@@ -13,28 +13,98 @@
       "ordre": 1,
       "chapitres": [
         {
-          "id": "ch01-puissances",
-          "titre": "Puissances et notation scientifique",
+          "id": "ch01-rappels",
+          "titre": "Rappels numériques et littéraux",
           "ordre": 1,
-          "fichier": "maths/ch01-puissances.json",
+          "fichier": "maths/ch01-rappels.json",
           "maj": "2026-10-16",
-          "exemple": true,
           "nb": {
-            "sections": 3,
-            "flashcards": 8,
+            "sections": 6,
+            "flashcards": 17,
             "exercices": 0
           }
         },
         {
-          "id": "ch02-equations",
-          "titre": "Équations du premier degré",
+          "id": "ch02-exposants",
+          "titre": "Exposants entiers et fractionnaires",
           "ordre": 2,
-          "fichier": "maths/ch02-equations.json",
+          "fichier": "maths/ch02-exposants.json",
           "maj": "2026-10-16",
-          "exemple": true,
           "nb": {
-            "sections": 2,
-            "flashcards": 4,
+            "sections": 5,
+            "flashcards": 15,
+            "exercices": 0
+          }
+        },
+        {
+          "id": "ch03-racines",
+          "titre": "Racines carrées et cubiques",
+          "ordre": 3,
+          "fichier": "maths/ch03-racines.json",
+          "maj": "2026-10-16",
+          "nb": {
+            "sections": 5,
+            "flashcards": 14,
+            "exercices": 0
+          }
+        },
+        {
+          "id": "ch04-radicaux",
+          "titre": "Racines et exposants fractionnaires (suite)",
+          "ordre": 4,
+          "fichier": "maths/ch04-radicaux.json",
+          "maj": "2026-10-16",
+          "nb": {
+            "sections": 5,
+            "flashcards": 12,
+            "exercices": 0
+          }
+        },
+        {
+          "id": "ch05-identites",
+          "titre": "Identités remarquables",
+          "ordre": 5,
+          "fichier": "maths/ch05-identites.json",
+          "maj": "2026-10-16",
+          "nb": {
+            "sections": 4,
+            "flashcards": 12,
+            "exercices": 0
+          }
+        },
+        {
+          "id": "ch06-distributivite",
+          "titre": "Distributivité et mise en évidence",
+          "ordre": 6,
+          "fichier": "maths/ch06-distributivite.json",
+          "maj": "2026-10-16",
+          "nb": {
+            "sections": 3,
+            "flashcards": 11,
+            "exercices": 0
+          }
+        },
+        {
+          "id": "ch07-formules",
+          "titre": "Transformations de formules",
+          "ordre": 7,
+          "fichier": "maths/ch07-formules.json",
+          "maj": "2026-10-16",
+          "nb": {
+            "sections": 6,
+            "flashcards": 16,
+            "exercices": 0
+          }
+        },
+        {
+          "id": "ch08-trigonometrie",
+          "titre": "Trigonométrie",
+          "ordre": 8,
+          "fichier": "maths/ch08-trigonometrie.json",
+          "maj": "2026-10-16",
+          "nb": {
+            "sections": 8,
+            "flashcards": 25,
             "exercices": 0
           }
         }
