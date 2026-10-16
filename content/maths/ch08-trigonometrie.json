@@ -8,25 +8,25 @@
    {
     "id": "cercle",
     "nom": "Chapitre 8 – Trigonométrie dans le cercle trigonométrique",
-    "court": "Cercle trigo",
+    "court": "Ch. 8 – Cercle trigo",
     "pages": 7
    },
    {
     "id": "valeurs",
     "nom": "Chapitre 8 – Trigonométrie : valeurs",
-    "court": "Valeurs",
+    "court": "Ch. 8 – Valeurs",
     "pages": 6
    },
    {
     "id": "formulaire",
     "nom": "Chapitre 8 – Aide-mémoire de trigonométrie",
-    "court": "Formulaire",
+    "court": "Ch. 8 – Formulaire",
     "pages": 2
    },
    {
     "id": "exercices",
     "nom": "Chapitre 8 – Exercices supplémentaires",
-    "court": "Exercices",
+    "court": "Ch. 8 – Exercices",
     "pages": 1
    }
   ],
@@ -318,6 +318,10 @@
      {
       "type": "point-cle",
       "contenu": "Moyen mnémotechnique : le cosinus est positif à **droite** de l'axe vertical (quadrants I et IV), le sinus est positif **au-dessus** de l'axe horizontal (quadrants I et II).",
+      "pages": [
+       3
+      ],
+      "doc": "cercle",
       "complement": true
      }
     ]

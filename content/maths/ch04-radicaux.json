@@ -8,7 +8,7 @@
    {
     "id": "cours",
     "nom": "Chapitre 4 – Racines, exposants fractionnaires (suite)",
-    "court": "Chapitre 4",
+    "court": "Ch. 4 – Racines (suite)",
     "pages": 2
    }
   ],
@@ -53,11 +53,17 @@
      {
       "type": "exemple",
       "contenu": "Différence de deux carrés : $(1 + \\sqrt{2})(1 - \\sqrt{2}) = 1^2 - (\\sqrt{2})^2 = 1 - 2 = -1$.\nCarré d'un binôme : $(1 + \\sqrt{2})^2 = 1 + 2\\sqrt{2} + 2 = 3 + 2\\sqrt{2}$.",
+      "pages": [
+       1
+      ],
       "complement": true
      },
      {
       "type": "point-cle",
       "contenu": "Une racine d'indice **impair** existe pour tout nombre : $\\sqrt[3]{-8} = -2$, $\\sqrt[5]{-243} = -3$. Une racine d'indice **pair** n'existe que pour un nombre **positif ou nul**.",
+      "pages": [
+       1
+      ],
       "complement": true
      }
     ]
@@ -109,11 +115,17 @@
         "$\\dfrac{1}{\\sqrt{a}}$"
        ]
       ],
+      "pages": [
+       1
+      ],
       "complement": true
      },
      {
       "type": "piege",
       "contenu": "$(-3)^{\\frac{1}{2}} = \\sqrt{-3}$ n'existe pas dans $\\mathbb{R}$, alors que $-3^{\\frac{1}{2}} = -\\sqrt{3}$ existe : attention aux parenthèses.",
+      "pages": [
+       1
+      ],
       "complement": true
      }
     ]
@@ -138,6 +150,9 @@
      {
       "type": "exemple",
       "contenu": "$\\sqrt{200} = \\sqrt{100 \\times 2} = 10\\sqrt{2} \\approx 14{,}142$\n$(10^4)^{\\frac{1}{2}} = 10^{4 \\times \\frac{1}{2}} = 10^2 = 100$\n$100^{-\\frac{1}{2}} = \\dfrac{1}{\\sqrt{100}} = \\dfrac{1}{10}$",
+      "pages": [
+       1
+      ],
       "complement": true
      }
     ]
@@ -162,11 +177,17 @@
      {
       "type": "point-cle",
       "contenu": "$\\sqrt{a^2} = |a|$ (valeur absolue), car une racine carrée est toujours positive : $\\sqrt{(-3)^2} = 3$.\n$\\left(\\sqrt{a}\\right)^2 = a$ seulement si $a \\geq 0$.\n$\\sqrt[3]{a^3} = a$ pour tout réel $a$.",
+      "pages": [
+       2
+      ],
       "complement": true
      },
      {
       "type": "exemple",
       "contenu": "Avec $a > 0$ : $\\sqrt{a^5} = \\sqrt{a^4 \\cdot a} = a^2\\sqrt{a}$ ; $\\sqrt{162a^2} = \\sqrt{81 \\cdot 2 \\cdot a^2} = 9a\\sqrt{2}$.",
+      "pages": [
+       2
+      ],
       "complement": true
      }
     ]
@@ -253,6 +274,7 @@
    "tags": [
     "algèbre"
    ],
+   "page": 2,
    "complement": true
   },
   {
@@ -262,6 +284,7 @@
    "tags": [
     "algèbre"
    ],
+   "page": 2,
    "complement": true
   },
   {
@@ -271,6 +294,7 @@
    "tags": [
     "algèbre"
    ],
+   "page": 2,
    "complement": true
   },
   {
@@ -280,6 +304,7 @@
    "tags": [
     "algèbre"
    ],
+   "page": 2,
    "complement": true
   }
  ],

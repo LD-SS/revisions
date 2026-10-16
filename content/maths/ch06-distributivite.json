@@ -8,7 +8,7 @@
    {
     "id": "cours",
     "nom": "Chapitre 6 – Distributivité et mise en évidence",
-    "court": "Chapitre 6",
+    "court": "Ch. 6 – Distributivité",
     "pages": 4
    }
   ],
@@ -176,11 +176,17 @@
      {
       "type": "point-cle",
       "contenu": "La mise en évidence est l'**opération inverse** de la distributivité : pour vérifier, redéveloppe ton résultat.",
+      "pages": [
+       4
+      ],
       "complement": true
      },
      {
       "type": "exemple",
       "contenu": "Le facteur commun peut être une parenthèse (série 2) : $x(x + 5) - 7(x + 5) = (x + 5)(x - 7)$.",
+      "pages": [
+       4
+      ],
       "complement": true
      }
     ]

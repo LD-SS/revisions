@@ -8,7 +8,7 @@
    {
     "id": "cours",
     "nom": "Chapitre 2 – Exposants entiers et fractionnaires",
-    "court": "Chapitre 2",
+    "court": "Ch. 2 – Exposants",
     "pages": 4
    }
   ],
@@ -176,6 +176,9 @@
      {
       "type": "point-cle",
       "contenu": "Un nombre négatif entre parenthèses élevé à un exposant **pair** donne un résultat **positif** ; à un exposant **impair**, un résultat **négatif**.",
+      "pages": [
+       2
+      ],
       "complement": true
      }
     ]
@@ -195,6 +198,9 @@
       "type": "definition",
       "contenu": "Un nombre en **notation scientifique** s'écrit $a \\times 10^n$ avec $1 \\leq a < 10$ et $n$ entier. Exemples : $2\\,450 = 2{,}45 \\times 10^3$ ; $0{,}0036 = 3{,}6 \\times 10^{-3}$.",
       "titre": "Notation scientifique",
+      "pages": [
+       3
+      ],
       "complement": true
      },
      {

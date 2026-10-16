@@ -8,7 +8,7 @@
    {
     "id": "cours",
     "nom": "Chapitre 3 – Racines carrées et cubiques",
-    "court": "Chapitre 3",
+    "court": "Ch. 3 – Racines",
     "pages": 5
    }
   ],
@@ -118,11 +118,17 @@
      {
       "type": "piege",
       "contenu": "La racine d'une somme n'est pas la somme des racines : $\\sqrt{9} + \\sqrt{16} = 3 + 4 = 7$ alors que $\\sqrt{9 + 16} = \\sqrt{25} = 5$.",
+      "pages": [
+       1
+      ],
       "complement": true
      },
      {
       "type": "exemple",
       "contenu": "$\\sqrt{50} + \\sqrt{18} = 5\\sqrt{2} + 3\\sqrt{2} = 8\\sqrt{2}$ : on simplifie d'abord chaque racine pour faire apparaître des radicaux semblables.",
+      "pages": [
+       4
+      ],
       "complement": true
      }
     ]
@@ -178,11 +184,17 @@
       "type": "definition",
       "contenu": "La racine cubique de $a$, notée $\\sqrt[3]{a}$, est le nombre dont le **cube** vaut $a$. Elle existe aussi pour un nombre **négatif** : $\\sqrt[3]{27} = 3$ car $3^3 = 27$ ; $\\sqrt[3]{-125} = -5$ car $(-5)^3 = -125$.",
       "titre": "Racine cubique",
+      "pages": [
+       5
+      ],
       "complement": true
      },
      {
       "type": "exemple",
       "contenu": "$\\sqrt[3]{x^3} = x$ ; $\\sqrt[3]{8a^6} = 2a^2$ car $(2a^2)^3 = 8a^6$.",
+      "pages": [
+       5
+      ],
       "complement": true
      }
     ]
@@ -326,6 +338,7 @@
    "tags": [
     "racine cubique"
    ],
+   "page": 5,
    "complement": true
   },
   {
@@ -335,6 +348,7 @@
    "tags": [
     "pièges"
    ],
+   "page": 1,
    "complement": true
   }
  ],

@@ -8,7 +8,7 @@
    {
     "id": "cours",
     "nom": "Chapitre 5 – Identités remarquables",
-    "court": "Chapitre 5",
+    "court": "Ch. 5 – Identités",
     "pages": 2
    }
   ],
@@ -83,6 +83,9 @@
      {
       "type": "piege",
       "contenu": "N'oublie pas le **double produit** : $(a + b)^2 \\neq a^2 + b^2$. Exemple : $(x + 3)^2 = x^2 + 6x + 9$, pas $x^2 + 9$.",
+      "pages": [
+       1
+      ],
       "complement": true
      }
     ]
@@ -149,6 +152,9 @@
      {
       "type": "point-cle",
       "contenu": "Pour reconnaître un carré d'une somme ou d'une différence : repère deux carrés ($x^2$ et $9 = 3^2$), puis vérifie que le terme du milieu vaut bien $2 \\times x \\times 3 = 6x$.",
+      "pages": [
+       2
+      ],
       "complement": true
      }
     ]
@@ -262,6 +268,7 @@
    "tags": [
     "pièges"
    ],
+   "page": 1,
    "complement": true
   }
  ],
