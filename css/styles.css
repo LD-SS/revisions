@@ -1,0 +1,288 @@
+/* =====================================================================
+   RÉVISIONS — feuille de style
+   ---------------------------------------------------------------------
+   Reprend les variables et composants de la « Boîte à outils technique »
+   (mêmes couleurs, tuiles, boutons) pour que les deux applis se ressemblent.
+   Sommaire :
+     1. Thème (variables clair / sombre)
+     2. Base
+     3. Barre supérieure
+     4. Mise en page, panneaux, boutons
+     5. Couleur de matière (.mc)
+     6. Accueil et tuiles
+     7. Page matière (liste des chapitres)
+     8. Page chapitre (en-tête + onglets)
+     9. Synthèse (sommaire, blocs, formules, tableaux)
+    10. Flashcards
+    11. Paramètres
+    12. Notifications, états vides
+    13. Responsive
+    14. Impression
+   ===================================================================== */
+
+/* ===================== 1. THÈME ===================== */
+:root{
+  --bg:#f3f5f8; --panel:#ffffff; --panel2:#f7f9fc; --text:#18212d; --muted:#5a6577;
+  --border:#d8dee8; --accent:#1d5fd1; --accent-weak:#e6eeff; --on-accent:#fff;
+  --ok:#1b7f47; --ok-weak:#e2f4e9; --warn:#a15c00; --warn-weak:#fff2dc;
+  --bad:#c42b2b; --bad-weak:#fde8e8; --code:#eef2f7;
+  --def:#1d5fd1; --def-weak:#e6eeff;
+  --shadow:0 1px 2px rgba(16,24,40,.05),0 1px 3px rgba(16,24,40,.07);
+  --radius:10px;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0e131a; --panel:#161d27; --panel2:#1b2430; --text:#e5eaf1; --muted:#97a3b6;
+    --border:#2a3545; --accent:#6aa3ff; --accent-weak:#1a2944; --on-accent:#0b1320;
+    --ok:#4cc38a; --ok-weak:#15302a; --warn:#f0b357; --warn-weak:#38290f;
+    --bad:#ff7a7a; --bad-weak:#3b1b1f; --code:#1f2935; --shadow:none;
+    --def:#6aa3ff; --def-weak:#1a2944;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0e131a; --panel:#161d27; --panel2:#1b2430; --text:#e5eaf1; --muted:#97a3b6;
+  --border:#2a3545; --accent:#6aa3ff; --accent-weak:#1a2944; --on-accent:#0b1320;
+  --ok:#4cc38a; --ok-weak:#15302a; --warn:#f0b357; --warn-weak:#38290f;
+  --bad:#ff7a7a; --bad-weak:#3b1b1f; --code:#1f2935; --shadow:none;
+  --def:#6aa3ff; --def-weak:#1a2944;
+  color-scheme:dark;
+}
+
+/* ===================== 2. BASE ===================== */
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,sans-serif;min-height:100vh;display:flex;flex-direction:column}
+a{color:var(--accent)}
+h1,h2,h3,h4{line-height:1.2}
+.muted{color:var(--muted)}
+[hidden]{display:none!important}
+svg{flex:none}
+.ic{width:18px;height:18px}
+.katex{font-size:1.08em}
+.katex-display{margin:.4em 0;overflow-x:auto;overflow-y:hidden;padding:2px 0}
+code{background:var(--code);border-radius:4px;padding:1px 5px;font-size:.92em}
+
+/* ===================== 3. BARRE SUPÉRIEURE ===================== */
+.topbar{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:12px;padding:8px 16px;background:var(--panel);border-bottom:1px solid var(--border);flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:9px;font-weight:700;white-space:nowrap;color:var(--text);text-decoration:none}
+.brand .logo{width:30px;height:30px;border-radius:8px;background:var(--accent);color:var(--on-accent);display:grid;place-items:center}
+.brand .logo svg{width:18px;height:18px}
+.tabs{display:flex;gap:2px;flex:1;min-width:0;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{display:flex;align-items:center;gap:7px;padding:8px 12px;border-radius:8px;color:var(--muted);text-decoration:none;white-space:nowrap;font-weight:500;min-height:40px}
+.tab:hover{background:var(--panel2);color:var(--text)}
+.tab.active{background:var(--accent-weak);color:var(--accent)}
+.tab svg{width:18px;height:18px}
+.tab.future{opacity:.7}
+.tab.mc svg{color:var(--mt)}
+.tab.mc.active{background:var(--mw);color:var(--mt)}
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;padding:1px 8px;border-radius:99px;border:1px solid var(--border);color:var(--muted);font-weight:500;white-space:nowrap}
+.badge.ok{background:var(--ok-weak);color:var(--ok);border-color:transparent}
+.badge.warn{background:var(--warn-weak);color:var(--warn);border-color:transparent}
+.badge.info{background:var(--accent-weak);color:var(--accent);border-color:transparent}
+.top-actions{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+
+/* ===================== 4. MISE EN PAGE, PANNEAUX, BOUTONS ===================== */
+main{flex:1;width:100%;max-width:1280px;margin:0 auto;padding:16px}
+#vue:focus,#vue:focus-visible{outline:none}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow);min-width:0}
+.panel>h3{margin:0 0 10px;font-size:12.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:650}
+footer{padding:14px 16px;text-align:center;font-size:12.5px;color:var(--muted)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:7px 12px;min-height:38px;border:1px solid var(--border);background:var(--panel);color:var(--text);border-radius:8px;font:inherit;font-size:14px;cursor:pointer;text-decoration:none;white-space:nowrap}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn:disabled:hover{border-color:var(--border);color:var(--text)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.btn.primary:hover{filter:brightness(1.08);color:var(--on-accent)}
+.btn.ok{background:var(--ok-weak);border-color:transparent;color:var(--ok);font-weight:600}
+.btn.ok:hover{border-color:var(--ok)}
+.btn.bad{background:var(--bad-weak);border-color:transparent;color:var(--bad);font-weight:600}
+.btn.bad:hover{border-color:var(--bad)}
+.btn.icon{padding:7px 9px}
+.btn svg{width:17px;height:17px}
+.btn:focus-visible,.tab:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.field{padding:7px 9px;min-height:38px;border:1px solid var(--border);border-radius:7px;background:var(--panel2);color:var(--text);font:inherit;font-size:14px}
+.crumb{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.crumb a{color:inherit;text-decoration:none} .crumb a:hover{color:var(--text);text-decoration:underline}
+.crumb-sep{opacity:.6}
+.sub-title{margin:22px 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+
+/* ===================== 5. COULEUR DE MATIÈRE ===================== */
+/* Tout élément portant style="--mc:#xxxxxx" et la classe .mc
+   reçoit une teinte claire (--mw) et une couleur de texte lisible (--mt). */
+.mc{--mw:color-mix(in srgb,var(--mc) 13%,var(--panel));--mt:var(--mc)}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]) .mc{--mw:color-mix(in srgb,var(--mc) 24%,var(--panel));--mt:color-mix(in srgb,var(--mc) 55%,#fff)}
+}
+:root[data-theme="dark"] .mc{--mw:color-mix(in srgb,var(--mc) 24%,var(--panel));--mt:color-mix(in srgb,var(--mc) 55%,#fff)}
+.m-ic{flex:none;width:44px;height:44px;border-radius:11px;display:grid;place-items:center;background:var(--mw);color:var(--mt)}
+.m-ic svg{width:24px;height:24px}
+
+/* ===================== 6. ACCUEIL ET TUILES ===================== */
+.hero{padding:18px 4px 6px}
+.hero h1{margin:0 0 6px;font-size:28px}
+.hero p{margin:0;max-width:760px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.tile{display:flex;align-items:flex-start;gap:12px;text-decoration:none;color:var(--text);position:relative;transition:border-color .15s,transform .15s}
+.tile:hover{border-color:var(--mt,var(--accent));transform:translateY(-1px)}
+.tile h3{margin:2px 0 4px;font-size:16px}
+.tile p{margin:0;font-size:13.5px;color:var(--muted)}
+.tile-body{flex:1;min-width:0}
+.tiles.big{grid-template-columns:repeat(auto-fill,minmax(260px,1fr));margin:18px 0}
+.tiles.big .tile{flex-direction:column;padding:20px;border-top:4px solid var(--mc,var(--accent))}
+.tiles.big .m-ic{width:64px;height:64px;border-radius:16px}
+.tiles.big .m-ic svg{width:36px;height:36px}
+.tiles.big .tile h3{font-size:20px}
+.tile-stats{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.two-cols{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.two-cols ul{margin:0;padding-left:20px}
+.two-cols li{margin:4px 0}
+
+/* ===================== 7. PAGE MATIÈRE ===================== */
+.page-head{display:flex;align-items:center;gap:14px;margin:6px 0 16px;flex-wrap:wrap}
+.page-head h1,.page-head h2{margin:0;font-size:24px}
+.page-head p{margin:2px 0 0}
+.page-head .m-ic{width:56px;height:56px;border-radius:14px}
+.page-head .m-ic svg{width:30px;height:30px}
+.chap-list{display:flex;flex-direction:column;gap:10px}
+.chap{display:flex;align-items:center;gap:14px;text-decoration:none;color:var(--text);transition:border-color .15s}
+.chap:hover{border-color:var(--mt)}
+.chap-num{flex:none;width:40px;height:40px;border-radius:10px;display:grid;place-items:center;background:var(--mw);color:var(--mt);font-weight:700}
+.chap-body{flex:1;min-width:0}
+.chap-body h3{margin:0 0 4px;font-size:16px}
+.chap-meta{display:flex;gap:6px;flex-wrap:wrap}
+.chap .chev{color:var(--muted)}
+
+/* ===================== 8. PAGE CHAPITRE ===================== */
+.seg{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 16px;border-bottom:1px solid var(--border);padding-bottom:10px}
+.seg a{display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border-radius:9px;color:var(--muted);text-decoration:none;font-weight:600;min-height:40px;border:1px solid transparent}
+.seg a:hover{background:var(--panel2);color:var(--text)}
+.seg a.active{background:var(--mw);color:var(--mt);border-color:color-mix(in srgb,var(--mt) 35%,transparent)}
+.seg a svg{width:18px;height:18px}
+.seg .count{font-size:12px;font-weight:600;background:var(--panel);border:1px solid var(--border);border-radius:99px;padding:0 7px;color:var(--muted)}
+.notice{display:flex;gap:10px;align-items:flex-start;padding:10px 14px;border-radius:9px;background:var(--warn-weak);color:var(--warn);font-size:14px;margin-bottom:14px}
+.notice svg{width:18px;height:18px;margin-top:2px}
+.notice.info{background:var(--accent-weak);color:var(--accent)}
+.chap-nav{display:flex;justify-content:space-between;gap:10px;margin-top:20px;flex-wrap:wrap}
+
+/* ===================== 9. SYNTHÈSE ===================== */
+.syn-layout{display:grid;grid-template-columns:240px minmax(0,1fr);gap:18px;align-items:start}
+.syn-toc{position:sticky;top:76px;max-height:calc(100vh - 96px);overflow:auto;padding:12px}
+.syn-toc ol{list-style:none;margin:0;padding:0;counter-reset:toc}
+.syn-toc li{counter-increment:toc}
+.syn-toc a{display:flex;gap:8px;padding:6px 8px;border-radius:7px;color:var(--text);text-decoration:none;font-size:14px}
+.syn-toc a::before{content:counter(toc);color:var(--mt);font-weight:700;min-width:14px}
+.syn-toc a:hover{background:var(--panel2)}
+.syn-toc a.active{background:var(--mw);color:var(--mt);font-weight:600}
+.syn-intro{font-size:15.5px;margin:0 0 4px}
+.syn-source{font-size:13px;margin:6px 0 0;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.syn-section{scroll-margin-top:80px;margin-bottom:16px}
+.syn-section>h2{display:flex;align-items:center;gap:10px;margin:0 0 12px;font-size:19px}
+.syn-section>h2 .num{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;background:var(--mw);color:var(--mt);font-size:15px;flex:none}
+.bloc{position:relative;margin:10px 0;padding:10px 14px;border-radius:9px}
+.bloc p{margin:0 0 6px} .bloc p:last-child{margin-bottom:0}
+.bloc ul,.bloc ol{margin:4px 0;padding-left:22px}
+.bloc li{margin:3px 0}
+.bloc-head{display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;padding-right:60px}
+.bloc-head svg{width:16px;height:16px}
+.bloc-head .t{text-transform:none;letter-spacing:0;font-size:14.5px;color:var(--text)}
+.bloc.texte{padding:4px 2px}
+.bloc.definition{background:var(--def-weak);border-left:4px solid var(--def)} .bloc.definition .bloc-head{color:var(--def)}
+.bloc.point-cle{background:var(--ok-weak);border-left:4px solid var(--ok)} .bloc.point-cle .bloc-head{color:var(--ok)}
+.bloc.piege{background:var(--bad-weak);border-left:4px solid var(--bad)} .bloc.piege .bloc-head{color:var(--bad)}
+.bloc.exemple{background:var(--panel2);border:1px dashed var(--border)} .bloc.exemple .bloc-head{color:var(--muted)}
+.bloc.formule{background:var(--mw);border:1px solid color-mix(in srgb,var(--mt) 30%,transparent);text-align:center;padding:14px}
+.bloc.formule .bloc-head{justify-content:center;color:var(--mt);padding-right:0}
+.formule-math{font-size:1.25em;overflow-x:auto}
+.formule-legende{font-size:14px;color:var(--muted);margin-top:4px}
+.vars{display:inline-grid;grid-template-columns:auto auto auto;gap:2px 14px;margin-top:10px;text-align:left;font-size:14px;padding-top:8px;border-top:1px dashed color-mix(in srgb,var(--mt) 30%,transparent)}
+.vars .u{color:var(--muted)}
+.bloc.liste .bloc-head,.bloc.tableau .bloc-head{color:var(--muted)}
+.bloc.tableau{padding:6px 2px}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:8px}
+table.tbl{border-collapse:collapse;width:100%;font-size:14.5px}
+.tbl th,.tbl td{padding:8px 12px;border-bottom:1px solid var(--border);text-align:left;vertical-align:middle}
+.tbl th{background:var(--panel2);font-size:12.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+.tbl tr:last-child td{border-bottom:0}
+.pg{position:absolute;top:8px;right:10px;display:inline-flex;align-items:center;gap:3px;font-size:11.5px;font-weight:600;color:var(--muted);background:var(--panel);border:1px solid var(--border);border-radius:99px;padding:0 7px;line-height:18px;cursor:help}
+.pg svg{width:12px;height:12px}
+.bloc.texte .pg,.bloc.tableau .pg{position:static;margin-left:6px;vertical-align:middle}
+.bloc.tableau .pg-row{display:flex;justify-content:flex-end;margin-top:4px}
+
+/* ===================== 10. FLASHCARDS ===================== */
+.fc-wrap{max-width:760px;margin:0 auto}
+.fc-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.fc-bar .grow{flex:1}
+.fc-progress{height:6px;border-radius:99px;background:var(--panel2);border:1px solid var(--border);overflow:hidden;margin-bottom:14px}
+.fc-progress>div{height:100%;background:var(--mt);transition:width .25s}
+.fc-stage{perspective:900px}
+.fc-card{min-height:280px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:34px 28px 26px;cursor:pointer;user-select:none;position:relative;border-width:2px;transition:transform .16s ease-in,border-color .15s}
+.fc-card:hover{border-color:color-mix(in srgb,var(--mt) 50%,var(--border))}
+.fc-card.flip-out{transform:rotateY(90deg)}
+.fc-card.verso{background:var(--mw);border-color:color-mix(in srgb,var(--mt) 40%,transparent)}
+.fc-side{position:absolute;top:10px;left:14px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mt)}
+.fc-card .pg{top:10px;right:12px}
+.fc-text{font-size:20px;line-height:1.5;max-width:100%}
+.fc-text p{margin:0 0 6px}
+.fc-hint{position:absolute;bottom:10px;left:0;right:0;font-size:12.5px;color:var(--muted)}
+.fc-tags{display:flex;gap:5px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.fc-actions{display:flex;justify-content:center;gap:10px;margin-top:14px;flex-wrap:wrap}
+.fc-actions .btn{min-width:130px;min-height:46px;font-size:15px}
+.fc-keys{text-align:center;font-size:12.5px;color:var(--muted);margin-top:12px}
+kbd{font:12px ui-monospace,Consolas,monospace;border:1px solid var(--border);border-bottom-width:2px;border-radius:4px;padding:0 5px;background:var(--panel)}
+.fc-score{display:flex;gap:12px;justify-content:center;margin:14px 0}
+.fc-score .panel{min-width:140px;text-align:center}
+.fc-score .big{font-size:32px;font-weight:700}
+.fc-score .ok{color:var(--ok)} .fc-score .bad{color:var(--bad)}
+@media (prefers-reduced-motion: reduce){ .fc-card,.tile{transition:none} }
+
+/* ===================== 11. PARAMÈTRES ===================== */
+.set-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px}
+.choice{display:flex;gap:8px;flex-wrap:wrap}
+.choice label{display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border:1px solid var(--border);border-radius:9px;cursor:pointer;min-height:40px}
+.choice input{accent-color:var(--accent)}
+.choice label:has(input:checked){border-color:var(--accent);background:var(--accent-weak);color:var(--accent);font-weight:600}
+.set-row{margin:8px 0}
+.set-row p{margin:4px 0}
+
+/* ===================== 12. NOTIFICATIONS, ÉTATS VIDES ===================== */
+#toasts{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;gap:8px;z-index:100;pointer-events:none}
+.toast{background:var(--text);color:var(--bg);padding:9px 16px;border-radius:9px;font-size:14px;box-shadow:0 4px 16px rgba(0,0,0,.2);animation:toast-in .2s}
+@keyframes toast-in{from{opacity:0;transform:translateY(8px)}}
+.empty{text-align:center;padding:40px 20px}
+.empty .m-ic{margin:0 auto 12px;width:64px;height:64px;border-radius:16px}
+.empty .m-ic svg{width:34px;height:34px}
+.empty h3{margin:0 0 6px}
+.empty p{margin:0 auto;max-width:520px}
+.loading{padding:40px;text-align:center;color:var(--muted)}
+.error-box{background:var(--bad-weak);color:var(--bad);border-radius:9px;padding:14px 16px}
+.file-warning{max-width:640px;margin:40px auto;padding:20px 24px}
+
+/* ===================== 13. RESPONSIVE ===================== */
+@media (max-width:900px){
+  .syn-layout{grid-template-columns:minmax(0,1fr)}
+  .syn-toc{position:static;max-height:none}
+  .two-cols{grid-template-columns:1fr}
+}
+@media (max-width:640px){
+  main{padding:12px}
+  .topbar{padding:8px 10px;gap:8px}
+  .brand span.txt{display:none}
+  .tab span.txt{display:none}
+  .hero h1{font-size:23px}
+  .fc-text{font-size:18px}
+  .fc-card{min-height:240px;padding:34px 16px 28px}
+  .set-grid{grid-template-columns:1fr}
+}
+
+/* ===================== 14. IMPRESSION (complété à l'étape 5) ===================== */
+@media print{
+  .topbar,footer,.seg,.syn-toc,.chap-nav,#toasts,.no-print{display:none!important}
+  body{background:#fff;color:#000}
+  main{max-width:none;padding:0}
+  .syn-layout{grid-template-columns:1fr}
+  .panel{box-shadow:none;border:0;padding:0}
+  .bloc{break-inside:avoid}
+}
