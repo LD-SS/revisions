@@ -1,0 +1,350 @@
+{
+ "format": 1,
+ "id": "ch02-exposants",
+ "matiere": "maths",
+ "titre": "Exposants entiers et fractionnaires",
+ "source": {
+  "pdfs": [
+   {
+    "id": "cours",
+    "nom": "Chapitre 2 – Exposants entiers et fractionnaires",
+    "court": "Chapitre 2",
+    "pages": 4
+   }
+  ],
+  "genereLe": "2026-10-16",
+  "modele": "Claude (rédigé dans la conversation)"
+ },
+ "synthese": {
+  "intro": "Définitions des exposants (positif, nul, négatif, fractionnaire), les cinq propriétés des puissances et les pièges de signe.",
+  "sections": [
+   {
+    "id": "s1",
+    "titre": "Définitions des exposants",
+    "blocs": [
+     {
+      "type": "tableau",
+      "entetes": [
+       "Exposant",
+       "Définition",
+       "Exemple"
+      ],
+      "lignes": [
+       [
+        "positif",
+        "$a^n = a \\times a \\times \\dots \\times a$ ($n$ fois)",
+        "$2^3 = 8$"
+       ],
+       [
+        "nul",
+        "$a^0 = 1$ (avec $a \\neq 0$)",
+        "$5^0 = 1$"
+       ],
+       [
+        "négatif",
+        "$a^{-n} = \\dfrac{1}{a^n}$ (avec $a \\neq 0$)",
+        "$2^{-3} = \\dfrac{1}{8}$"
+       ],
+       [
+        "fractionnaire",
+        "$a^{\\frac{1}{n}} = \\sqrt[n]{a}$ (avec $a > 0$)",
+        "$9^{\\frac{1}{2}} = \\sqrt{9} = 3$"
+       ]
+      ],
+      "pages": [
+       1
+      ]
+     },
+     {
+      "type": "formule",
+      "latex": "a^{\\frac{m}{n}} = \\left(\\sqrt[n]{a}\\right)^{m} = \\sqrt[n]{a^{m}}",
+      "legende": "Exposant fractionnaire (cas général)",
+      "pages": [
+       1
+      ]
+     },
+     {
+      "type": "exemple",
+      "contenu": "$8^{\\frac{2}{3}} = \\left(\\sqrt[3]{8}\\right)^2 = 2^2 = 4$",
+      "pages": [
+       1
+      ]
+     }
+    ]
+   },
+   {
+    "id": "s2",
+    "titre": "Propriétés des puissances",
+    "blocs": [
+     {
+      "type": "tableau",
+      "entetes": [
+       "Propriété",
+       "Formule",
+       "Exemple"
+      ],
+      "lignes": [
+       [
+        "Produit de puissances de même base",
+        "$a^m \\times a^n = a^{m+n}$",
+        "$2^3 \\times 2^4 = 2^7 = 128$"
+       ],
+       [
+        "Quotient de puissances de même base",
+        "$\\dfrac{a^m}{a^n} = a^{m-n}$",
+        "$\\dfrac{5^6}{5^2} = 5^4 = 625$"
+       ],
+       [
+        "Puissance d'une puissance",
+        "$(a^m)^n = a^{m \\times n}$",
+        "$(3^2)^4 = 3^8 = 6561$"
+       ],
+       [
+        "Puissance d'un produit",
+        "$(a \\times b)^n = a^n \\times b^n$",
+        "$(2 \\times 5)^3 = 2^3 \\times 5^3 = 1000$"
+       ],
+       [
+        "Puissance d'un quotient",
+        "$\\left(\\dfrac{a}{b}\\right)^n = \\dfrac{a^n}{b^n}$ ($b \\neq 0$)",
+        "$\\left(\\dfrac{3}{2}\\right)^2 = \\dfrac{9}{4}$"
+       ]
+      ],
+      "pages": [
+       1,
+       2
+      ]
+     },
+     {
+      "type": "piege",
+      "contenu": "Les deux premières règles ne valent que pour des puissances de **même base** : on ne peut pas regrouper $2^3 \\times 5^4$.",
+      "pages": [
+       1
+      ]
+     }
+    ]
+   },
+   {
+    "id": "s3",
+    "titre": "Exemples à connaître",
+    "blocs": [
+     {
+      "type": "liste",
+      "items": [
+       "Exposants positifs : $4^2 = 16$ ; $(2 \\times 3)^2 = 36$",
+       "Exposants nuls : $7^0 = 1$ ; $(-5)^0 = 1$",
+       "Exposants négatifs : $10^{-2} = \\dfrac{1}{100} = 0{,}01$ ; $2^{-3} = \\dfrac{1}{8}$",
+       "Exposants fractionnaires : $16^{\\frac{1}{2}} = 4$ ; $27^{\\frac{1}{3}} = 3$ ; $81^{\\frac{3}{4}} = 27$"
+      ],
+      "pages": [
+       2
+      ]
+     }
+    ]
+   },
+   {
+    "id": "s4",
+    "titre": "Attention aux parenthèses",
+    "blocs": [
+     {
+      "type": "tableau",
+      "entetes": [
+       "Sans parenthèses",
+       "Avec parenthèses"
+      ],
+      "lignes": [
+       [
+        "$-3^2 = -9$",
+        "$(-3)^2 = 9$"
+       ],
+       [
+        "$-4^3 = -64$",
+        "$(-4)^3 = -64$"
+       ]
+      ],
+      "pages": [
+       2
+      ]
+     },
+     {
+      "type": "piege",
+      "contenu": "Sans parenthèses, l'exposant ne porte **que sur le nombre** : $-3^2 = -(3^2) = -9$.",
+      "pages": [
+       2
+      ]
+     },
+     {
+      "type": "point-cle",
+      "contenu": "Un nombre négatif entre parenthèses élevé à un exposant **pair** donne un résultat **positif** ; à un exposant **impair**, un résultat **négatif**.",
+      "complement": true
+     }
+    ]
+   },
+   {
+    "id": "s5",
+    "titre": "Notation scientifique et racines",
+    "blocs": [
+     {
+      "type": "texte",
+      "contenu": "Les exercices de la page 3 demandent de passer de l'écriture décimale à la notation scientifique, et inversement (ex. $10^5 / 10^2$, $(10^3)^2$, $42\\,000 \\cdot 10^{-4}$).",
+      "pages": [
+       3
+      ]
+     },
+     {
+      "type": "definition",
+      "contenu": "Un nombre en **notation scientifique** s'écrit $a \\times 10^n$ avec $1 \\leq a < 10$ et $n$ entier. Exemples : $2\\,450 = 2{,}45 \\times 10^3$ ; $0{,}0036 = 3{,}6 \\times 10^{-3}$.",
+      "titre": "Notation scientifique",
+      "complement": true
+     },
+     {
+      "type": "texte",
+      "contenu": "Les exercices des pages 3–4 font transformer un exposant fractionnaire en racine avec la règle $a^{\\frac{m}{n}} = \\sqrt[n]{a^m}$ : par exemple $4^{\\frac{1}{3}} = \\sqrt[3]{4}$ et $8^{\\frac{2}{3}} = \\sqrt[3]{8^2} = \\sqrt[3]{64} = 4$.",
+      "pages": [
+       3,
+       4
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "flashcards": [
+  {
+   "id": "fc-001",
+   "recto": "Que vaut $a^0$ ?",
+   "verso": "$1$ (avec $a \\neq 0$)",
+   "tags": [
+    "définitions"
+   ],
+   "page": 1
+  },
+  {
+   "id": "fc-002",
+   "recto": "Que vaut $a^{-n}$ ?",
+   "verso": "$\\dfrac{1}{a^n}$ (avec $a \\neq 0$)",
+   "tags": [
+    "définitions"
+   ],
+   "page": 1
+  },
+  {
+   "id": "fc-003",
+   "recto": "Que vaut $a^{\\frac{1}{n}}$ ?",
+   "verso": "$\\sqrt[n]{a}$ (avec $a > 0$)",
+   "tags": [
+    "définitions"
+   ],
+   "page": 1
+  },
+  {
+   "id": "fc-004",
+   "recto": "Écrire $a^{\\frac{m}{n}}$ avec une racine",
+   "verso": "$\\left(\\sqrt[n]{a}\\right)^m = \\sqrt[n]{a^m}$",
+   "tags": [
+    "définitions"
+   ],
+   "page": 1
+  },
+  {
+   "id": "fc-005",
+   "recto": "Calculer $8^{\\frac{2}{3}}$",
+   "verso": "$\\left(\\sqrt[3]{8}\\right)^2 = 2^2 = 4$",
+   "tags": [
+    "calcul"
+   ],
+   "page": 1
+  },
+  {
+   "id": "fc-006",
+   "recto": "Simplifier $a^m \\times a^n$",
+   "verso": "$a^{m+n}$",
+   "tags": [
+    "propriétés"
+   ],
+   "page": 1
+  },
+  {
+   "id": "fc-007",
+   "recto": "Simplifier $\\dfrac{a^m}{a^n}$",
+   "verso": "$a^{m-n}$",
+   "tags": [
+    "propriétés"
+   ],
+   "page": 1
+  },
+  {
+   "id": "fc-008",
+   "recto": "Simplifier $(a^m)^n$",
+   "verso": "$a^{m \\times n}$",
+   "tags": [
+    "propriétés"
+   ],
+   "page": 1
+  },
+  {
+   "id": "fc-009",
+   "recto": "Développer $(a \\times b)^n$",
+   "verso": "$a^n \\times b^n$",
+   "tags": [
+    "propriétés"
+   ],
+   "page": 1
+  },
+  {
+   "id": "fc-010",
+   "recto": "Développer $\\left(\\dfrac{a}{b}\\right)^n$",
+   "verso": "$\\dfrac{a^n}{b^n}$ ($b \\neq 0$)",
+   "tags": [
+    "propriétés"
+   ],
+   "page": 2
+  },
+  {
+   "id": "fc-011",
+   "recto": "Calculer $(3^2)^4$",
+   "verso": "$3^8 = 6561$",
+   "tags": [
+    "calcul"
+   ],
+   "page": 1
+  },
+  {
+   "id": "fc-012",
+   "recto": "Calculer $10^{-2}$",
+   "verso": "$\\dfrac{1}{100} = 0{,}01$",
+   "tags": [
+    "calcul"
+   ],
+   "page": 2
+  },
+  {
+   "id": "fc-013",
+   "recto": "Calculer $81^{\\frac{3}{4}}$",
+   "verso": "$27$ (car $\\sqrt[4]{81} = 3$ et $3^3 = 27$)",
+   "tags": [
+    "calcul"
+   ],
+   "page": 2
+  },
+  {
+   "id": "fc-014",
+   "recto": "$-3^2$ ou $(-3)^2$ : lequel vaut $9$ ?",
+   "verso": "$(-3)^2 = 9$ ; alors que $-3^2 = -9$.",
+   "tags": [
+    "pièges"
+   ],
+   "page": 2
+  },
+  {
+   "id": "fc-015",
+   "recto": "Calculer $(-4)^3$",
+   "verso": "$-64$ (exposant impair : le signe reste négatif)",
+   "tags": [
+    "pièges"
+   ],
+   "page": 2
+  }
+ ],
+ "exercices": []
+}

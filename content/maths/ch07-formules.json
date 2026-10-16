@@ -1,0 +1,495 @@
+{
+ "format": 1,
+ "id": "ch07-formules",
+ "matiere": "maths",
+ "titre": "Transformations de formules",
+ "source": {
+  "pdfs": [
+   {
+    "id": "p1",
+    "nom": "Chapitre 7 – Transformations de formules (1)",
+    "court": "Partie 1",
+    "pages": 6
+   },
+   {
+    "id": "p3",
+    "nom": "Chapitre 7 – Transformations de formules (3) : je consolide mes acquis",
+    "court": "Partie 3",
+    "pages": 3
+   },
+   {
+    "id": "p4",
+    "nom": "Chapitre 7 – Transformations de formules (4) : impédance",
+    "court": "Partie 4",
+    "pages": 4
+   }
+  ],
+  "genereLe": "2026-10-16",
+  "modele": "Claude (rédigé dans la conversation)"
+ },
+ "synthese": {
+  "intro": "Isoler une grandeur dans une formule : principe de la balance, opérations inverses, transformations en plusieurs étapes, produit en croix et formules avec une racine (impédance).",
+  "sections": [
+   {
+    "id": "s1",
+    "titre": "Pourquoi transformer une formule ?",
+    "blocs": [
+     {
+      "type": "texte",
+      "contenu": "Une formule relie plusieurs grandeurs. Par exemple, le périmètre d'un rectangle : $P = 2L + 2l$ ($P$ = périmètre, $L$ = longueur, $l$ = largeur). Elle donne $P$ quand on connaît $L$ et $l$. Si on connaît $P$ et $l$ et qu'on cherche $L$, il faut **transformer la formule pour isoler $L$**.",
+      "pages": [
+       1
+      ],
+      "doc": "p1"
+     },
+     {
+      "type": "point-cle",
+      "contenu": "Objectif : exprimer une grandeur en fonction des autres, pour calculer celle qui manque.",
+      "pages": [
+       1
+      ],
+      "doc": "p3"
+     }
+    ]
+   },
+   {
+    "id": "s2",
+    "titre": "Le principe de la balance",
+    "blocs": [
+     {
+      "type": "definition",
+      "contenu": "Une égalité est comme une **balance** : si on effectue une opération d'un côté, il faut effectuer **la même opération de l'autre côté**.",
+      "pages": [
+       1
+      ],
+      "doc": "p1"
+     },
+     {
+      "type": "exemple",
+      "contenu": "$A + B = C$ : pour isoler $A$, on soustrait $B$ aux deux membres : $A + B - B = C - B$, donc $A = C - B$.",
+      "pages": [
+       1
+      ],
+      "doc": "p1"
+     },
+     {
+      "type": "tableau",
+      "entetes": [
+       "Opération présente",
+       "Opération inverse"
+      ],
+      "lignes": [
+       [
+        "$+$",
+        "$-$"
+       ],
+       [
+        "$-$",
+        "$+$"
+       ],
+       [
+        "$\\times$",
+        "$\\div$"
+       ],
+       [
+        "$\\div$",
+        "$\\times$"
+       ]
+      ],
+      "pages": [
+       1,
+       2
+      ],
+      "doc": "p1",
+      "titre": "Pour isoler une lettre, on utilise l'opération inverse"
+     }
+    ]
+   },
+   {
+    "id": "s3",
+    "titre": "Transformations simples",
+    "blocs": [
+     {
+      "type": "tableau",
+      "entetes": [
+       "Formule",
+       "On veut isoler B",
+       "Résultat"
+      ],
+      "lignes": [
+       [
+        "$A = B + C$",
+        "on soustrait $C$",
+        "$B = A - C$"
+       ],
+       [
+        "$A = B - C$",
+        "on ajoute $C$",
+        "$B = A + C$"
+       ],
+       [
+        "$A = B \\times C$",
+        "on divise par $C$",
+        "$B = \\dfrac{A}{C}$"
+       ],
+       [
+        "$\\dfrac{B}{C} = A$",
+        "on multiplie par $C$",
+        "$B = A \\times C$"
+       ]
+      ],
+      "pages": [
+       2,
+       3
+      ],
+      "doc": "p1"
+     },
+     {
+      "type": "exemple",
+      "contenu": "$y = x + 7$ → $y - 7 = x$, donc $x = y - 7$.",
+      "pages": [
+       2
+      ],
+      "doc": "p1"
+     }
+    ]
+   },
+   {
+    "id": "s4",
+    "titre": "Transformations en plusieurs étapes",
+    "blocs": [
+     {
+      "type": "point-cle",
+      "contenu": "On procède **étape par étape**, en défaisant d'abord les additions / soustractions, puis les multiplications / divisions.",
+      "pages": [
+       3
+      ],
+      "doc": "p1"
+     },
+     {
+      "type": "exemple",
+      "contenu": "Isoler $L$ dans $P = 2L + 2l$ :\nÉtape 1 : retirer $2l$ → $P - 2l = 2L$\nÉtape 2 : diviser par 2 → $L = \\dfrac{P - 2l}{2}$",
+      "pages": [
+       3
+      ],
+      "doc": "p1"
+     },
+     {
+      "type": "exemple",
+      "contenu": "Isoler $C$ dans $F = 1{,}8C + 32$ (degrés Celsius / Fahrenheit) :\nÉtape 1 : soustraire 32 → $F - 32 = 1{,}8C$\nÉtape 2 : diviser par $1{,}8$ → $C = \\dfrac{F - 32}{1{,}8}$",
+      "pages": [
+       3,
+       4
+      ],
+      "doc": "p1"
+     }
+    ]
+   },
+   {
+    "id": "s5",
+    "titre": "Ce que je dois savoir",
+    "blocs": [
+     {
+      "type": "formule",
+      "latex": "a = \\dfrac{b}{c} \\iff b = a \\cdot c \\quad (c \\neq 0)",
+      "legende": "Fraction et produit",
+      "pages": [
+       1
+      ],
+      "doc": "p3"
+     },
+     {
+      "type": "formule",
+      "latex": "\\dfrac{a}{b} = \\dfrac{c}{d} \\iff a \\times d = c \\times b \\quad (b \\neq 0,\\ d \\neq 0)",
+      "legende": "Produit en croix",
+      "pages": [
+       1
+      ],
+      "doc": "p3"
+     },
+     {
+      "type": "exemple",
+      "contenu": "Loi d'Ohm : $U = R \\cdot I$ donne deux formules équivalentes : $I = \\dfrac{U}{R}$ et $R = \\dfrac{U}{I}$.",
+      "pages": [
+       1
+      ],
+      "doc": "p3"
+     },
+     {
+      "type": "liste",
+      "items": [
+       "Je **repère** la grandeur à exprimer (je l'entoure ou la surligne).",
+       "Je l'**isole** en écrivant des égalités équivalentes, et j'encadre l'expression obtenue.",
+       "Je **calcule** la grandeur cherchée, et j'encadre ou souligne le résultat."
+      ],
+      "pages": [
+       1
+      ],
+      "doc": "p3",
+      "titre": "Méthode en 3 étapes",
+      "ordonnee": true
+     },
+     {
+      "type": "exemple",
+      "contenu": "Volume d'un cône : $V = \\dfrac{1}{3}\\pi R^2 h$. On cherche $R$.\nOn divise par ce qui multiplie $R^2$ : $\\dfrac{V}{\\frac{1}{3}\\pi h} = R^2$, donc $R = \\sqrt{\\dfrac{V}{\\frac{1}{3}\\pi h}}$.\nAvec $V = 0{,}2\\ \\text{L} = 200\\ \\text{cm}^3$ et $h = 15\\ \\text{cm}$ : $R = \\sqrt{\\dfrac{3 \\times 200}{\\pi \\times 15}} = \\sqrt{\\dfrac{40}{\\pi}} \\approx 3{,}568\\ \\text{cm}$.",
+      "pages": [
+       1
+      ],
+      "doc": "p3"
+     },
+     {
+      "type": "piege",
+      "contenu": "Attention aux **unités** : convertis avant de calculer ($0{,}2\\ \\text{L} = 200\\ \\text{cm}^3$ pour une hauteur en cm).",
+      "pages": [
+       1
+      ],
+      "doc": "p3"
+     }
+    ]
+   },
+   {
+    "id": "s6",
+    "titre": "Formule avec une racine : l'impédance",
+    "blocs": [
+     {
+      "type": "formule",
+      "latex": "Z = \\sqrt{R^2 + (X_L - X_C)^2}",
+      "legende": "Impédance d'un circuit RLC série (courant alternatif)",
+      "pages": [
+       1
+      ],
+      "doc": "p4",
+      "variables": [
+       {
+        "symbole": "Z",
+        "nom": "impédance",
+        "unite": "Ω"
+       },
+       {
+        "symbole": "R",
+        "nom": "résistance",
+        "unite": "Ω"
+       },
+       {
+        "symbole": "X_L",
+        "nom": "réactance inductive (bobine)",
+        "unite": "Ω"
+       },
+       {
+        "symbole": "X_C",
+        "nom": "réactance capacitive (condensateur)",
+        "unite": "Ω"
+       }
+      ]
+     },
+     {
+      "type": "point-cle",
+      "contenu": "Pour **supprimer une racine carrée**, on élève les deux membres au **carré**. Pour revenir en arrière, on prend la racine carrée des deux membres : il y a alors deux signes possibles ($\\pm$).",
+      "pages": [
+       1,
+       2
+      ],
+      "doc": "p4"
+     },
+     {
+      "type": "exemple",
+      "contenu": "Isoler $R$ :\n1. Élever au carré : $Z^2 = R^2 + (X_L - X_C)^2$\n2. Isoler $R^2$ : $R^2 = Z^2 - (X_L - X_C)^2$\n3. Racine carrée (une résistance est positive) : $R = \\sqrt{Z^2 - (X_L - X_C)^2}$",
+      "pages": [
+       1
+      ],
+      "doc": "p4"
+     },
+     {
+      "type": "formule",
+      "latex": "X_L = X_C \\pm \\sqrt{Z^2 - R^2} \\qquad X_C = X_L \\pm \\sqrt{Z^2 - R^2}",
+      "legende": "Le signe dépend du circuit (le résultat doit être positif ou nul)",
+      "pages": [
+       2
+      ],
+      "doc": "p4"
+     },
+     {
+      "type": "exemple",
+      "contenu": "$Z = 50\\ \\Omega$, $X_L = 40\\ \\Omega$, $X_C = 10\\ \\Omega$ :\n$R = \\sqrt{50^2 - (40 - 10)^2} = \\sqrt{2500 - 900} = \\sqrt{1600} = 40\\ \\Omega$",
+      "pages": [
+       2,
+       3
+      ],
+      "doc": "p4"
+     },
+     {
+      "type": "exemple",
+      "contenu": "Circuit inductif ($X_L > X_C$) avec $Z = 100\\ \\Omega$, $R = 80\\ \\Omega$, $X_C = 20\\ \\Omega$ : on prend le signe $+$.\n$X_L = 20 + \\sqrt{100^2 - 80^2} = 20 + \\sqrt{3600} = 20 + 60 = 80\\ \\Omega$",
+      "pages": [
+       3
+      ],
+      "doc": "p4"
+     }
+    ]
+   }
+  ]
+ },
+ "flashcards": [
+  {
+   "id": "fc-001",
+   "recto": "Quel est le « principe de la balance » ?",
+   "verso": "Toute opération faite d'un côté de l'égalité doit être faite **de l'autre côté** aussi.",
+   "tags": [
+    "méthode"
+   ],
+   "page": 1,
+   "doc": "p1"
+  },
+  {
+   "id": "fc-002",
+   "recto": "Isoler $B$ dans $A = B + C$",
+   "verso": "$B = A - C$",
+   "tags": [
+    "simple"
+   ],
+   "page": 2,
+   "doc": "p1"
+  },
+  {
+   "id": "fc-003",
+   "recto": "Isoler $B$ dans $A = B \\times C$",
+   "verso": "$B = \\dfrac{A}{C}$",
+   "tags": [
+    "simple"
+   ],
+   "page": 2,
+   "doc": "p1"
+  },
+  {
+   "id": "fc-004",
+   "recto": "Isoler $B$ dans $\\dfrac{B}{C} = A$",
+   "verso": "$B = A \\times C$",
+   "tags": [
+    "simple"
+   ],
+   "page": 3,
+   "doc": "p1"
+  },
+  {
+   "id": "fc-005",
+   "recto": "Isoler $L$ dans $P = 2L + 2l$",
+   "verso": "$L = \\dfrac{P - 2l}{2}$",
+   "tags": [
+    "étapes"
+   ],
+   "page": 3,
+   "doc": "p1"
+  },
+  {
+   "id": "fc-006",
+   "recto": "Isoler $C$ dans $F = 1{,}8C + 32$",
+   "verso": "$C = \\dfrac{F - 32}{1{,}8}$",
+   "tags": [
+    "étapes"
+   ],
+   "page": 4,
+   "doc": "p1"
+  },
+  {
+   "id": "fc-007",
+   "recto": "Isoler $x$ dans $y = 3x + 7$",
+   "verso": "$x = \\dfrac{y - 7}{3}$",
+   "tags": [
+    "étapes"
+   ],
+   "page": 4,
+   "doc": "p1"
+  },
+  {
+   "id": "fc-008",
+   "recto": "Isoler $h$ dans $A = \\dfrac{b \\times h}{2}$",
+   "verso": "$h = \\dfrac{2A}{b}$",
+   "tags": [
+    "étapes"
+   ],
+   "page": 4,
+   "doc": "p1"
+  },
+  {
+   "id": "fc-009",
+   "recto": "Isoler $t$ dans $v = \\dfrac{d}{t}$",
+   "verso": "$t = \\dfrac{d}{v}$",
+   "tags": [
+    "étapes"
+   ],
+   "page": 4,
+   "doc": "p1"
+  },
+  {
+   "id": "fc-010",
+   "recto": "À partir de $U = R \\cdot I$, exprimer $I$ et $R$",
+   "verso": "$I = \\dfrac{U}{R}$ et $R = \\dfrac{U}{I}$",
+   "tags": [
+    "physique"
+   ],
+   "page": 1,
+   "doc": "p3"
+  },
+  {
+   "id": "fc-011",
+   "recto": "$\\dfrac{a}{b} = \\dfrac{c}{d}$ équivaut à… ?",
+   "verso": "$a \\times d = c \\times b$ (avec $b, d \\neq 0$)",
+   "tags": [
+    "méthode"
+   ],
+   "page": 1,
+   "doc": "p3"
+  },
+  {
+   "id": "fc-012",
+   "recto": "Isoler $R$ dans $V = \\dfrac{1}{3}\\pi R^2 h$",
+   "verso": "$R = \\sqrt{\\dfrac{3V}{\\pi h}}$",
+   "tags": [
+    "racine"
+   ],
+   "page": 1,
+   "doc": "p3"
+  },
+  {
+   "id": "fc-013",
+   "recto": "Comment supprimer une racine carrée dans une formule ?",
+   "verso": "On élève **les deux membres au carré**.",
+   "tags": [
+    "racine"
+   ],
+   "page": 1,
+   "doc": "p4"
+  },
+  {
+   "id": "fc-014",
+   "recto": "Isoler $R$ dans $Z = \\sqrt{R^2 + (X_L - X_C)^2}$",
+   "verso": "$R = \\sqrt{Z^2 - (X_L - X_C)^2}$",
+   "tags": [
+    "racine"
+   ],
+   "page": 1,
+   "doc": "p4"
+  },
+  {
+   "id": "fc-015",
+   "recto": "Isoler $X_L$ dans $Z = \\sqrt{R^2 + (X_L - X_C)^2}$",
+   "verso": "$X_L = X_C \\pm \\sqrt{Z^2 - R^2}$ (signe $+$ si le circuit est inductif)",
+   "tags": [
+    "racine"
+   ],
+   "page": 2,
+   "doc": "p4"
+  },
+  {
+   "id": "fc-016",
+   "recto": "$Z = 50\\ \\Omega$, $X_L = 40\\ \\Omega$, $X_C = 10\\ \\Omega$ : que vaut $R$ ?",
+   "verso": "$\\sqrt{2500 - 900} = 40\\ \\Omega$",
+   "tags": [
+    "racine"
+   ],
+   "page": 3,
+   "doc": "p4"
+  }
+ ],
+ "exercices": []
+}

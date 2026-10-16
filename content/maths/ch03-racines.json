@@ -1,0 +1,342 @@
+{
+ "format": 1,
+ "id": "ch03-racines",
+ "matiere": "maths",
+ "titre": "Racines carrées et cubiques",
+ "source": {
+  "pdfs": [
+   {
+    "id": "cours",
+    "nom": "Chapitre 3 – Racines carrées et cubiques",
+    "court": "Chapitre 3",
+    "pages": 5
+   }
+  ],
+  "genereLe": "2026-10-16",
+  "modele": "Claude (rédigé dans la conversation)"
+ },
+ "synthese": {
+  "intro": "Racine carrée, carrés parfaits, simplification et opérations sur les radicaux, suppression d'une racine au dénominateur ; les racines cubiques apparaissent dans les exercices.",
+  "sections": [
+   {
+    "id": "s1",
+    "titre": "La racine carrée",
+    "blocs": [
+     {
+      "type": "definition",
+      "contenu": "La racine carrée positive d'un nombre positif $a$ est le nombre positif qui, multiplié par lui-même, donne $a$.\nExemples : $\\sqrt{25} = 5$ car $5 \\times 5 = 25$ ; $\\sqrt{81} = 9$ car $9^2 = 81$.",
+      "titre": "Racine carrée",
+      "pages": [
+       1
+      ]
+     },
+     {
+      "type": "point-cle",
+      "contenu": "Le symbole $\\sqrt{\\phantom{a}}$ se lit « racine carrée de ». Dans ce cours, $\\sqrt{a}$ désigne **toujours la racine positive**.",
+      "pages": [
+       1
+      ]
+     },
+     {
+      "type": "tableau",
+      "entetes": [
+       "$n$",
+       "0",
+       "1",
+       "2",
+       "3",
+       "4",
+       "5",
+       "6",
+       "7",
+       "8",
+       "9",
+       "10",
+       "11",
+       "12",
+       "13"
+      ],
+      "lignes": [
+       [
+        "$n^2$",
+        "0",
+        "1",
+        "4",
+        "9",
+        "16",
+        "25",
+        "36",
+        "49",
+        "64",
+        "81",
+        "100",
+        "121",
+        "144",
+        "169"
+       ]
+      ],
+      "pages": [
+       1
+      ],
+      "titre": "Carrés parfaits à connaître"
+     },
+     {
+      "type": "point-cle",
+      "contenu": "Élever au carré et prendre la racine carrée sont des **opérations inverses** (pour un nombre positif) : $\\left(\\sqrt{49}\\right)^2 = 49$ et $\\sqrt{7^2} = 7$.",
+      "pages": [
+       1
+      ]
+     }
+    ]
+   },
+   {
+    "id": "s2",
+    "titre": "Propriétés et simplification",
+    "blocs": [
+     {
+      "type": "formule",
+      "latex": "\\sqrt{a} \\times \\sqrt{b} = \\sqrt{ab} \\qquad \\dfrac{\\sqrt{a}}{\\sqrt{b}} = \\sqrt{\\dfrac{a}{b}}",
+      "legende": "Produit et quotient de racines",
+      "pages": [
+       1
+      ]
+     },
+     {
+      "type": "point-cle",
+      "contenu": "On **simplifie** une racine en extrayant les facteurs carrés : $\\sqrt{12} = \\sqrt{4 \\times 3} = 2\\sqrt{3}$.",
+      "pages": [
+       1
+      ]
+     },
+     {
+      "type": "point-cle",
+      "contenu": "On n'additionne ou ne soustrait que des **radicaux semblables** : $2\\sqrt{3} + 5\\sqrt{3} = 7\\sqrt{3}$.",
+      "pages": [
+       1
+      ]
+     },
+     {
+      "type": "piege",
+      "contenu": "La racine d'une somme n'est pas la somme des racines : $\\sqrt{9} + \\sqrt{16} = 3 + 4 = 7$ alors que $\\sqrt{9 + 16} = \\sqrt{25} = 5$.",
+      "complement": true
+     },
+     {
+      "type": "exemple",
+      "contenu": "$\\sqrt{50} + \\sqrt{18} = 5\\sqrt{2} + 3\\sqrt{2} = 8\\sqrt{2}$ : on simplifie d'abord chaque racine pour faire apparaître des radicaux semblables.",
+      "complement": true
+     }
+    ]
+   },
+   {
+    "id": "s3",
+    "titre": "Supprimer un radical au dénominateur",
+    "blocs": [
+     {
+      "type": "texte",
+      "contenu": "Quand une fraction contient une racine carrée au dénominateur, on transforme son écriture pour que le dénominateur ne contienne plus de radical : on **multiplie en haut et en bas par cette racine**.",
+      "pages": [
+       1
+      ]
+     },
+     {
+      "type": "formule",
+      "latex": "\\dfrac{a}{\\sqrt{b}} = \\dfrac{a}{\\sqrt{b}} \\times \\dfrac{\\sqrt{b}}{\\sqrt{b}} = \\dfrac{a\\sqrt{b}}{b}",
+      "legende": "Méthode (car $\\sqrt{b} \\times \\sqrt{b} = b$)",
+      "pages": [
+       2
+      ]
+     },
+     {
+      "type": "exemple",
+      "contenu": "$\\dfrac{3}{\\sqrt{5}} = \\dfrac{3}{\\sqrt{5}} \\times \\dfrac{\\sqrt{5}}{\\sqrt{5}} = \\dfrac{3\\sqrt{5}}{5}$",
+      "pages": [
+       1,
+       2
+      ]
+     },
+     {
+      "type": "exemple",
+      "contenu": "Avec un nombre devant la racine : $\\dfrac{6}{2\\sqrt{3}} = \\dfrac{6}{2\\sqrt{3}} \\times \\dfrac{\\sqrt{3}}{\\sqrt{3}} = \\dfrac{6\\sqrt{3}}{2 \\times 3} = \\dfrac{6\\sqrt{3}}{6} = \\sqrt{3}$",
+      "pages": [
+       2
+      ]
+     }
+    ]
+   },
+   {
+    "id": "s4",
+    "titre": "Racines cubiques",
+    "blocs": [
+     {
+      "type": "texte",
+      "contenu": "Les exercices 6 et 7 (p. 5) portent sur les **racines cubiques** $\\sqrt[3]{\\phantom{a}}$, de nombres et d'expressions littérales.",
+      "pages": [
+       5
+      ]
+     },
+     {
+      "type": "definition",
+      "contenu": "La racine cubique de $a$, notée $\\sqrt[3]{a}$, est le nombre dont le **cube** vaut $a$. Elle existe aussi pour un nombre **négatif** : $\\sqrt[3]{27} = 3$ car $3^3 = 27$ ; $\\sqrt[3]{-125} = -5$ car $(-5)^3 = -125$.",
+      "titre": "Racine cubique",
+      "complement": true
+     },
+     {
+      "type": "exemple",
+      "contenu": "$\\sqrt[3]{x^3} = x$ ; $\\sqrt[3]{8a^6} = 2a^2$ car $(2a^2)^3 = 8a^6$.",
+      "complement": true
+     }
+    ]
+   },
+   {
+    "id": "s5",
+    "titre": "Ce que les exercices te demandent",
+    "blocs": [
+     {
+      "type": "liste",
+      "items": [
+       "Reconnaître les écritures correctes et les nombres égaux à $5$ ou $-5$ (ex. 1).",
+       "Écrire un nombre sous la forme $a\\sqrt{3}$, $a\\sqrt{5}$ ou $a\\sqrt{b}$ (ex. 2 et 3).",
+       "Additionner, soustraire, multiplier et diviser des racines (ex. 4).",
+       "Écrire une expression sans radical au dénominateur (ex. 5).",
+       "Simplifier des racines cubiques numériques et littérales (ex. 6 et 7)."
+      ],
+      "pages": [
+       3,
+       4,
+       5
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "flashcards": [
+  {
+   "id": "fc-001",
+   "recto": "Définition de la racine carrée de $a$ ?",
+   "verso": "Le nombre **positif** qui, multiplié par lui-même, donne $a$ ($a \\geq 0$).",
+   "tags": [
+    "définition"
+   ],
+   "page": 1
+  },
+  {
+   "id": "fc-002",
+   "recto": "Que vaut $\\sqrt{169}$ ?",
+   "verso": "$13$",
+   "tags": [
+    "carrés parfaits"
+   ],
+   "page": 1
+  },
+  {
+   "id": "fc-003",
+   "recto": "Que vaut $\\sqrt{144}$ ?",
+   "verso": "$12$",
+   "tags": [
+    "carrés parfaits"
+   ],
+   "page": 1
+  },
+  {
+   "id": "fc-004",
+   "recto": "Que vaut $\\left(\\sqrt{49}\\right)^2$ ?",
+   "verso": "$49$",
+   "tags": [
+    "propriétés"
+   ],
+   "page": 1
+  },
+  {
+   "id": "fc-005",
+   "recto": "Simplifier $\\sqrt{12}$",
+   "verso": "$\\sqrt{4 \\times 3} = 2\\sqrt{3}$",
+   "tags": [
+    "simplification"
+   ],
+   "page": 1
+  },
+  {
+   "id": "fc-006",
+   "recto": "Simplifier $\\sqrt{72}$",
+   "verso": "$\\sqrt{36 \\times 2} = 6\\sqrt{2}$",
+   "tags": [
+    "simplification"
+   ],
+   "page": 3
+  },
+  {
+   "id": "fc-007",
+   "recto": "Calculer $2\\sqrt{3} + 5\\sqrt{3}$",
+   "verso": "$7\\sqrt{3}$",
+   "tags": [
+    "opérations"
+   ],
+   "page": 1
+  },
+  {
+   "id": "fc-008",
+   "recto": "$\\sqrt{a} \\times \\sqrt{b} = \\; ?$",
+   "verso": "$\\sqrt{ab}$",
+   "tags": [
+    "propriétés"
+   ],
+   "page": 1
+  },
+  {
+   "id": "fc-009",
+   "recto": "$\\dfrac{\\sqrt{a}}{\\sqrt{b}} = \\; ?$",
+   "verso": "$\\sqrt{\\dfrac{a}{b}}$",
+   "tags": [
+    "propriétés"
+   ],
+   "page": 1
+  },
+  {
+   "id": "fc-010",
+   "recto": "Comment supprimer $\\sqrt{b}$ au dénominateur de $\\dfrac{a}{\\sqrt{b}}$ ?",
+   "verso": "On multiplie en haut et en bas par $\\sqrt{b}$ : $\\dfrac{a\\sqrt{b}}{b}$.",
+   "tags": [
+    "rationaliser"
+   ],
+   "page": 2
+  },
+  {
+   "id": "fc-011",
+   "recto": "Écrire $\\dfrac{3}{\\sqrt{5}}$ sans radical au dénominateur",
+   "verso": "$\\dfrac{3\\sqrt{5}}{5}$",
+   "tags": [
+    "rationaliser"
+   ],
+   "page": 2
+  },
+  {
+   "id": "fc-012",
+   "recto": "Écrire $\\dfrac{6}{2\\sqrt{3}}$ sans radical au dénominateur",
+   "verso": "$\\sqrt{3}$",
+   "tags": [
+    "rationaliser"
+   ],
+   "page": 2
+  },
+  {
+   "id": "fc-013",
+   "recto": "Que vaut $\\sqrt[3]{-8}$ ?",
+   "verso": "$-2$ car $(-2)^3 = -8$",
+   "tags": [
+    "racine cubique"
+   ],
+   "complement": true
+  },
+  {
+   "id": "fc-014",
+   "recto": "$\\sqrt{9 + 16} = \\sqrt{9} + \\sqrt{16}$ ?",
+   "verso": "**Faux** : $\\sqrt{25} = 5$ alors que $3 + 4 = 7$.",
+   "tags": [
+    "pièges"
+   ],
+   "complement": true
+  }
+ ],
+ "exercices": []
+}

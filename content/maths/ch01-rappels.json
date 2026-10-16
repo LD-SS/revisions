@@ -1,0 +1,486 @@
+{
+ "format": 1,
+ "id": "ch01-rappels",
+ "matiere": "maths",
+ "titre": "Rappels numériques et littéraux",
+ "source": {
+  "pdfs": [
+   {
+    "id": "cours",
+    "nom": "Cours 1 – Rappels numériques et littéraux",
+    "court": "Rappels",
+    "pages": 9
+   }
+  ],
+  "genereLe": "2026-10-16",
+  "modele": "Claude (rédigé dans la conversation)"
+ },
+ "synthese": {
+  "intro": "Les bases à maîtriser avant tout le reste : ensembles de nombres, carrés et racines, règles des signes, fractions, priorités des opérations et termes semblables.",
+  "sections": [
+   {
+    "id": "s1",
+    "titre": "Les ensembles de nombres",
+    "blocs": [
+     {
+      "type": "liste",
+      "items": [
+       "$\\mathbb{N}$ (**naturels**) : $0, 1, 2, 3, 4, \\dots$",
+       "$\\mathbb{Z}$ (**entiers**) : $\\dots, -3, -2, -1, 0, 1, 2, 3, \\dots$ (donc $\\mathbb{N} \\subset \\mathbb{Z}$)",
+       "$\\mathbb{Q}$ (**rationnels**) : tous les nombres qui peuvent s'écrire sous forme de fraction $\\dfrac{p}{q}$ avec $p, q \\in \\mathbb{Z}$ et $q \\neq 0$ (donc $\\mathbb{Z} \\subset \\mathbb{Q}$). Leur développement décimal est **fini** (ex. $2{,}59$) ou **périodique** (ex. $3{,}333\\dots$).",
+       "$\\mathbb{R}$ (**réels**) : tous les nombres qui peuvent s'écrire sous forme décimale. Ils comprennent les **rationnels** (décimaux finis ou périodiques) et les **irrationnels** (décimaux infinis non périodiques)."
+      ],
+      "pages": [
+       1
+      ],
+      "titre": "Les quatre ensembles"
+     },
+     {
+      "type": "tableau",
+      "entetes": [
+       "Nombre",
+       "Écriture décimale",
+       "Type"
+      ],
+      "lignes": [
+       [
+        "$\\dfrac{7}{8}$",
+        "$0{,}875$",
+        "rationnel (fini)"
+       ],
+       [
+        "$\\dfrac{2}{7}$",
+        "$0{,}285714\\,285714\\dots$",
+        "rationnel (périodique)"
+       ],
+       [
+        "$\\sqrt{2}$",
+        "$1{,}41421356\\dots$",
+        "irrationnel (non périodique), donc réel"
+       ],
+       [
+        "$\\pi$",
+        "$3{,}14159\\dots$",
+        "irrationnel (non périodique), donc réel"
+       ]
+      ],
+      "pages": [
+       1
+      ],
+      "titre": "Exemples"
+     },
+     {
+      "type": "point-cle",
+      "contenu": "Chaque ensemble est inclus dans le suivant : $\\mathbb{N} \\subset \\mathbb{Z} \\subset \\mathbb{Q} \\subset \\mathbb{R}$.",
+      "pages": [
+       1
+      ]
+     }
+    ]
+   },
+   {
+    "id": "s2",
+    "titre": "Carré et racine carrée",
+    "blocs": [
+     {
+      "type": "definition",
+      "contenu": "Le carré d'un nombre est le produit de ce nombre par lui-même.\nExemples : $4^2 = 16$ ; $10^2 = 100$ ; $(-6)^2 = 36$.",
+      "titre": "Carré d'un nombre",
+      "pages": [
+       2
+      ]
+     },
+     {
+      "type": "definition",
+      "contenu": "La racine carrée d'un nombre est le nombre **positif** dont le carré est égal au nombre de départ.\nExemples : $\\sqrt{36} = 6$ ; $\\sqrt{121} = 11$ ; $\\sqrt{2} \\approx 1{,}41$.",
+      "titre": "Racine carrée",
+      "pages": [
+       2
+      ]
+     },
+     {
+      "type": "piege",
+      "contenu": "Un carré n'est jamais négatif : $\\sqrt{-5}$ **n'existe pas** dans $\\mathbb{R}$.",
+      "complement": true
+     }
+    ]
+   },
+   {
+    "id": "s3",
+    "titre": "Signes et parenthèses",
+    "blocs": [
+     {
+      "type": "formule",
+      "latex": "a - b = a + (-b) \\qquad a - (-b) = a + b",
+      "legende": "Soustraire, c'est additionner l'opposé",
+      "pages": [
+       2
+      ]
+     },
+     {
+      "type": "point-cle",
+      "contenu": "Après avoir simplifié les signes, on calcule **de gauche à droite**.\nExemple : $10 - (-3) - 4 = 10 + 3 - 4 = 9$.",
+      "pages": [
+       2
+      ]
+     },
+     {
+      "type": "tableau",
+      "entetes": [
+       "Facteur 1",
+       "Facteur 2",
+       "Résultat"
+      ],
+      "lignes": [
+       [
+        "(+)",
+        "(+)",
+        "(+)"
+       ],
+       [
+        "(+)",
+        "(–)",
+        "(–)"
+       ],
+       [
+        "(–)",
+        "(+)",
+        "(–)"
+       ],
+       [
+        "(–)",
+        "(–)",
+        "(+)"
+       ]
+      ],
+      "pages": [
+       2
+      ],
+      "titre": "Règle des signes dans une multiplication"
+     },
+     {
+      "type": "point-cle",
+      "contenu": "- **Même signe** → résultat **positif**\n- **Signes différents** → résultat **négatif**",
+      "pages": [
+       3
+      ]
+     },
+     {
+      "type": "exemple",
+      "contenu": "$3 \\times (-4)$ : c'est « 3 fois la perte de 4 » → $-12$.\nMultiplier par $-1$ revient à changer de signe, donc $(-1) \\times (-1) = +1$ : le signe est inversé deux fois.\n$5 \\times (-3) = -15$ ; $(-5) \\times 3 = -15$ ; $(-5) \\times (-3) = 15$.",
+      "pages": [
+       3
+      ]
+     }
+    ]
+   },
+   {
+    "id": "s4",
+    "titre": "Fractions",
+    "blocs": [
+     {
+      "type": "definition",
+      "contenu": "Une fraction est une écriture de la forme $\\dfrac{p}{q}$ (avec $q \\neq 0$), où $p$ (**numérateur**) et $q$ (**dénominateur**) sont des entiers.",
+      "titre": "Fraction",
+      "pages": [
+       3
+      ]
+     },
+     {
+      "type": "definition",
+      "contenu": "C'est écrire une fraction équivalente avec des nombres plus petits : on **divise** le numérateur et le dénominateur par un **même nombre** (facteur commun). La valeur de la fraction ne change pas.",
+      "titre": "Simplifier une fraction",
+      "pages": [
+       3
+      ]
+     },
+     {
+      "type": "exemple",
+      "contenu": "$\\dfrac{12}{16} = \\dfrac{3}{4}$ (on divise par 4)\n$\\dfrac{45}{60} = \\dfrac{3}{4}$ (le PGCD est 15)\n$\\dfrac{28}{35} = \\dfrac{4}{5}$ (on divise par 7)",
+      "pages": [
+       4
+      ]
+     },
+     {
+      "type": "liste",
+      "items": [
+       "**Addition / soustraction** : mettre au même dénominateur.",
+       "**Multiplication** : multiplier les numérateurs entre eux et les dénominateurs entre eux.",
+       "**Division** : multiplier par l'inverse.",
+       "Un entier peut s'écrire comme une fraction de dénominateur 1 (ex. $13 = \\dfrac{13}{1}$)."
+      ],
+      "pages": [
+       4
+      ],
+      "titre": "Opérations sur les fractions"
+     },
+     {
+      "type": "exemple",
+      "contenu": "$\\dfrac{1}{4} + \\dfrac{1}{3} = \\dfrac{3}{12} + \\dfrac{4}{12} = \\dfrac{7}{12}$\n$\\dfrac{1}{4} \\times \\dfrac{1}{3} = \\dfrac{1}{12}$\n$\\dfrac{3}{4} : \\dfrac{5}{2} = \\dfrac{3}{4} \\times \\dfrac{2}{5} = \\dfrac{6}{20} = \\dfrac{3}{10}$",
+      "pages": [
+       4,
+       5
+      ]
+     },
+     {
+      "type": "piege",
+      "contenu": "On n'additionne **jamais** les dénominateurs : $\\dfrac{1}{4} + \\dfrac{1}{3} \\neq \\dfrac{2}{7}$.",
+      "complement": true
+     }
+    ]
+   },
+   {
+    "id": "s5",
+    "titre": "Priorités des opérations",
+    "blocs": [
+     {
+      "type": "liste",
+      "items": [
+       "**Parenthèses** : on effectue d'abord les calculs entre parenthèses.",
+       "**Exposants** : ensuite les carrés, cubes, …",
+       "**Multiplications et divisions**.",
+       "**Additions et soustractions**."
+      ],
+      "pages": [
+       6
+      ],
+      "titre": "Ordre des priorités (PEMDAS)",
+      "ordonnee": true
+     },
+     {
+      "type": "exemple",
+      "contenu": "$2 + 3 \\times 4 = 2 + 12 = 14$ (multiplication avant addition)\n$(2 + 3) \\times 4 = 5 \\times 4 = 20$ (parenthèses d'abord)\n$100 - 25 \\div 5 = 100 - 5 = 95$ (division avant soustraction)\n$6 + 2^3 = 6 + 8 = 14$ (puissance avant addition)",
+      "pages": [
+       6
+      ]
+     },
+     {
+      "type": "point-cle",
+      "contenu": "Les multiplications et divisions ont la **même priorité** : on les effectue de gauche à droite. Même chose pour les additions et soustractions. Exemple : $20 - 4 \\times 3 : 12 = 20 - 12 : 12 = 20 - 1 = 19$.",
+      "complement": true
+     },
+     {
+      "type": "texte",
+      "contenu": "Les racines carrées se calculent au même niveau que les exposants (exercices p. 7) : $(20 - 2^3 \\times 2) + \\sqrt{81} = (20 - 16) + 9 = 13$.",
+      "pages": [
+       7
+      ]
+     }
+    ]
+   },
+   {
+    "id": "s6",
+    "titre": "Calcul littéral : termes semblables",
+    "blocs": [
+     {
+      "type": "definition",
+      "contenu": "Utilisation de lettres ($x, y, a, b, \\dots$) pour représenter des nombres inconnus ou généraux.",
+      "titre": "Calcul littéral",
+      "pages": [
+       8
+      ]
+     },
+     {
+      "type": "definition",
+      "contenu": "On ne peut additionner ou soustraire que les termes **semblables** : ceux qui ont **la même lettre et le même exposant**. On additionne alors leurs **coefficients**.",
+      "titre": "Termes semblables",
+      "pages": [
+       8
+      ]
+     },
+     {
+      "type": "tableau",
+      "entetes": [
+       "On peut réduire",
+       "On ne peut pas réduire"
+      ],
+      "lignes": [
+       [
+        "$2x + 5x = 7x$",
+        "$3x + 4y$ (lettres différentes)"
+       ],
+       [
+        "$8y - 3y = 5y$",
+        "$2a + 3a^2$ (exposants différents)"
+       ]
+      ],
+      "pages": [
+       8
+      ]
+     },
+     {
+      "type": "exemple",
+      "contenu": "$2x + 7x - 4x = 5x$\n$6y - 2y + 10y = 14y$\n$5x + 2y - 3x = 2x + 2y$ (on ne regroupe que les $x$ entre eux)",
+      "pages": [
+       8,
+       9
+      ]
+     },
+     {
+      "type": "piege",
+      "contenu": "$2a + 3a^2 \\neq 5a^3$ : $a$ et $a^2$ ne sont pas semblables, l'expression reste $2a + 3a^2$.",
+      "pages": [
+       8
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "flashcards": [
+  {
+   "id": "fc-001",
+   "recto": "Que représente $\\mathbb{Z}$ ?",
+   "verso": "Les **entiers** : $\\dots, -2, -1, 0, 1, 2, \\dots$",
+   "tags": [
+    "ensembles"
+   ],
+   "page": 1
+  },
+  {
+   "id": "fc-002",
+   "recto": "Qu'est-ce qu'un nombre **rationnel** ($\\mathbb{Q}$) ?",
+   "verso": "Un nombre qui s'écrit $\\dfrac{p}{q}$ avec $p, q$ entiers et $q \\neq 0$. Développement décimal fini ou périodique.",
+   "tags": [
+    "ensembles"
+   ],
+   "page": 1
+  },
+  {
+   "id": "fc-003",
+   "recto": "$\\sqrt{2}$ est-il rationnel ?",
+   "verso": "Non : $1{,}41421356\\dots$ est un décimal infini **non périodique** → irrationnel (mais réel).",
+   "tags": [
+    "ensembles"
+   ],
+   "page": 1
+  },
+  {
+   "id": "fc-004",
+   "recto": "Que vaut $(-6)^2$ ?",
+   "verso": "$36$",
+   "tags": [
+    "carré"
+   ],
+   "page": 2
+  },
+  {
+   "id": "fc-005",
+   "recto": "Définition de la racine carrée d'un nombre ?",
+   "verso": "Le nombre **positif** dont le carré est égal au nombre de départ.",
+   "tags": [
+    "racine"
+   ],
+   "page": 2
+  },
+  {
+   "id": "fc-006",
+   "recto": "Que vaut $a - (-b)$ ?",
+   "verso": "$a + b$",
+   "tags": [
+    "signes"
+   ],
+   "page": 2
+  },
+  {
+   "id": "fc-007",
+   "recto": "Signe de $(-5) \\times (-3)$ ?",
+   "verso": "**Positif** : $15$ (même signe → positif).",
+   "tags": [
+    "signes"
+   ],
+   "page": 3
+  },
+  {
+   "id": "fc-008",
+   "recto": "Signe de $7 \\times (-2)$ ?",
+   "verso": "**Négatif** : $-14$ (signes différents → négatif).",
+   "tags": [
+    "signes"
+   ],
+   "page": 3
+  },
+  {
+   "id": "fc-009",
+   "recto": "Comment simplifie-t-on une fraction ?",
+   "verso": "On divise le numérateur et le dénominateur par un **même facteur commun** (idéalement le PGCD).",
+   "tags": [
+    "fractions"
+   ],
+   "page": 3
+  },
+  {
+   "id": "fc-010",
+   "recto": "Simplifier $\\dfrac{45}{60}$",
+   "verso": "$\\dfrac{3}{4}$ (PGCD = 15)",
+   "tags": [
+    "fractions"
+   ],
+   "page": 4
+  },
+  {
+   "id": "fc-011",
+   "recto": "Comment divise-t-on par une fraction ?",
+   "verso": "On **multiplie par son inverse**.",
+   "tags": [
+    "fractions"
+   ],
+   "page": 4
+  },
+  {
+   "id": "fc-012",
+   "recto": "Calculer $\\dfrac{1}{4} + \\dfrac{1}{3}$",
+   "verso": "$\\dfrac{3}{12} + \\dfrac{4}{12} = \\dfrac{7}{12}$",
+   "tags": [
+    "fractions"
+   ],
+   "page": 4
+  },
+  {
+   "id": "fc-013",
+   "recto": "Ordre des priorités des opérations ?",
+   "verso": "Parenthèses → Exposants → Multiplications et divisions → Additions et soustractions (**PEMDAS**).",
+   "tags": [
+    "priorités"
+   ],
+   "page": 6
+  },
+  {
+   "id": "fc-014",
+   "recto": "Calculer $2 + 3 \\times 4$",
+   "verso": "$14$ (la multiplication passe avant l'addition).",
+   "tags": [
+    "priorités"
+   ],
+   "page": 6
+  },
+  {
+   "id": "fc-015",
+   "recto": "Quand deux termes sont-ils **semblables** ?",
+   "verso": "Quand ils ont **la même lettre et le même exposant**.",
+   "tags": [
+    "littéral"
+   ],
+   "page": 8
+  },
+  {
+   "id": "fc-016",
+   "recto": "Réduire $6y - 2y + 10y$",
+   "verso": "$14y$",
+   "tags": [
+    "littéral"
+   ],
+   "page": 8
+  },
+  {
+   "id": "fc-017",
+   "recto": "Peut-on réduire $2a + 3a^2$ ?",
+   "verso": "Non : exposants différents.",
+   "tags": [
+    "littéral"
+   ],
+   "page": 8
+  }
+ ],
+ "exercices": []
+}

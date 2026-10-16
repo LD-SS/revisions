@@ -1,0 +1,762 @@
+{
+ "format": 1,
+ "id": "ch08-trigonometrie",
+ "matiere": "maths",
+ "titre": "Trigonométrie",
+ "source": {
+  "pdfs": [
+   {
+    "id": "cercle",
+    "nom": "Chapitre 8 – Trigonométrie dans le cercle trigonométrique",
+    "court": "Cercle trigo",
+    "pages": 7
+   },
+   {
+    "id": "valeurs",
+    "nom": "Chapitre 8 – Trigonométrie : valeurs",
+    "court": "Valeurs",
+    "pages": 6
+   },
+   {
+    "id": "formulaire",
+    "nom": "Chapitre 8 – Aide-mémoire de trigonométrie",
+    "court": "Formulaire",
+    "pages": 2
+   },
+   {
+    "id": "exercices",
+    "nom": "Chapitre 8 – Exercices supplémentaires",
+    "court": "Exercices",
+    "pages": 1
+   }
+  ],
+  "genereLe": "2026-10-16",
+  "modele": "Claude (rédigé dans la conversation)"
+ },
+ "synthese": {
+  "intro": "Cercle trigonométrique, degrés et radians, cosinus / sinus / tangente, valeurs remarquables, signes par quadrant, formule fondamentale, angles associés et formules d'addition.",
+  "sections": [
+   {
+    "id": "s1",
+    "titre": "Le cercle trigonométrique",
+    "blocs": [
+     {
+      "type": "definition",
+      "contenu": "Cercle de **rayon 1**, centré à l'origine $O$ d'un repère orthonormé. Chaque point $M$ du cercle correspond à un angle orienté $\\theta$, mesuré à partir de l'**axe des abscisses** : dans le sens **anti-horloger** pour les angles positifs, **horloger** pour les angles négatifs.",
+      "titre": "Cercle trigonométrique",
+      "pages": [
+       1
+      ],
+      "doc": "cercle"
+     }
+    ]
+   },
+   {
+    "id": "s2",
+    "titre": "Mesurer un angle : degrés et radians",
+    "blocs": [
+     {
+      "type": "point-cle",
+      "contenu": "Un tour complet = $360^{\\circ}$ = $2\\pi$ radians.",
+      "pages": [
+       1
+      ],
+      "doc": "cercle"
+     },
+     {
+      "type": "tableau",
+      "entetes": [
+       "Degrés",
+       "30°",
+       "45°",
+       "60°",
+       "90°",
+       "180°",
+       "360°"
+      ],
+      "lignes": [
+       [
+        "Radians",
+        "$\\dfrac{\\pi}{6}$",
+        "$\\dfrac{\\pi}{4}$",
+        "$\\dfrac{\\pi}{3}$",
+        "$\\dfrac{\\pi}{2}$",
+        "$\\pi$",
+        "$2\\pi$"
+       ]
+      ],
+      "pages": [
+       1
+      ],
+      "doc": "cercle"
+     },
+     {
+      "type": "formule",
+      "latex": "\\text{angle en radians} = \\text{angle en degrés} \\times \\dfrac{\\pi}{180}",
+      "legende": "Conversion degrés → radians",
+      "pages": [
+       1
+      ],
+      "doc": "cercle"
+     },
+     {
+      "type": "point-cle",
+      "contenu": "Un même angle a une **infinité de mesures** : en faisant un ou plusieurs tours, on retombe sur le même point. Toutes les mesures s'écrivent $\\theta + k \\times 360^{\\circ}$ ou $\\theta + k \\times 2\\pi$, avec $k \\in \\mathbb{Z}$.",
+      "pages": [
+       1
+      ],
+      "doc": "cercle"
+     },
+     {
+      "type": "exemple",
+      "contenu": "$30^{\\circ}$, $390^{\\circ}$, $-330^{\\circ}$, $750^{\\circ}$ sont des mesures du même angle.\n$\\dfrac{\\pi}{6}$, $\\dfrac{13\\pi}{6}$, $-\\dfrac{11\\pi}{6}$, $\\dfrac{25\\pi}{6}$ aussi.",
+      "pages": [
+       2
+      ],
+      "doc": "cercle"
+     },
+     {
+      "type": "definition",
+      "contenu": "Tout angle orienté possède une **unique** mesure dans l'intervalle $]-\\pi\\,;\\,\\pi]$ : c'est sa mesure principale.",
+      "titre": "Mesure principale",
+      "pages": [
+       2
+      ],
+      "doc": "valeurs"
+     },
+     {
+      "type": "exemple",
+      "contenu": "$-\\dfrac{5\\pi}{2} = -\\dfrac{\\pi}{2} - 2\\pi$ et $-\\dfrac{\\pi}{2} \\in\\ ]-\\pi\\,;\\,\\pi]$, donc la mesure principale est $-\\dfrac{\\pi}{2}$.",
+      "pages": [
+       2
+      ],
+      "doc": "valeurs"
+     }
+    ]
+   },
+   {
+    "id": "s3",
+    "titre": "Cosinus, sinus et tangente",
+    "blocs": [
+     {
+      "type": "definition",
+      "contenu": "Le point $M$ du cercle associé à l'angle $\\theta$ a pour coordonnées $M(\\cos\\theta\\,;\\,\\sin\\theta)$ :\n- $\\cos\\theta$ = **abscisse** de $M$ (projection sur l'axe des $x$)\n- $\\sin\\theta$ = **ordonnée** de $M$ (projection sur l'axe des $y$)",
+      "pages": [
+       2
+      ],
+      "doc": "cercle"
+     },
+     {
+      "type": "formule",
+      "latex": "\\tan\\theta = \\dfrac{\\sin\\theta}{\\cos\\theta} \\quad (\\cos\\theta \\neq 0)",
+      "legende": "Se lit sur la droite parallèle à $Oy$ passant par le point $(1\\,;\\,0)$",
+      "pages": [
+       2
+      ],
+      "doc": "cercle"
+     },
+     {
+      "type": "point-cle",
+      "contenu": "Pour tout réel $x$ : $-1 \\leq \\cos x \\leq 1$ et $-1 \\leq \\sin x \\leq 1$.",
+      "pages": [
+       3
+      ],
+      "doc": "valeurs"
+     }
+    ]
+   },
+   {
+    "id": "s4",
+    "titre": "Valeurs à connaître",
+    "blocs": [
+     {
+      "type": "tableau",
+      "entetes": [
+       "Angle",
+       "Radians",
+       "$\\cos$",
+       "$\\sin$",
+       "$\\tan$"
+      ],
+      "lignes": [
+       [
+        "0°",
+        "$0$",
+        "$1$",
+        "$0$",
+        "$0$"
+       ],
+       [
+        "30°",
+        "$\\dfrac{\\pi}{6}$",
+        "$\\dfrac{\\sqrt{3}}{2}$",
+        "$\\dfrac{1}{2}$",
+        "$\\dfrac{\\sqrt{3}}{3}$"
+       ],
+       [
+        "45°",
+        "$\\dfrac{\\pi}{4}$",
+        "$\\dfrac{\\sqrt{2}}{2}$",
+        "$\\dfrac{\\sqrt{2}}{2}$",
+        "$1$"
+       ],
+       [
+        "60°",
+        "$\\dfrac{\\pi}{3}$",
+        "$\\dfrac{1}{2}$",
+        "$\\dfrac{\\sqrt{3}}{2}$",
+        "$\\sqrt{3}$"
+       ],
+       [
+        "90°",
+        "$\\dfrac{\\pi}{2}$",
+        "$0$",
+        "$1$",
+        "n'existe pas"
+       ]
+      ],
+      "pages": [
+       3
+      ],
+      "doc": "cercle"
+     },
+     {
+      "type": "point-cle",
+      "contenu": "Retenir : $\\sin 30^{\\circ} = \\cos 60^{\\circ} = \\dfrac{1}{2}$ et $\\sin 60^{\\circ} = \\cos 30^{\\circ} = \\dfrac{\\sqrt{3}}{2}$.",
+      "pages": [
+       1
+      ],
+      "doc": "formulaire"
+     }
+    ]
+   },
+   {
+    "id": "s5",
+    "titre": "Signes selon les quadrants",
+    "blocs": [
+     {
+      "type": "tableau",
+      "entetes": [
+       "Quadrant",
+       "Angles",
+       "$\\cos$",
+       "$\\sin$",
+       "$\\tan$"
+      ],
+      "lignes": [
+       [
+        "I",
+        "0° à 90°",
+        "+",
+        "+",
+        "+"
+       ],
+       [
+        "II",
+        "90° à 180°",
+        "−",
+        "+",
+        "−"
+       ],
+       [
+        "III",
+        "180° à 270°",
+        "−",
+        "−",
+        "+"
+       ],
+       [
+        "IV",
+        "270° à 360°",
+        "+",
+        "−",
+        "−"
+       ]
+      ],
+      "pages": [
+       3
+      ],
+      "doc": "cercle"
+     },
+     {
+      "type": "point-cle",
+      "contenu": "Moyen mnémotechnique : le cosinus est positif à **droite** de l'axe vertical (quadrants I et IV), le sinus est positif **au-dessus** de l'axe horizontal (quadrants I et II).",
+      "complement": true
+     }
+    ]
+   },
+   {
+    "id": "s6",
+    "titre": "La formule fondamentale",
+    "blocs": [
+     {
+      "type": "formule",
+      "latex": "\\cos^2\\alpha + \\sin^2\\alpha = 1",
+      "legende": "Valable pour **tout** angle ($\\cos^2\\alpha$ signifie $(\\cos\\alpha)^2$)",
+      "pages": [
+       5
+      ],
+      "doc": "cercle"
+     },
+     {
+      "type": "texte",
+      "contenu": "Elle vient de **Pythagore** : $M(\\cos\\alpha\\,;\\,\\sin\\alpha)$ est sur un cercle de rayon 1, donc $(\\cos\\alpha)^2 + (\\sin\\alpha)^2 = 1^2$.",
+      "pages": [
+       5
+      ],
+      "doc": "cercle"
+     },
+     {
+      "type": "formule",
+      "latex": "\\sin\\alpha = \\pm\\sqrt{1 - \\cos^2\\alpha} \\qquad \\cos\\alpha = \\pm\\sqrt{1 - \\sin^2\\alpha}",
+      "legende": "Calculer le sinus à partir du cosinus, et inversement",
+      "pages": [
+       5
+      ],
+      "doc": "cercle"
+     },
+     {
+      "type": "piege",
+      "contenu": "Le signe $+$ ou $-$ dépend du **quadrant** où se trouve l'angle.",
+      "pages": [
+       5
+      ],
+      "doc": "cercle"
+     },
+     {
+      "type": "exemple",
+      "contenu": "$\\cos\\alpha = -0{,}6$, angle dans le 2ᵉ quadrant :\n$\\sin^2\\alpha = 1 - 0{,}36 = 0{,}64$, donc $\\sin\\alpha = \\pm 0{,}8$.\nAu 2ᵉ quadrant, le sinus est positif : $\\sin\\alpha = 0{,}8$.",
+      "pages": [
+       6
+      ],
+      "doc": "cercle"
+     },
+     {
+      "type": "exemple",
+      "contenu": "$\\sin\\alpha = -0{,}8$, angle dans le 3ᵉ quadrant :\n$\\cos^2\\alpha = 1 - 0{,}64 = 0{,}36$, donc $\\cos\\alpha = \\pm 0{,}6$.\nAu 3ᵉ quadrant, le cosinus est négatif : $\\cos\\alpha = -0{,}6$.",
+      "pages": [
+       6,
+       7
+      ],
+      "doc": "cercle"
+     }
+    ]
+   },
+   {
+    "id": "s7",
+    "titre": "Angles associés",
+    "blocs": [
+     {
+      "type": "tableau",
+      "entetes": [
+       "Angles",
+       "$\\cos$",
+       "$\\sin$",
+       "$\\tan$"
+      ],
+      "lignes": [
+       [
+        "égaux : $x + k \\cdot 360^{\\circ}$",
+        "$\\cos x$",
+        "$\\sin x$",
+        "$\\tan x$"
+       ],
+       [
+        "opposés : $-x$",
+        "$\\cos x$",
+        "$-\\sin x$",
+        "$-\\tan x$"
+       ],
+       [
+        "supplémentaires : $180^{\\circ} - x$",
+        "$-\\cos x$",
+        "$\\sin x$",
+        "$-\\tan x$"
+       ],
+       [
+        "anti-supplémentaires : $180^{\\circ} + x$",
+        "$-\\cos x$",
+        "$-\\sin x$",
+        "$\\tan x$"
+       ],
+       [
+        "complémentaires : $90^{\\circ} - x$",
+        "$\\sin x$",
+        "$\\cos x$",
+        "$\\cot x$"
+       ],
+       [
+        "anti-complémentaires : $90^{\\circ} + x$",
+        "$-\\sin x$",
+        "$\\cos x$",
+        "$-\\cot x$"
+       ]
+      ],
+      "pages": [
+       1,
+       2
+      ],
+      "doc": "formulaire"
+     },
+     {
+      "type": "point-cle",
+      "contenu": "En radians : remplace $360^{\\circ}$ par $2\\pi$, $180^{\\circ}$ par $\\pi$ et $90^{\\circ}$ par $\\dfrac{\\pi}{2}$.",
+      "pages": [
+       1,
+       2
+      ],
+      "doc": "formulaire"
+     },
+     {
+      "type": "exemple",
+      "contenu": "$\\cos 120^{\\circ} = \\cos(180^{\\circ} - 60^{\\circ}) = -\\cos 60^{\\circ} = -\\dfrac{1}{2}$\n$\\sin 210^{\\circ} = \\sin(180^{\\circ} + 30^{\\circ}) = -\\sin 30^{\\circ} = -\\dfrac{1}{2}$",
+      "pages": [
+       1
+      ],
+      "doc": "formulaire"
+     }
+    ]
+   },
+   {
+    "id": "s8",
+    "titre": "Autres formules",
+    "blocs": [
+     {
+      "type": "tableau",
+      "entetes": [
+       "Formule",
+       "Condition"
+      ],
+      "lignes": [
+       [
+        "$\\tan x = \\dfrac{\\sin x}{\\cos x}$",
+        "$x \\neq \\dfrac{\\pi}{2} + k\\pi$"
+       ],
+       [
+        "$\\cot x = \\dfrac{\\cos x}{\\sin x} = \\dfrac{1}{\\tan x}$",
+        "$x \\neq k\\pi$"
+       ],
+       [
+        "$1 + \\tan^2 x = \\dfrac{1}{\\cos^2 x}$",
+        "$x \\neq \\dfrac{\\pi}{2} + k\\pi$"
+       ],
+       [
+        "$1 + \\cot^2 x = \\dfrac{1}{\\sin^2 x}$",
+        "$x \\neq k\\pi$"
+       ],
+       [
+        "$\\sec x = \\dfrac{1}{\\cos x}$ ; $\\csc x = \\dfrac{1}{\\sin x}$",
+        ""
+       ]
+      ],
+      "pages": [
+       2
+      ],
+      "doc": "formulaire",
+      "titre": "Aide-mémoire (cotan, séc et coséc sont notées cot, sec, csc)"
+     },
+     {
+      "type": "formule",
+      "latex": "\\cos(a + b) = \\cos a \\cos b - \\sin a \\sin b",
+      "legende": "Formule d'addition du cosinus",
+      "pages": [
+       5
+      ],
+      "doc": "valeurs"
+     },
+     {
+      "type": "formule",
+      "latex": "\\sin(a + b) = \\sin a \\cos b + \\cos a \\sin b",
+      "legende": "Formule d'addition du sinus",
+      "pages": [
+       5
+      ],
+      "doc": "valeurs"
+     },
+     {
+      "type": "liste",
+      "items": [
+       "$\\cos x = \\cos a$ ⟺ $x = a + 2k\\pi$ ou $x = -a + 2k\\pi$ ($k \\in \\mathbb{Z}$)",
+       "$\\sin x = \\sin a$ ⟺ $x = a + 2k\\pi$ ou $x = \\pi - a + 2k\\pi$ ($k \\in \\mathbb{Z}$)"
+      ],
+      "pages": [
+       5,
+       6
+      ],
+      "doc": "valeurs",
+      "titre": "Équations trigonométriques"
+     },
+     {
+      "type": "exemple",
+      "contenu": "$\\cos x = 0 = \\cos\\dfrac{\\pi}{2}$, donc $x = \\dfrac{\\pi}{2} + 2k\\pi$ ou $x = -\\dfrac{\\pi}{2} + 2k\\pi$.",
+      "pages": [
+       5
+      ],
+      "doc": "valeurs"
+     },
+     {
+      "type": "texte",
+      "contenu": "La feuille d'exercices supplémentaires entraîne les conversions degrés → radians, les mesures associées à un même point, la valeur exacte de $\\cos x$ à partir de $\\sin x$ et la mesure principale.",
+      "pages": [
+       1
+      ],
+      "doc": "exercices"
+     }
+    ]
+   }
+  ]
+ },
+ "flashcards": [
+  {
+   "id": "fc-001",
+   "recto": "Quel est le rayon du cercle trigonométrique ?",
+   "verso": "**1** (centré à l'origine).",
+   "tags": [
+    "cercle"
+   ],
+   "page": 1,
+   "doc": "cercle"
+  },
+  {
+   "id": "fc-002",
+   "recto": "Dans quel sens tournent les angles positifs ?",
+   "verso": "Dans le sens **anti-horloger**.",
+   "tags": [
+    "cercle"
+   ],
+   "page": 1,
+   "doc": "cercle"
+  },
+  {
+   "id": "fc-003",
+   "recto": "Combien de radians dans $180^{\\circ}$ ?",
+   "verso": "$\\pi$",
+   "tags": [
+    "radians"
+   ],
+   "page": 1,
+   "doc": "cercle"
+  },
+  {
+   "id": "fc-004",
+   "recto": "Convertir $60^{\\circ}$ en radians",
+   "verso": "$60 \\times \\dfrac{\\pi}{180} = \\dfrac{\\pi}{3}$",
+   "tags": [
+    "radians"
+   ],
+   "page": 1,
+   "doc": "cercle"
+  },
+  {
+   "id": "fc-005",
+   "recto": "Convertir $150^{\\circ}$ en radians",
+   "verso": "$\\dfrac{5\\pi}{6}$",
+   "tags": [
+    "radians"
+   ],
+   "page": 1,
+   "doc": "exercices"
+  },
+  {
+   "id": "fc-006",
+   "recto": "Donner deux autres mesures de l'angle $30^{\\circ}$",
+   "verso": "Par exemple $390^{\\circ}$ et $-330^{\\circ}$ ($30^{\\circ} + k \\cdot 360^{\\circ}$).",
+   "tags": [
+    "radians"
+   ],
+   "page": 2,
+   "doc": "cercle"
+  },
+  {
+   "id": "fc-007",
+   "recto": "Qu'est-ce que la mesure principale d'un angle ?",
+   "verso": "Son unique mesure dans $]-\\pi\\,;\\,\\pi]$.",
+   "tags": [
+    "radians"
+   ],
+   "page": 2,
+   "doc": "valeurs"
+  },
+  {
+   "id": "fc-008",
+   "recto": "Coordonnées du point $M$ associé à $\\theta$ ?",
+   "verso": "$M(\\cos\\theta\\,;\\,\\sin\\theta)$",
+   "tags": [
+    "définitions"
+   ],
+   "page": 2,
+   "doc": "cercle"
+  },
+  {
+   "id": "fc-009",
+   "recto": "Définition de $\\tan\\theta$ ?",
+   "verso": "$\\dfrac{\\sin\\theta}{\\cos\\theta}$ (si $\\cos\\theta \\neq 0$)",
+   "tags": [
+    "définitions"
+   ],
+   "page": 2,
+   "doc": "cercle"
+  },
+  {
+   "id": "fc-010",
+   "recto": "$\\cos 30^{\\circ}$ ?",
+   "verso": "$\\dfrac{\\sqrt{3}}{2}$",
+   "tags": [
+    "valeurs"
+   ],
+   "page": 3,
+   "doc": "cercle"
+  },
+  {
+   "id": "fc-011",
+   "recto": "$\\sin 30^{\\circ}$ ?",
+   "verso": "$\\dfrac{1}{2}$",
+   "tags": [
+    "valeurs"
+   ],
+   "page": 3,
+   "doc": "cercle"
+  },
+  {
+   "id": "fc-012",
+   "recto": "$\\cos 45^{\\circ}$ et $\\sin 45^{\\circ}$ ?",
+   "verso": "$\\dfrac{\\sqrt{2}}{2}$ tous les deux",
+   "tags": [
+    "valeurs"
+   ],
+   "page": 3,
+   "doc": "cercle"
+  },
+  {
+   "id": "fc-013",
+   "recto": "$\\tan 60^{\\circ}$ ?",
+   "verso": "$\\sqrt{3}$",
+   "tags": [
+    "valeurs"
+   ],
+   "page": 3,
+   "doc": "cercle"
+  },
+  {
+   "id": "fc-014",
+   "recto": "$\\tan 30^{\\circ}$ ?",
+   "verso": "$\\dfrac{\\sqrt{3}}{3}$",
+   "tags": [
+    "valeurs"
+   ],
+   "page": 3,
+   "doc": "cercle"
+  },
+  {
+   "id": "fc-015",
+   "recto": "$\\tan 90^{\\circ}$ ?",
+   "verso": "N'existe pas ($\\cos 90^{\\circ} = 0$).",
+   "tags": [
+    "valeurs"
+   ],
+   "page": 3,
+   "doc": "cercle"
+  },
+  {
+   "id": "fc-016",
+   "recto": "Signes de cos, sin, tan dans le 2ᵉ quadrant ?",
+   "verso": "$\\cos < 0$, $\\sin > 0$, $\\tan < 0$",
+   "tags": [
+    "quadrants"
+   ],
+   "page": 3,
+   "doc": "cercle"
+  },
+  {
+   "id": "fc-017",
+   "recto": "Signes de cos, sin, tan dans le 3ᵉ quadrant ?",
+   "verso": "$\\cos < 0$, $\\sin < 0$, $\\tan > 0$",
+   "tags": [
+    "quadrants"
+   ],
+   "page": 3,
+   "doc": "cercle"
+  },
+  {
+   "id": "fc-018",
+   "recto": "Formule fondamentale de la trigonométrie ?",
+   "verso": "$\\cos^2\\alpha + \\sin^2\\alpha = 1$",
+   "tags": [
+    "formules"
+   ],
+   "page": 5,
+   "doc": "cercle"
+  },
+  {
+   "id": "fc-019",
+   "recto": "$\\cos\\alpha = -0{,}6$ et $\\alpha$ au 2ᵉ quadrant : $\\sin\\alpha$ ?",
+   "verso": "$0{,}8$ (positif au 2ᵉ quadrant)",
+   "tags": [
+    "formules"
+   ],
+   "page": 6,
+   "doc": "cercle"
+  },
+  {
+   "id": "fc-020",
+   "recto": "$\\cos(-x)$ et $\\sin(-x)$ ?",
+   "verso": "$\\cos(-x) = \\cos x$ ; $\\sin(-x) = -\\sin x$",
+   "tags": [
+    "angles associés"
+   ],
+   "page": 1,
+   "doc": "formulaire"
+  },
+  {
+   "id": "fc-021",
+   "recto": "$\\cos(180^{\\circ} - x)$ et $\\sin(180^{\\circ} - x)$ ?",
+   "verso": "$-\\cos x$ et $\\sin x$",
+   "tags": [
+    "angles associés"
+   ],
+   "page": 1,
+   "doc": "formulaire"
+  },
+  {
+   "id": "fc-022",
+   "recto": "$\\cos(90^{\\circ} - x)$ ?",
+   "verso": "$\\sin x$",
+   "tags": [
+    "angles associés"
+   ],
+   "page": 2,
+   "doc": "formulaire"
+  },
+  {
+   "id": "fc-023",
+   "recto": "$\\cos(a + b)$ ?",
+   "verso": "$\\cos a \\cos b - \\sin a \\sin b$",
+   "tags": [
+    "formules"
+   ],
+   "page": 5,
+   "doc": "valeurs"
+  },
+  {
+   "id": "fc-024",
+   "recto": "$\\sin(a + b)$ ?",
+   "verso": "$\\sin a \\cos b + \\cos a \\sin b$",
+   "tags": [
+    "formules"
+   ],
+   "page": 5,
+   "doc": "valeurs"
+  },
+  {
+   "id": "fc-025",
+   "recto": "Solutions de $\\cos x = \\cos a$ ?",
+   "verso": "$x = a + 2k\\pi$ ou $x = -a + 2k\\pi$",
+   "tags": [
+    "équations"
+   ],
+   "page": 5,
+   "doc": "valeurs"
+  }
+ ],
+ "exercices": []
+}

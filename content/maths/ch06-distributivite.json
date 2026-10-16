@@ -1,0 +1,292 @@
+{
+ "format": 1,
+ "id": "ch06-distributivite",
+ "matiere": "maths",
+ "titre": "Distributivité et mise en évidence",
+ "source": {
+  "pdfs": [
+   {
+    "id": "cours",
+    "nom": "Chapitre 6 – Distributivité et mise en évidence",
+    "court": "Chapitre 6",
+    "pages": 4
+   }
+  ],
+  "genereLe": "2026-10-16",
+  "modele": "Claude (rédigé dans la conversation)"
+ },
+ "synthese": {
+  "intro": "Supprimer des parenthèses (simple et double distributivité) puis faire l'inverse : mettre un facteur commun en évidence.",
+  "sections": [
+   {
+    "id": "s1",
+    "titre": "La simple distributivité",
+    "blocs": [
+     {
+      "type": "texte",
+      "contenu": "Elle permet de **supprimer des parenthèses** lorsqu'un nombre ou une expression multiplie une parenthèse.",
+      "pages": [
+       1
+      ]
+     },
+     {
+      "type": "formule",
+      "latex": "a(b + c) = ab + ac \\qquad a(b - c) = ab - ac",
+      "legende": "Simple distributivité",
+      "pages": [
+       1
+      ]
+     },
+     {
+      "type": "exemple",
+      "contenu": "$3(x + 4) = 3 \\times x + 3 \\times 4 = 3x + 12$",
+      "pages": [
+       1
+      ]
+     },
+     {
+      "type": "exemple",
+      "contenu": "$-2(3x - 5) = (-2) \\times 3x + (-2) \\times (-5) = -6x + 10$",
+      "pages": [
+       1
+      ]
+     },
+     {
+      "type": "liste",
+      "items": [
+       "Je multiplie le terme placé devant la parenthèse par **chaque** terme de la parenthèse.",
+       "Je respecte les **règles des signes**.",
+       "Je **réduis** l'expression si c'est possible."
+      ],
+      "pages": [
+       1
+      ],
+      "titre": "À retenir",
+      "ordonnee": true
+     },
+     {
+      "type": "piege",
+      "contenu": "Avec un facteur négatif, **tous** les signes de la parenthèse changent : $-2(3x - 5) = -6x + 10$ (et non $-6x - 10$).",
+      "pages": [
+       1
+      ]
+     }
+    ]
+   },
+   {
+    "id": "s2",
+    "titre": "La double distributivité",
+    "blocs": [
+     {
+      "type": "texte",
+      "contenu": "On l'utilise quand **deux parenthèses** sont multipliées entre elles : chaque terme de la première est multiplié par chaque terme de la seconde, soit généralement **quatre multiplications**.",
+      "pages": [
+       2
+      ]
+     },
+     {
+      "type": "formule",
+      "latex": "(a + b)(c + d) = ac + ad + bc + bd",
+      "legende": "Double distributivité",
+      "pages": [
+       2
+      ]
+     },
+     {
+      "type": "exemple",
+      "contenu": "$(x + 2)(x + 5) = x^2 + 5x + 2x + 10 = x^2 + 7x + 10$",
+      "pages": [
+       2
+      ]
+     },
+     {
+      "type": "exemple",
+      "contenu": "$(2x - 3)(x + 4) = 2x^2 + 8x - 3x - 12 = 2x^2 + 5x - 12$",
+      "pages": [
+       2
+      ]
+     },
+     {
+      "type": "point-cle",
+      "contenu": "Après les quatre multiplications, on **regroupe les termes semblables**.",
+      "pages": [
+       2
+      ]
+     }
+    ]
+   },
+   {
+    "id": "s3",
+    "titre": "La mise en évidence",
+    "blocs": [
+     {
+      "type": "definition",
+      "contenu": "C'est réécrire une expression sous forme de **produit** en extrayant le facteur commun à plusieurs termes. C'est l'étape préalable à des factorisations plus complexes (par exemple avec les identités remarquables).",
+      "titre": "Mettre en évidence",
+      "pages": [
+       4
+      ]
+     },
+     {
+      "type": "formule",
+      "latex": "ab + ac = a(b + c)",
+      "legende": "On « sort » le facteur $a$, commun aux deux termes",
+      "pages": [
+       4
+      ]
+     },
+     {
+      "type": "tableau",
+      "entetes": [
+       "Expression",
+       "Facteur commun",
+       "Mise en évidence"
+      ],
+      "lignes": [
+       [
+        "$3x + 6$",
+        "$3$",
+        "$3(x + 2)$"
+       ],
+       [
+        "$4a^2 + 8a$",
+        "$4a$",
+        "$4a(a + 2)$"
+       ],
+       [
+        "$6x^2 - 9x$",
+        "$3x$",
+        "$3x(2x - 3)$"
+       ],
+       [
+        "$x^2 + 5x$",
+        "$x$",
+        "$x(x + 5)$"
+       ],
+       [
+        "$2a^2b - 4ab$",
+        "$2ab$",
+        "$2ab(a - 2)$"
+       ]
+      ],
+      "pages": [
+       4
+      ]
+     },
+     {
+      "type": "point-cle",
+      "contenu": "La mise en évidence est l'**opération inverse** de la distributivité : pour vérifier, redéveloppe ton résultat.",
+      "complement": true
+     },
+     {
+      "type": "exemple",
+      "contenu": "Le facteur commun peut être une parenthèse (série 2) : $x(x + 5) - 7(x + 5) = (x + 5)(x - 7)$.",
+      "complement": true
+     }
+    ]
+   }
+  ]
+ },
+ "flashcards": [
+  {
+   "id": "fc-001",
+   "recto": "Développer $a(b + c)$",
+   "verso": "$ab + ac$",
+   "tags": [
+    "simple"
+   ],
+   "page": 1
+  },
+  {
+   "id": "fc-002",
+   "recto": "Développer $3(x + 4)$",
+   "verso": "$3x + 12$",
+   "tags": [
+    "simple"
+   ],
+   "page": 1
+  },
+  {
+   "id": "fc-003",
+   "recto": "Développer $-2(3x - 5)$",
+   "verso": "$-6x + 10$",
+   "tags": [
+    "simple"
+   ],
+   "page": 1
+  },
+  {
+   "id": "fc-004",
+   "recto": "Développer $(a + b)(c + d)$",
+   "verso": "$ac + ad + bc + bd$",
+   "tags": [
+    "double"
+   ],
+   "page": 2
+  },
+  {
+   "id": "fc-005",
+   "recto": "Combien de multiplications pour $(a + b)(c + d)$ ?",
+   "verso": "**Quatre** : chaque terme de la première parenthèse par chaque terme de la seconde.",
+   "tags": [
+    "double"
+   ],
+   "page": 2
+  },
+  {
+   "id": "fc-006",
+   "recto": "Développer $(x + 2)(x + 5)$",
+   "verso": "$x^2 + 7x + 10$",
+   "tags": [
+    "double"
+   ],
+   "page": 2
+  },
+  {
+   "id": "fc-007",
+   "recto": "Développer $(2x - 3)(x + 4)$",
+   "verso": "$2x^2 + 5x - 12$",
+   "tags": [
+    "double"
+   ],
+   "page": 2
+  },
+  {
+   "id": "fc-008",
+   "recto": "Que signifie « mettre en évidence » ?",
+   "verso": "Réécrire une expression sous forme de **produit** en sortant le facteur commun : $ab + ac = a(b + c)$.",
+   "tags": [
+    "mise en évidence"
+   ],
+   "page": 4
+  },
+  {
+   "id": "fc-009",
+   "recto": "Mettre en évidence $6x^2 - 9x$",
+   "verso": "$3x(2x - 3)$",
+   "tags": [
+    "mise en évidence"
+   ],
+   "page": 4
+  },
+  {
+   "id": "fc-010",
+   "recto": "Mettre en évidence $4a^2 + 8a$",
+   "verso": "$4a(a + 2)$",
+   "tags": [
+    "mise en évidence"
+   ],
+   "page": 4
+  },
+  {
+   "id": "fc-011",
+   "recto": "Mettre en évidence $2a^2b - 4ab$",
+   "verso": "$2ab(a - 2)$",
+   "tags": [
+    "mise en évidence"
+   ],
+   "page": 4
+  }
+ ],
+ "exercices": []
+}

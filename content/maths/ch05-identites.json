@@ -1,0 +1,269 @@
+{
+ "format": 1,
+ "id": "ch05-identites",
+ "matiere": "maths",
+ "titre": "Identités remarquables",
+ "source": {
+  "pdfs": [
+   {
+    "id": "cours",
+    "nom": "Chapitre 5 – Identités remarquables",
+    "court": "Chapitre 5",
+    "pages": 2
+   }
+  ],
+  "genereLe": "2026-10-16",
+  "modele": "Claude (rédigé dans la conversation)"
+ },
+ "synthese": {
+  "intro": "Les trois identités remarquables, pour développer vite… et pour factoriser dans l'autre sens.",
+  "sections": [
+   {
+    "id": "s1",
+    "titre": "À quoi servent-elles ?",
+    "blocs": [
+     {
+      "type": "texte",
+      "contenu": "Les identités remarquables permettent de **développer rapidement** certaines expressions sans effectuer toutes les multiplications. Ce sont des outils essentiels pour le calcul algébrique et la **factorisation**.",
+      "pages": [
+       1
+      ]
+     }
+    ]
+   },
+   {
+    "id": "s2",
+    "titre": "Les trois identités remarquables",
+    "blocs": [
+     {
+      "type": "formule",
+      "latex": "(a + b)^2 = a^2 + 2ab + b^2",
+      "legende": "Carré d'une somme",
+      "pages": [
+       1
+      ]
+     },
+     {
+      "type": "exemple",
+      "contenu": "$(x + 5)^2 = x^2 + 10x + 25$",
+      "pages": [
+       1
+      ]
+     },
+     {
+      "type": "formule",
+      "latex": "(a - b)^2 = a^2 - 2ab + b^2",
+      "legende": "Carré d'une différence",
+      "pages": [
+       1
+      ]
+     },
+     {
+      "type": "exemple",
+      "contenu": "$(x - 4)^2 = x^2 - 8x + 16$",
+      "pages": [
+       1
+      ]
+     },
+     {
+      "type": "formule",
+      "latex": "(a + b)(a - b) = a^2 - b^2",
+      "legende": "Différence de deux carrés",
+      "pages": [
+       1
+      ]
+     },
+     {
+      "type": "exemple",
+      "contenu": "$(x + 6)(x - 6) = x^2 - 36$",
+      "pages": [
+       1
+      ]
+     },
+     {
+      "type": "piege",
+      "contenu": "N'oublie pas le **double produit** : $(a + b)^2 \\neq a^2 + b^2$. Exemple : $(x + 3)^2 = x^2 + 6x + 9$, pas $x^2 + 9$.",
+      "complement": true
+     }
+    ]
+   },
+   {
+    "id": "s3",
+    "titre": "Tableau récapitulatif",
+    "blocs": [
+     {
+      "type": "tableau",
+      "entetes": [
+       "Identité",
+       "Formule",
+       "Exemple"
+      ],
+      "lignes": [
+       [
+        "Carré d'une somme",
+        "$(a + b)^2 = a^2 + 2ab + b^2$",
+        "$(x + 3)^2 = x^2 + 6x + 9$"
+       ],
+       [
+        "Carré d'une différence",
+        "$(a - b)^2 = a^2 - 2ab + b^2$",
+        "$(x - 5)^2 = x^2 - 10x + 25$"
+       ],
+       [
+        "Différence de deux carrés",
+        "$(a + b)(a - b) = a^2 - b^2$",
+        "$(2x + 1)(2x - 1) = 4x^2 - 1$"
+       ]
+      ],
+      "pages": [
+       1
+      ]
+     },
+     {
+      "type": "exemple",
+      "contenu": "$(3y - 4)^2 = 9y^2 - 24y + 16$ : ici $a = 3y$, donc $a^2 = 9y^2$ et $2ab = 2 \\cdot 3y \\cdot 4 = 24y$.",
+      "pages": [
+       1
+      ]
+     }
+    ]
+   },
+   {
+    "id": "s4",
+    "titre": "Dans l'autre sens : factoriser",
+    "blocs": [
+     {
+      "type": "texte",
+      "contenu": "Les « applications inverses » demandent de reconnaître une identité dans une expression **développée** pour la réécrire sous forme de produit.",
+      "pages": [
+       2
+      ]
+     },
+     {
+      "type": "exemple",
+      "contenu": "$x^2 + 6x + 9 = (x + 3)^2$\n$y^2 - 10y + 25 = (y - 5)^2$\n$a^2 - 81 = (a + 9)(a - 9)$",
+      "pages": [
+       2
+      ]
+     },
+     {
+      "type": "point-cle",
+      "contenu": "Pour reconnaître un carré d'une somme ou d'une différence : repère deux carrés ($x^2$ et $9 = 3^2$), puis vérifie que le terme du milieu vaut bien $2 \\times x \\times 3 = 6x$.",
+      "complement": true
+     }
+    ]
+   }
+  ]
+ },
+ "flashcards": [
+  {
+   "id": "fc-001",
+   "recto": "Développer $(a + b)^2$",
+   "verso": "$a^2 + 2ab + b^2$",
+   "tags": [
+    "formules"
+   ],
+   "page": 1
+  },
+  {
+   "id": "fc-002",
+   "recto": "Développer $(a - b)^2$",
+   "verso": "$a^2 - 2ab + b^2$",
+   "tags": [
+    "formules"
+   ],
+   "page": 1
+  },
+  {
+   "id": "fc-003",
+   "recto": "Développer $(a + b)(a - b)$",
+   "verso": "$a^2 - b^2$",
+   "tags": [
+    "formules"
+   ],
+   "page": 1
+  },
+  {
+   "id": "fc-004",
+   "recto": "Développer $(x + 5)^2$",
+   "verso": "$x^2 + 10x + 25$",
+   "tags": [
+    "développer"
+   ],
+   "page": 1
+  },
+  {
+   "id": "fc-005",
+   "recto": "Développer $(x - 4)^2$",
+   "verso": "$x^2 - 8x + 16$",
+   "tags": [
+    "développer"
+   ],
+   "page": 1
+  },
+  {
+   "id": "fc-006",
+   "recto": "Développer $(x + 6)(x - 6)$",
+   "verso": "$x^2 - 36$",
+   "tags": [
+    "développer"
+   ],
+   "page": 1
+  },
+  {
+   "id": "fc-007",
+   "recto": "Développer $(2x + 1)(2x - 1)$",
+   "verso": "$4x^2 - 1$",
+   "tags": [
+    "développer"
+   ],
+   "page": 1
+  },
+  {
+   "id": "fc-008",
+   "recto": "Développer $(3y - 4)^2$",
+   "verso": "$9y^2 - 24y + 16$",
+   "tags": [
+    "développer"
+   ],
+   "page": 1
+  },
+  {
+   "id": "fc-009",
+   "recto": "Factoriser $x^2 + 6x + 9$",
+   "verso": "$(x + 3)^2$",
+   "tags": [
+    "factoriser"
+   ],
+   "page": 2
+  },
+  {
+   "id": "fc-010",
+   "recto": "Factoriser $y^2 - 10y + 25$",
+   "verso": "$(y - 5)^2$",
+   "tags": [
+    "factoriser"
+   ],
+   "page": 2
+  },
+  {
+   "id": "fc-011",
+   "recto": "Factoriser $a^2 - 81$",
+   "verso": "$(a + 9)(a - 9)$",
+   "tags": [
+    "factoriser"
+   ],
+   "page": 2
+  },
+  {
+   "id": "fc-012",
+   "recto": "$(a + b)^2 = a^2 + b^2$ ?",
+   "verso": "**Faux** : il manque le double produit $2ab$.",
+   "tags": [
+    "pièges"
+   ],
+   "complement": true
+  }
+ ],
+ "exercices": []
+}
