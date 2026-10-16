@@ -248,6 +248,7 @@ table.tbl{border-collapse:collapse;width:100%;font-size:14.5px}
 .fig svg .trou{fill:var(--panel)}
 .fig svg .muet{fill:var(--muted)}
 .fig svg line.muet,.fig svg path.muet{stroke:var(--muted);fill:none}
+.fig svg .cmp{fill:var(--panel);stroke:currentColor;stroke-width:1.6}
 .fig svg .s-def{stroke:var(--def)} .fig svg .f-def{fill:var(--def)}
 .fig svg .s-ok{stroke:var(--ok)} .fig svg .f-ok{fill:var(--ok)}
 .fig svg .s-bad{stroke:var(--bad)} .fig svg .f-bad{fill:var(--bad)}
