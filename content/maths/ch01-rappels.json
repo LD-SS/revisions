@@ -36,6 +36,14 @@
       "titre": "Les quatre ensembles"
      },
      {
+      "type": "figure",
+      "svg": "<svg viewBox=\"0 0 400 262\" width=\"400\" role=\"img\" aria-label=\"Ensembles de nombres emboîtés\" xmlns=\"http://www.w3.org/2000/svg\"><title>Ensembles de nombres emboîtés</title><ellipse class=\"trait fin\" cx=\"200\" cy=\"135\" rx=\"190\" ry=\"118\"/><ellipse class=\"trait\" cx=\"200\" cy=\"145\" rx=\"150\" ry=\"95\"/><ellipse class=\"trait\" cx=\"200\" cy=\"158\" rx=\"105\" ry=\"68\"/><ellipse class=\"trait\" cx=\"200\" cy=\"170\" rx=\"58\" ry=\"40\"/><text x=\"200\" y=\"38\" text-anchor=\"middle\" class=\"\"><tspan class=\"gras\">ℝ</tspan> réels</text><text x=\"200\" y=\"70\" text-anchor=\"middle\" class=\"\"><tspan class=\"gras\">ℚ</tspan> rationnels</text><text x=\"200\" y=\"109\" text-anchor=\"middle\" class=\"\"><tspan class=\"gras\">ℤ</tspan> entiers</text><text x=\"200\" y=\"162\" text-anchor=\"middle\" class=\"\"><tspan class=\"gras\">ℕ</tspan> naturels</text><text x=\"200\" y=\"182\" text-anchor=\"middle\" class=\"petit\">0, 1, 2, 3, …</text><text x=\"30\" y=\"150\" text-anchor=\"middle\" class=\"exemple\">√2</text><text x=\"370\" y=\"150\" text-anchor=\"middle\" class=\"exemple\">π</text><text x=\"85\" y=\"150\" text-anchor=\"middle\" class=\"exemple\">7/8</text><text x=\"315\" y=\"150\" text-anchor=\"middle\" class=\"exemple\">2/7</text><text x=\"140\" y=\"150\" text-anchor=\"middle\" class=\"exemple\">−3</text><text x=\"260\" y=\"150\" text-anchor=\"middle\" class=\"exemple\">−1</text></svg>",
+      "legende": "Chaque ensemble est contenu dans le suivant. Exemples placés : $-3$ et $-1$ sont entiers mais pas naturels ; $\\dfrac{7}{8}$ et $\\dfrac{2}{7}$ sont rationnels mais pas entiers ; $\\sqrt{2}$ et $\\pi$ sont réels mais pas rationnels.",
+      "pages": [
+       1
+      ]
+     },
+     {
       "type": "tableau",
       "entetes": [
        "Nombre",
