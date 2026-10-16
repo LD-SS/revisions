@@ -8,6 +8,7 @@
      formule → { latex, legende?, variables?: [{ symbole, nom, unite }] }
      liste   → { items: [..], ordonnee?: true }
      tableau → { entetes: [..], lignes: [[..], ..] }
+     figure  → { svg: '<svg …>', legende? }  (schéma redessiné, couleurs via les classes .fig)
    Tous les blocs : titre? (facultatif), pages: [n, …] (page(s) du PDF source),
    doc? (id du PDF quand le chapitre en a plusieurs, voir source.pdfs),
    complement?: true (ajout qui ne figure pas dans le PDF : affiché comme tel).
@@ -17,7 +18,7 @@
 import { esc, pagesTxt, formatDate, $$ } from './utils.js';
 import { icone } from './icones.js';
 import { TYPES_BLOCS } from './matieres.js';
-import { texte, enLigne, math } from './rendu.js';
+import { texte, enLigne, math, svgSur } from './rendu.js';
 
 /**
  * Pastille de source : « p. 4 », « Formulaire · p. 2 » (chapitre à plusieurs PDF)
@@ -114,6 +115,8 @@ function corpsBloc(type, b) {
       return `<div class="formule-math">${math(b.latex, true)}</div>
         ${b.legende ? `<div class="formule-legende">${enLigne(b.legende)}</div>` : ''}${vars}`;
     }
+    case 'figure':
+      return `<figure class="fig">${svgSur(b.svg)}${b.legende ? `<figcaption>${enLigne(b.legende)}</figcaption>` : ''}</figure>`;
     case 'liste': {
       const tag = b.ordonnee ? 'ol' : 'ul';
       return `<${tag}>${(b.items || []).map((it) => `<li>${enLigne(it)}</li>`).join('')}</${tag}>`;

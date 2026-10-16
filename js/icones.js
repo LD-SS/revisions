@@ -55,6 +55,7 @@ export const ICONES = {
   fonction: '<path d="M9 19c2 0 2.5-1 3-3l2-9c.5-2 1-3 3-3M8 11h8"/>',
   crayon: '<path d="M17 3a2.8 2.8 0 0 1 4 4L7.5 20.5 2 22l1.5-5.5z"/>',
   liste: '<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',
+  figure: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3v18M12 12l5.5-5.5"/>',
   tableau: '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M12 3v18"/>',
   'cle-api': '<circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6M15.5 7.5l3 3L22 7l-3-3"/>',
   telecharger: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>',

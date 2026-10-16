@@ -62,3 +62,25 @@ export function texte(src) {
   fermer();
   return html;
 }
+
+/**
+ * Figure SVG d'une synthèse : on ne garde que du dessin (pas de script, pas
+ * d'évènements, pas de liens externes), au cas où un contenu serait mal formé.
+ */
+export function svgSur(source) {
+  try {
+    const doc = new DOMParser().parseFromString(String(source || ''), 'image/svg+xml');
+    const racine = doc.documentElement;
+    if (!racine || racine.nodeName !== 'svg' || doc.querySelector('parsererror')) return '';
+    racine.querySelectorAll('script, foreignObject, iframe, image, use, a, style').forEach((n) => n.remove());
+    for (const n of [racine, ...racine.querySelectorAll('*')]) {
+      for (const at of [...n.attributes]) {
+        const nom = at.name.toLowerCase();
+        if (nom.startsWith('on') || nom.includes('href') || /javascript:/i.test(at.value)) n.removeAttribute(at.name);
+      }
+    }
+    return racine.outerHTML;
+  } catch {
+    return '';
+  }
+}

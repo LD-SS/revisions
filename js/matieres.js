@@ -42,6 +42,7 @@ export const TYPES_BLOCS = {
   exemple:     { libelle: 'Exemple',        icone: 'crayon' },
   liste:       { libelle: '',               icone: 'liste' },
   tableau:     { libelle: '',               icone: 'tableau' },
+  figure:      { libelle: 'Figure',         icone: 'figure' },
 };
 
 export const profilDe = (matiere) => PROFILS[matiere?.profil] || PROFILS.generique;
