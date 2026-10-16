@@ -21,23 +21,25 @@ import { TYPES_BLOCS } from './matieres.js';
 import { texte, enLigne, math, svgSur } from './rendu.js';
 
 /**
- * Pastille de source : « p. 4 », « Formulaire · p. 2 » (chapitre à plusieurs PDF)
- * ou « Complément » pour un ajout qui ne figure pas dans le PDF.
+ * Pastille de source, affichée sur chaque bloc et chaque flashcard :
+ *   « Ch. 3 – Racines · p. 5 »  (nom court du PDF + page)
+ *   « Complément · Ch. 3 – Racines · p. 5 »  pour un ajout qui ne figure pas dans le PDF,
+ *   en lien avec cette page.
+ * Le nom complet du PDF apparaît au survol (ou au toucher, voir app.js).
  * @param {{pages?: number[], page?: number, doc?: string, complement?: boolean}} el  bloc ou flashcard
  * @param {{id: string, nom: string, court?: string}[]} docs  PDF sources du chapitre (source.pdfs)
  */
 export function badgeSource(el, docs = []) {
   if (!el) return '';
-  if (el.complement) {
-    return `<span class="pg cplt" title="Ajouté pour compléter le cours : ne figure pas dans le PDF">${icone('info')}Complément</span>`;
-  }
   const p = pagesTxt(el.pages ?? (el.page != null ? [el.page] : []));
-  const d = docs.length > 1 ? docs.find((x) => x.id === el.doc) : null;
-  if (!p && !d) return '';
-  const nomPdf = d ? `du PDF « ${d.nom} »` : 'du PDF de cours';
-  const titre = p ? `Voir ${/[–,]/.test(p) ? 'pages' : 'page'} ${p} ${nomPdf}` : `Voir le PDF « ${d.nom} »`;
-  const texteBadge = [d ? esc(d.court || d.nom) : '', p ? `p. ${p}` : ''].filter(Boolean).join(' · ');
-  return `<span class="pg" title="${esc(titre)}">${icone('page')}${texteBadge}</span>`;
+  const d = docs.find((x) => x.id === el.doc) || (docs.length === 1 ? docs[0] : null);
+  if (!p && !d && !el.complement) return '';
+  const ref = d ? `${p ? `${/[–,]/.test(p) ? 'pages' : 'page'} ${p} du` : 'le'} PDF « ${d.nom} »` : p ? `page ${p} du PDF de cours` : '';
+  const titre = el.complement
+    ? `Complément : ajouté pour aider, ne figure pas dans le PDF${ref ? ` (en lien avec la ${ref})` : ''}`
+    : `Voir la ${ref}`;
+  const morceaux = [el.complement ? 'Complément' : '', d ? esc(d.court || d.nom) : '', p ? `p. ${p}` : ''].filter(Boolean);
+  return `<span class="pg${el.complement ? ' cplt' : ''}" title="${esc(titre)}" tabindex="0">${icone(el.complement ? 'info' : 'page')}${morceaux.join(' · ')}</span>`;
 }
 
 /** Ancienne forme, conservée : pastille à partir d'une simple liste de pages. */

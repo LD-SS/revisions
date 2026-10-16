@@ -69,9 +69,9 @@ export function lecteurFlashcards(conteneur, toutesLesCartes, options = {}) {
         <div class="panel fc-card ${etat.verso ? 'verso' : ''}" data-action="retourner" tabindex="0" role="button"
              aria-label="${etat.verso ? 'Réponse' : 'Question'} — cliquer pour retourner">
           <span class="fc-side">${etat.verso ? 'Réponse' : 'Question'}</span>
-          ${etat.verso ? badgeSource(c, options.docs) : ''}
           <div class="fc-text">${texte(face)}</div>
           ${etat.verso && c.tags?.length ? `<div class="fc-tags">${c.tags.map((t) => `<span class="badge">${esc(t)}</span>`).join('')}</div>` : ''}
+          ${etat.verso ? `<div class="fc-source">${badgeSource(c, options.docs)}</div>` : ''}
           <div class="fc-hint">${etat.verso ? '' : 'Clique sur la carte pour voir la réponse'}</div>
         </div>
       </div>
@@ -149,6 +149,7 @@ export function lecteurFlashcards(conteneur, toutesLesCartes, options = {}) {
   let ignorerClic = false;
   conteneur.addEventListener('click', (e) => {
     if (ignorerClic) { ignorerClic = false; return; }
+    if (e.target.closest('.pg')) return; // la pastille de source affiche son détail (app.js)
     const cible = e.target.closest('[data-action]');
     if (!cible || cible.tagName === 'SELECT' || cible.disabled) return;
     actions[cible.dataset.action]?.();

@@ -104,6 +104,16 @@ async function router() {
   vue.focus({ preventScroll: true });
 }
 
+/* ---------- Pastilles de source : détail au clic / toucher (utile sur tablette et téléphone) ---------- */
+function detailSource(e) {
+  const pg = e.target.closest?.('.pg');
+  if (!pg || (e.type === 'keydown' && e.key !== 'Enter')) return;
+  e.stopPropagation();
+  toast(pg.title, 4500);
+}
+document.addEventListener('click', detailSource, true);
+document.addEventListener('keydown', detailSource, true);
+
 /* ---------- Démarrage ---------- */
 async function demarrer() {
   document.getElementById('brand-logo').innerHTML = icone('logo');
