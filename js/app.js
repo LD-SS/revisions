@@ -19,7 +19,7 @@ import { vueMatiere } from './vues/matiere.js';
 import { vueChapitre } from './vues/chapitre.js';
 import { vueParametres } from './vues/parametres.js';
 
-const VERSION = '0.2.0 (étape 1 + PDF liés)';
+const VERSION = '0.3.0 (exercices de maths)';
 const vue = document.getElementById('vue');
 let nettoyer = null; // fonction fournie par la page affichée, appelée avant d'en changer
 
