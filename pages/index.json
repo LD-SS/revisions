@@ -1,0 +1,89 @@
+{
+ "format": 1,
+ "sel": "4b8e625d203c132e96dee040af760449",
+ "iterations": 200000,
+ "verif": "444a0af1d057b18c7a18d79ca0ebc77a20066f9ae6f4e96d30270fad714a2b33054cb76b59258762",
+ "paquet": 8,
+ "docs": {
+  "chapitre4racinesexposantsfractionnairessuite": {
+   "pages": 2,
+   "paquets": 1
+  },
+  "chapitre2exposantsentiersetfractionnaires": {
+   "pages": 4,
+   "paquets": 1
+  },
+  "cours1rappelsnumeriqueetlitteral": {
+   "pages": 9,
+   "paquets": 2
+  },
+  "chapitre5identitesremarquables": {
+   "pages": 2,
+   "paquets": 1
+  },
+  "chapitre6distributiviteetmiseenevidence": {
+   "pages": 4,
+   "paquets": 1
+  },
+  "chapitre3racinescarreesetcubiques": {
+   "pages": 5,
+   "paquets": 1
+  },
+  "chapitre7transformationsdeformules": {
+   "pages": 6,
+   "paquets": 1
+  },
+  "chapitre7transformationsdeformules3": {
+   "pages": 3,
+   "paquets": 1
+  },
+  "chapitre7transformationsdeformules4": {
+   "pages": 4,
+   "paquets": 1
+  },
+  "chapitre8trigonometriedanslecercletrigonometrique": {
+   "pages": 7,
+   "paquets": 1
+  },
+  "chapitre8trigonometrievaleurs": {
+   "pages": 6,
+   "paquets": 1
+  },
+  "chapitre8trigonometrieformulaire": {
+   "pages": 2,
+   "paquets": 1
+  },
+  "chapitre8trigonometrieexercices": {
+   "pages": 1,
+   "paquets": 1
+  },
+  "3dessintechndaochapitre3": {
+   "pages": 20,
+   "paquets": 3
+  },
+  "1135dessintechnique": {
+   "pages": 135,
+   "paquets": 17
+  },
+  "1dessintechndaochapitre1": {
+   "pages": 36,
+   "paquets": 5
+  },
+  "6dessintechndaochapitre6": {
+   "pages": 23,
+   "paquets": 3
+  },
+  "2dessintechndaochapitre2": {
+   "pages": 18,
+   "paquets": 3
+  },
+  "4dessintechndaochapitre4": {
+   "pages": 13,
+   "paquets": 2
+  },
+  "5dessintechndaochapitre5": {
+   "pages": 19,
+   "paquets": 3
+  }
+ }
+}
