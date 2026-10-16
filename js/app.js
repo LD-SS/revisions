@@ -19,7 +19,7 @@ import { vueMatiere } from './vues/matiere.js';
 import { vueChapitre } from './vues/chapitre.js';
 import { vueParametres } from './vues/parametres.js';
 
-const VERSION = '0.1.0 (étape 1)';
+const VERSION = '0.2.0 (étape 1 + PDF liés)';
 const vue = document.getElementById('vue');
 let nettoyer = null; // fonction fournie par la page affichée, appelée avant d'en changer
 
@@ -104,12 +104,17 @@ async function router() {
   vue.focus({ preventScroll: true });
 }
 
-/* ---------- Pastilles de source : détail au clic / toucher (utile sur tablette et téléphone) ---------- */
+/* ---------- Pastilles de source : toucher = ouvrir le PDF à la bonne page ---------- */
 function detailSource(e) {
   const pg = e.target.closest?.('.pg');
   if (!pg || (e.type === 'keydown' && e.key !== 'Enter')) return;
   e.stopPropagation();
-  toast(pg.title, 4500);
+  e.preventDefault();
+  if (!pg.dataset.cle) { toast(pg.title, 4500); return; } // contenu d'exemple : pas de PDF
+  import('./visionneuse.js').then(({ ouvrirVisionneuse }) => ouvrirVisionneuse({
+    cle: pg.dataset.cle, nom: pg.dataset.nom, court: pg.dataset.court,
+    fichier: pg.dataset.fichier, pages: Number(pg.dataset.total) || null,
+  }, Number(pg.dataset.page) || 1));
 }
 document.addEventListener('click', detailSource, true);
 document.addEventListener('keydown', detailSource, true);

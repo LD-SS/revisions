@@ -19,6 +19,7 @@ import { esc, pagesTxt, formatDate, $$ } from './utils.js';
 import { icone } from './icones.js';
 import { TYPES_BLOCS } from './matieres.js';
 import { texte, enLigne, math, svgSur } from './rendu.js';
+import { cleSource } from './pdfs.js';
 
 /**
  * Pastille de source, affichée sur chaque bloc et chaque flashcard :
@@ -39,7 +40,11 @@ export function badgeSource(el, docs = []) {
     ? `Complément : ajouté pour aider, ne figure pas dans le PDF${ref ? ` (en lien avec la ${ref})` : ''}`
     : `Voir la ${ref}`;
   const morceaux = [el.complement ? 'Complément' : '', d ? esc(d.court || d.nom) : '', p ? `p. ${p}` : ''].filter(Boolean);
-  return `<span class="pg${el.complement ? ' cplt' : ''}" title="${esc(titre)}" tabindex="0">${icone(el.complement ? 'info' : 'page')}${morceaux.join(' · ')}</span>`;
+  // Données pour ouvrir la page dans la visionneuse (app.js → visionneuse.js)
+  const premiere = (el.pages ?? [el.page]).find((x) => Number.isFinite(x)) || 1;
+  const data = d ? ` data-cle="${esc(cleSource(d))}" data-nom="${esc(d.nom)}" data-court="${esc(d.court || d.nom)}"`
+    + ` data-fichier="${esc(d.fichier || '')}" data-total="${d.pages || ''}" data-page="${premiere}"` : '';
+  return `<span class="pg${el.complement ? ' cplt' : ''}" title="${esc(titre)}${d ? ' — toucher pour ouvrir la page' : ''}" tabindex="0" role="button"${data}>${icone(el.complement ? 'info' : 'page')}${morceaux.join(' · ')}</span>`;
 }
 
 /** Ancienne forme, conservée : pastille à partir d'une simple liste de pages. */
