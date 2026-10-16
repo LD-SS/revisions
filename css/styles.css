@@ -234,6 +234,16 @@ table.tbl{border-collapse:collapse;width:100%;font-size:14.5px}
 .fc-card .fc-source .pg{position:static}
 .pg{white-space:normal;text-align:left;max-width:100%}
 .pg:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.fig svg .tf{stroke:currentColor;stroke-width:2.4;fill:none;stroke-linejoin:round}
+.fig svg .tn{stroke:currentColor;stroke-width:1;fill:none}
+.fig svg .ti{stroke:currentColor;stroke-width:1.2;fill:none;stroke-dasharray:7 4}
+.fig svg .tm{stroke:currentColor;stroke-width:1;fill:none;stroke-dasharray:18 4 2 4}
+.fig svg .tm2{stroke:currentColor;stroke-width:1;fill:none;stroke-dasharray:18 4 2 4 2 4}
+.fig svg .tmf{stroke:currentColor;stroke-width:2.4;fill:none;stroke-dasharray:18 4 3 4}
+.fig svg .solide{stroke-dasharray:none}
+.fig svg .fond{fill:var(--panel);stroke:none}
+.fig svg .muet{fill:var(--muted)}
+.fig svg line.muet,.fig svg path.muet{stroke:var(--muted);fill:none}
 .fig svg .s-def{stroke:var(--def)} .fig svg .f-def{fill:var(--def)}
 .fig svg .s-ok{stroke:var(--ok)} .fig svg .f-ok{fill:var(--ok)}
 .fig svg .s-bad{stroke:var(--bad)} .fig svg .f-bad{fill:var(--bad)}
