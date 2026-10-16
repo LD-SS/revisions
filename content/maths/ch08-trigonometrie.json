@@ -9,24 +9,28 @@
     "id": "cercle",
     "nom": "Chapitre 8 – Trigonométrie dans le cercle trigonométrique",
     "court": "Ch. 8 – Cercle trigo",
+    "fichier": "Chapitre 8 - Trigonométrie dans le cercle trigonométrique 1.pdf",
     "pages": 7
    },
    {
     "id": "valeurs",
     "nom": "Chapitre 8 – Trigonométrie : valeurs",
     "court": "Ch. 8 – Valeurs",
+    "fichier": "Chapitre 8 - Trigonométrie_Valeurs 1.pdf",
     "pages": 6
    },
    {
     "id": "formulaire",
     "nom": "Chapitre 8 – Aide-mémoire de trigonométrie",
     "court": "Ch. 8 – Formulaire",
+    "fichier": "Chapitre 8 - Trigonométrie_Formulaire 1.pdf",
     "pages": 2
    },
    {
     "id": "exercices",
     "nom": "Chapitre 8 – Exercices supplémentaires",
     "court": "Ch. 8 – Exercices",
+    "fichier": "Chapitre 8 - Trigonométrie_Exercices 1.pdf",
     "pages": 1
    }
   ],

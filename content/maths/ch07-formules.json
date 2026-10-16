@@ -9,18 +9,21 @@
     "id": "p1",
     "nom": "Chapitre 7 – Transformations de formules (1)",
     "court": "Ch. 7 – partie 1",
+    "fichier": "Chapitre 7 - Transformations de formules 1.pdf",
     "pages": 6
    },
    {
     "id": "p3",
     "nom": "Chapitre 7 – Transformations de formules (3) : je consolide mes acquis",
     "court": "Ch. 7 – partie 3",
+    "fichier": "Chapitre 7 - Transformations de formules_3.PDF",
     "pages": 3
    },
    {
     "id": "p4",
     "nom": "Chapitre 7 – Transformations de formules (4) : impédance",
     "court": "Ch. 7 – partie 4",
+    "fichier": "Chapitre 7 - Transformations de formules_4.pdf",
     "pages": 4
    }
   ],
