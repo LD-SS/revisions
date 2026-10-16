@@ -1,0 +1,76 @@
+{
+  "format": 1,
+  "id": "ch01-puissances",
+  "matiere": "maths",
+  "titre": "Puissances et notation scientifique",
+  "exemple": true,
+  "source": { "pdf": null, "pages": null, "genereLe": "2026-10-16", "modele": null },
+  "synthese": {
+    "intro": "Ce chapitre revoit les règles de calcul sur les puissances et la notation scientifique, indispensables pour les calculs d'électricité (préfixes k, m, µ…).",
+    "sections": [
+      {
+        "id": "s1",
+        "titre": "Définition et vocabulaire",
+        "blocs": [
+          { "type": "definition", "titre": "Puissance d'un nombre", "contenu": "Pour un réel $a$ et un naturel $n \\geq 1$, la puissance $a^n$ est le produit de $n$ facteurs égaux à $a$ : $a^n = \\underbrace{a \\cdot a \\cdots a}_{n \\text{ facteurs}}$.\n$a$ est la **base**, $n$ est l'**exposant**.", "pages": [1] },
+          { "type": "point-cle", "contenu": "Par convention : $a^1 = a$ et $a^0 = 1$ (pour $a \\neq 0$).", "pages": [1] },
+          { "type": "formule", "latex": "a^{-n} = \\dfrac{1}{a^{n}}", "legende": "Exposant négatif (avec $a \\neq 0$)", "pages": [2] }
+        ]
+      },
+      {
+        "id": "s2",
+        "titre": "Règles de calcul",
+        "blocs": [
+          {
+            "type": "tableau",
+            "entetes": ["Règle", "Formule", "Exemple"],
+            "lignes": [
+              ["Produit de puissances", "$a^m \\cdot a^n = a^{m+n}$", "$2^3 \\cdot 2^4 = 2^7$"],
+              ["Quotient de puissances", "$\\dfrac{a^m}{a^n} = a^{m-n}$", "$\\dfrac{10^5}{10^2} = 10^3$"],
+              ["Puissance d'une puissance", "$(a^m)^n = a^{m \\cdot n}$", "$(3^2)^3 = 3^6$"],
+              ["Puissance d'un produit", "$(a \\cdot b)^n = a^n \\cdot b^n$", "$(2 \\cdot 5)^3 = 2^3 \\cdot 5^3$"],
+              ["Puissance d'un quotient", "$\\left(\\dfrac{a}{b}\\right)^n = \\dfrac{a^n}{b^n}$", "$\\left(\\dfrac{1}{2}\\right)^3 = \\dfrac{1}{8}$"]
+            ],
+            "pages": [2, 3]
+          },
+          { "type": "piege", "contenu": "$(a+b)^n \\neq a^n + b^n$ : les règles ne s'appliquent qu'aux **produits** et aux **quotients**, jamais aux sommes.\nExemple : $(1+2)^2 = 9$ mais $1^2 + 2^2 = 5$.", "pages": [3] },
+          { "type": "piege", "contenu": "$-3^2 = -9$ alors que $(-3)^2 = 9$ : sans parenthèses, l'exposant ne porte que sur le 3.", "pages": [3] }
+        ]
+      },
+      {
+        "id": "s3",
+        "titre": "Notation scientifique et préfixes",
+        "blocs": [
+          { "type": "definition", "titre": "Notation scientifique", "contenu": "Un nombre est écrit en notation scientifique sous la forme $a \\times 10^n$ avec $1 \\leq |a| < 10$ et $n$ entier.", "pages": [4] },
+          { "type": "exemple", "contenu": "$45\\,000 = 4{,}5 \\times 10^{4}$\n$0{,}00072 = 7{,}2 \\times 10^{-4}$", "pages": [4] },
+          {
+            "type": "tableau",
+            "titre": "Préfixes du Système international",
+            "entetes": ["Préfixe", "Symbole", "Facteur"],
+            "lignes": [
+              ["giga", "G", "$10^{9}$"],
+              ["méga", "M", "$10^{6}$"],
+              ["kilo", "k", "$10^{3}$"],
+              ["milli", "m", "$10^{-3}$"],
+              ["micro", "µ", "$10^{-6}$"],
+              ["nano", "n", "$10^{-9}$"]
+            ],
+            "pages": [5]
+          },
+          { "type": "point-cle", "contenu": "En électricité, ces préfixes reviennent sans cesse : $4{,}7\\ \\text{k}\\Omega = 4{,}7 \\times 10^{3}\\ \\Omega$ et $20\\ \\text{mA} = 2 \\times 10^{-2}\\ \\text{A}$.", "pages": [5] }
+        ]
+      }
+    ]
+  },
+  "flashcards": [
+    { "id": "fc-001", "recto": "Que vaut $a^0$ (avec $a \\neq 0$) ?", "verso": "$a^0 = 1$", "tags": ["règles"], "page": 1 },
+    { "id": "fc-002", "recto": "Simplifier $a^m \\cdot a^n$", "verso": "$a^{m+n}$ : on **additionne** les exposants.", "tags": ["règles"], "page": 2 },
+    { "id": "fc-003", "recto": "Simplifier $\\dfrac{a^m}{a^n}$", "verso": "$a^{m-n}$ : on **soustrait** les exposants.", "tags": ["règles"], "page": 2 },
+    { "id": "fc-004", "recto": "Simplifier $(a^m)^n$", "verso": "$a^{m \\cdot n}$ : on **multiplie** les exposants.", "tags": ["règles"], "page": 3 },
+    { "id": "fc-005", "recto": "Que vaut $a^{-n}$ ?", "verso": "$a^{-n} = \\dfrac{1}{a^n}$", "tags": ["règles"], "page": 2 },
+    { "id": "fc-006", "recto": "Écrire $0{,}00072$ en notation scientifique.", "verso": "$7{,}2 \\times 10^{-4}$", "tags": ["notation"], "page": 4 },
+    { "id": "fc-007", "recto": "Quel facteur représente le préfixe **µ** (micro) ?", "verso": "$10^{-6}$", "tags": ["préfixes"], "page": 5 },
+    { "id": "fc-008", "recto": "Que vaut $-3^2$ ?", "verso": "$-9$ : l'exposant ne porte que sur le 3. (Alors que $(-3)^2 = 9$.)", "tags": ["pièges"], "page": 3 }
+  ],
+  "exercices": []
+}

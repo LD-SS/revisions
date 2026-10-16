@@ -1,0 +1,44 @@
+{
+  "format": 1,
+  "id": "ch02-equations",
+  "matiere": "maths",
+  "titre": "Équations du premier degré",
+  "exemple": true,
+  "source": { "pdf": null, "pages": null, "genereLe": "2026-10-16", "modele": null },
+  "synthese": {
+    "intro": "Résoudre une équation du premier degré à une inconnue, avec la méthode et la vérification.",
+    "sections": [
+      {
+        "id": "s1",
+        "titre": "Principe",
+        "blocs": [
+          { "type": "definition", "titre": "Équation du premier degré", "contenu": "Une équation du premier degré à une inconnue peut s'écrire sous la forme $ax + b = 0$ avec $a \\neq 0$.", "pages": [1] },
+          { "type": "formule", "latex": "x = -\\dfrac{b}{a}", "legende": "Solution de $ax + b = 0$", "pages": [1] },
+          { "type": "point-cle", "contenu": "On obtient une équation équivalente si l'on :\n- **ajoute** ou **soustrait** le même nombre aux deux membres ;\n- **multiplie** ou **divise** les deux membres par un même nombre **non nul**.", "pages": [2] }
+        ]
+      },
+      {
+        "id": "s2",
+        "titre": "Méthode de résolution",
+        "blocs": [
+          { "type": "liste", "ordonnee": true, "items": [
+            "Supprimer les parenthèses (distributivité).",
+            "Regrouper les termes en $x$ dans un membre et les nombres dans l'autre.",
+            "Réduire chaque membre.",
+            "Diviser par le coefficient de $x$.",
+            "Vérifier en remplaçant $x$ dans l'équation de départ."
+          ], "pages": [2, 3] },
+          { "type": "exemple", "contenu": "Résoudre $3x - 5 = 7$.\n$3x = 7 + 5 = 12$ donc $x = \\dfrac{12}{3} = 4$.\nVérification : $3 \\cdot 4 - 5 = 7$ ✓", "pages": [3] },
+          { "type": "piege", "contenu": "Quand un terme **change de membre**, son signe change : $x + 5 = 2 \\Rightarrow x = 2 - 5 = -3$.", "pages": [3] }
+        ]
+      }
+    ]
+  },
+  "flashcards": [
+    { "id": "fc-001", "recto": "Forme générale d'une équation du premier degré ?", "verso": "$ax + b = 0$ avec $a \\neq 0$", "tags": ["définition"], "page": 1 },
+    { "id": "fc-002", "recto": "Solution de $ax + b = 0$ ?", "verso": "$x = -\\dfrac{b}{a}$", "tags": ["méthode"], "page": 1 },
+    { "id": "fc-003", "recto": "Résoudre $3x - 5 = 7$", "verso": "$x = 4$", "tags": ["méthode"], "page": 3 },
+    { "id": "fc-004", "recto": "Par quel nombre est-il **interdit** de diviser les deux membres ?", "verso": "Par **zéro**.", "tags": ["pièges"], "page": 2 }
+  ],
+  "exercices": []
+}
