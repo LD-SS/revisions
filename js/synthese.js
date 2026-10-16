@@ -8,7 +8,9 @@
      formule → { latex, legende?, variables?: [{ symbole, nom, unite }] }
      liste   → { items: [..], ordonnee?: true }
      tableau → { entetes: [..], lignes: [[..], ..] }
-   Tous les blocs : titre? (facultatif) et pages: [n, …] (page(s) du PDF source).
+   Tous les blocs : titre? (facultatif), pages: [n, …] (page(s) du PDF source),
+   doc? (id du PDF quand le chapitre en a plusieurs, voir source.pdfs),
+   complement?: true (ajout qui ne figure pas dans le PDF : affiché comme tel).
    Pour ajouter un type de bloc : une entrée dans TYPES_BLOCS + un « case » dans corpsBloc().
    ===================================================================== */
 
@@ -17,13 +19,28 @@ import { icone } from './icones.js';
 import { TYPES_BLOCS } from './matieres.js';
 import { texte, enLigne, math } from './rendu.js';
 
-/** Pastille « p. 4 » renvoyant à la page du PDF de cours. */
-export function badgePage(pages) {
-  const p = pagesTxt(pages ?? []);
-  if (!p) return '';
-  const pluriel = /[–,]/.test(p);
-  return `<span class="pg" title="Voir ${pluriel ? 'pages' : 'page'} ${p} du PDF de cours">${icone('page')}p. ${p}</span>`;
+/**
+ * Pastille de source : « p. 4 », « Formulaire · p. 2 » (chapitre à plusieurs PDF)
+ * ou « Complément » pour un ajout qui ne figure pas dans le PDF.
+ * @param {{pages?: number[], page?: number, doc?: string, complement?: boolean}} el  bloc ou flashcard
+ * @param {{id: string, nom: string, court?: string}[]} docs  PDF sources du chapitre (source.pdfs)
+ */
+export function badgeSource(el, docs = []) {
+  if (!el) return '';
+  if (el.complement) {
+    return `<span class="pg cplt" title="Ajouté pour compléter le cours : ne figure pas dans le PDF">${icone('info')}Complément</span>`;
+  }
+  const p = pagesTxt(el.pages ?? (el.page != null ? [el.page] : []));
+  const d = docs.length > 1 ? docs.find((x) => x.id === el.doc) : null;
+  if (!p && !d) return '';
+  const nomPdf = d ? `du PDF « ${d.nom} »` : 'du PDF de cours';
+  const titre = p ? `Voir ${/[–,]/.test(p) ? 'pages' : 'page'} ${p} ${nomPdf}` : `Voir le PDF « ${d.nom} »`;
+  const texteBadge = [d ? esc(d.court || d.nom) : '', p ? `p. ${p}` : ''].filter(Boolean).join(' · ');
+  return `<span class="pg" title="${esc(titre)}">${icone('page')}${texteBadge}</span>`;
 }
+
+/** Ancienne forme, conservée : pastille à partir d'une simple liste de pages. */
+export const badgePage = (pages) => badgeSource({ pages });
 
 /** HTML complet de l'onglet Synthèse. */
 export function rendreSynthese(ch, base) {
@@ -37,14 +54,14 @@ export function rendreSynthese(ch, base) {
   const sommaire = sections.map((s, i) =>
     `<li><a href="${base}" data-cible="sec-${esc(s.id || i)}">${esc(s.titre)}</a></li>`).join('');
 
-  const source = [];
-  if (ch.source.pdf) source.push(`<span class="badge">${icone('page')} ${esc(ch.source.pdf)}${ch.source.pages ? ` · ${ch.source.pages} p.` : ''}</span>`);
+  const docs = sourcesDe(ch);
+  const source = docs.map((d) => `<span class="badge" title="PDF source (non publié)">${icone('page')} ${esc(d.nom)}${d.pages ? ` · ${d.pages} p.` : ''}</span>`);
   if (ch.source.genereLe) source.push(`<span class="muted">Généré le ${esc(formatDate(ch.source.genereLe))}</span>`);
 
   const corps = sections.map((s, i) => `
     <section class="panel syn-section" id="sec-${esc(s.id || i)}">
       <h2><span class="num">${i + 1}</span>${esc(s.titre)}</h2>
-      ${(s.blocs || []).map(rendreBloc).join('')}
+      ${(s.blocs || []).map((b) => rendreBloc(b, docs)).join('')}
     </section>`).join('');
 
   return `
@@ -61,24 +78,30 @@ export function rendreSynthese(ch, base) {
 }
 
 /** Un bloc de synthèse (encadré). */
-export function rendreBloc(b) {
+export function rendreBloc(b, docs = []) {
   const type = TYPES_BLOCS[b.type] ? b.type : 'texte';
   const def = TYPES_BLOCS[type];
   const libelle = b.titre
     ? `${def.libelle ? `${def.libelle} · ` : ''}<span class="t">${enLigne(b.titre)}</span>`
     : def.libelle;
+  const pg = badgeSource(b, docs);
+  // La pastille de source se place à droite du titre du bloc (ou en fin de texte).
   const tete = libelle && type !== 'texte'
-    ? `<div class="bloc-head">${def.icone ? icone(def.icone) : ''}${libelle}</div>` : '';
-  const pg = badgePage(b.pages);
-  // Pour le texte et les tableaux, la pastille de page est placée en ligne / en dessous.
-  if (type === 'texte') {
-    let html = texte(b.contenu);
+    ? `<div class="bloc-head">${def.icone ? icone(def.icone) : ''}${libelle}${type !== 'formule' ? pg : ''}</div>` : '';
+  if (type === 'texte' || !tete) {
+    let html = type === 'texte' ? texte(b.contenu) : corpsBloc(type, b);
     const fin = html.lastIndexOf('</p>');
     html = !pg ? html : fin >= 0 ? `${html.slice(0, fin)} ${pg}${html.slice(fin)}` : `${html}<p>${pg}</p>`;
-    return `<div class="bloc texte">${html}</div>`;
+    return `<div class="bloc ${type}${b.complement ? ' cplt' : ''}">${html}</div>`;
   }
-  if (type === 'tableau') return `<div class="bloc tableau">${tete}${corpsBloc(type, b)}${pg ? `<div class="pg-row">${pg}</div>` : ''}</div>`;
-  return `<div class="bloc ${type}">${pg}${tete}${corpsBloc(type, b)}</div>`;
+  return `<div class="bloc ${type}${b.complement ? ' cplt' : ''}">${type === 'formule' ? pg : ''}${tete}${corpsBloc(type, b)}</div>`;
+}
+
+/** Liste des PDF sources d'un chapitre (format à plusieurs PDF ou ancien format à un seul). */
+export function sourcesDe(ch) {
+  const s = ch.source || {};
+  if (Array.isArray(s.pdfs)) return s.pdfs;
+  return s.pdf ? [{ id: 'cours', nom: s.pdf, pages: s.pages }] : [];
 }
 
 function corpsBloc(type, b) {

@@ -1,7 +1,7 @@
 /* =====================================================================
    FLASHCARDS — lecteur de cartes question / réponse
    ---------------------------------------------------------------------
-   Carte : { id, recto, verso, tags?: [..], page? }
+   Carte : { id, recto, verso, tags?: [..], page?, doc?, complement? }
    Utilisation : const fin = lecteurFlashcards(conteneur, cartes, options)
                  fin() retire les raccourcis clavier quand on quitte la page.
    Commandes : clic / Espace = retourner ; ← → = carte précédente / suivante ;
@@ -14,7 +14,7 @@
 import { esc, melanger, pluriel } from './utils.js';
 import { icone } from './icones.js';
 import { texte } from './rendu.js';
-import { badgePage } from './synthese.js';
+import { badgeSource } from './synthese.js';
 
 export function lecteurFlashcards(conteneur, toutesLesCartes, options = {}) {
   const etat = {
@@ -69,7 +69,7 @@ export function lecteurFlashcards(conteneur, toutesLesCartes, options = {}) {
         <div class="panel fc-card ${etat.verso ? 'verso' : ''}" data-action="retourner" tabindex="0" role="button"
              aria-label="${etat.verso ? 'Réponse' : 'Question'} — cliquer pour retourner">
           <span class="fc-side">${etat.verso ? 'Réponse' : 'Question'}</span>
-          ${etat.verso ? badgePage(c.page != null ? [c.page] : []) : ''}
+          ${etat.verso ? badgeSource(c, options.docs) : ''}
           <div class="fc-text">${texte(face)}</div>
           ${etat.verso && c.tags?.length ? `<div class="fc-tags">${c.tags.map((t) => `<span class="badge">${esc(t)}</span>`).join('')}</div>` : ''}
           <div class="fc-hint">${etat.verso ? '' : 'Clique sur la carte pour voir la réponse'}</div>
