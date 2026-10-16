@@ -14,6 +14,8 @@ import { esc, melanger, stockage, pluriel } from './utils.js';
 import { icone } from './icones.js';
 import { texte, enLigne } from './rendu.js';
 import { badgeSource } from './synthese.js';
+import { monterPlanche } from './planche.js';
+import { svgSur } from './rendu.js';
 
 const NOTES = { ok: { lib: 'Juste', val: 1 }, mid: { lib: 'Presque', val: 0.5 }, ko: { lib: 'Faux', val: 0 } };
 const LETTRES = 'abcdefghijklmnopqrstuvwxyz';
@@ -102,9 +104,11 @@ export function lecteurExercices(conteneur, tous, options = {}) {
     conteneur.innerHTML = `<div class="fc-wrap ex-wrap">${barre}${n ? carte(etat.liste[etat.pos], t) : `
       <div class="panel empty"><p class="muted">Aucun exercice pour ce filtre.</p>
       <button class="btn" data-action="tous">Voir tous les exercices</button></div>`}</div>`;
+    monter();
   }
 
   function carte(e, t) {
+    if (e.type === 'dessin') return carteDessin(e, t);
     const note = t[cle(e)];
     const liste = etapes(e);
     const fini = etat.vus >= liste.length;
@@ -150,6 +154,66 @@ export function lecteurExercices(conteneur, tous, options = {}) {
       </div>`;
   }
 
+
+  /* ---------- Exercice de dessin : planche interactive ---------- */
+  function entete(e, note) {
+    const etoiles = '★'.repeat(e.niveau || 1) + '☆'.repeat(3 - (e.niveau || 1));
+    return `<div class="ex-head">
+          <span class="ex-niv" title="Niveau ${e.niveau || 1} sur 3">${etoiles}</span>
+          <h3>${enLigne(e.titre || 'Exercice')}</h3>
+          <span class="grow"></span>
+          ${note ? `<span class="badge ex-${note.r}">${NOTES[note.r].lib}${note.n > 1 ? ` · ${note.n}×` : ''}</span>` : ''}
+          ${badgeSource(e, options.docs)}
+        </div>`;
+  }
+  function carteDessin(e, t) {
+    const note = t[cle(e)];
+    const corrige = etat.vus > 0;
+    return `
+      <div class="panel ex-card ex-dessin">
+        ${entete(e, note)}
+        <div class="ex-dz">
+          <div class="ex-consigne">${texte(e.consigne || '')}
+            ${e.perspective ? `<figure class="fig ex-persp">${svgSur(e.perspective)}<figcaption>Perspective · F = sens de la vue de face</figcaption></figure>` : ''}
+          </div>
+        </div>
+        ${e.indice ? (etat.indice ? `<div class="ex-indice">${icone('ampoule')}<div>${texte(e.indice)}</div></div>`
+          : (!corrige ? `<button class="btn" data-action="indice">${icone('ampoule')} Un indice</button>` : '')) : ''}
+        <div class="ex-planche" data-planche></div>
+        ${corrige ? '<div class="ex-res" data-res></div>' : ''}
+        <div class="fc-actions">
+          ${!corrige ? `<button class="btn primary" data-action="verifier">${icone('check')} Vérifier mon dessin</button>` : `
+            <span class="ex-q">Comment ça s'est passé ?</span>
+            <button class="btn ok" data-action="noter" data-r="ok">${icone('check')} Juste</button>
+            <button class="btn ex-mid" data-action="noter" data-r="mid">≈ Presque</button>
+            <button class="btn bad" data-action="noter" data-r="ko">${icone('croix')} Faux</button>
+            <button class="btn" data-action="retoucher">${icone('crayon')} Corriger mon dessin</button>`}
+        </div>
+        <div class="fc-actions ex-nav">
+          <button class="btn icon" data-action="prec" title="Exercice précédent" ${etat.pos === 0 ? 'disabled' : ''}>${icone('fleche-g')}</button>
+          <button class="btn" data-action="suiv" ${etat.pos >= etat.liste.length - 1 ? 'disabled' : ''}>Passer ${icone('fleche-d')}</button>
+        </div>
+      </div>`;
+  }
+  function monter() {
+    const zone = conteneur.querySelector('[data-planche]');
+    if (!zone) return;
+    const e = etat.liste[etat.pos];
+    const p = monterPlanche(zone, e, { cle: cle(e), correction: etat.vus > 0 });
+    const r = p.resultat; const res = conteneur.querySelector('[data-res]');
+    if (r && res) {
+      const verdict = r.pct >= 95 && !r.enTrop.length ? 'ok' : r.pct >= 70 ? 'mid' : 'ko';
+      res.innerHTML = `<div class="ex-bilan ${verdict}"><b>${r.pct} %</b>
+        <span>${r.ok} / ${r.n} traits justes</span>
+        ${r.manque ? `<span class="pl-leg manque">${r.manque} manquant${r.manque > 1 ? 's' : ''}</span>` : ''}
+        ${r.type ? `<span class="pl-leg type">${r.type} mauvais type de trait</span>` : ''}
+        ${r.enTrop.length ? `<span class="pl-leg trop">${r.enTrop.length} en trop</span>` : ''}</div>
+        <p class="muted pl-legende"><span class="pl-leg ok">vert</span> trouvé · <span class="pl-leg manque">rouge</span> manquant · <span class="pl-leg type">orange</span> bon tracé mais mauvais type de trait · <span class="pl-leg trop">violet</span> en trop.
+        <label><input type="checkbox" checked data-action="voircorr"> Afficher la correction</label></p>`;
+      res.querySelector('[data-action=voircorr]').addEventListener('change', (ev) => p.basculer(ev.target.checked));
+    }
+  }
+
   function aller(p) {
     if (p < 0 || p >= etat.liste.length) return;
     etat.pos = p; reset(); afficher();
@@ -158,6 +222,8 @@ export function lecteurExercices(conteneur, tous, options = {}) {
 
   const actions = {
     etape: () => { etat.vus++; afficher(); conteneur.querySelector('.ex-step:last-child')?.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); },
+    verifier: () => { etat.vus = 1; afficher(); conteneur.querySelector('[data-res]')?.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); },
+    retoucher: () => { etat.vus = 0; afficher(); },
     tout: () => { etat.vus = etapes(etat.liste[etat.pos]).length; afficher(); },
     indice: () => { etat.indice = true; afficher(); },
     noter: (b) => {

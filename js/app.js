@@ -19,7 +19,7 @@ import { vueMatiere } from './vues/matiere.js';
 import { vueChapitre } from './vues/chapitre.js';
 import { vueParametres } from './vues/parametres.js';
 
-const VERSION = '0.3.0 (exercices de maths)';
+const VERSION = '0.4.0 (dessin dans l’appli)';
 const vue = document.getElementById('vue');
 let nettoyer = null; // fonction fournie par la page affichée, appelée avant d'en changer
 
