@@ -1,221 +1,304 @@
 {
-  "format": 1,
-  "titre": "Révisions — Bachelier électromécanique",
-  "maj": "2026-10-16",
-  "matieres": [
+ "format": 1,
+ "titre": "Révisions — Bachelier électromécanique",
+ "maj": "2026-10-16",
+ "matieres": [
+  {
+   "id": "maths",
+   "nom": "Remédiation mathématique",
+   "court": "Maths",
+   "couleur": "#7c3aed",
+   "icone": "sigma",
+   "profil": "maths",
+   "ordre": 1,
+   "chapitres": [
     {
-      "id": "maths",
-      "nom": "Remédiation mathématique",
-      "court": "Maths",
-      "couleur": "#7c3aed",
-      "icone": "sigma",
-      "profil": "maths",
-      "ordre": 1,
-      "chapitres": [
-        {
-          "id": "ch01-rappels",
-          "titre": "Rappels numériques et littéraux",
-          "ordre": 1,
-          "fichier": "maths/ch01-rappels.json",
-          "maj": "2026-10-16",
-          "nb": {
-            "sections": 6,
-            "flashcards": 17,
-            "exercices": 0
-          }
-        },
-        {
-          "id": "ch02-exposants",
-          "titre": "Exposants entiers et fractionnaires",
-          "ordre": 2,
-          "fichier": "maths/ch02-exposants.json",
-          "maj": "2026-10-16",
-          "nb": {
-            "sections": 5,
-            "flashcards": 15,
-            "exercices": 0
-          }
-        },
-        {
-          "id": "ch03-racines",
-          "titre": "Racines carrées et cubiques",
-          "ordre": 3,
-          "fichier": "maths/ch03-racines.json",
-          "maj": "2026-10-16",
-          "nb": {
-            "sections": 5,
-            "flashcards": 14,
-            "exercices": 0
-          }
-        },
-        {
-          "id": "ch04-radicaux",
-          "titre": "Racines et exposants fractionnaires (suite)",
-          "ordre": 4,
-          "fichier": "maths/ch04-radicaux.json",
-          "maj": "2026-10-16",
-          "nb": {
-            "sections": 5,
-            "flashcards": 12,
-            "exercices": 0
-          }
-        },
-        {
-          "id": "ch05-identites",
-          "titre": "Identités remarquables",
-          "ordre": 5,
-          "fichier": "maths/ch05-identites.json",
-          "maj": "2026-10-16",
-          "nb": {
-            "sections": 4,
-            "flashcards": 12,
-            "exercices": 0
-          }
-        },
-        {
-          "id": "ch06-distributivite",
-          "titre": "Distributivité et mise en évidence",
-          "ordre": 6,
-          "fichier": "maths/ch06-distributivite.json",
-          "maj": "2026-10-16",
-          "nb": {
-            "sections": 3,
-            "flashcards": 11,
-            "exercices": 0
-          }
-        },
-        {
-          "id": "ch07-formules",
-          "titre": "Transformations de formules",
-          "ordre": 7,
-          "fichier": "maths/ch07-formules.json",
-          "maj": "2026-10-16",
-          "nb": {
-            "sections": 6,
-            "flashcards": 16,
-            "exercices": 0
-          }
-        },
-        {
-          "id": "ch08-trigonometrie",
-          "titre": "Trigonométrie",
-          "ordre": 8,
-          "fichier": "maths/ch08-trigonometrie.json",
-          "maj": "2026-10-16",
-          "nb": {
-            "sections": 8,
-            "flashcards": 25,
-            "exercices": 0
-          }
-        }
-      ]
+     "id": "ch01-rappels",
+     "titre": "Rappels numériques et littéraux",
+     "ordre": 1,
+     "fichier": "maths/ch01-rappels.json",
+     "maj": "2026-10-16",
+     "nb": {
+      "sections": 6,
+      "flashcards": 17,
+      "exercices": 0
+     }
     },
     {
-      "id": "dessin",
-      "nom": "Dessin technique",
-      "court": "Dessin",
-      "couleur": "#0f766e",
-      "icone": "equerre",
-      "profil": "dessin",
-      "ordre": 2,
-      "chapitres": [
-        {
-          "id": "ch01-generalites",
-          "titre": "Dessins techniques : généralités",
-          "ordre": 1,
-          "fichier": "dessin/ch01-generalites.json",
-          "maj": "2026-10-16",
-          "nb": {
-            "sections": 9,
-            "flashcards": 22,
-            "exercices": 0
-          }
-        },
-        {
-          "id": "ch02-formes",
-          "titre": "Formes usuelles : vocabulaire",
-          "ordre": 2,
-          "fichier": "dessin/ch02-formes.json",
-          "maj": "2026-10-16",
-          "nb": {
-            "sections": 6,
-            "flashcards": 20,
-            "exercices": 0
-          }
-        },
-        {
-          "id": "ch03-projections",
-          "titre": "Projections orthogonales – normalisation",
-          "ordre": 3,
-          "fichier": "dessin/ch03-projections.json",
-          "maj": "2026-10-16",
-          "nb": {
-            "sections": 7,
-            "flashcards": 19,
-            "exercices": 0
-          }
-        },
-        {
-          "id": "ch04-coupes",
-          "titre": "Coupes et sections",
-          "ordre": 4,
-          "fichier": "dessin/ch04-coupes.json",
-          "maj": "2026-10-16",
-          "nb": {
-            "sections": 7,
-            "flashcards": 15,
-            "exercices": 0
-          }
-        },
-        {
-          "id": "ch05-perspectives",
-          "titre": "Perspectives",
-          "ordre": 5,
-          "fichier": "dessin/ch05-perspectives.json",
-          "maj": "2026-10-16",
-          "nb": {
-            "sections": 7,
-            "flashcards": 13,
-            "exercices": 0
-          }
-        },
-        {
-          "id": "ch06-cotation",
-          "titre": "Cotation : principes généraux",
-          "ordre": 6,
-          "fichier": "dessin/ch06-cotation.json",
-          "maj": "2026-10-16",
-          "nb": {
-            "sections": 8,
-            "flashcards": 16,
-            "exercices": 0
-          }
-        }
-      ]
+     "id": "ch02-exposants",
+     "titre": "Exposants entiers et fractionnaires",
+     "ordre": 2,
+     "fichier": "maths/ch02-exposants.json",
+     "maj": "2026-10-16",
+     "nb": {
+      "sections": 5,
+      "flashcards": 15,
+      "exercices": 0
+     }
     },
     {
-      "id": "elec",
-      "nom": "Électricité",
-      "court": "Électricité",
-      "couleur": "#d97706",
-      "icone": "eclair",
-      "profil": "electricite",
-      "ordre": 3,
-      "chapitres": [
-        {
-          "id": "ch01-ohm",
-          "titre": "Loi d'Ohm, puissance et associations de résistances",
-          "ordre": 1,
-          "fichier": "elec/ch01-ohm.json",
-          "maj": "2026-10-16",
-          "exemple": true,
-          "nb": {
-            "sections": 4,
-            "flashcards": 9,
-            "exercices": 0
-          }
-        }
-      ]
+     "id": "ch03-racines",
+     "titre": "Racines carrées et cubiques",
+     "ordre": 3,
+     "fichier": "maths/ch03-racines.json",
+     "maj": "2026-10-16",
+     "nb": {
+      "sections": 5,
+      "flashcards": 14,
+      "exercices": 0
+     }
+    },
+    {
+     "id": "ch04-radicaux",
+     "titre": "Racines et exposants fractionnaires (suite)",
+     "ordre": 4,
+     "fichier": "maths/ch04-radicaux.json",
+     "maj": "2026-10-16",
+     "nb": {
+      "sections": 5,
+      "flashcards": 12,
+      "exercices": 0
+     }
+    },
+    {
+     "id": "ch05-identites",
+     "titre": "Identités remarquables",
+     "ordre": 5,
+     "fichier": "maths/ch05-identites.json",
+     "maj": "2026-10-16",
+     "nb": {
+      "sections": 4,
+      "flashcards": 12,
+      "exercices": 0
+     }
+    },
+    {
+     "id": "ch06-distributivite",
+     "titre": "Distributivité et mise en évidence",
+     "ordre": 6,
+     "fichier": "maths/ch06-distributivite.json",
+     "maj": "2026-10-16",
+     "nb": {
+      "sections": 3,
+      "flashcards": 11,
+      "exercices": 0
+     }
+    },
+    {
+     "id": "ch07-formules",
+     "titre": "Transformations de formules",
+     "ordre": 7,
+     "fichier": "maths/ch07-formules.json",
+     "maj": "2026-10-16",
+     "nb": {
+      "sections": 6,
+      "flashcards": 16,
+      "exercices": 0
+     }
+    },
+    {
+     "id": "ch08-trigonometrie",
+     "titre": "Trigonométrie",
+     "ordre": 8,
+     "fichier": "maths/ch08-trigonometrie.json",
+     "maj": "2026-10-16",
+     "nb": {
+      "sections": 8,
+      "flashcards": 25,
+      "exercices": 0
+     }
     }
-  ]
+   ]
+  },
+  {
+   "id": "dessin",
+   "nom": "Dessin technique",
+   "court": "Dessin",
+   "couleur": "#0f766e",
+   "icone": "equerre",
+   "profil": "dessin",
+   "ordre": 2,
+   "chapitres": [
+    {
+     "id": "ch01-generalites",
+     "titre": "Dessins techniques : généralités",
+     "ordre": 1,
+     "fichier": "dessin/ch01-generalites.json",
+     "maj": "2026-10-16",
+     "nb": {
+      "sections": 9,
+      "flashcards": 22,
+      "exercices": 0
+     }
+    },
+    {
+     "id": "ch02-formes",
+     "titre": "Formes usuelles : vocabulaire",
+     "ordre": 2,
+     "fichier": "dessin/ch02-formes.json",
+     "maj": "2026-10-16",
+     "nb": {
+      "sections": 6,
+      "flashcards": 20,
+      "exercices": 0
+     }
+    },
+    {
+     "id": "ch03-projections",
+     "titre": "Projections orthogonales – normalisation",
+     "ordre": 3,
+     "fichier": "dessin/ch03-projections.json",
+     "maj": "2026-10-16",
+     "nb": {
+      "sections": 7,
+      "flashcards": 19,
+      "exercices": 0
+     }
+    },
+    {
+     "id": "ch04-coupes",
+     "titre": "Coupes et sections",
+     "ordre": 4,
+     "fichier": "dessin/ch04-coupes.json",
+     "maj": "2026-10-16",
+     "nb": {
+      "sections": 7,
+      "flashcards": 15,
+      "exercices": 0
+     }
+    },
+    {
+     "id": "ch05-perspectives",
+     "titre": "Perspectives",
+     "ordre": 5,
+     "fichier": "dessin/ch05-perspectives.json",
+     "maj": "2026-10-16",
+     "nb": {
+      "sections": 7,
+      "flashcards": 13,
+      "exercices": 0
+     }
+    },
+    {
+     "id": "ch06-cotation",
+     "titre": "Cotation : principes généraux",
+     "ordre": 6,
+     "fichier": "dessin/ch06-cotation.json",
+     "maj": "2026-10-16",
+     "nb": {
+      "sections": 8,
+      "flashcards": 16,
+      "exercices": 0
+     }
+    }
+   ]
+  },
+  {
+   "id": "elec",
+   "nom": "Électricité",
+   "court": "Électricité",
+   "couleur": "#d97706",
+   "icone": "eclair",
+   "profil": "electricite",
+   "ordre": 3,
+   "chapitres": [
+    {
+     "id": "ch01-circuit",
+     "titre": "Le circuit électrique et la sécurité",
+     "ordre": 1,
+     "fichier": "elec/ch01-circuit.json",
+     "maj": "2026-10-16",
+     "nb": {
+      "sections": 5,
+      "flashcards": 13,
+      "exercices": 0
+     }
+    },
+    {
+     "id": "ch02-courant",
+     "titre": "Le courant et la loi des nœuds",
+     "ordre": 2,
+     "fichier": "elec/ch02-courant.json",
+     "maj": "2026-10-16",
+     "nb": {
+      "sections": 5,
+      "flashcards": 14,
+      "exercices": 0
+     }
+    },
+    {
+     "id": "ch03-tension",
+     "titre": "La tension et la loi des mailles",
+     "ordre": 3,
+     "fichier": "elec/ch03-tension.json",
+     "maj": "2026-10-16",
+     "nb": {
+      "sections": 7,
+      "flashcards": 15,
+      "exercices": 0
+     }
+    },
+    {
+     "id": "ch04-charge",
+     "titre": "Quantité d'électricité et batteries",
+     "ordre": 4,
+     "fichier": "elec/ch04-charge.json",
+     "maj": "2026-10-16",
+     "nb": {
+      "sections": 4,
+      "flashcards": 12,
+      "exercices": 0
+     }
+    },
+    {
+     "id": "ch05-ohm",
+     "titre": "La loi d'Ohm et l'effet Joule",
+     "ordre": 5,
+     "fichier": "elec/ch05-ohm.json",
+     "maj": "2026-10-16",
+     "nb": {
+      "sections": 6,
+      "flashcards": 13,
+      "exercices": 0
+     }
+    },
+    {
+     "id": "ch06-associations",
+     "titre": "Associations de résistances",
+     "ordre": 6,
+     "fichier": "elec/ch06-associations.json",
+     "maj": "2026-10-16",
+     "nb": {
+      "sections": 7,
+      "flashcards": 16,
+      "exercices": 0
+     }
+    },
+    {
+     "id": "ch07-puissance",
+     "titre": "Puissance, énergie et rendement",
+     "ordre": 7,
+     "fichier": "elec/ch07-puissance.json",
+     "maj": "2026-10-16",
+     "nb": {
+      "sections": 6,
+      "flashcards": 17,
+      "exercices": 0
+     }
+    },
+    {
+     "id": "ch08-thermique",
+     "titre": "Énergie électrique et chaleur",
+     "ordre": 8,
+     "fichier": "elec/ch08-thermique.json",
+     "maj": "2026-10-16",
+     "nb": {
+      "sections": 6,
+      "flashcards": 14,
+      "exercices": 0
+     }
+    }
+   ]
+  }
+ ]
 }
