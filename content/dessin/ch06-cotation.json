@@ -1,0 +1,485 @@
+{
+ "format": 1,
+ "id": "ch06-cotation",
+ "matiere": "dessin",
+ "titre": "Cotation : principes généraux",
+ "source": {
+  "pdfs": [
+   {
+    "id": "cours",
+    "nom": "Dessin technique et DAO – Chapitre 6 : Cotation, principes généraux",
+    "court": "Ch. 6 – Cotation",
+    "pages": 23
+   },
+   {
+    "id": "guide",
+    "nom": "Guide des sciences et technologies industrielles (J.-L. Fanchon)",
+    "court": "Guide Fanchon",
+    "pages": 135
+   }
+  ],
+  "genereLe": "2026-10-16",
+  "modele": "Claude (rédigé dans la conversation)"
+ },
+ "synthese": {
+  "intro": "Inscrire les dimensions d'une pièce : éléments d'une cote, modes de cotation, symboles, cotes particulières et règles pour une cotation suffisante.",
+  "sections": [
+   {
+    "id": "s1",
+    "titre": "Le rôle de la cotation",
+    "blocs": [
+     {
+      "type": "texte",
+      "contenu": "Pour fabriquer un objet, il faut les **vues** (formes et contours) **et** la **cotation** (description chiffrée des dimensions). Le dessin est un **document contractuel** : chaque intervenant doit y trouver tout ce dont il a besoin.",
+      "pages": [
+       2
+      ],
+      "doc": "cours"
+     }
+    ]
+   },
+   {
+    "id": "s2",
+    "titre": "Les éléments d'une cote",
+    "blocs": [
+     {
+      "type": "figure",
+      "svg": "<svg viewBox=\"0 0 620 285\" width=\"620\" role=\"img\" aria-label=\"Éléments d'une cote ; cotation en série et en parallèle\" xmlns=\"http://www.w3.org/2000/svg\"><title>Éléments d'une cote ; cotation en série et en parallèle</title><path class=\"tf\" d=\"M80 150 L80 80 L300 80 L300 150 Z\"/><line class=\"tn\" x1=\"80\" y1=\"72\" x2=\"80\" y2=\"30\"/><line class=\"tn\" x1=\"300\" y1=\"72\" x2=\"300\" y2=\"30\"/><line class=\"tn solide\" x1=\"190\" y1=\"40\" x2=\"80\" y2=\"40\"/><polygon class=\"pt\" points=\"80,40 86.4,37.3 86.4,42.7\"/><line class=\"tn solide\" x1=\"190\" y1=\"40\" x2=\"300\" y2=\"40\"/><polygon class=\"pt\" points=\"300,40 293.6,42.7 293.6,37.3\"/><text x=\"190\" y=\"34\" text-anchor=\"middle\" class=\"gras grand\">60</text><line class=\"tn\" x1=\"308\" y1=\"80\" x2=\"360\" y2=\"80\"/><line class=\"tn\" x1=\"308\" y1=\"150\" x2=\"360\" y2=\"150\"/><line class=\"tn solide\" x1=\"350\" y1=\"115\" x2=\"350\" y2=\"80\"/><polygon class=\"pt\" points=\"350,80 352.7,86.4 347.3,86.4\"/><line class=\"tn solide\" x1=\"350\" y1=\"115\" x2=\"350\" y2=\"150\"/><polygon class=\"pt\" points=\"350,150 347.3,143.6 352.7,143.6\"/><text class=\"gras grand\" transform=\"translate(343 115) rotate(-90)\" text-anchor=\"middle\">20</text><text x=\"430\" y=\"32\" text-anchor=\"start\" class=\"petit f-def\">① ligne de cote (trait fin)</text><text x=\"430\" y=\"52\" text-anchor=\"start\" class=\"petit f-def\">② lignes d'attache (trait fin)</text><text x=\"430\" y=\"72\" text-anchor=\"start\" class=\"petit f-def\">③ flèches aux extrémités</text><text x=\"430\" y=\"92\" text-anchor=\"start\" class=\"petit f-def\">④ valeur en mm, sans unité :</text><text x=\"446\" y=\"108\" text-anchor=\"start\" class=\"petit muet\">au-dessus de la ligne de cote,</text><text x=\"446\" y=\"122\" text-anchor=\"start\" class=\"petit muet\">lue depuis le bas ou la droite</text><text x=\"140\" y=\"26\" text-anchor=\"middle\" class=\"petit f-def\">①</text><text x=\"68\" y=\"50\" text-anchor=\"middle\" class=\"petit f-def\">②</text><text x=\"94\" y=\"54\" text-anchor=\"middle\" class=\"petit f-def\">③</text><text x=\"212\" y=\"26\" text-anchor=\"middle\" class=\"petit f-def\">④</text><text x=\"150\" y=\"200\" text-anchor=\"middle\" class=\"gras\">En série</text><text x=\"470\" y=\"200\" text-anchor=\"middle\" class=\"gras\">En parallèle</text><line class=\"tf\" x1=\"40\" y1=\"240\" x2=\"260\" y2=\"240\"/><line class=\"tn solide\" x1=\"75\" y1=\"222\" x2=\"40\" y2=\"222\"/><polygon class=\"pt\" points=\"40,222 46.4,219.3 46.4,224.7\"/><line class=\"tn solide\" x1=\"75\" y1=\"222\" x2=\"110\" y2=\"222\"/><polygon class=\"pt\" points=\"110,222 103.6,224.7 103.6,219.3\"/><line class=\"tn solide\" x1=\"150\" y1=\"222\" x2=\"110\" y2=\"222\"/><polygon class=\"pt\" points=\"110,222 116.4,219.3 116.4,224.7\"/><line class=\"tn solide\" x1=\"150\" y1=\"222\" x2=\"190\" y2=\"222\"/><polygon class=\"pt\" points=\"190,222 183.6,224.7 183.6,219.3\"/><line class=\"tn solide\" x1=\"225\" y1=\"222\" x2=\"190\" y2=\"222\"/><polygon class=\"pt\" points=\"190,222 196.4,219.3 196.4,224.7\"/><line class=\"tn solide\" x1=\"225\" y1=\"222\" x2=\"260\" y2=\"222\"/><polygon class=\"pt\" points=\"260,222 253.6,224.7 253.6,219.3\"/><line class=\"tn\" x1=\"40\" y1=\"236\" x2=\"40\" y2=\"214\"/><line class=\"tn\" x1=\"110\" y1=\"236\" x2=\"110\" y2=\"214\"/><line class=\"tn\" x1=\"190\" y1=\"236\" x2=\"190\" y2=\"214\"/><line class=\"tn\" x1=\"260\" y1=\"236\" x2=\"260\" y2=\"214\"/><line class=\"tf\" x1=\"360\" y1=\"270\" x2=\"580\" y2=\"270\"/><line class=\"tn solide\" x1=\"395\" y1=\"252\" x2=\"360\" y2=\"252\"/><polygon class=\"pt\" points=\"360,252 366.4,249.3 366.4,254.7\"/><line class=\"tn solide\" x1=\"395\" y1=\"252\" x2=\"430\" y2=\"252\"/><polygon class=\"pt\" points=\"430,252 423.6,254.7 423.6,249.3\"/><line class=\"tn\" x1=\"430\" y1=\"266\" x2=\"430\" y2=\"246\"/><line class=\"tn solide\" x1=\"435\" y1=\"236\" x2=\"360\" y2=\"236\"/><polygon class=\"pt\" points=\"360,236 366.4,233.3 366.4,238.7\"/><line class=\"tn solide\" x1=\"435\" y1=\"236\" x2=\"510\" y2=\"236\"/><polygon class=\"pt\" points=\"510,236 503.6,238.7 503.6,233.3\"/><line class=\"tn\" x1=\"510\" y1=\"266\" x2=\"510\" y2=\"230\"/><line class=\"tn solide\" x1=\"470\" y1=\"220\" x2=\"360\" y2=\"220\"/><polygon class=\"pt\" points=\"360,220 366.4,217.3 366.4,222.7\"/><line class=\"tn solide\" x1=\"470\" y1=\"220\" x2=\"580\" y2=\"220\"/><polygon class=\"pt\" points=\"580,220 573.6,222.7 573.6,217.3\"/><line class=\"tn\" x1=\"580\" y1=\"266\" x2=\"580\" y2=\"214\"/><line class=\"tn\" x1=\"360\" y1=\"266\" x2=\"360\" y2=\"210\"/></svg>",
+      "legende": "Les quatre éléments d'une cote, puis deux façons d'enchaîner plusieurs cotes.",
+      "pages": [
+       4,
+       5
+      ],
+      "doc": "cours"
+     },
+     {
+      "type": "liste",
+      "items": [
+       "une **ligne de cote**, en trait fin ;",
+       "deux **lignes d'attache** (de rappel), en trait continu fin ; un trait d'axe peut aussi servir ;",
+       "deux **flèches** (ou extrémités) aux limites de la ligne de cote ;",
+       "la **valeur** : au milieu et **au-dessus** de la ligne pour une cote horizontale ; à **gauche**, écrite **de bas en haut**, pour une cote verticale."
+      ],
+      "pages": [
+       4
+      ],
+      "titre": "Une cote = 4 éléments",
+      "doc": "cours"
+     },
+     {
+      "type": "point-cle",
+      "contenu": "Les valeurs se lisent **depuis le bas ou depuis la droite** du dessin. La valeur indiquée est la **dimension réelle** de l'objet, quelle que soit l'échelle.",
+      "pages": [
+       4
+      ],
+      "doc": "cours"
+     },
+     {
+      "type": "texte",
+      "contenu": "Si la place manque : prolonger la ligne de cote, **inverser les flèches** et écrire le texte à l'extérieur. Les lignes d'attache peuvent être obliques, mais parallèles entre elles.",
+      "pages": [
+       4
+      ],
+      "doc": "cours"
+     }
+    ]
+   },
+   {
+    "id": "s3",
+    "titre": "Cotation multiple",
+    "blocs": [
+     {
+      "type": "tableau",
+      "entetes": [
+       "Mode",
+       "Principe"
+      ],
+      "lignes": [
+       [
+        "En série",
+        "Les cotes se suivent sur une **même ligne**, sans se chevaucher."
+       ],
+       [
+        "En parallèle",
+        "Les cotes partent d'une **ligne d'attache commune** (pratique pour l'usineur : pas de calcul)."
+       ],
+       [
+        "Cotes superposées",
+        "Toutes les cotes sur une même ligne, depuis une **origine marquée d'un cercle**."
+       ],
+       [
+        "Coordonnées cartésiennes",
+        "Cotes depuis un point zéro, souvent regroupées dans un **tableau** (dessins de fabrication)."
+       ]
+      ],
+      "pages": [
+       5,
+       6
+      ],
+      "doc": "cours"
+     },
+     {
+      "type": "piege",
+      "contenu": "Le nombre de **décimales** doit être le même pour chaque cote (sauf une cote nulle, sans décimale).",
+      "pages": [
+       5
+      ],
+      "doc": "cours"
+     }
+    ]
+   },
+   {
+    "id": "s4",
+    "titre": "Tolérances et cotes particulières",
+    "blocs": [
+     {
+      "type": "texte",
+      "contenu": "Une **tolérance dimensionnelle** s'écrit après la dimension nominale : il faut deux valeurs (maximale et minimale), souvent par un écart supérieur et un écart inférieur. Si une seule limite compte : « mini » ou « max ».",
+      "pages": [
+       6
+      ],
+      "doc": "cours"
+     },
+     {
+      "type": "tableau",
+      "entetes": [
+       "Cote",
+       "Signification"
+      ],
+      "lignes": [
+       [
+        "Cote **encadrée**",
+        "Dimension **théorique exacte** (position, orientation ou profil), tolérancée par d'autres spécifications."
+       ],
+       [
+        "Cote **entre parenthèses**",
+        "Cote **auxiliaire** : à titre d'information, **jamais tolérancée**."
+       ],
+       [
+        "Cote **soulignée**",
+        "Dimension **non dessinée à l'échelle**."
+       ]
+      ],
+      "pages": [
+       8,
+       13,
+       14
+      ],
+      "doc": "cours"
+     }
+    ]
+   },
+   {
+    "id": "s5",
+    "titre": "Symboles : diamètres, rayons, sphères…",
+    "blocs": [
+     {
+      "type": "tableau",
+      "entetes": [
+       "Élément",
+       "Symbole",
+       "Exemple"
+      ],
+      "lignes": [
+       [
+        "Diamètre",
+        "Ø",
+        "Ø 20"
+       ],
+       [
+        "Rayon",
+        "R",
+        "R 5"
+       ],
+       [
+        "Sphère",
+        "SØ ou SR",
+        "SØ 45"
+       ],
+       [
+        "Carré",
+        "□",
+        "□ 35"
+       ],
+       [
+        "Épaisseur",
+        "t =",
+        "t = 3"
+       ]
+      ],
+      "pages": [
+       10,
+       11
+      ],
+      "doc": "cours"
+     },
+     {
+      "type": "point-cle",
+      "contenu": "On cote le **diamètre** d'un cercle complet (trou, cylindre) et le **rayon** d'un **arc**. La ligne de cote d'un rayon ou d'un diamètre passe par le **centre**.",
+      "pages": [
+       11,
+       15,
+       17
+      ],
+      "doc": "cours"
+     },
+     {
+      "type": "texte",
+      "contenu": "Les valeurs angulaires s'écrivent dans le sens de la ligne de cote (ou horizontalement si c'est plus lisible). Pour des trous ou éléments **répétitifs et équidistants**, on utilise les dispositions normalisées qui évitent de répéter les cotes.",
+      "pages": [
+       9,
+       12
+      ],
+      "doc": "cours"
+     }
+    ]
+   },
+   {
+    "id": "s6",
+    "titre": "Règles pour une bonne cotation",
+    "blocs": [
+     {
+      "type": "liste",
+      "items": [
+       "L'**échelle** est la première indication à inscrire.",
+       "Toutes les cotes dans la **même unité** : le **millimètre** (et le degré), **sans l'écrire**.",
+       "Une même cote n'apparaît **qu'une seule fois** dans tout le dessin.",
+       "**Grouper** les cotes d'un détail sur la vue qui le définit le mieux.",
+       "Coter le **diamètre** plutôt que le rayon pour les trous et cylindres.",
+       "Ne jamais inscrire de cotes **incontrôlables ou inutiles**."
+      ],
+      "pages": [
+       15,
+       16
+      ],
+      "titre": "Organisation",
+      "doc": "cours"
+     },
+     {
+      "type": "liste",
+      "items": [
+       "Les lignes d'attache ne doivent pas couper les lignes de cote (elles peuvent se couper entre elles).",
+       "Placer les cotes de préférence **en dehors des vues**.",
+       "Coter à partir des **traits forts** ou des **axes**, **jamais sur des traits interrompus** (contours cachés).",
+       "Ne pas écrire un chiffre à cheval sur un axe ou un trait."
+      ],
+      "pages": [
+       17
+      ],
+      "titre": "Tracé",
+      "doc": "cours"
+     }
+    ]
+   },
+   {
+    "id": "s7",
+    "titre": "Cotation suffisante, pas surabondante",
+    "blocs": [
+     {
+      "type": "definition",
+      "contenu": "Une forme est cotée **deux fois** (directement ou par une chaîne où une cote est la somme ou la différence d'autres). À éviter : au moment de fabriquer, on devrait **choisir** entre deux dimensions, et les tolérances se combinent.",
+      "titre": "Cotation surabondante",
+      "pages": [
+       20
+      ],
+      "doc": "cours"
+     },
+     {
+      "type": "point-cle",
+      "contenu": "Le choix d'une **cotation suffisante** est l'étape la plus difficile : il demande de connaître la fabrication et le fonctionnement.",
+      "pages": [
+       20
+      ],
+      "doc": "cours"
+     },
+     {
+      "type": "exemple",
+      "contenu": "Une longueur de 72 divisée en 4 parties égales de 18 : si 18 est tolérancée, la cote 72 est surabondante et se met **entre parenthèses** (cote auxiliaire).",
+      "pages": [
+       12
+      ],
+      "doc": "cours"
+     }
+    ]
+   },
+   {
+    "id": "s8",
+    "titre": "Pour aller plus loin",
+    "blocs": [
+     {
+      "type": "texte",
+      "contenu": "Chapitre 7 « Cotation : principes généraux (normes GPS) » du guide.",
+      "pages": [
+       72,
+       81
+      ],
+      "doc": "guide"
+     }
+    ]
+   }
+  ]
+ },
+ "flashcards": [
+  {
+   "id": "fc-001",
+   "recto": "Les 4 éléments d'une cote ?",
+   "verso": "Ligne de cote, deux lignes d'attache, deux flèches, la valeur.",
+   "tags": [
+    "cote"
+   ],
+   "page": 4,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-002",
+   "recto": "En quel trait sont les lignes de cote et d'attache ?",
+   "verso": "En trait **continu fin**.",
+   "tags": [
+    "cote"
+   ],
+   "page": 4,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-003",
+   "recto": "Où écrit-on la valeur d'une cote horizontale ? verticale ?",
+   "verso": "Horizontale : au milieu, **au-dessus**. Verticale : à **gauche**, de bas en haut.",
+   "tags": [
+    "cote"
+   ],
+   "page": 4,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-004",
+   "recto": "D'où se lisent les cotes ?",
+   "verso": "Depuis le **bas** ou depuis la **droite** du dessin.",
+   "tags": [
+    "cote"
+   ],
+   "page": 4,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-005",
+   "recto": "La cote indique-t-elle la dimension dessinée ou réelle ?",
+   "verso": "La dimension **réelle**, quelle que soit l'échelle.",
+   "tags": [
+    "cote"
+   ],
+   "page": 4,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-006",
+   "recto": "Différence entre cotation **en série** et **en parallèle** ?",
+   "verso": "Série : cotes qui se suivent sur une ligne. Parallèle : cotes depuis une **ligne de référence commune**.",
+   "tags": [
+    "cotation multiple"
+   ],
+   "page": 5,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-007",
+   "recto": "Que signifie une cote **entre parenthèses** ?",
+   "verso": "Une **cote auxiliaire** (information), jamais tolérancée.",
+   "tags": [
+    "cotes particulières"
+   ],
+   "page": 13,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-008",
+   "recto": "Que signifie une cote **encadrée** ?",
+   "verso": "Une **dimension théorique exacte**.",
+   "tags": [
+    "cotes particulières"
+   ],
+   "page": 8,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-009",
+   "recto": "Que signifie une cote **soulignée** ?",
+   "verso": "Dimension **non dessinée à l'échelle**.",
+   "tags": [
+    "cotes particulières"
+   ],
+   "page": 14,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-010",
+   "recto": "Symbole du diamètre ? du rayon ? d'une sphère ?",
+   "verso": "Ø ; R ; SØ ou SR.",
+   "tags": [
+    "symboles"
+   ],
+   "page": 11,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-011",
+   "recto": "Trou complet : rayon ou diamètre ?",
+   "verso": "Le **diamètre** (le rayon est réservé aux arcs).",
+   "tags": [
+    "symboles"
+   ],
+   "page": 15,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-012",
+   "recto": "Unité des cotes en construction mécanique ?",
+   "verso": "Le **millimètre** (et le degré), sans l'indiquer.",
+   "tags": [
+    "règles"
+   ],
+   "page": 15,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-013",
+   "recto": "Combien de fois cote-t-on une même dimension ?",
+   "verso": "**Une seule fois** dans tout le dessin.",
+   "tags": [
+    "règles"
+   ],
+   "page": 15,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-014",
+   "recto": "Peut-on coter sur un contour caché ?",
+   "verso": "**Non** : coter à partir des traits forts ou des axes.",
+   "tags": [
+    "règles"
+   ],
+   "page": 17,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-015",
+   "recto": "Quelle est la première indication à inscrire ?",
+   "verso": "L'**échelle** du dessin.",
+   "tags": [
+    "règles"
+   ],
+   "page": 15,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-016",
+   "recto": "Qu'est-ce qu'une cotation **surabondante** ?",
+   "verso": "Une même forme cotée deux fois (ex. une cote = somme d'autres) : à éviter.",
+   "tags": [
+    "surabondance"
+   ],
+   "page": 20,
+   "doc": "cours"
+  }
+ ],
+ "exercices": []
+}

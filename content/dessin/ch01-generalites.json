@@ -1,0 +1,643 @@
+{
+ "format": 1,
+ "id": "ch01-generalites",
+ "matiere": "dessin",
+ "titre": "Dessins techniques : généralités",
+ "source": {
+  "pdfs": [
+   {
+    "id": "cours",
+    "nom": "Dessin technique et DAO – Chapitre 1 : Dessins techniques, généralités",
+    "court": "Ch. 1 – Généralités",
+    "pages": 36
+   },
+   {
+    "id": "guide",
+    "nom": "Guide des sciences et technologies industrielles (J.-L. Fanchon)",
+    "court": "Guide Fanchon",
+    "pages": 135
+   }
+  ],
+  "genereLe": "2026-10-16",
+  "modele": "Claude (rédigé dans la conversation)"
+ },
+ "synthese": {
+  "intro": "Les bases du langage du dessin technique : types de dessins, échelles, formats, cartouche, types de traits et écritures.",
+  "sections": [
+   {
+    "id": "s1",
+    "titre": "Le dessin technique, un langage normalisé",
+    "blocs": [
+     {
+      "type": "texte",
+      "contenu": "« Le dessin technique permet de représenter, communiquer, fabriquer, assembler, contrôler et maintenir un produit ou une installation **sans ambiguïté**. » C'est le langage **universel et rigoureux** des techniciens, dont les règles sont normalisées internationalement (**ISO**).",
+      "pages": [
+       3
+      ],
+      "doc": "cours"
+     },
+     {
+      "type": "point-cle",
+      "contenu": "Les numéros de normes ISO cités dans le cours sont **indicatifs** : il ne faut pas les apprendre.",
+      "pages": [
+       3
+      ],
+      "doc": "cours"
+     }
+    ]
+   },
+   {
+    "id": "s2",
+    "titre": "Principaux types de dessins",
+    "blocs": [
+     {
+      "type": "tableau",
+      "entetes": [
+       "Type",
+       "Définition"
+      ],
+      "lignes": [
+       [
+        "Abaque",
+        "Diagramme qui donne, sans calcul, les valeurs approximatives d'une ou plusieurs variables."
+       ],
+       [
+        "Croquis",
+        "Dessin fait en majeure partie **à main levée**, sans respecter forcément une échelle."
+       ],
+       [
+        "Épure",
+        "Dessin géométrique tracé avec la plus grande précision possible."
+       ],
+       [
+        "Esquisse",
+        "Dessin préliminaire des grandes lignes d'un projet."
+       ],
+       [
+        "Schéma",
+        "Utilise des **symboles normalisés** pour montrer les fonctions des composants et leurs relations (schémas électriques, hydrauliques…)."
+       ],
+       [
+        "Avant-projet / projet",
+        "Grandes lignes d'une solution viable / tous les détails de la solution choisie."
+       ],
+       [
+        "Dessin d'ensemble",
+        "Le « plan » du mécanisme : disposition et forme des éléments assemblés, à une certaine échelle. Le **dessin éclaté** en fait partie."
+       ],
+       [
+        "Dessin de sous-ensemble",
+        "Dessin d'ensemble d'un niveau inférieur (ex. le moteur dans la voiture)."
+       ],
+       [
+        "Dessin de composant",
+        "Un seul composant, avec tous les renseignements pour le définir."
+       ],
+       [
+        "Dessin de définition",
+        "Définit complètement chaque élément et ses exigences ; il fait foi au contrôle de réception (contrat)."
+       ],
+       [
+        "Dessin d'interface",
+        "Informations pour assembler ou connecter deux pièces ou plus (dimensions, encombrement…)."
+       ]
+      ],
+      "pages": [
+       5,
+       10
+      ],
+      "doc": "cours"
+     }
+    ]
+   },
+   {
+    "id": "s3",
+    "titre": "Échelles",
+    "blocs": [
+     {
+      "type": "formule",
+      "latex": "\\text{Échelle} = \\dfrac{\\text{dimensions dessinées}}{\\text{dimensions réelles}}",
+      "legende": "Rapport entre le dessin et la réalité",
+      "pages": [
+       13
+      ],
+      "doc": "cours"
+     },
+     {
+      "type": "tableau",
+      "entetes": [
+       "Type",
+       "Échelles usuelles"
+      ],
+      "lignes": [
+       [
+        "Vraie grandeur",
+        "1 : 1"
+       ],
+       [
+        "Réduction",
+        "1 : 2 — 1 : 5 — 1 : 10 — 1 : 20 — 1 : 50 — 1 : 100 — 1 : 200 — 1 : 500 — 1 : 1000"
+       ],
+       [
+        "Agrandissement",
+        "2 : 1 — 5 : 1 — 10 : 1 — 20 : 1 — 50 : 1 — …"
+       ]
+      ],
+      "pages": [
+       13
+      ],
+      "doc": "cours"
+     },
+     {
+      "type": "exemple",
+      "contenu": "Échelle **1 : 2** : 1 cm sur le dessin mesure réellement **2 cm** (réduction). Échelle **2 : 1** : le dessin est deux fois plus grand que l'objet.",
+      "pages": [
+       16
+      ],
+      "doc": "cours"
+     },
+     {
+      "type": "point-cle",
+      "contenu": "L'échelle **1 : 1** montre l'objet en vraie grandeur. Si plusieurs échelles sont utilisées sur un même dessin, on les indique près des vues concernées (ex. « Détail A, Éch. 2 : 1 »).",
+      "pages": [
+       13
+      ],
+      "doc": "cours"
+     }
+    ]
+   },
+   {
+    "id": "s4",
+    "titre": "Formats normalisés",
+    "blocs": [
+     {
+      "type": "figure",
+      "svg": "<svg viewBox=\"0 0 470 355\" width=\"470\" role=\"img\" aria-label=\"Formats normalisés de la série A\" xmlns=\"http://www.w3.org/2000/svg\"><title>Formats normalisés de la série A</title><rect class=\"tn\" x=\"10\" y=\"10\" width=\"451.8\" height=\"319.2\" /><line class=\"tn\" x1=\"235.9\" y1=\"10\" x2=\"235.9\" y2=\"329.6\"/><line class=\"tn\" x1=\"10\" y1=\"169.8\" x2=\"235.9\" y2=\"169.8\"/><line class=\"tn\" x1=\"122.9\" y1=\"169.8\" x2=\"122.9\" y2=\"329.6\"/><line class=\"tn\" x1=\"122.9\" y1=\"249.7\" x2=\"235.9\" y2=\"249.7\"/><text x=\"348.8\" y=\"165.8\" text-anchor=\"middle\" class=\"gras grand\">A1</text><text x=\"348.8\" y=\"182.8\" text-anchor=\"middle\" class=\"petit muet\">840 × 594</text><text x=\"122.9\" y=\"85.8\" text-anchor=\"middle\" class=\"gras grand\">A2</text><text x=\"122.9\" y=\"102.8\" text-anchor=\"middle\" class=\"petit muet\">594 × 420</text><text x=\"66.4\" y=\"245.4\" text-anchor=\"middle\" class=\"gras grand\">A3</text><text x=\"66.4\" y=\"262.4\" text-anchor=\"middle\" class=\"petit muet\">420 × 297</text><text x=\"179.1\" y=\"205.5\" text-anchor=\"middle\" class=\"gras grand\">A4</text><text x=\"179.1\" y=\"222.5\" text-anchor=\"middle\" class=\"petit muet\">297 × 210</text><text x=\"179.1\" y=\"285.7\" text-anchor=\"middle\" class=\"gras grand\">A4</text><text x=\"179.1\" y=\"302.7\" text-anchor=\"middle\" class=\"petit muet\">297 × 210</text><text x=\"235.9\" y=\"349.6\" text-anchor=\"middle\" class=\"petit\">A0 = 1189 × 840 mm (≈ 1 m²) — chaque format est la moitié du précédent</text></svg>",
+      "legende": "Chaque format s'obtient en coupant le précédent en deux (le rapport longueur / largeur vaut toujours $\\sqrt{2} \\approx 1{,}414$).",
+      "pages": [
+       14
+      ],
+      "doc": "cours"
+     },
+     {
+      "type": "tableau",
+      "entetes": [
+       "Format",
+       "Dimensions (mm)"
+      ],
+      "lignes": [
+       [
+        "A0",
+        "1189 × 840"
+       ],
+       [
+        "A1",
+        "840 × 594"
+       ],
+       [
+        "A2",
+        "594 × 420"
+       ],
+       [
+        "A3",
+        "420 × 297"
+       ],
+       [
+        "A4",
+        "297 × 210"
+       ]
+      ],
+      "pages": [
+       14
+      ],
+      "doc": "cours"
+     },
+     {
+      "type": "liste",
+      "items": [
+       "A3 à A0 : utilisés **horizontalement** ; A4 : **verticalement**.",
+       "Cartouche **en bas à droite**.",
+       "Marge gauche **20 mm**, autres marges **10 mm**."
+      ],
+      "pages": [
+       14
+      ],
+      "titre": "Règles d'utilisation",
+      "doc": "cours"
+     }
+    ]
+   },
+   {
+    "id": "s5",
+    "titre": "Éléments graphiques permanents",
+    "blocs": [
+     {
+      "type": "liste",
+      "items": [
+       "**Cadre** en trait continu fort : délimite la zone du dessin, à **10 mm** du bord (A2, A3, A4) ou **20 mm** (A1, A0).",
+       "**Repères de centrage** (4) : indiquent les axes de symétrie du format.",
+       "**Repères d'orientation** : un seul reste à la fin, orienté vers le lecteur.",
+       "**Système de coordonnées** : lettres de haut en bas, chiffres de gauche à droite, pour localiser une zone du dessin.",
+       "**Graduation de référence** (non chiffrée) et **onglets de coupe** aux quatre coins."
+      ],
+      "pages": [
+       15,
+       16
+      ],
+      "doc": "cours"
+     }
+    ]
+   },
+   {
+    "id": "s6",
+    "titre": "Cartouche et nomenclature",
+    "blocs": [
+     {
+      "type": "definition",
+      "contenu": "C'est la **carte d'identité** du dessin, placée en bas à droite. Le sens de lecture du dessin est celui du cartouche.",
+      "titre": "Cartouche",
+      "pages": [
+       16
+      ],
+      "doc": "cours"
+     },
+     {
+      "type": "liste",
+      "items": [
+       "l'**échelle** ;",
+       "le **symbole de la méthode** de projection (européenne) ;",
+       "le **format** d'origine ;",
+       "la **provenance** (établissement) ;",
+       "le **titre** (nom de l'ensemble ou du sous-ensemble) ;",
+       "le **nom du dessinateur** et la **date** ;",
+       "le **numéro** (de liasse, de page), la **matière**, l'indice de **révision** et la **partie**."
+      ],
+      "pages": [
+       16,
+       17
+      ],
+      "titre": "Ce qu'on y trouve",
+      "doc": "cours"
+     },
+     {
+      "type": "piege",
+      "contenu": "Il existe de nombreux modèles de cartouche : la plupart des entreprises ont le leur.",
+      "pages": [
+       17
+      ],
+      "doc": "cours"
+     },
+     {
+      "type": "definition",
+      "contenu": "Liste de tous les éléments d'un dessin d'ensemble, en colonnes : **repère**, **nombre**, **désignation**, **matière**, **observations**. Les repères sont classés par ordre croissant **de bas en haut**.",
+      "titre": "Nomenclature (à voir en 2e année)",
+      "pages": [
+       18
+      ],
+      "doc": "cours"
+     },
+     {
+      "type": "texte",
+      "contenu": "L'**organigramme technique de produit** (O.T.P.) décrit la structure du produit par niveaux (ensembles, sous-ensembles, pièces) et sert à numéroter les plans.",
+      "pages": [
+       19
+      ],
+      "doc": "cours"
+     }
+    ]
+   },
+   {
+    "id": "s7",
+    "titre": "Les types de traits",
+    "blocs": [
+     {
+      "type": "texte",
+      "contenu": "Chaque trait a une **nature** (continu, interrompu, mixte), une **épaisseur** (fort, fin) et un **usage** précis. Largeurs recommandées (ISO) : 0,13 ; 0,18 ; 0,25 ; 0,35 ; 0,5 ; 0,7 ; 1 ; 1,4 ; 2 mm.",
+      "pages": [
+       21
+      ],
+      "doc": "cours"
+     },
+     {
+      "type": "figure",
+      "svg": "<svg viewBox=\"0 0 520 360\" width=\"520\" role=\"img\" aria-label=\"Principaux types de traits et leurs usages\" xmlns=\"http://www.w3.org/2000/svg\"><title>Principaux types de traits et leurs usages</title><line class=\"tf\" x1=\"14\" y1=\"26\" x2=\"174\" y2=\"26\"/><text x=\"192\" y=\"23\" text-anchor=\"start\" class=\"gras\">Continu fort</text><text x=\"192\" y=\"39\" text-anchor=\"start\" class=\"petit muet\">arêtes et contours vus</text><line class=\"ti\" x1=\"14\" y1=\"70\" x2=\"174\" y2=\"70\"/><text x=\"192\" y=\"67\" text-anchor=\"start\" class=\"gras\">Interrompu fin</text><text x=\"192\" y=\"83\" text-anchor=\"start\" class=\"petit muet\">arêtes et contours cachés</text><line class=\"tm\" x1=\"14\" y1=\"114\" x2=\"174\" y2=\"114\"/><text x=\"192\" y=\"111\" text-anchor=\"start\" class=\"gras\">Mixte fin</text><text x=\"192\" y=\"127\" text-anchor=\"start\" class=\"petit muet\">axes, plans de symétrie, trajectoires</text><line class=\"tn\" x1=\"14\" y1=\"158\" x2=\"174\" y2=\"158\"/><text x=\"192\" y=\"155\" text-anchor=\"start\" class=\"gras\">Continu fin</text><text x=\"192\" y=\"171\" text-anchor=\"start\" class=\"petit muet\">hachures, lignes de cote et d'attache, arêtes fictives</text><path class=\"tn\" d=\"M14 202 L22 195 L38 209 L54 195 L70 209 L86 195 L102 209 L118 195 L134 209 L150 195 L166 209 L174 202\"/><text x=\"192\" y=\"199\" text-anchor=\"start\" class=\"gras\">Continu fin à main levée / zigzag</text><text x=\"192\" y=\"215\" text-anchor=\"start\" class=\"petit muet\">limites de vues partielles, coupes partielles</text><line class=\"tmf\" x1=\"14\" y1=\"246\" x2=\"174\" y2=\"246\"/><text x=\"192\" y=\"243\" text-anchor=\"start\" class=\"gras\">Mixte fort</text><text x=\"192\" y=\"259\" text-anchor=\"start\" class=\"petit muet\">surfaces avec traitement</text><line class=\"tm2\" x1=\"14\" y1=\"290\" x2=\"174\" y2=\"290\"/><text x=\"192\" y=\"287\" text-anchor=\"start\" class=\"gras\">Mixte fin à deux tirets</text><text x=\"192\" y=\"303\" text-anchor=\"start\" class=\"petit muet\">pièces voisines, positions extrêmes</text><line class=\"tm\" x1=\"14\" y1=\"334\" x2=\"174\" y2=\"334\"/><line class=\"tmf solide\" x1=\"14\" y1=\"334\" x2=\"34\" y2=\"334\"/><line class=\"tmf solide\" x1=\"154\" y1=\"334\" x2=\"174\" y2=\"334\"/><text x=\"192\" y=\"331\" text-anchor=\"start\" class=\"gras\">Mixte fin renforcé aux extrémités</text><text x=\"192\" y=\"347\" text-anchor=\"start\" class=\"petit muet\">traces de plans de coupe</text></svg>",
+      "legende": "Les principaux traits normalisés et leurs usages.",
+      "pages": [
+       21,
+       31
+      ],
+      "doc": "cours"
+     },
+     {
+      "type": "point-cle",
+      "contenu": "Le trait **fort** est au moins **deux fois** plus épais que le trait **fin**. On garde la même largeur pour chaque type de trait dans toutes les vues d'une même pièce à la même échelle.",
+      "pages": [
+       31
+      ],
+      "doc": "cours"
+     },
+     {
+      "type": "liste",
+      "items": [
+       "Continu fort",
+       "Interrompu",
+       "Mixte fin renforcé aux extrémités",
+       "Mixte fin",
+       "Mixte fin à deux tirets",
+       "Continu fin"
+      ],
+      "pages": [
+       31
+      ],
+      "titre": "Priorité quand deux traits se superposent",
+      "ordonnee": true,
+      "doc": "cours"
+     },
+     {
+      "type": "piege",
+      "contenu": "Le trait interrompu doit **toujours former une intersection** avec les traits continus forts et entre eux ; le trait mixte commence et se termine **toujours par un élément long**.",
+      "pages": [
+       25
+      ],
+      "doc": "cours"
+     },
+     {
+      "type": "definition",
+      "contenu": "Les congés et arrondis font disparaître les arêtes : on les représente par des traits **fins arrêtés à environ 2 mm** du contour. Une arête fictive ne se dessine **pas** si elle est cachée.",
+      "titre": "Arêtes fictives",
+      "pages": [
+       32
+      ],
+      "doc": "cours"
+     }
+    ]
+   },
+   {
+    "id": "s8",
+    "titre": "Écritures et dessin manuel",
+    "blocs": [
+     {
+      "type": "liste",
+      "items": [
+       "Utiliser les écritures normalisées (types A et B, même hauteur, A plus fin).",
+       "Préférer une écriture **droite** ; une écriture penchée est tolérée jusqu'à **15°** vers la droite.",
+       "Hauteurs nominales (type B) : 1,8 ; 2,5 ; 3,5 ; 5 ; 7 ; 10 ; 14 ; 20 mm."
+      ],
+      "pages": [
+       32
+      ],
+      "titre": "Écritures",
+      "doc": "cours"
+     },
+     {
+      "type": "texte",
+      "contenu": "Le dessin manuel (à main levée ou aux instruments) demande peu de matériel : équerres 45° et 60°/30°, compas, règle, té, trace-cercles, trace-lettres, crayons… Dans ce cours, les dessins à la main peuvent être faits **au crayon**.",
+      "pages": [
+       33,
+       34
+      ],
+      "doc": "cours"
+     }
+    ]
+   },
+   {
+    "id": "s9",
+    "titre": "Pour aller plus loin",
+    "blocs": [
+     {
+      "type": "texte",
+      "contenu": "Le cours suit le chapitre 1 « Dessins techniques : généralités » du **Guide des sciences et technologies industrielles** (types de dessins, échelles, formats, cartouche, traits, écritures).",
+      "pages": [
+       6,
+       17
+      ],
+      "doc": "guide"
+     }
+    ]
+   }
+  ]
+ },
+ "flashcards": [
+  {
+   "id": "fc-001",
+   "recto": "Quel est le rôle du dessin technique ?",
+   "verso": "Représenter, communiquer, fabriquer, assembler, contrôler et maintenir un produit **sans ambiguïté**.",
+   "tags": [
+    "généralités"
+   ],
+   "page": 3,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-002",
+   "recto": "Qu'est-ce qu'un **croquis** ?",
+   "verso": "Un dessin fait en majeure partie **à main levée**, sans respecter forcément une échelle.",
+   "tags": [
+    "types de dessins"
+   ],
+   "page": 5,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-003",
+   "recto": "Qu'est-ce qu'une **épure** ?",
+   "verso": "Un dessin géométrique tracé avec la plus grande précision possible.",
+   "tags": [
+    "types de dessins"
+   ],
+   "page": 6,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-004",
+   "recto": "Qu'est-ce qu'un **dessin d'ensemble** ?",
+   "verso": "Le « plan » du mécanisme : disposition et forme des éléments assemblés, à une certaine échelle.",
+   "tags": [
+    "types de dessins"
+   ],
+   "page": 8,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-005",
+   "recto": "À quoi sert le **dessin de définition** ?",
+   "verso": "Il définit complètement chaque élément et ses exigences ; il fait foi au contrôle de réception.",
+   "tags": [
+    "types de dessins"
+   ],
+   "page": 9,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-006",
+   "recto": "Que signifie l'échelle **1 : 2** ?",
+   "verso": "1 cm sur le dessin = **2 cm** en réalité (réduction).",
+   "tags": [
+    "échelles"
+   ],
+   "page": 16,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-007",
+   "recto": "Formule de l'échelle ?",
+   "verso": "$\\dfrac{\\text{dimensions dessinées}}{\\text{dimensions réelles}}$",
+   "tags": [
+    "échelles"
+   ],
+   "page": 13,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-008",
+   "recto": "Dimensions du format **A4** ? Et du **A3** ?",
+   "verso": "A4 : **297 × 210** mm ; A3 : **420 × 297** mm.",
+   "tags": [
+    "formats"
+   ],
+   "page": 14,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-009",
+   "recto": "Comment passe-t-on du A4 au A3 ?",
+   "verso": "On double la plus petite dimension : 210 × 2 = 420, donc A3 = 420 × 297.",
+   "tags": [
+    "formats"
+   ],
+   "page": 14,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-010",
+   "recto": "Orientation des formats ?",
+   "verso": "A3 à A0 : **horizontal** ; A4 : **vertical**.",
+   "tags": [
+    "formats"
+   ],
+   "page": 14,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-011",
+   "recto": "Marges d'un format ?",
+   "verso": "Marge gauche **20 mm**, autres marges **10 mm** ; cartouche en bas à droite.",
+   "tags": [
+    "formats"
+   ],
+   "page": 14,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-012",
+   "recto": "Qu'est-ce que le **cartouche** ?",
+   "verso": "La **carte d'identité** du dessin (échelle, titre, auteur, date, format, méthode, matière…), en bas à droite.",
+   "tags": [
+    "cartouche"
+   ],
+   "page": 16,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-013",
+   "recto": "Usage du trait **continu fort** ?",
+   "verso": "Arêtes et contours **vus**.",
+   "tags": [
+    "traits"
+   ],
+   "page": 21,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-014",
+   "recto": "Usage du trait **interrompu fin** ?",
+   "verso": "Arêtes et contours **cachés**.",
+   "tags": [
+    "traits"
+   ],
+   "page": 21,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-015",
+   "recto": "Usage du trait **mixte fin** ?",
+   "verso": "**Axes**, plans de symétrie, trajectoires.",
+   "tags": [
+    "traits"
+   ],
+   "page": 21,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-016",
+   "recto": "Usage du trait **continu fin** ?",
+   "verso": "Hachures, lignes de cote et d'attache, lignes de repère, arêtes fictives.",
+   "tags": [
+    "traits"
+   ],
+   "page": 21,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-017",
+   "recto": "Usage du trait **mixte fin à deux tirets** ?",
+   "verso": "Contours de **pièces voisines**, **positions extrêmes** de pièces mobiles.",
+   "tags": [
+    "traits"
+   ],
+   "page": 21,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-018",
+   "recto": "Quel trait pour une **trace de plan de coupe** ?",
+   "verso": "Le trait **mixte fin renforcé aux extrémités** (et aux changements de direction).",
+   "tags": [
+    "traits"
+   ],
+   "page": 26,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-019",
+   "recto": "Ordre de priorité des traits ?",
+   "verso": "Continu fort → interrompu → mixte renforcé → mixte fin → mixte à deux tirets → continu fin.",
+   "tags": [
+    "traits"
+   ],
+   "page": 31,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-020",
+   "recto": "Rapport d'épaisseur trait fort / trait fin ?",
+   "verso": "Au moins **2 pour 1**.",
+   "tags": [
+    "traits"
+   ],
+   "page": 31,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-021",
+   "recto": "Qu'est-ce qu'une **arête fictive** ?",
+   "verso": "Une arête supprimée par un congé ou un arrondi, dessinée en trait fin arrêté à ~2 mm du contour.",
+   "tags": [
+    "traits"
+   ],
+   "page": 32,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-022",
+   "recto": "Inclinaison maximale tolérée pour une écriture penchée ?",
+   "verso": "**15°** vers la droite (on préfère l'écriture droite).",
+   "tags": [
+    "écritures"
+   ],
+   "page": 32,
+   "doc": "cours"
+  }
+ ],
+ "exercices": []
+}

@@ -1,0 +1,571 @@
+{
+ "format": 1,
+ "id": "ch03-projections",
+ "matiere": "dessin",
+ "titre": "Projections orthogonales – normalisation",
+ "source": {
+  "pdfs": [
+   {
+    "id": "cours",
+    "nom": "Dessin technique et DAO – Chapitre 3 : Projections orthogonales, normalisation",
+    "court": "Ch. 3 – Projections",
+    "pages": 20
+   },
+   {
+    "id": "guide",
+    "nom": "Guide des sciences et technologies industrielles (J.-L. Fanchon)",
+    "court": "Guide Fanchon",
+    "pages": 135
+   }
+  ],
+  "genereLe": "2026-10-16",
+  "modele": "Claude (rédigé dans la conversation)"
+ },
+ "synthese": {
+  "intro": "Représenter un objet par des vues en projection orthogonale : principe, disposition européenne et américaine, correspondance, choix des vues et vues particulières.",
+  "sections": [
+   {
+    "id": "s1",
+    "titre": "Principe des projections orthogonales",
+    "blocs": [
+     {
+      "type": "texte",
+      "contenu": "Une photo ne suffit pas pour fabriquer : il faut décrire **précisément les formes et les dimensions**. On utilise pour cela plusieurs **vues** de l'objet, en correspondance les unes avec les autres.",
+      "pages": [
+       3
+      ],
+      "doc": "cours"
+     },
+     {
+      "type": "definition",
+      "contenu": "L'observateur se place **perpendiculairement** à une face de l'objet. Cette face est projetée sur un plan **parallèle** à elle, situé **derrière** l'objet. La vue plane obtenue est une projection orthogonale.",
+      "titre": "Projection orthogonale",
+      "pages": [
+       3
+      ],
+      "doc": "cours"
+     },
+     {
+      "type": "point-cle",
+      "contenu": "À partir de la **vue de face** (vue principale), on peut définir **5 autres vues** : droite, gauche, dessus, dessous et arrière (comme les six faces d'un dé). Le plus souvent, **trois vues** suffisent.",
+      "pages": [
+       3
+      ],
+      "doc": "cours"
+     },
+     {
+      "type": "liste",
+      "items": [
+       "Parties **vues** (arêtes, surfaces) : trait **continu fort**.",
+       "Parties **cachées** : trait **interrompu**.",
+       "Priorité en cas de superposition : 1. trait fort, 2. trait interrompu, 3. trait mixte fin (axe)."
+      ],
+      "pages": [
+       5
+      ],
+      "titre": "Règles",
+      "doc": "cours"
+     },
+     {
+      "type": "point-cle",
+      "contenu": "Les parties cachées sont souvent **omises** quand elles ne sont pas nécessaires : le dessin est plus lisible.",
+      "pages": [
+       5
+      ],
+      "doc": "cours"
+     },
+     {
+      "type": "texte",
+      "contenu": "**Gaspard Monge** (1746 – 1818) est considéré comme le père du dessin industriel moderne fondé sur les projections orthogonales.",
+      "pages": [
+       5
+      ],
+      "doc": "cours"
+     }
+    ]
+   },
+   {
+    "id": "s2",
+    "titre": "Disposition des vues",
+    "blocs": [
+     {
+      "type": "figure",
+      "svg": "<svg viewBox=\"0 0 620 265\" width=\"620\" role=\"img\" aria-label=\"Disposition des vues : méthodes européenne et américaine\" xmlns=\"http://www.w3.org/2000/svg\"><title>Disposition des vues : méthodes européenne et américaine</title><text x=\"170\" y=\"22\" text-anchor=\"middle\" class=\"gras grand\">Méthode européenne (E)</text><path class=\"tf\" d=\"M110 170 L110 120 L135 120 L135 145 L170 145 L170 170 Z\"/><text x=\"140\" y=\"186\" text-anchor=\"middle\" class=\"petit\">face</text><rect class=\"tf\" x=\"110\" y=\"200\" width=\"60\" height=\"40\" /><line class=\"tf\" x1=\"135\" y1=\"200\" x2=\"135\" y2=\"240\"/><circle class=\"tf\" cx=\"154\" cy=\"220\" r=\"7\"/><text x=\"140\" y=\"256\" text-anchor=\"middle\" class=\"petit\">dessus</text><rect class=\"tf\" x=\"195\" y=\"120\" width=\"40\" height=\"50\" /><line class=\"ti\" x1=\"195\" y1=\"145\" x2=\"235\" y2=\"145\"/><line class=\"ti\" x1=\"208\" y1=\"145\" x2=\"208\" y2=\"170\"/><line class=\"ti\" x1=\"222\" y1=\"145\" x2=\"222\" y2=\"170\"/><text x=\"215\" y=\"186\" text-anchor=\"middle\" class=\"petit\">gauche</text><rect class=\"tf\" x=\"45\" y=\"120\" width=\"40\" height=\"50\" /><line class=\"tf\" x1=\"45\" y1=\"145\" x2=\"85\" y2=\"145\"/><line class=\"ti\" x1=\"58\" y1=\"145\" x2=\"58\" y2=\"170\"/><line class=\"ti\" x1=\"72\" y1=\"145\" x2=\"72\" y2=\"170\"/><text x=\"65\" y=\"186\" text-anchor=\"middle\" class=\"petit\">droite</text><path class=\"tf\" d=\"M140 52 L166 46 L166 74 L140 68 Z\"/><circle class=\"tf\" cx=\"190\" cy=\"60\" r=\"14\"/><circle class=\"tf\" cx=\"190\" cy=\"60\" r=\"7\"/><line class=\"tm\" x1=\"134\" y1=\"60\" x2=\"210\" y2=\"60\"/><text x=\"480\" y=\"22\" text-anchor=\"middle\" class=\"gras grand\">Méthode américaine (A)</text><path class=\"tf\" d=\"M420 170 L420 120 L445 120 L445 145 L480 145 L480 170 Z\"/><text x=\"450\" y=\"186\" text-anchor=\"middle\" class=\"petit\">face</text><rect class=\"tf\" x=\"420\" y=\"60\" width=\"60\" height=\"40\" /><line class=\"tf\" x1=\"445\" y1=\"60\" x2=\"445\" y2=\"100\"/><circle class=\"tf\" cx=\"464\" cy=\"80\" r=\"7\"/><text x=\"450\" y=\"56\" text-anchor=\"middle\" class=\"petit\">dessus</text><rect class=\"tf\" x=\"355\" y=\"120\" width=\"40\" height=\"50\" /><line class=\"ti\" x1=\"355\" y1=\"145\" x2=\"395\" y2=\"145\"/><line class=\"ti\" x1=\"368\" y1=\"145\" x2=\"368\" y2=\"170\"/><line class=\"ti\" x1=\"382\" y1=\"145\" x2=\"382\" y2=\"170\"/><text x=\"375\" y=\"186\" text-anchor=\"middle\" class=\"petit\">gauche</text><rect class=\"tf\" x=\"505\" y=\"120\" width=\"40\" height=\"50\" /><line class=\"tf\" x1=\"505\" y1=\"145\" x2=\"545\" y2=\"145\"/><line class=\"ti\" x1=\"518\" y1=\"145\" x2=\"518\" y2=\"170\"/><line class=\"ti\" x1=\"532\" y1=\"145\" x2=\"532\" y2=\"170\"/><text x=\"525\" y=\"186\" text-anchor=\"middle\" class=\"petit\">droite</text><circle class=\"tf\" cx=\"446\" cy=\"230\" r=\"14\"/><circle class=\"tf\" cx=\"446\" cy=\"230\" r=\"7\"/><path class=\"tf\" d=\"M470 222 L496 216 L496 244 L470 238 Z\"/><line class=\"tm\" x1=\"434\" y1=\"230\" x2=\"510\" y2=\"230\"/><line class=\"tn muet\" x1=\"310\" y1=\"10\" x2=\"310\" y2=\"260\"/></svg>",
+      "legende": "Une même pièce dessinée selon les deux méthodes, avec le symbole à placer dans le cartouche.",
+      "pages": [
+       6,
+       7
+      ],
+      "doc": "cours"
+     },
+     {
+      "type": "tableau",
+      "entetes": [
+       "Vue",
+       "Méthode européenne (1er dièdre)",
+       "Méthode américaine"
+      ],
+      "lignes": [
+       [
+        "Vue de dessus",
+        "**sous** la vue de face",
+        "**au-dessus** de la vue de face"
+       ],
+       [
+        "Vue de gauche",
+        "**à droite** de la vue de face",
+        "**à gauche** de la vue de face"
+       ],
+       [
+        "Vue de droite",
+        "**à gauche** de la vue de face",
+        "**à droite** de la vue de face"
+       ],
+       [
+        "Vue de dessous",
+        "**au-dessus** de la vue de face",
+        "**sous** la vue de face"
+       ]
+      ],
+      "pages": [
+       6,
+       7
+      ],
+      "doc": "cours"
+     },
+     {
+      "type": "point-cle",
+      "contenu": "En Belgique, on utilise la **méthode européenne**. Le **symbole** de la méthode doit figurer dans le **cartouche**.",
+      "pages": [
+       7
+      ],
+      "doc": "cours"
+     },
+     {
+      "type": "texte",
+      "contenu": "Les espaces entre les vues sont au choix du dessinateur ; des espaces réguliers donnent une plus belle présentation.",
+      "pages": [
+       6
+      ],
+      "doc": "cours"
+     }
+    ]
+   },
+   {
+    "id": "s3",
+    "titre": "Correspondance des vues",
+    "blocs": [
+     {
+      "type": "point-cle",
+      "contenu": "Les vues sont **alignées** : les dimensions se conservent d'une vue à l'autre et se reportent avec les mêmes **lignes de rappel**.",
+      "pages": [
+       8
+      ],
+      "doc": "cours"
+     },
+     {
+      "type": "liste",
+      "items": [
+       "Vue de face, de gauche, de droite et arrière : alignées **horizontalement** (même hauteur).",
+       "Vue de face, de dessus et de dessous : alignées **verticalement** (même largeur)."
+      ],
+      "pages": [
+       18
+      ],
+      "doc": "cours"
+     },
+     {
+      "type": "piege",
+      "contenu": "Erreurs typiques : vues **non en correspondance**, vues **mal placées**, **hauteur non respectée**.",
+      "pages": [
+       8
+      ],
+      "doc": "cours"
+     }
+    ]
+   },
+   {
+    "id": "s4",
+    "titre": "Choisir les vues",
+    "blocs": [
+     {
+      "type": "point-cle",
+      "contenu": "Objectif : avec un **minimum de vues**, obtenir le **maximum** de définition et de clarté.",
+      "pages": [
+       9
+      ],
+      "doc": "cours"
+     },
+     {
+      "type": "texte",
+      "contenu": "La **vue de face** représente l'objet, autant que possible, dans sa **position d'utilisation** ou dans sa **position principale d'usinage**.",
+      "pages": [
+       9
+      ],
+      "doc": "cours"
+     },
+     {
+      "type": "tableau",
+      "entetes": [
+       "Nombre de vues",
+       "Cas"
+      ],
+      "lignes": [
+       [
+        "1 vue",
+        "Pièces de **révolution** (avec une cotation adaptée : symbole Ø) ou pièces d'épaisseur constante."
+       ],
+       [
+        "2 vues",
+        "Formes simples, épaisseur constante, symétries particulières."
+       ],
+       [
+        "3 vues",
+        "Cas général : vue de face + vue de gauche ou droite + vue de dessus ou dessous."
+       ]
+      ],
+      "pages": [
+       9,
+       10,
+       11
+      ],
+      "doc": "cours"
+     },
+     {
+      "type": "liste",
+      "items": [
+       "Préférer les vues avec le **moins de traits interrompus**.",
+       "Éliminer les vues inutiles ; la vue **arrière** est très rarement utile.",
+       "Une vue supplémentaire peut aider à la lecture, même si elle n'est pas indispensable."
+      ],
+      "pages": [
+       11
+      ],
+      "titre": "Critères",
+      "doc": "cours"
+     },
+     {
+      "type": "point-cle",
+      "contenu": "Sur une pièce de révolution, une **surface plane** (méplat) se repère par ses **deux diagonales** en trait continu fin.",
+      "pages": [
+       9,
+       13
+      ],
+      "doc": "cours"
+     }
+    ]
+   },
+   {
+    "id": "s5",
+    "titre": "Vues particulières",
+    "blocs": [
+     {
+      "type": "tableau",
+      "entetes": [
+       "Vue",
+       "Usage",
+       "Règle"
+      ],
+      "lignes": [
+       [
+        "Vue partielle",
+        "Seule une partie de la vue est utile.",
+        "Limitée par un trait **continu fin à main levée** ou en **zigzag**."
+       ],
+       [
+        "Vue interrompue",
+        "Objets **très longs** : on ne dessine que l'essentiel.",
+        "Deux traits fins (ou zigzag) limitent la partie supprimée ; une cote donne la longueur."
+       ],
+       [
+        "Demi-vue (ou quart de vue)",
+        "Objets **symétriques**.",
+        "Limitée par un trait d'axe, avec **deux paires de petits traits fins parallèles** à ses extrémités."
+       ],
+       [
+        "Vue auxiliaire",
+        "Montrer une forme oblique en **vraie grandeur**.",
+        "Indiquer le sens d'observation par une **flèche avec une lettre**, reprise près de la vue."
+       ]
+      ],
+      "pages": [
+       11,
+       12,
+       13
+      ],
+      "doc": "cours"
+     },
+     {
+      "type": "liste",
+      "items": [
+       "**Éléments voisins** et **positions extrêmes** : trait mixte fin à deux tirets ; les éléments voisins ne sont pas hachurés en coupe.",
+       "**Éléments répétitifs** : une représentation partielle suffit.",
+       "**Contour primitif** avant façonnage : trait mixte fin à deux tirets."
+      ],
+      "pages": [
+       13,
+       14
+      ],
+      "titre": "Représentations particulières (2e année)",
+      "doc": "cours"
+     },
+     {
+      "type": "texte",
+      "contenu": "Une vue peut être **redressée** (tournée) : on l'indique par un **arc fléché** dans le sens de la rotation, avec l'angle si besoin.",
+      "pages": [
+       16
+      ],
+      "doc": "cours"
+     }
+    ]
+   },
+   {
+    "id": "s6",
+    "titre": "Lire et construire des vues",
+    "blocs": [
+     {
+      "type": "point-cle",
+      "contenu": "Des objets ou surfaces **différents** peuvent avoir la **même vue de face**, et parfois même deux vues identiques : **une seule vue ne suffit pas** en général.",
+      "pages": [
+       17,
+       18
+      ],
+      "doc": "cours"
+     },
+     {
+      "type": "liste",
+      "items": [
+       "Tracer les limites de la vue cherchée.",
+       "Tracer les surfaces principales (base, faces…) avec les lignes de rappel.",
+       "Construire les formes complexes **point par point**.",
+       "Faire le tracé définitif et effacer les constructions."
+      ],
+      "pages": [
+       18,
+       19
+      ],
+      "titre": "Construire une vue manquante",
+      "ordonnee": true,
+      "doc": "cours"
+     },
+     {
+      "type": "texte",
+      "contenu": "**Intersection de cylindres** : si les diamètres sont très différents, une méthode approchée suffit ; si les diamètres sont **égaux**, l'intersection se réduit à **deux droites perpendiculaires**.",
+      "pages": [
+       19
+      ],
+      "doc": "cours"
+     }
+    ]
+   },
+   {
+    "id": "s7",
+    "titre": "Pour aller plus loin",
+    "blocs": [
+     {
+      "type": "texte",
+      "contenu": "Chapitre 3 « Projections orthogonales – Normalisation » du guide (principe, disposition et choix des vues, vues partielles, intersections, exercices).",
+      "pages": [
+       34,
+       45
+      ],
+      "doc": "guide"
+     }
+    ]
+   }
+  ]
+ },
+ "flashcards": [
+  {
+   "id": "fc-001",
+   "recto": "Principe de la projection orthogonale ?",
+   "verso": "L'observateur se place **perpendiculairement** à une face ; la face est projetée sur un plan parallèle situé derrière l'objet.",
+   "tags": [
+    "principe"
+   ],
+   "page": 3,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-002",
+   "recto": "Combien de vues possibles ? Combien suffisent en général ?",
+   "verso": "**6** vues possibles ; **3** suffisent en général.",
+   "tags": [
+    "principe"
+   ],
+   "page": 3,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-003",
+   "recto": "Trait des parties **cachées** ?",
+   "verso": "Le trait **interrompu** (fin).",
+   "tags": [
+    "principe"
+   ],
+   "page": 5,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-004",
+   "recto": "Méthode européenne : où place-t-on la **vue de dessus** ?",
+   "verso": "**Sous** la vue de face.",
+   "tags": [
+    "disposition"
+   ],
+   "page": 6,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-005",
+   "recto": "Méthode européenne : où place-t-on la **vue de gauche** ?",
+   "verso": "**À droite** de la vue de face.",
+   "tags": [
+    "disposition"
+   ],
+   "page": 6,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-006",
+   "recto": "Méthode européenne : où place-t-on la **vue de droite** ?",
+   "verso": "**À gauche** de la vue de face.",
+   "tags": [
+    "disposition"
+   ],
+   "page": 7,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-007",
+   "recto": "Méthode américaine : où est la vue de dessus ?",
+   "verso": "**Au-dessus** de la vue de face.",
+   "tags": [
+    "disposition"
+   ],
+   "page": 7,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-008",
+   "recto": "Quelle méthode est recommandée en Belgique ?",
+   "verso": "La **méthode européenne** (1er dièdre).",
+   "tags": [
+    "disposition"
+   ],
+   "page": 7,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-009",
+   "recto": "Où place-t-on le symbole de la méthode de projection ?",
+   "verso": "Dans le **cartouche**.",
+   "tags": [
+    "disposition"
+   ],
+   "page": 7,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-010",
+   "recto": "Quelles vues sont alignées horizontalement ?",
+   "verso": "Face, gauche, droite et arrière (même hauteur).",
+   "tags": [
+    "correspondance"
+   ],
+   "page": 18,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-011",
+   "recto": "Comment choisir la vue de face ?",
+   "verso": "Position d'**utilisation** ou position principale d'**usinage**, en montrant le plus de détails.",
+   "tags": [
+    "choix des vues"
+   ],
+   "page": 9,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-012",
+   "recto": "Quand une seule vue suffit-elle ?",
+   "verso": "Pour une pièce de **révolution** (avec le symbole Ø) ou d'épaisseur constante.",
+   "tags": [
+    "choix des vues"
+   ],
+   "page": 9,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-013",
+   "recto": "Comment repérer un méplat sur une vue ?",
+   "verso": "Par ses **deux diagonales** en trait continu fin.",
+   "tags": [
+    "choix des vues"
+   ],
+   "page": 9,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-014",
+   "recto": "Quelle vue est très rarement utile ?",
+   "verso": "La vue **arrière**.",
+   "tags": [
+    "choix des vues"
+   ],
+   "page": 11,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-015",
+   "recto": "Comment limite-t-on une **vue partielle** ?",
+   "verso": "Par un trait **continu fin à main levée** ou en **zigzag**.",
+   "tags": [
+    "vues particulières"
+   ],
+   "page": 11,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-016",
+   "recto": "Comment indique-t-on une **demi-vue** d'objet symétrique ?",
+   "verso": "Trait d'axe + **deux paires de petits traits parallèles** à ses extrémités.",
+   "tags": [
+    "vues particulières"
+   ],
+   "page": 12,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-017",
+   "recto": "À quoi sert une **vue auxiliaire** ?",
+   "verso": "Montrer une forme oblique en **vraie grandeur** ; on indique le sens d'observation par une flèche et une lettre.",
+   "tags": [
+    "vues particulières"
+   ],
+   "page": 13,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-018",
+   "recto": "Intersection de deux cylindres de **même diamètre** ?",
+   "verso": "**Deux droites perpendiculaires**.",
+   "tags": [
+    "construction"
+   ],
+   "page": 19,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-019",
+   "recto": "Qui est considéré comme le père du dessin industriel ?",
+   "verso": "**Gaspard Monge** (1746 – 1818).",
+   "tags": [
+    "principe"
+   ],
+   "page": 5,
+   "doc": "cours"
+  }
+ ],
+ "exercices": []
+}

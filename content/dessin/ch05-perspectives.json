@@ -1,0 +1,399 @@
+{
+ "format": 1,
+ "id": "ch05-perspectives",
+ "matiere": "dessin",
+ "titre": "Perspectives",
+ "source": {
+  "pdfs": [
+   {
+    "id": "cours",
+    "nom": "Dessin technique et DAO – Chapitre 5 : Perspectives",
+    "court": "Ch. 5 – Perspectives",
+    "pages": 19
+   },
+   {
+    "id": "guide",
+    "nom": "Guide des sciences et technologies industrielles (J.-L. Fanchon)",
+    "court": "Guide Fanchon",
+    "pages": 135
+   }
+  ],
+  "genereLe": "2026-10-16",
+  "modele": "Claude (rédigé dans la conversation)"
+ },
+ "synthese": {
+  "intro": "Représenter un objet en 3D : systèmes de projection, perspectives isométrique et cavalière, ellipses et perspective conique.",
+  "sections": [
+   {
+    "id": "s1",
+    "titre": "À quoi servent les perspectives ?",
+    "blocs": [
+     {
+      "type": "texte",
+      "contenu": "Une perspective montre l'objet **en 3 dimensions** en une seule image : plusieurs faces à la fois. Elle est plus accessible aux non-techniciens, mais seule la **projection orthogonale** donne une description **précise et rigoureuse**.",
+      "pages": [
+       2
+      ],
+      "doc": "cours"
+     },
+     {
+      "type": "texte",
+      "contenu": "Applications : publicité, catalogues, vues complémentaires, implantations d'usines, présentation d'objets en cours de création…",
+      "pages": [
+       2
+      ],
+      "doc": "cours"
+     }
+    ]
+   },
+   {
+    "id": "s2",
+    "titre": "Les systèmes de projection",
+    "blocs": [
+     {
+      "type": "tableau",
+      "entetes": [
+       "Projection",
+       "Donne…"
+      ],
+      "lignes": [
+       [
+        "Orthogonale",
+        "les vues multiples (pas de perspective)."
+       ],
+       [
+        "Oblique",
+        "la perspective **cavalière**."
+       ],
+       [
+        "Axonométrique",
+        "les perspectives **isométrique**, dimétrique, trimétrique."
+       ],
+       [
+        "Avec point de fuite",
+        "la perspective **conique**."
+       ]
+      ],
+      "pages": [
+       3
+      ],
+      "doc": "cours"
+     },
+     {
+      "type": "point-cle",
+      "contenu": "Pour les projections orthogonale, oblique et axonométrique, l'observateur est à l'**infini** : les lignes de rappel sont **parallèles**. Avec un point de fuite, l'observateur est à distance finie : les lignes **convergent** vers son œil.",
+      "pages": [
+       3
+      ],
+      "doc": "cours"
+     }
+    ]
+   },
+   {
+    "id": "s3",
+    "titre": "Perspective isométrique",
+    "blocs": [
+     {
+      "type": "figure",
+      "svg": "<svg viewBox=\"0 0 580 265\" width=\"580\" role=\"img\" aria-label=\"Axes des perspectives isométrique et cavalière\" xmlns=\"http://www.w3.org/2000/svg\"><title>Axes des perspectives isométrique et cavalière</title><text x=\"130\" y=\"22\" text-anchor=\"middle\" class=\"gras grand\">Isométrique</text><line class=\"tf solide\" x1=\"130\" y1=\"150\" x2=\"130\" y2=\"55\"/><polygon class=\"pt\" points=\"130,55 132.7,61.4 127.3,61.4\"/><line class=\"tf solide\" x1=\"130\" y1=\"150\" x2=\"47.7\" y2=\"197.5\"/><polygon class=\"pt\" points=\"47.7,197.5 51.9,191.9 54.7,196.6\"/><line class=\"tf solide\" x1=\"130\" y1=\"150\" x2=\"212.3\" y2=\"197.5\"/><polygon class=\"pt\" points=\"212.3,197.5 205.3,196.6 208.1,191.9\"/><text x=\"144\" y=\"62\" text-anchor=\"start\" class=\"gras\">z</text><text x=\"38\" y=\"208\" text-anchor=\"middle\" class=\"gras\">x</text><text x=\"222\" y=\"208\" text-anchor=\"middle\" class=\"gras\">y</text><text x=\"80\" y=\"130\" text-anchor=\"middle\" class=\"petit f-def\">120°</text><text x=\"180\" y=\"130\" text-anchor=\"middle\" class=\"petit f-def\">120°</text><text x=\"130\" y=\"190\" text-anchor=\"middle\" class=\"petit f-def\">120°</text><line class=\"tn muet\" x1=\"30\" y1=\"208\" x2=\"230\" y2=\"208\"/><text x=\"205\" y=\"224\" text-anchor=\"middle\" class=\"petit muet\">30°</text><text x=\"130\" y=\"250\" text-anchor=\"middle\" class=\"petit\">arêtes × 0,82 (dessin isométrique : × 1)</text><text x=\"440\" y=\"22\" text-anchor=\"middle\" class=\"gras grand\">Cavalière</text><rect class=\"tf\" x=\"380\" y=\"100\" width=\"90\" height=\"90\" /><path class=\"tf\" d=\"M380 100 L411.8 68.2 L501.8 68.2 L470 100\"/><path class=\"tf\" d=\"M470 190 L501.8 158.2 L501.8 68.2\"/><path class=\"ti\" d=\"M380 190 L411.8 158.2 L501.8 158.2 M411.8 158.2 L411.8 68.2\"/><text x=\"425\" y=\"208\" text-anchor=\"middle\" class=\"petit\">face en vraie grandeur</text><text x=\"509.8\" y=\"113.2\" text-anchor=\"start\" class=\"petit f-def\">fuyantes à 45°</text><text x=\"509.8\" y=\"128.2\" text-anchor=\"start\" class=\"petit f-def\">réduites à 0,5</text><text x=\"440\" y=\"250\" text-anchor=\"middle\" class=\"petit\">angle de fuite 45°, coefficient 0,5</text></svg>",
+      "legende": "Axes isométriques à 120° ; perspective cavalière avec fuyantes à 45° réduites de moitié.",
+      "pages": [
+       4,
+       11
+      ],
+      "doc": "cours"
+     },
+     {
+      "type": "tableau",
+      "entetes": [
+       "Perspective axonométrique",
+       "Angles entre les axes"
+      ],
+      "lignes": [
+       [
+        "Isométrique",
+        "3 angles **égaux** (120°)"
+       ],
+       [
+        "Dimétrique",
+        "2 angles égaux (l'ISO recommande 7° et 42°)"
+       ],
+       [
+        "Trimétrique",
+        "3 angles différents"
+       ]
+      ],
+      "pages": [
+       4,
+       8,
+       9
+      ],
+      "doc": "cours"
+     },
+     {
+      "type": "liste",
+      "items": [
+       "Axes à **120°** les uns des autres ; les arêtes verticales restent **verticales**, les fuyantes font **30°** avec l'horizontale.",
+       "Dimensions parallèles aux axes multipliées par **0,82** (perspective isométrique).",
+       "**Dessin isométrique** : on trace les arêtes en **vraie grandeur** (× 1) ; le dessin est le même, environ **25 % plus grand**.",
+       "Les cercles deviennent des **ellipses**."
+      ],
+      "pages": [
+       4,
+       6,
+       13
+      ],
+      "titre": "Caractéristiques",
+      "doc": "cours"
+     },
+     {
+      "type": "point-cle",
+      "contenu": "C'est la perspective axonométrique la plus facile : elle est souvent utilisée, et les logiciels CAO/DAO ont des commandes pour la tracer.",
+      "pages": [
+       4
+      ],
+      "doc": "cours"
+     }
+    ]
+   },
+   {
+    "id": "s4",
+    "titre": "Perspective cavalière",
+    "blocs": [
+     {
+      "type": "definition",
+      "contenu": "La face principale, **parallèle au plan de projection**, est dessinée en **vraie grandeur** ; les arêtes perpendiculaires (les **fuyantes**) sont tracées à **45°** et **réduites de moitié** (coefficient 0,5).",
+      "titre": "Perspective cavalière",
+      "pages": [
+       10,
+       11
+      ],
+      "doc": "cours"
+     },
+     {
+      "type": "point-cle",
+      "contenu": "Placer les faces les plus **complexes** (cercles, cylindres…) **parallèles au plan de projection** : elles restent en vraie grandeur, sans ellipses.",
+      "pages": [
+       11
+      ],
+      "doc": "cours"
+     },
+     {
+      "type": "texte",
+      "contenu": "C'est la plus ancienne (époque médiévale) et la plus facile à mettre en œuvre. Les coupes et la cotation sont possibles ; on place alors les cotes dans la direction des axes.",
+      "pages": [
+       11
+      ],
+      "doc": "cours"
+     }
+    ]
+   },
+   {
+    "id": "s5",
+    "titre": "Les ellipses",
+    "blocs": [
+     {
+      "type": "liste",
+      "items": [
+       "Le **grand axe** de l'ellipse est perpendiculaire à l'axe du trou ou du cylindre et vaut son **diamètre réel**.",
+       "Le **petit axe** est perpendiculaire au grand axe et coïncide avec l'axe du trou."
+      ],
+      "pages": [
+       9
+      ],
+      "titre": "Propriétés",
+      "doc": "cours"
+     },
+     {
+      "type": "exemple",
+      "contenu": "Tracé rapide à main levée : construire le **carré circonscrit** et ses médianes, puis dessiner l'ellipse **tangente aux milieux** des côtés.",
+      "pages": [
+       13
+      ],
+      "doc": "cours"
+     }
+    ]
+   },
+   {
+    "id": "s6",
+    "titre": "Perspective conique",
+    "blocs": [
+     {
+      "type": "texte",
+      "contenu": "Elle utilise des **points de fuite** : l'observateur est à distance finie, comme dans la réalité.",
+      "pages": [
+       3,
+       14
+      ],
+      "doc": "cours"
+     },
+     {
+      "type": "liste",
+      "items": [
+       "Sur le plan : placer le **Tableau** (perpendiculaire au regard), le point P et trouver les **points de fuite** F1, F2.",
+       "Sur la feuille : tracer la **ligne de terre (LT)** et la **ligne d'horizon (HH')**, placer P et F1.",
+       "Placer les arêtes **en vraie grandeur** (celles situées dans le Tableau).",
+       "Tracer les **fuyantes** vers F1 puis vers F2 ; les arêtes verticales restent **perpendiculaires** à LT.",
+       "Repasser les arêtes sûres, en traits interrompus pour les arêtes cachées."
+      ],
+      "pages": [
+       14,
+       16
+      ],
+      "titre": "Étapes de l'exemple du cours",
+      "ordonnee": true,
+      "doc": "cours"
+     }
+    ]
+   },
+   {
+    "id": "s7",
+    "titre": "Pour aller plus loin",
+    "blocs": [
+     {
+      "type": "texte",
+      "contenu": "Chapitre 5 « Perspectives » du guide (systèmes de projection, isométrique, dimétrique, trimétrique, cavalière).",
+      "pages": [
+       56,
+       63
+      ],
+      "doc": "guide"
+     }
+    ]
+   }
+  ]
+ },
+ "flashcards": [
+  {
+   "id": "fc-001",
+   "recto": "Avantage d'une perspective ?",
+   "verso": "Montrer l'objet en **3D** en une seule image, compréhensible par des non-techniciens.",
+   "tags": [
+    "généralités"
+   ],
+   "page": 2,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-002",
+   "recto": "Quelle représentation donne une description précise et rigoureuse ?",
+   "verso": "La **projection orthogonale** (vues multiples).",
+   "tags": [
+    "généralités"
+   ],
+   "page": 2,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-003",
+   "recto": "Angle entre les axes isométriques ?",
+   "verso": "**120°**",
+   "tags": [
+    "isométrique"
+   ],
+   "page": 4,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-004",
+   "recto": "Coefficient de réduction en perspective isométrique ?",
+   "verso": "**0,82** (les arêtes parallèles aux axes).",
+   "tags": [
+    "isométrique"
+   ],
+   "page": 4,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-005",
+   "recto": "Différence entre **perspective** et **dessin** isométrique ?",
+   "verso": "Le dessin isométrique trace les arêtes en vraie grandeur (× 1) : même image, ~**25 % plus grande**.",
+   "tags": [
+    "isométrique"
+   ],
+   "page": 6,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-006",
+   "recto": "Isométrique / dimétrique / trimétrique : combien d'angles égaux ?",
+   "verso": "3 égaux / 2 égaux / tous différents.",
+   "tags": [
+    "axonométrique"
+   ],
+   "page": 4,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-007",
+   "recto": "En cavalière, que trace-t-on en vraie grandeur ?",
+   "verso": "La **face parallèle au plan de projection**.",
+   "tags": [
+    "cavalière"
+   ],
+   "page": 11,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-008",
+   "recto": "Angle et coefficient des fuyantes en cavalière ?",
+   "verso": "**45°** et **0,5**.",
+   "tags": [
+    "cavalière"
+   ],
+   "page": 11,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-009",
+   "recto": "En cavalière, comment placer les formes circulaires ?",
+   "verso": "**Parallèles au plan de projection** : elles restent des cercles en vraie grandeur.",
+   "tags": [
+    "cavalière"
+   ],
+   "page": 11,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-010",
+   "recto": "Que devient un cercle en perspective isométrique ?",
+   "verso": "Une **ellipse**.",
+   "tags": [
+    "ellipses"
+   ],
+   "page": 5,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-011",
+   "recto": "Longueur du grand axe d'une ellipse de trou ?",
+   "verso": "Le **diamètre réel** du trou ; il est perpendiculaire à l'axe du trou.",
+   "tags": [
+    "ellipses"
+   ],
+   "page": 9,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-012",
+   "recto": "Comment tracer vite une ellipse à main levée ?",
+   "verso": "Carré circonscrit + médianes, puis ellipse **tangente aux milieux** des côtés.",
+   "tags": [
+    "ellipses"
+   ],
+   "page": 13,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-013",
+   "recto": "Quelle perspective utilise des **points de fuite** ?",
+   "verso": "La perspective **conique**.",
+   "tags": [
+    "conique"
+   ],
+   "page": 14,
+   "doc": "cours"
+  }
+ ],
+ "exercices": []
+}

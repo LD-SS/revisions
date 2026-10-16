@@ -1,0 +1,543 @@
+{
+ "format": 1,
+ "id": "ch02-formes",
+ "matiere": "dessin",
+ "titre": "Formes usuelles : vocabulaire",
+ "source": {
+  "pdfs": [
+   {
+    "id": "cours",
+    "nom": "Dessin technique et DAO – Chapitre 2 : Formes usuelles, vocabulaire",
+    "court": "Ch. 2 – Formes usuelles",
+    "pages": 18
+   },
+   {
+    "id": "guide",
+    "nom": "Guide des sciences et technologies industrielles (J.-L. Fanchon)",
+    "court": "Guide Fanchon",
+    "pages": 135
+   }
+  ],
+  "genereLe": "2026-10-16",
+  "modele": "Claude (rédigé dans la conversation)"
+ },
+ "synthese": {
+  "intro": "Le vocabulaire des formes techniques (trous, formes sur un arbre, formes de pièces) et des éléments standards.",
+  "sections": [
+   {
+    "id": "s1",
+    "titre": "Pourquoi un vocabulaire technique ?",
+    "blocs": [
+     {
+      "type": "texte",
+      "contenu": "Le vocabulaire technique permet de **dialoguer avec un autre professionnel** sans perdre de temps en problèmes de compréhension : les deux parlent le même langage.",
+      "pages": [
+       3
+      ],
+      "doc": "cours"
+     },
+     {
+      "type": "liste",
+      "items": [
+       "plane",
+       "cylindrique",
+       "conique",
+       "sphérique",
+       "hélicoïdale",
+       "torique"
+      ],
+      "pages": [
+       3
+      ],
+      "titre": "Les surfaces élémentaires",
+      "doc": "cours"
+     }
+    ]
+   },
+   {
+    "id": "s2",
+    "titre": "Trous et formes intérieures",
+    "blocs": [
+     {
+      "type": "figure",
+      "svg": "<svg viewBox=\"0 0 620 200\" width=\"620\" role=\"img\" aria-label=\"Formes intérieures usuelles vues en coupe\" xmlns=\"http://www.w3.org/2000/svg\"><title>Formes intérieures usuelles vues en coupe</title><clipPath id=\"h97184\"><rect x=\"10\" y=\"40\" width=\"600\" height=\"100\"/></clipPath><g clip-path=\"url(#h97184)\"><line class=\"tn\" x1=\"-90\" y1=\"140\" x2=\"10\" y2=\"40\"/><line class=\"tn\" x1=\"-81\" y1=\"140\" x2=\"19\" y2=\"40\"/><line class=\"tn\" x1=\"-72\" y1=\"140\" x2=\"28\" y2=\"40\"/><line class=\"tn\" x1=\"-63\" y1=\"140\" x2=\"37\" y2=\"40\"/><line class=\"tn\" x1=\"-54\" y1=\"140\" x2=\"46\" y2=\"40\"/><line class=\"tn\" x1=\"-45\" y1=\"140\" x2=\"55\" y2=\"40\"/><line class=\"tn\" x1=\"-36\" y1=\"140\" x2=\"64\" y2=\"40\"/><line class=\"tn\" x1=\"-27\" y1=\"140\" x2=\"73\" y2=\"40\"/><line class=\"tn\" x1=\"-18\" y1=\"140\" x2=\"82\" y2=\"40\"/><line class=\"tn\" x1=\"-9\" y1=\"140\" x2=\"91\" y2=\"40\"/><line class=\"tn\" x1=\"0\" y1=\"140\" x2=\"100\" y2=\"40\"/><line class=\"tn\" x1=\"9\" y1=\"140\" x2=\"109\" y2=\"40\"/><line class=\"tn\" x1=\"18\" y1=\"140\" x2=\"118\" y2=\"40\"/><line class=\"tn\" x1=\"27\" y1=\"140\" x2=\"127\" y2=\"40\"/><line class=\"tn\" x1=\"36\" y1=\"140\" x2=\"136\" y2=\"40\"/><line class=\"tn\" x1=\"45\" y1=\"140\" x2=\"145\" y2=\"40\"/><line class=\"tn\" x1=\"54\" y1=\"140\" x2=\"154\" y2=\"40\"/><line class=\"tn\" x1=\"63\" y1=\"140\" x2=\"163\" y2=\"40\"/><line class=\"tn\" x1=\"72\" y1=\"140\" x2=\"172\" y2=\"40\"/><line class=\"tn\" x1=\"81\" y1=\"140\" x2=\"181\" y2=\"40\"/><line class=\"tn\" x1=\"90\" y1=\"140\" x2=\"190\" y2=\"40\"/><line class=\"tn\" x1=\"99\" y1=\"140\" x2=\"199\" y2=\"40\"/><line class=\"tn\" x1=\"108\" y1=\"140\" x2=\"208\" y2=\"40\"/><line class=\"tn\" x1=\"117\" y1=\"140\" x2=\"217\" y2=\"40\"/><line class=\"tn\" x1=\"126\" y1=\"140\" x2=\"226\" y2=\"40\"/><line class=\"tn\" x1=\"135\" y1=\"140\" x2=\"235\" y2=\"40\"/><line class=\"tn\" x1=\"144\" y1=\"140\" x2=\"244\" y2=\"40\"/><line class=\"tn\" x1=\"153\" y1=\"140\" x2=\"253\" y2=\"40\"/><line class=\"tn\" x1=\"162\" y1=\"140\" x2=\"262\" y2=\"40\"/><line class=\"tn\" x1=\"171\" y1=\"140\" x2=\"271\" y2=\"40\"/><line class=\"tn\" x1=\"180\" y1=\"140\" x2=\"280\" y2=\"40\"/><line class=\"tn\" x1=\"189\" y1=\"140\" x2=\"289\" y2=\"40\"/><line class=\"tn\" x1=\"198\" y1=\"140\" x2=\"298\" y2=\"40\"/><line class=\"tn\" x1=\"207\" y1=\"140\" x2=\"307\" y2=\"40\"/><line class=\"tn\" x1=\"216\" y1=\"140\" x2=\"316\" y2=\"40\"/><line class=\"tn\" x1=\"225\" y1=\"140\" x2=\"325\" y2=\"40\"/><line class=\"tn\" x1=\"234\" y1=\"140\" x2=\"334\" y2=\"40\"/><line class=\"tn\" x1=\"243\" y1=\"140\" x2=\"343\" y2=\"40\"/><line class=\"tn\" x1=\"252\" y1=\"140\" x2=\"352\" y2=\"40\"/><line class=\"tn\" x1=\"261\" y1=\"140\" x2=\"361\" y2=\"40\"/><line class=\"tn\" x1=\"270\" y1=\"140\" x2=\"370\" y2=\"40\"/><line class=\"tn\" x1=\"279\" y1=\"140\" x2=\"379\" y2=\"40\"/><line class=\"tn\" x1=\"288\" y1=\"140\" x2=\"388\" y2=\"40\"/><line class=\"tn\" x1=\"297\" y1=\"140\" x2=\"397\" y2=\"40\"/><line class=\"tn\" x1=\"306\" y1=\"140\" x2=\"406\" y2=\"40\"/><line class=\"tn\" x1=\"315\" y1=\"140\" x2=\"415\" y2=\"40\"/><line class=\"tn\" x1=\"324\" y1=\"140\" x2=\"424\" y2=\"40\"/><line class=\"tn\" x1=\"333\" y1=\"140\" x2=\"433\" y2=\"40\"/><line class=\"tn\" x1=\"342\" y1=\"140\" x2=\"442\" y2=\"40\"/><line class=\"tn\" x1=\"351\" y1=\"140\" x2=\"451\" y2=\"40\"/><line class=\"tn\" x1=\"360\" y1=\"140\" x2=\"460\" y2=\"40\"/><line class=\"tn\" x1=\"369\" y1=\"140\" x2=\"469\" y2=\"40\"/><line class=\"tn\" x1=\"378\" y1=\"140\" x2=\"478\" y2=\"40\"/><line class=\"tn\" x1=\"387\" y1=\"140\" x2=\"487\" y2=\"40\"/><line class=\"tn\" x1=\"396\" y1=\"140\" x2=\"496\" y2=\"40\"/><line class=\"tn\" x1=\"405\" y1=\"140\" x2=\"505\" y2=\"40\"/><line class=\"tn\" x1=\"414\" y1=\"140\" x2=\"514\" y2=\"40\"/><line class=\"tn\" x1=\"423\" y1=\"140\" x2=\"523\" y2=\"40\"/><line class=\"tn\" x1=\"432\" y1=\"140\" x2=\"532\" y2=\"40\"/><line class=\"tn\" x1=\"441\" y1=\"140\" x2=\"541\" y2=\"40\"/><line class=\"tn\" x1=\"450\" y1=\"140\" x2=\"550\" y2=\"40\"/><line class=\"tn\" x1=\"459\" y1=\"140\" x2=\"559\" y2=\"40\"/><line class=\"tn\" x1=\"468\" y1=\"140\" x2=\"568\" y2=\"40\"/><line class=\"tn\" x1=\"477\" y1=\"140\" x2=\"577\" y2=\"40\"/><line class=\"tn\" x1=\"486\" y1=\"140\" x2=\"586\" y2=\"40\"/><line class=\"tn\" x1=\"495\" y1=\"140\" x2=\"595\" y2=\"40\"/><line class=\"tn\" x1=\"504\" y1=\"140\" x2=\"604\" y2=\"40\"/><line class=\"tn\" x1=\"513\" y1=\"140\" x2=\"613\" y2=\"40\"/><line class=\"tn\" x1=\"522\" y1=\"140\" x2=\"622\" y2=\"40\"/><line class=\"tn\" x1=\"531\" y1=\"140\" x2=\"631\" y2=\"40\"/><line class=\"tn\" x1=\"540\" y1=\"140\" x2=\"640\" y2=\"40\"/><line class=\"tn\" x1=\"549\" y1=\"140\" x2=\"649\" y2=\"40\"/><line class=\"tn\" x1=\"558\" y1=\"140\" x2=\"658\" y2=\"40\"/><line class=\"tn\" x1=\"567\" y1=\"140\" x2=\"667\" y2=\"40\"/><line class=\"tn\" x1=\"576\" y1=\"140\" x2=\"676\" y2=\"40\"/><line class=\"tn\" x1=\"585\" y1=\"140\" x2=\"685\" y2=\"40\"/><line class=\"tn\" x1=\"594\" y1=\"140\" x2=\"694\" y2=\"40\"/><line class=\"tn\" x1=\"603\" y1=\"140\" x2=\"703\" y2=\"40\"/><line class=\"tn\" x1=\"612\" y1=\"140\" x2=\"712\" y2=\"40\"/><line class=\"tn\" x1=\"621\" y1=\"140\" x2=\"721\" y2=\"40\"/><line class=\"tn\" x1=\"630\" y1=\"140\" x2=\"730\" y2=\"40\"/><line class=\"tn\" x1=\"639\" y1=\"140\" x2=\"739\" y2=\"40\"/><line class=\"tn\" x1=\"648\" y1=\"140\" x2=\"748\" y2=\"40\"/><line class=\"tn\" x1=\"657\" y1=\"140\" x2=\"757\" y2=\"40\"/><line class=\"tn\" x1=\"666\" y1=\"140\" x2=\"766\" y2=\"40\"/><line class=\"tn\" x1=\"675\" y1=\"140\" x2=\"775\" y2=\"40\"/><line class=\"tn\" x1=\"684\" y1=\"140\" x2=\"784\" y2=\"40\"/><line class=\"tn\" x1=\"693\" y1=\"140\" x2=\"793\" y2=\"40\"/><line class=\"tn\" x1=\"702\" y1=\"140\" x2=\"802\" y2=\"40\"/></g><rect class=\"fond\" x=\"50\" y=\"40\" width=\"40\" height=\"100\" /><line class=\"tf\" x1=\"50\" y1=\"40\" x2=\"50\" y2=\"140\"/><line class=\"tf\" x1=\"90\" y1=\"40\" x2=\"90\" y2=\"140\"/><line class=\"tm\" x1=\"70\" y1=\"26\" x2=\"70\" y2=\"154\"/><path class=\"fond\" d=\"M150 40 L150 105 L170 116.5 L190 105 L190 40 Z\"/><path class=\"tf\" d=\"M150 40 L150 105 L170 116.5 L190 105 L190 40\"/><line class=\"tf\" x1=\"150\" y1=\"105\" x2=\"190\" y2=\"105\"/><line class=\"tm\" x1=\"170\" y1=\"26\" x2=\"170\" y2=\"128\"/><path class=\"fond\" d=\"M250 40 L250 70 L265 70 L265 140 L295 140 L295 70 L310 70 L310 40 Z\"/><path class=\"tf\" d=\"M250 40 L250 70 L265 70 L265 140 M295 140 L295 70 L310 70 L310 40\"/><line class=\"tf\" x1=\"265\" y1=\"70\" x2=\"295\" y2=\"70\"/><line class=\"tm\" x1=\"280\" y1=\"26\" x2=\"280\" y2=\"154\"/><path class=\"fond\" d=\"M358 40 L373 62 L373 140 L393 140 L393 62 L408 40 Z\"/><path class=\"tf\" d=\"M358 40 L373 62 L373 140 M393 140 L393 62 L408 40\"/><line class=\"tf\" x1=\"373\" y1=\"62\" x2=\"393\" y2=\"62\"/><line class=\"tm\" x1=\"383\" y1=\"26\" x2=\"383\" y2=\"154\"/><path class=\"fond\" d=\"M460 40 L460 112 L480 124 L500 112 L500 40 Z\"/><path class=\"tf\" d=\"M460 40 L460 112 L480 124 L500 112 L500 40\"/><line class=\"tf\" x1=\"460\" y1=\"112\" x2=\"500\" y2=\"112\"/><line class=\"tn\" x1=\"455\" y1=\"40\" x2=\"455\" y2=\"96\"/><line class=\"tn\" x1=\"505\" y1=\"40\" x2=\"505\" y2=\"96\"/><line class=\"tf\" x1=\"455\" y1=\"96\" x2=\"505\" y2=\"96\"/><line class=\"tm\" x1=\"480\" y1=\"26\" x2=\"480\" y2=\"136\"/><line class=\"tf\" x1=\"10\" y1=\"40\" x2=\"610\" y2=\"40\"/><line class=\"tf\" x1=\"10\" y1=\"140\" x2=\"610\" y2=\"140\"/><line class=\"tf\" x1=\"10\" y1=\"40\" x2=\"10\" y2=\"140\"/><line class=\"tf\" x1=\"610\" y1=\"40\" x2=\"610\" y2=\"140\"/><text x=\"70\" y=\"172\" text-anchor=\"middle\" class=\"gras\">Trou</text><text x=\"70\" y=\"188\" text-anchor=\"middle\" class=\"petit muet\">débouchant</text><text x=\"170\" y=\"172\" text-anchor=\"middle\" class=\"gras\">Trou borgne</text><text x=\"170\" y=\"188\" text-anchor=\"middle\" class=\"petit muet\">(cône 120°)</text><text x=\"280\" y=\"172\" text-anchor=\"middle\" class=\"gras\">Lamage</text><text x=\"280\" y=\"188\" text-anchor=\"middle\" class=\"petit muet\">(tête de vis noyée)</text><text x=\"383\" y=\"172\" text-anchor=\"middle\" class=\"gras\">Fraisure</text><text x=\"383\" y=\"188\" text-anchor=\"middle\" class=\"petit muet\">(tête conique)</text><text x=\"480\" y=\"172\" text-anchor=\"middle\" class=\"gras\">Taraudage</text><text x=\"480\" y=\"188\" text-anchor=\"middle\" class=\"petit muet\">borgne</text><text x=\"560\" y=\"30\" text-anchor=\"middle\" class=\"petit muet\">matière coupée</text></svg>",
+      "legende": "Quelques formes intérieures vues en coupe (la matière coupée est hachurée).",
+      "pages": [
+       4,
+       5
+      ],
+      "doc": "cours"
+     },
+     {
+      "type": "tableau",
+      "entetes": [
+       "Terme",
+       "Définition"
+      ],
+      "lignes": [
+       [
+        "Alésage",
+        "Forme creuse précise (un trou) destinée à **recevoir un arbre** : c'est le **contenant** d'un assemblage."
+       ],
+       [
+        "Perçage",
+        "Trou, débouchant ou non, généralement fait avec un **foret** à extrémité pointue."
+       ],
+       [
+        "Trou débouchant",
+        "Surface cylindrique intérieure qui **traverse** la pièce de part en part."
+       ],
+       [
+        "Trou borgne",
+        "Trou **non traversant**, terminé par un **cône à 120°** (laissé par le foret)."
+       ],
+       [
+        "Lamage",
+        "Logement cylindrique **à fond plat**, en général pour **noyer une tête de vis CHC** ; peut servir de surface d'appui."
+       ],
+       [
+        "Fraisure",
+        "Usinage **conique** à l'entrée d'un perçage, pour recevoir une **tête de vis conique**."
+       ],
+       [
+        "Taraudage",
+        "Filet hélicoïdal **intérieur** qui reçoit une pièce filetée (liaison encastrement). Débouchant ou **borgne**."
+       ],
+       [
+        "Chambrage",
+        "Évidement **à l'intérieur d'un alésage** pour limiter la portée (surface de contact) de l'arbre."
+       ]
+      ],
+      "pages": [
+       4,
+       5,
+       9
+      ],
+      "doc": "cours"
+     }
+    ]
+   },
+   {
+    "id": "s3",
+    "titre": "Formes sur un arbre",
+    "blocs": [
+     {
+      "type": "figure",
+      "svg": "<svg viewBox=\"0 0 620 210\" width=\"620\" role=\"img\" aria-label=\"Formes usuelles sur un arbre\" xmlns=\"http://www.w3.org/2000/svg\"><title>Formes usuelles sur un arbre</title><line class=\"tm\" x1=\"10\" y1=\"110\" x2=\"610\" y2=\"110\"/><path class=\"tf\" d=\"M20 80 L28 72 L190 72 Q200 72 200 62 L200 52 L330 52 L330 72 L360 72 L360 79 L376 79 L376 72 L590 72 L598 80 L598 110\"/><path class=\"tf\" d=\"M20 140 L28 148 L190 148 Q200 148 200 158 L200 168 L330 168 L330 148 L360 148 L360 141 L376 141 L376 148 L590 148 L598 140 L598 110\"/><line class=\"tf\" x1=\"20\" y1=\"80\" x2=\"20\" y2=\"140\"/><line class=\"tn\" x1=\"28\" y1=\"72\" x2=\"28\" y2=\"148\"/><line class=\"tn\" x1=\"590\" y1=\"72\" x2=\"590\" y2=\"148\"/><line class=\"tf\" x1=\"200\" y1=\"52\" x2=\"200\" y2=\"168\"/><line class=\"tf\" x1=\"330\" y1=\"52\" x2=\"330\" y2=\"168\"/><line class=\"tf\" x1=\"360\" y1=\"79\" x2=\"360\" y2=\"141\"/><line class=\"tf\" x1=\"376\" y1=\"79\" x2=\"376\" y2=\"141\"/><rect class=\"tn\" x=\"440\" y=\"72\" width=\"80\" height=\"76\" /><line class=\"tn\" x1=\"440\" y1=\"72\" x2=\"520\" y2=\"148\"/><line class=\"tn\" x1=\"440\" y1=\"148\" x2=\"520\" y2=\"72\"/><text x=\"22\" y=\"48\" text-anchor=\"middle\" class=\"gras\">Chanfrein</text><line class=\"tn muet\" x1=\"22\" y1=\"52\" x2=\"22\" y2=\"74\"/><text x=\"175\" y=\"30\" text-anchor=\"middle\" class=\"gras\">Congé</text><line class=\"tn muet\" x1=\"175\" y1=\"34\" x2=\"198\" y2=\"64\"/><text x=\"265\" y=\"30\" text-anchor=\"middle\" class=\"gras\">Épaulement</text><line class=\"tn muet\" x1=\"265\" y1=\"34\" x2=\"205\" y2=\"54\"/><text x=\"368\" y=\"30\" text-anchor=\"middle\" class=\"gras\">Gorge</text><line class=\"tn muet\" x1=\"368\" y1=\"34\" x2=\"368\" y2=\"77\"/><text x=\"480\" y=\"48\" text-anchor=\"middle\" class=\"gras\">Méplat</text><line class=\"tn muet\" x1=\"480\" y1=\"52\" x2=\"480\" y2=\"100\"/><text x=\"265\" y=\"190\" text-anchor=\"middle\" class=\"gras\">Collet</text><line class=\"tn muet\" x1=\"265\" y1=\"194\" x2=\"265\" y2=\"168\"/></svg>",
+      "legende": "Quelques formes usuelles sur un arbre (le méplat est repéré par ses deux diagonales en trait fin).",
+      "pages": [
+       6,
+       10
+      ],
+      "doc": "cours"
+     },
+     {
+      "type": "tableau",
+      "entetes": [
+       "Terme",
+       "Définition"
+      ],
+      "lignes": [
+       [
+        "Arbre",
+        "Pièce cylindrique précise : le **contenu** d'un assemblage avec un alésage."
+       ],
+       [
+        "Filetage",
+        "Surface hélicoïdale **extérieure** taillée sur un cylindre (la vis), utilisée avec un taraudage."
+       ],
+       [
+        "Épaulement",
+        "Changement de section d'une pièce pour obtenir une **surface d'appui**."
+       ],
+       [
+        "Chanfrein",
+        "Petite surface obtenue en **supprimant une arête** (sécurité, facilite le montage) ; sur un cylindre, c'est un cône."
+       ],
+       [
+        "Arrondi",
+        "Petite surface arrondie **convexe** qui supprime une arête vive."
+       ],
+       [
+        "Congé",
+        "Petite surface **concave** qui raccorde deux surfaces formant un angle rentrant."
+       ],
+       [
+        "Méplat",
+        "Surface **plane** coupant un cylindre parallèlement à son axe (ex. deux méplats pour une clé plate)."
+       ],
+       [
+        "Gorge",
+        "**Rainure circulaire** sur un arbre : pour un anneau élastique, un joint, ou comme dégagement."
+       ],
+       [
+        "Collet",
+        "**Couronne** sur une pièce cylindrique, qui peut servir de butée."
+       ],
+       [
+        "Rainure de clavette",
+        "Rainure sur un arbre où l'on loge une **clavette**, qui bloque la rotation entre arbre et moyeu."
+       ],
+       [
+        "Cannelure",
+        "Usinage sur un arbre qui transmet une **rotation de grande résistance** avec la pièce femelle."
+       ]
+      ],
+      "pages": [
+       5,
+       6,
+       7,
+       8,
+       10
+      ],
+      "doc": "cours"
+     },
+     {
+      "type": "piege",
+      "contenu": "**Arrondi** = surface **convexe** (bosse) ; **congé** = surface **concave** (creux).",
+      "pages": [
+       7
+      ],
+      "doc": "cours"
+     }
+    ]
+   },
+   {
+    "id": "s4",
+    "titre": "Autres formes à connaître",
+    "blocs": [
+     {
+      "type": "tableau",
+      "entetes": [
+       "Terme",
+       "Définition"
+      ],
+      "lignes": [
+       [
+        "Languette (tenon)",
+        "Forme qui s'ajuste dans une rainure, en général pour une **liaison glissière**."
+       ],
+       [
+        "Rainure",
+        "Usinage associé à une languette pour réaliser une **liaison glissière**."
+       ],
+       [
+        "Trou oblong",
+        "Trou plus long que large, terminé par deux demi-cylindres ; souvent pour un **réglage**."
+       ],
+       [
+        "Lumière",
+        "Orifice de forme quelconque dans une pièce mince (ex. boîtier électronique)."
+       ],
+       [
+        "Bossage",
+        "**Surépaisseur** de matière à l'entrée d'un perçage, dressée pour l'appui d'une tête de vis ou d'un écrou."
+       ],
+       [
+        "Nervure",
+        "Volume (souvent triangulaire) qui **augmente la rigidité** sans trop alourdir."
+       ],
+       [
+        "Évidement",
+        "Dégagement qui réduit une portée, un poids ou une surface d'appui."
+       ],
+       [
+        "Embase",
+        "Élément d'une pièce qui lui sert de **base**."
+       ],
+       [
+        "Dégagement",
+        "Usinage au fond d'un angle pour un bon contact ou pour faciliter l'usinage."
+       ],
+       [
+        "Arête",
+        "Ligne d'**intersection** de deux surfaces."
+       ],
+       [
+        "Dépouille",
+        "Inclinaison des surfaces d'une pièce moulée pour la **démouler** facilement."
+       ],
+       [
+        "Ergot",
+        "Petite saillie qui assure en général un **arrêt en rotation**."
+       ],
+       [
+        "Queue d'aronde",
+        "Tenon **trapézoïdal** dans une rainure de même forme : liaison glissière."
+       ],
+       [
+        "Saignée",
+        "Entaille profonde et étroite."
+       ],
+       [
+        "Semelle",
+        "Surface plane d'une pièce servant d'**appui**."
+       ],
+       [
+        "Téton",
+        "Petite saillie cylindrique."
+       ],
+       [
+        "Chape",
+        "Sorte de **fourche** qui relie deux pièces par un axe d'articulation."
+       ],
+       [
+        "Goupille",
+        "Organe de liaison simple pour **immobiliser** ou **positionner** une pièce ; travaille souvent au cisaillement."
+       ]
+      ],
+      "pages": [
+       6,
+       8,
+       9,
+       10,
+       11,
+       12,
+       13
+      ],
+      "doc": "cours"
+     }
+    ]
+   },
+   {
+    "id": "s5",
+    "titre": "Éléments standards",
+    "blocs": [
+     {
+      "type": "liste",
+      "items": [
+       "**Profilés** (métal laminé de section constante) : tube carré ou rond, barre ronde ou carrée, tôle, plaque, plat, cornière.",
+       "**Assemblage** : vis à tête hexagonale (vis H), vis à tête cylindrique à six pans creux (**vis CHC**), rondelle, écrou, goujon, anneau élastique (circlips) pour arbre ou pour alésage, goupille élastique.",
+       "**Guidage en rotation** : bague autolubrifiée (coussinet), roulement à billes.",
+       "**Transmission** : engrenages, pignons et chaîne, poulies et courroie, pignon-crémaillère.",
+       "**Autres** : joint torique (étanchéité), ressort (restitution d'effort), clavette (liaison complète démontable)."
+      ],
+      "pages": [
+       14,
+       15,
+       16
+      ],
+      "doc": "cours"
+     }
+    ]
+   },
+   {
+    "id": "s6",
+    "titre": "Pour aller plus loin",
+    "blocs": [
+     {
+      "type": "texte",
+      "contenu": "Le guide présente les formes usuelles sur une planche illustrée de vocabulaire.",
+      "pages": [
+       16
+      ],
+      "doc": "guide"
+     }
+    ]
+   }
+  ]
+ },
+ "flashcards": [
+  {
+   "id": "fc-001",
+   "recto": "Différence entre **alésage** et **arbre** ?",
+   "verso": "L'alésage est le **contenant** (trou qui reçoit) ; l'arbre est le **contenu** (pièce cylindrique reçue).",
+   "tags": [
+    "trous"
+   ],
+   "page": 4,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-002",
+   "recto": "Qu'est-ce qu'un **trou borgne** ?",
+   "verso": "Un trou non traversant, terminé par un **cône à 120°**.",
+   "tags": [
+    "trous"
+   ],
+   "page": 4,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-003",
+   "recto": "Qu'est-ce qu'un **lamage** ?",
+   "verso": "Un logement cylindrique **à fond plat**, pour noyer une tête de vis CHC.",
+   "tags": [
+    "trous"
+   ],
+   "page": 4,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-004",
+   "recto": "Qu'est-ce qu'une **fraisure** ?",
+   "verso": "Un usinage **conique** à l'entrée d'un trou, pour une tête de vis conique.",
+   "tags": [
+    "trous"
+   ],
+   "page": 5,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-005",
+   "recto": "Taraudage ou filetage : lequel est intérieur ?",
+   "verso": "Le **taraudage** est intérieur (écrou, trou taraudé) ; le **filetage** est extérieur (vis).",
+   "tags": [
+    "trous"
+   ],
+   "page": 5,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-006",
+   "recto": "Qu'est-ce qu'un **épaulement** ?",
+   "verso": "Un changement de section qui crée une **surface d'appui**.",
+   "tags": [
+    "arbre"
+   ],
+   "page": 6,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-007",
+   "recto": "Qu'est-ce qu'un **chanfrein** ?",
+   "verso": "Une petite surface qui **supprime une arête** (sécurité, montage plus facile).",
+   "tags": [
+    "arbre"
+   ],
+   "page": 7,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-008",
+   "recto": "**Congé** ou **arrondi** : lequel est concave ?",
+   "verso": "Le **congé** (angle rentrant) ; l'arrondi est convexe.",
+   "tags": [
+    "arbre"
+   ],
+   "page": 7,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-009",
+   "recto": "Qu'est-ce qu'un **méplat** ?",
+   "verso": "Une surface **plane** qui coupe un cylindre parallèlement à son axe.",
+   "tags": [
+    "arbre"
+   ],
+   "page": 8,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-010",
+   "recto": "À quoi sert une **gorge** sur un arbre ?",
+   "verso": "À loger un **anneau élastique** ou un joint, ou à servir de dégagement.",
+   "tags": [
+    "arbre"
+   ],
+   "page": 8,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-011",
+   "recto": "Qu'est-ce qu'un **collet** ?",
+   "verso": "Une **couronne** sur une pièce cylindrique, qui peut servir de butée.",
+   "tags": [
+    "arbre"
+   ],
+   "page": 10,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-012",
+   "recto": "Rôle d'une **clavette** ?",
+   "verso": "Bloquer la **rotation** entre un arbre et un moyeu (liaison complète démontable).",
+   "tags": [
+    "arbre"
+   ],
+   "page": 6,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-013",
+   "recto": "Qu'est-ce qu'une **nervure** ?",
+   "verso": "Un volume (souvent triangulaire) qui augmente la **rigidité** sans trop de poids.",
+   "tags": [
+    "autres formes"
+   ],
+   "page": 9,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-014",
+   "recto": "Qu'est-ce qu'un **bossage** ?",
+   "verso": "Une **surépaisseur** de matière à l'entrée d'un perçage, pour l'appui d'une vis ou d'un écrou.",
+   "tags": [
+    "autres formes"
+   ],
+   "page": 8,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-015",
+   "recto": "À quoi sert un **trou oblong** ?",
+   "verso": "En général à permettre un **réglage** (trou plus long que large).",
+   "tags": [
+    "autres formes"
+   ],
+   "page": 8,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-016",
+   "recto": "Qu'est-ce que la **dépouille** ?",
+   "verso": "L'inclinaison des surfaces d'une pièce moulée pour la **démouler**.",
+   "tags": [
+    "autres formes"
+   ],
+   "page": 11,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-017",
+   "recto": "Qu'est-ce qu'une **queue d'aronde** ?",
+   "verso": "Un tenon **trapézoïdal** dans une rainure de même forme (liaison glissière).",
+   "tags": [
+    "autres formes"
+   ],
+   "page": 12,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-018",
+   "recto": "Que signifie **vis CHC** ?",
+   "verso": "Vis à tête **C**ylindrique, **H**exagone **C**reux (six pans creux).",
+   "tags": [
+    "éléments standards"
+   ],
+   "page": 14,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-019",
+   "recto": "Qu'est-ce qu'une **arête** ?",
+   "verso": "La ligne d'**intersection** de deux surfaces.",
+   "tags": [
+    "autres formes"
+   ],
+   "page": 10,
+   "doc": "cours"
+  },
+  {
+   "id": "fc-020",
+   "recto": "Rôle d'un **joint torique** ?",
+   "verso": "Assurer l'**étanchéité**.",
+   "tags": [
+    "éléments standards"
+   ],
+   "page": 16,
+   "doc": "cours"
+  }
+ ],
+ "exercices": []
+}
