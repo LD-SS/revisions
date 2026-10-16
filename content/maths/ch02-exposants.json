@@ -353,5 +353,444 @@
    "page": 2
   }
  ],
- "exercices": []
+ "exercices": [
+  {
+   "id": "ex-01",
+   "titre": "Calculer des puissances (1)",
+   "niveau": 1,
+   "items": [
+    {
+     "q": "$3^3$",
+     "r": "$27$",
+     "etapes": [
+      "$3 \\times 3 \\times 3$"
+     ]
+    },
+    {
+     "q": "$2^4 \\cdot 2^3$",
+     "r": "$2^7 = 128$",
+     "etapes": [
+      "Même base : on additionne les exposants."
+     ]
+    },
+    {
+     "q": "$1^8$",
+     "r": "$1$"
+    },
+    {
+     "q": "$5^6 : 5^4$",
+     "r": "$5^2 = 25$",
+     "etapes": [
+      "Même base : on soustrait les exposants."
+     ]
+    },
+    {
+     "q": "$12^0$",
+     "r": "$1$",
+     "etapes": [
+      "Tout nombre non nul à l'exposant 0 vaut 1."
+     ]
+    },
+    {
+     "q": "$(-3)^2 \\cdot (-3)^3$",
+     "r": "$(-3)^5 = -243$",
+     "etapes": [
+      "Exposant impair → résultat négatif."
+     ]
+    },
+    {
+     "q": "$(-4)^2$",
+     "r": "$16$"
+    },
+    {
+     "q": "$-(-2)^4$",
+     "r": "$-16$",
+     "etapes": [
+      "$(-2)^4 = 16$, puis le « − » devant."
+     ]
+    }
+   ],
+   "page": 2,
+   "consigne": "Calcule les puissances suivantes."
+  },
+  {
+   "id": "ex-02",
+   "titre": "Calculer des puissances (2)",
+   "niveau": 2,
+   "items": [
+    {
+     "q": "$-4^2$",
+     "r": "$-16$",
+     "etapes": [
+      "Sans parenthèses, l'exposant porte seulement sur 4 : $-(4^2)$."
+     ]
+    },
+    {
+     "q": "$-5^3$",
+     "r": "$-125$"
+    },
+    {
+     "q": "$(-2)^5$",
+     "r": "$-32$"
+    },
+    {
+     "q": "$\\dfrac{4^6}{4^3}$",
+     "r": "$4^3 = 64$"
+    },
+    {
+     "q": "$-2^6$",
+     "r": "$-64$",
+     "etapes": [
+      "$-(2^6)$"
+     ]
+    },
+    {
+     "q": "$\\dfrac{3^5}{3^2}$",
+     "r": "$3^3 = 27$"
+    },
+    {
+     "q": "$14^0$",
+     "r": "$1$"
+    },
+    {
+     "q": "$5^{-2}$",
+     "r": "$\\dfrac{1}{25}$",
+     "etapes": [
+      "$5^{-2} = \\dfrac{1}{5^2}$"
+     ]
+    }
+   ],
+   "page": 2,
+   "consigne": "Calcule les puissances suivantes.",
+   "indice": "Attention aux parenthèses : $-3^2 = -9$ mais $(-3)^2 = 9$."
+  },
+  {
+   "id": "ex-03",
+   "titre": "Notation scientifique (1)",
+   "niveau": 1,
+   "items": [
+    {
+     "q": "$2\\,450$",
+     "r": "$2{,}45 \\cdot 10^3$"
+    },
+    {
+     "q": "$0{,}0036$",
+     "r": "$3{,}6 \\cdot 10^{-3}$"
+    },
+    {
+     "q": "$72\\,000\\,000$",
+     "r": "$7{,}2 \\cdot 10^7$"
+    },
+    {
+     "q": "$0{,}000081$",
+     "r": "$8{,}1 \\cdot 10^{-5}$"
+    },
+    {
+     "q": "$0{,}0000457$",
+     "r": "$4{,}57 \\cdot 10^{-5}$"
+    },
+    {
+     "q": "$0{,}0725$",
+     "r": "$7{,}25 \\cdot 10^{-2}$"
+    },
+    {
+     "q": "15 milliards",
+     "r": "$1{,}5 \\cdot 10^{10}$",
+     "etapes": [
+      "1 milliard $= 10^9$ : $15 \\cdot 10^9$"
+     ]
+    },
+    {
+     "q": "$83\\,000\\,000$",
+     "r": "$8{,}3 \\cdot 10^7$"
+    }
+   ],
+   "page": 3,
+   "consigne": "Donne la notation scientifique.",
+   "indice": "Un seul chiffre non nul avant la virgule, puis × une puissance de 10. On compte de combien de rangs la virgule se déplace."
+  },
+  {
+   "id": "ex-04",
+   "titre": "Notation scientifique (2)",
+   "niveau": 2,
+   "items": [
+    {
+     "q": "$42{,}6 \\cdot 10^3$",
+     "r": "$4{,}26 \\cdot 10^4$",
+     "etapes": [
+      "$42{,}6 = 4{,}26 \\cdot 10^1$, donc $10^{1+3}$"
+     ]
+    },
+    {
+     "q": "$507\\,000\\,000$",
+     "r": "$5{,}07 \\cdot 10^8$"
+    },
+    {
+     "q": "450 millions",
+     "r": "$4{,}5 \\cdot 10^8$"
+    },
+    {
+     "q": "$0{,}308$",
+     "r": "$3{,}08 \\cdot 10^{-1}$"
+    },
+    {
+     "q": "$0{,}0072$",
+     "r": "$7{,}2 \\cdot 10^{-3}$"
+    },
+    {
+     "q": "$91\\,500$",
+     "r": "$9{,}15 \\cdot 10^4$"
+    },
+    {
+     "q": "$6{,}425$",
+     "r": "$6{,}425 \\cdot 10^0$"
+    },
+    {
+     "q": "$7\\,002\\,000$",
+     "r": "$7{,}002 \\cdot 10^6$"
+    }
+   ],
+   "page": 3,
+   "consigne": "Donne la notation scientifique."
+  },
+  {
+   "id": "ex-05",
+   "titre": "Notation décimale (1)",
+   "niveau": 1,
+   "items": [
+    {
+     "q": "$10^3$",
+     "r": "$1\\,000$"
+    },
+    {
+     "q": "$10^5 / 10^2$",
+     "r": "$10^3 = 1\\,000$"
+    },
+    {
+     "q": "$10^{-6}$",
+     "r": "$0{,}000001$"
+    },
+    {
+     "q": "$318 \\cdot 10^3$",
+     "r": "$318\\,000$"
+    },
+    {
+     "q": "$10^4$",
+     "r": "$10\\,000$"
+    },
+    {
+     "q": "$0{,}425 \\cdot 10^5$",
+     "r": "$42\\,500$",
+     "etapes": [
+      "On déplace la virgule de 5 rangs vers la droite."
+     ]
+    },
+    {
+     "q": "$10^2$",
+     "r": "$100$"
+    },
+    {
+     "q": "$0{,}0072 \\cdot 10^6$",
+     "r": "$7\\,200$"
+    }
+   ],
+   "page": 3,
+   "consigne": "Donne la notation décimale."
+  },
+  {
+   "id": "ex-06",
+   "titre": "Notation décimale (2)",
+   "niveau": 2,
+   "items": [
+    {
+     "q": "$10^{-2}$",
+     "r": "$0{,}01$"
+    },
+    {
+     "q": "$34{,}25 \\cdot 10^4$",
+     "r": "$342\\,500$"
+    },
+    {
+     "q": "$(10^3)^2$",
+     "r": "$10^6 = 1\\,000\\,000$",
+     "etapes": [
+      "Puissance d'une puissance : on multiplie les exposants."
+     ]
+    },
+    {
+     "q": "$3{,}125 \\cdot 10^2$",
+     "r": "$312{,}5$"
+    },
+    {
+     "q": "$10^3 \\cdot 10^2$",
+     "r": "$10^5 = 100\\,000$"
+    },
+    {
+     "q": "$725 \\cdot 10^{-3}$",
+     "r": "$0{,}725$",
+     "etapes": [
+      "On déplace la virgule de 3 rangs vers la gauche."
+     ]
+    },
+    {
+     "q": "$10^4 \\cdot 10^3$",
+     "r": "$10^7 = 10\\,000\\,000$"
+    },
+    {
+     "q": "$42\\\\,000 \\cdot 10^{-4}$",
+     "r": "$4{,}2$"
+    }
+   ],
+   "page": 3,
+   "consigne": "Donne la notation décimale."
+  },
+  {
+   "id": "ex-07",
+   "titre": "Des exposants aux racines (1)",
+   "niveau": 2,
+   "items": [
+    {
+     "q": "$4^{1/3}$",
+     "r": "$\\sqrt[3]{4}$"
+    },
+    {
+     "q": "$12^{1/4}$",
+     "r": "$\\sqrt[4]{12}$"
+    },
+    {
+     "q": "$5^{1/2}$",
+     "r": "$\\sqrt{5}$"
+    },
+    {
+     "q": "$7^{2/5}$",
+     "r": "$\\sqrt[5]{7^2} = \\sqrt[5]{49}$"
+    },
+    {
+     "q": "$8^{2/3}$",
+     "r": "$4$",
+     "etapes": [
+      "$\\left(\\sqrt[3]{8}\\right)^2 = 2^2$"
+     ]
+    },
+    {
+     "q": "$16^{3/4}$",
+     "r": "$8$",
+     "etapes": [
+      "$\\left(\\sqrt[4]{16}\\right)^3 = 2^3$"
+     ]
+    },
+    {
+     "q": "$9^{4/5}$",
+     "r": "$\\sqrt[5]{9^4} = \\sqrt[5]{6561}$",
+     "etapes": [
+      "Pas de simplification simple ($= 3\\sqrt[5]{27}$ si on veut aller plus loin)."
+     ]
+    },
+    {
+     "q": "$25^{3/7}$",
+     "r": "$\\sqrt[7]{25^3} = \\sqrt[7]{15\\,625}$"
+    }
+   ],
+   "page": [
+    3,
+    4
+   ],
+   "consigne": "Transforme sous forme de racine et simplifie quand c'est possible.",
+   "indice": "$a^{m/n} = \\sqrt[n]{a^m} = \\left(\\sqrt[n]{a}\\right)^m$ : le dénominateur devient l'indice de la racine."
+  },
+  {
+   "id": "ex-08",
+   "titre": "Des exposants aux racines (2)",
+   "niveau": 2,
+   "items": [
+    {
+     "q": "$10^{5/8}$",
+     "r": "$\\sqrt[8]{10^5}$"
+    },
+    {
+     "q": "$3^{7/5}$",
+     "r": "$\\sqrt[5]{3^7} = 3\\sqrt[5]{9}$",
+     "etapes": [
+      "$3^7 = 3^5 \\cdot 3^2$ : on sort $3^5$ de la racine."
+     ]
+    },
+    {
+     "q": "$49^{1/2}$",
+     "r": "$7$"
+    },
+    {
+     "q": "$8^{5/3}$",
+     "r": "$32$",
+     "etapes": [
+      "$\\left(\\sqrt[3]{8}\\right)^5 = 2^5$"
+     ]
+    },
+    {
+     "q": "$64^{2/3}$",
+     "r": "$16$",
+     "etapes": [
+      "$\\left(\\sqrt[3]{64}\\right)^2 = 4^2$"
+     ]
+    },
+    {
+     "q": "$32^{3/5}$",
+     "r": "$8$",
+     "etapes": [
+      "$\\left(\\sqrt[5]{32}\\right)^3 = 2^3$"
+     ]
+    },
+    {
+     "q": "$81^{3/4}$",
+     "r": "$27$",
+     "etapes": [
+      "$\\left(\\sqrt[4]{81}\\right)^3 = 3^3$"
+     ]
+    },
+    {
+     "q": "$20^{4/7}$",
+     "r": "$\\sqrt[7]{20^4}$"
+    }
+   ],
+   "page": 4,
+   "consigne": "Transforme sous forme de racine et simplifie quand c'est possible.",
+   "indice": "Calcule d'abord la racine (le nombre devient petit), puis la puissance."
+  },
+  {
+   "id": "ex-09",
+   "titre": "Pour aller plus loin : règles avec des lettres",
+   "niveau": 3,
+   "items": [
+    {
+     "q": "$\\dfrac{a^3 \\cdot a^4}{a^2}$",
+     "r": "$a^5$",
+     "etapes": [
+      "$a^{3+4-2}$"
+     ]
+    },
+    {
+     "q": "$(2x^2)^3$",
+     "r": "$8x^6$",
+     "etapes": [
+      "$2^3 \\cdot (x^2)^3$"
+     ]
+    },
+    {
+     "q": "$(a^{-2})^3 \\cdot a^5$",
+     "r": "$a^{-1} = \\dfrac{1}{a}$",
+     "etapes": [
+      "$a^{-6} \\cdot a^5 = a^{-6+5}$"
+     ]
+    },
+    {
+     "q": "$2^{-3} \\cdot 2^5$",
+     "r": "$4$",
+     "etapes": [
+      "$2^{-3+5} = 2^2$"
+     ]
+    }
+   ],
+   "page": 1,
+   "complement": true
+  }
+ ]
 }

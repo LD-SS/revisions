@@ -494,5 +494,422 @@
    "doc": "p4"
   }
  ],
- "exercices": []
+ "exercices": [
+  {
+   "id": "ex-01",
+   "titre": "Transformations simples",
+   "niveau": 1,
+   "items": [
+    {
+     "q": "$A = B + 6$ : isoler $B$",
+     "r": "$B = A - 6$"
+    },
+    {
+     "q": "$C = D - 4$ : isoler $D$",
+     "r": "$D = C + 4$"
+    },
+    {
+     "q": "$P = 8x$ : isoler $x$",
+     "r": "$x = \\dfrac{P}{8}$"
+    },
+    {
+     "q": "$\\dfrac{B}{A} = 5$ : isoler $B$",
+     "r": "$B = 5A$"
+    },
+    {
+     "q": "$y = 3x + 7$ : isoler $x$",
+     "r": "$x = \\dfrac{y - 7}{3}$",
+     "etapes": [
+      "$y - 7 = 3x$",
+      "On divise par 3."
+     ]
+    },
+    {
+     "q": "$M = 5a - 10$ : isoler $a$",
+     "r": "$a = \\dfrac{M + 10}{5}$",
+     "etapes": [
+      "$M + 10 = 5a$"
+     ]
+    }
+   ],
+   "page": 4,
+   "consigne": "Transforme les formules.",
+   "doc": "p1",
+   "indice": "On défait les opérations dans l'ordre inverse, avec l'opération contraire, des deux côtés."
+  },
+  {
+   "id": "ex-02",
+   "titre": "Formules de géométrie et de physique",
+   "niveau": 2,
+   "items": [
+    {
+     "q": "$P = 2L + 2l$ : isoler $l$",
+     "r": "$l = \\dfrac{P - 2L}{2}$",
+     "etapes": [
+      "$P - 2L = 2l$"
+     ]
+    },
+    {
+     "q": "$A = L \\times l$ : isoler $L$",
+     "r": "$L = \\dfrac{A}{l}$"
+    },
+    {
+     "q": "$A = \\dfrac{b \\times h}{2}$ : isoler $h$",
+     "r": "$h = \\dfrac{2A}{b}$",
+     "etapes": [
+      "$2A = b \\times h$"
+     ]
+    },
+    {
+     "q": "$v = \\dfrac{d}{t}$ : isoler $d$, puis $t$",
+     "r": "$d = v \\cdot t$ et $t = \\dfrac{d}{v}$"
+    },
+    {
+     "q": "$C = 2 \\times \\pi \\times r$ : isoler $r$",
+     "r": "$r = \\dfrac{C}{2\\pi}$"
+    }
+   ],
+   "page": [
+    4,
+    5
+   ],
+   "consigne": "Transforme les formules.",
+   "doc": "p1"
+  },
+  {
+   "id": "ex-03",
+   "titre": "Résistance d'un conducteur et énergie cinétique",
+   "niveau": 2,
+   "items": [
+    {
+     "q": "$R = \\rho \\times \\dfrac{L}{S}$ : isoler $\\rho$, $L$ et $S$",
+     "r": "$\\rho = \\dfrac{R \\cdot S}{L}$ ; $L = \\dfrac{R \\cdot S}{\\rho}$ ; $S = \\dfrac{\\rho \\cdot L}{R}$",
+     "etapes": [
+      "On multiplie d'abord par $S$ : $R \\cdot S = \\rho \\cdot L$."
+     ]
+    },
+    {
+     "q": "$E_c = \\dfrac{1}{2} m v^2$ : isoler $m$ et $v$",
+     "r": "$m = \\dfrac{2E_c}{v^2}$ ; $v = \\sqrt{\\dfrac{2E_c}{m}}$",
+     "etapes": [
+      "On multiplie par 2 : $2E_c = m v^2$.",
+      "Pour $v$ : on divise par $m$, puis on prend la racine carrée."
+     ]
+    }
+   ],
+   "page": [
+    4,
+    5
+   ],
+   "doc": "p1"
+  },
+  {
+   "id": "ex-04",
+   "titre": "Problèmes",
+   "niveau": 2,
+   "items": [
+    {
+     "q": "Un véhicule parcourt 180 km à 72 km/h. Durée du trajet ?",
+     "r": "$t = 2{,}5$ h (2 h 30 min)",
+     "etapes": [
+      "$t = \\dfrac{d}{v} = \\dfrac{180}{72}$"
+     ]
+    },
+    {
+     "q": "Terrain : périmètre 86 m, largeur 18 m. Longueur ?",
+     "r": "$L = 25$ m",
+     "etapes": [
+      "$L = \\dfrac{P - 2l}{2} = \\dfrac{86 - 36}{2}$"
+     ]
+    },
+    {
+     "q": "Panneau triangulaire : aire 3 m², base 2,4 m. Hauteur ?",
+     "r": "$h = 2{,}5$ m",
+     "etapes": [
+      "$h = \\dfrac{2A}{b} = \\dfrac{6}{2{,}4}$"
+     ]
+    },
+    {
+     "q": "Un appareil consomme 6 kWh en 4 h ($E = P \\times t$). Puissance ?",
+     "r": "$P = 1{,}5$ kW",
+     "etapes": [
+      "$P = \\dfrac{E}{t} = \\dfrac{6}{4}$"
+     ]
+    }
+   ],
+   "page": [
+    5,
+    6
+   ],
+   "consigne": "Transforme d'abord la formule, puis remplace par les valeurs.",
+   "doc": "p1"
+  },
+  {
+   "id": "ex-05",
+   "titre": "Isoler la lettre demandée",
+   "niveau": 2,
+   "items": [
+    {
+     "q": "$U = R \\cdot I$ ($R$)",
+     "r": "$R = \\dfrac{U}{I}$"
+    },
+    {
+     "q": "$P = R \\cdot I^2$ ($R$)",
+     "r": "$R = \\dfrac{P}{I^2}$"
+    },
+    {
+     "q": "$\\dfrac{1}{R} = \\dfrac{1}{R_1} + \\dfrac{1}{R_2}$ ($R$)",
+     "r": "$R = \\dfrac{R_1 R_2}{R_1 + R_2}$",
+     "etapes": [
+      "$\\dfrac{1}{R} = \\dfrac{R_2 + R_1}{R_1 R_2}$, puis on retourne les deux membres."
+     ]
+    },
+    {
+     "q": "$l = l_0(1 + \\alpha\\theta)$ ($\\theta$)",
+     "r": "$\\theta = \\dfrac{l - l_0}{l_0 \\, \\alpha}$",
+     "etapes": [
+      "$\\dfrac{l}{l_0} = 1 + \\alpha\\theta$",
+      "$\\dfrac{l}{l_0} - 1 = \\alpha\\theta$, soit $\\dfrac{l - l_0}{l_0} = \\alpha\\theta$"
+     ]
+    },
+    {
+     "q": "$\\lambda = \\dfrac{c}{f}$ ($f$)",
+     "r": "$f = \\dfrac{c}{\\lambda}$"
+    },
+    {
+     "q": "$\\dfrac{1}{C} = \\dfrac{1}{C_1} + \\dfrac{1}{C_2}$ ($C$)",
+     "r": "$C = \\dfrac{C_1 C_2}{C_1 + C_2}$"
+    },
+    {
+     "q": "$V = \\dfrac{1}{3} a^2 h$ ($h$)",
+     "r": "$h = \\dfrac{3V}{a^2}$"
+    },
+    {
+     "q": "$V = \\dfrac{B + b}{2}$ ($b$)",
+     "r": "$b = 2V - B$"
+    },
+    {
+     "q": "$R = \\rho \\dfrac{l}{S}$ ($S$)",
+     "r": "$S = \\dfrac{\\rho \\, l}{R}$"
+    }
+   ],
+   "page": 2,
+   "consigne": "Exprime la lettre entre parenthèses en fonction des autres.",
+   "doc": "p3"
+  },
+  {
+   "id": "ex-06",
+   "titre": "Le pendule et la cylindrée",
+   "niveau": 3,
+   "items": [
+    {
+     "q": "Pendule : $T = 2\\pi\\sqrt{\\dfrac{l}{g}}$. Exprimer $l$, puis le calculer pour $T = 2$ s ($g = 9{,}81$ m/s²).",
+     "r": "$l = \\dfrac{g\\,T^2}{4\\pi^2} \\approx 0{,}99$ m",
+     "etapes": [
+      "$\\dfrac{T}{2\\pi} = \\sqrt{\\dfrac{l}{g}}$",
+      "On élève au carré : $\\dfrac{T^2}{4\\pi^2} = \\dfrac{l}{g}$",
+      "$l = \\dfrac{9{,}81 \\times 4}{4\\pi^2} = \\dfrac{9{,}81}{\\pi^2} \\approx 0{,}994$ m"
+     ]
+    },
+    {
+     "q": "Cylindrée : $V = 1{,}5 \\cdot \\pi \\cdot a^2 \\cdot c$. Exprimer $a$, puis le calculer pour $V = 3\\,200$ cm³ et $c = 120$ mm.",
+     "r": "$a = \\sqrt{\\dfrac{V}{1{,}5\\,\\pi\\,c}} \\approx 7{,}52$ cm",
+     "etapes": [
+      "$a^2 = \\dfrac{V}{1{,}5\\,\\pi\\,c}$",
+      "Attention aux unités : $c = 12$ cm.",
+      "$a^2 = \\dfrac{3\\,200}{1{,}5\\,\\pi \\times 12} \\approx 56{,}6$"
+     ]
+    }
+   ],
+   "page": 2,
+   "doc": "p3",
+   "indice": "Une racine carrée se supprime en élevant les deux membres au carré."
+  },
+  {
+   "id": "ex-07",
+   "titre": "Corde d'un cercle et électro-aimant",
+   "niveau": 3,
+   "items": [
+    {
+     "q": "$\\dfrac{c^2}{4} = f(2R - f)$ : montrer que $4f^2 - 8fR + c^2 = 0$",
+     "r": "$c^2 = 8fR - 4f^2$, donc $4f^2 - 8fR + c^2 = 0$",
+     "etapes": [
+      "On multiplie par 4 : $c^2 = 4f(2R - f) = 8fR - 4f^2$"
+     ]
+    },
+    {
+     "q": "Si $f = \\dfrac{R}{2}$ : exprimer $c^2$ puis $c$ en fonction de $R$. Pour $R = 10$, 17,32 est-il une valeur approchée de $c$ par excès ?",
+     "r": "$c^2 = 3R^2$, $c = R\\sqrt{3}$. Pour $R = 10$ : $c \\approx 17{,}3205$ → 17,32 est une valeur **par défaut** (par excès : 17,33).",
+     "etapes": [
+      "$c^2 = 8 \\cdot \\dfrac{R}{2} \\cdot R - 4 \\cdot \\dfrac{R^2}{4} = 4R^2 - R^2$"
+     ]
+    },
+    {
+     "q": "Électro-aimant : $F = \\dfrac{10^7}{8\\pi} B^2 S$. Exprimer $B$, puis le calculer pour $F = 5\\,000$ N et $S = 0{,}01$ m².",
+     "r": "$B = \\sqrt{\\dfrac{8\\pi F}{10^7 S}} \\approx 1{,}12$ T",
+     "etapes": [
+      "$B^2 = \\dfrac{8\\pi F}{10^7 S}$",
+      "$B^2 = \\dfrac{8\\pi \\times 5\\,000}{10^5} = 0{,}4\\pi \\approx 1{,}2566$"
+     ]
+    }
+   ],
+   "page": 2,
+   "doc": "p3"
+  },
+  {
+   "id": "ex-08",
+   "titre": "Problèmes d'examen",
+   "niveau": 3,
+   "items": [
+    {
+     "q": "Cylindre : $R = 3$ m et $V = 113$ m³ ($V = \\pi R^2 h$). Hauteur ?",
+     "r": "$h \\approx 4$ m",
+     "etapes": [
+      "$h = \\dfrac{V}{\\pi R^2} = \\dfrac{113}{9\\pi}$"
+     ]
+    },
+    {
+     "q": "Trapèze : aire 850 cm², grande base 50 cm, hauteur 20 cm. Petite base ?",
+     "r": "$b = 35$ cm",
+     "etapes": [
+      "$A = \\dfrac{(B + b)\\,h}{2}$ → $b = \\dfrac{2A}{h} - B = 85 - 50$"
+     ]
+    },
+    {
+     "q": "Tonneau : $V = \\dfrac{\\pi}{4}\\left(\\dfrac{D + d}{2}\\right)^2 L$. Exprimer $D$, puis le calculer pour $L = 9$ dm, $d = 5{,}2$ dm, $V = 0{,}222$ m³.",
+     "r": "$D = 2\\sqrt{\\dfrac{4V}{\\pi L}} - d \\approx 6{,}0$ dm",
+     "etapes": [
+      "$\\left(\\dfrac{D + d}{2}\\right)^2 = \\dfrac{4V}{\\pi L}$",
+      "$V = 222$ dm³ : $\\dfrac{4 \\times 222}{\\pi \\times 9} \\approx 31{,}41$, racine ≈ 5,604",
+      "$D = 2 × 5{,}604 − 5{,}2$"
+     ]
+    },
+    {
+     "q": "$v = \\dfrac{2 \\pi n R}{60}$. Calculer $n$ si $v = 25{,}12$ ; $R = 0{,}04$ ; $\\pi = 3{,}14$.",
+     "r": "$n = 6\\,000$",
+     "etapes": [
+      "$n = \\dfrac{60\\,v}{2\\pi R} = \\dfrac{1\\,507{,}2}{0{,}2512}$"
+     ]
+    }
+   ],
+   "page": [
+    2,
+    3
+   ],
+   "doc": "p3"
+  },
+  {
+   "id": "ex-09",
+   "titre": "Bobine, triangle et sphère",
+   "niveau": 3,
+   "items": [
+    {
+     "q": "$B = \\dfrac{\\mu N I}{l}$ : exprimer $\\mu$, puis le calculer pour $B = 2$ T, $I = 0{,}5$ A, $N = 1\\,000$, $l = 0{,}5$ m.",
+     "r": "$\\mu = \\dfrac{B\\,l}{N\\,I} = 0{,}002$",
+     "etapes": [
+      "$\\dfrac{2 \\times 0{,}5}{1\\,000 \\times 0{,}5}$",
+      "Le PDF écrit « I = ,5 A » : on lit 0,5 A."
+     ]
+    },
+    {
+     "q": "$a^2 = b^2 + c^2 - 2bc\\cos\\hat{A}$ : exprimer $\\cos\\hat{A}$, puis $\\hat{A}$ pour $a = 50$, $b = 25$, $c = 30$ cm.",
+     "r": "$\\cos\\hat{A} = \\dfrac{b^2 + c^2 - a^2}{2bc} = -0{,}65$ → $\\hat{A} \\approx 131^{\\circ}$",
+     "etapes": [
+      "$\\dfrac{625 + 900 - 2\\,500}{1\\,500}$",
+      "Calculatrice : $\\cos^{-1}(-0{,}65) \\approx 130{,}5^{\\circ}$"
+     ]
+    },
+    {
+     "q": "$V = \\dfrac{4}{3}\\pi R^3$ avec $V = 1\\,113$ ($\\pi = 3{,}14$). Calculer $R$ à l'unité.",
+     "r": "$R \\approx 6$",
+     "etapes": [
+      "$R^3 = \\dfrac{3V}{4\\pi} = \\dfrac{3\\,339}{12{,}56} \\approx 265{,}8$",
+      "$R = \\sqrt[3]{265{,}8} \\approx 6{,}4$"
+     ]
+    }
+   ],
+   "page": 3,
+   "doc": "p3"
+  },
+  {
+   "id": "ex-10",
+   "titre": "Impédance d'un circuit RLC",
+   "niveau": 2,
+   "items": [
+    {
+     "q": "$Z = 25$ Ω, $R = 15$ Ω, $X_C = 10$ Ω. Calculer $X_L$ ($X_L > X_C$).",
+     "r": "$X_L = 30$ Ω",
+     "etapes": [
+      "$X_L = X_C + \\sqrt{Z^2 - R^2} = 10 + \\sqrt{625 - 225} = 10 + 20$"
+     ]
+    },
+    {
+     "q": "$Z = 65$ Ω, $X_L = 36$ Ω, $X_C = 3$ Ω. Calculer $R$.",
+     "r": "$R = 56$ Ω",
+     "etapes": [
+      "$R = \\sqrt{Z^2 - (X_L - X_C)^2} = \\sqrt{4\\,225 - 1\\,089} = \\sqrt{3\\,136}$"
+     ]
+    },
+    {
+     "q": "$Z = 50$ Ω, $R = 30$ Ω, $X_L = 55$ Ω. Calculer $X_C$ ($X_L > X_C$).",
+     "r": "$X_C = 15$ Ω",
+     "etapes": [
+      "$X_C = X_L - \\sqrt{Z^2 - R^2} = 55 - \\sqrt{1\\,600} = 55 - 40$"
+     ]
+    },
+    {
+     "q": "$Z = 85$ Ω, $R = 77$ Ω, $X_C = 12$ Ω. Calculer $X_L$ ($X_L > X_C$).",
+     "r": "$X_L = 48$ Ω",
+     "etapes": [
+      "$12 + \\sqrt{7\\,225 - 5\\,929} = 12 + \\sqrt{1\\,296} = 12 + 36$"
+     ]
+    },
+    {
+     "q": "$Z = 100$ Ω, $R = 60$ Ω, $X_L = 35$ Ω. Calculer $X_C$ ($X_C > X_L$).",
+     "r": "$X_C = 115$ Ω",
+     "etapes": [
+      "$X_C > X_L$ : on prend le signe + : $X_C = 35 + \\sqrt{10\\,000 - 3\\,600} = 35 + 80$"
+     ]
+    },
+    {
+     "q": "$Z = 130$ Ω, $X_L = 150$ Ω, $X_C = 30$ Ω. Calculer $R$.",
+     "r": "$R = 50$ Ω",
+     "etapes": [
+      "$\\sqrt{16\\,900 - 120^2} = \\sqrt{2\\,500}$"
+     ]
+    }
+   ],
+   "page": [
+    3,
+    4
+   ],
+   "consigne": "$Z = \\sqrt{R^2 + (X_L - X_C)^2}$",
+   "doc": "p4",
+   "indice": "Élève au carré : $Z^2 = R^2 + (X_L - X_C)^2$, puis isole la grandeur cherchée."
+  },
+  {
+   "id": "ex-11",
+   "titre": "Pour aller plus loin : formules d'électricité",
+   "niveau": 3,
+   "items": [
+    {
+     "q": "$P = \\dfrac{U^2}{R}$ : isoler $U$",
+     "r": "$U = \\sqrt{P \\cdot R}$",
+     "etapes": [
+      "$U^2 = P \\cdot R$"
+     ]
+    },
+    {
+     "q": "$I = \\dfrac{E}{R + r}$ : isoler $R$",
+     "r": "$R = \\dfrac{E}{I} - r$",
+     "etapes": [
+      "$I(R + r) = E$, donc $R + r = E / I$"
+     ]
+    }
+   ],
+   "page": 2,
+   "doc": "p3",
+   "complement": true
+  }
+ ]
 }

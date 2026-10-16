@@ -812,5 +812,379 @@
    "doc": "valeurs"
   }
  ],
- "exercices": []
+ "exercices": [
+  {
+   "id": "ex-01",
+   "titre": "Degrés → radians",
+   "niveau": 1,
+   "items": [
+    {
+     "q": "$60^{\\circ}$",
+     "r": "$\\dfrac{\\pi}{3}$",
+     "etapes": [
+      "$60 \\times \\dfrac{\\pi}{180}$"
+     ]
+    },
+    {
+     "q": "$150^{\\circ}$",
+     "r": "$\\dfrac{5\\pi}{6}$"
+    },
+    {
+     "q": "$10^{\\circ}$",
+     "r": "$\\dfrac{\\pi}{18}$"
+    },
+    {
+     "q": "$12^{\\circ}$",
+     "r": "$\\dfrac{\\pi}{15}$"
+    },
+    {
+     "q": "$198^{\\circ}$",
+     "r": "$\\dfrac{11\\pi}{10}$",
+     "etapes": [
+      "$\\dfrac{198}{180} = \\dfrac{11}{10}$"
+     ]
+    },
+    {
+     "q": "$15^{\\circ}$",
+     "r": "$\\dfrac{\\pi}{12}$"
+    }
+   ],
+   "page": 1,
+   "consigne": "Convertis en radians.",
+   "doc": "exercices",
+   "indice": "On multiplie par $\\dfrac{\\pi}{180}$ et on simplifie la fraction."
+  },
+  {
+   "id": "ex-02",
+   "titre": "Même point du cercle",
+   "niveau": 1,
+   "items": [
+    {
+     "q": "$-\\pi$",
+     "r": "$\\pi$ ; $3\\pi$ ; $-3\\pi$"
+    },
+    {
+     "q": "$\\dfrac{3\\pi}{2}$",
+     "r": "$-\\dfrac{\\pi}{2}$ ; $\\dfrac{7\\pi}{2}$ ; $-\\dfrac{5\\pi}{2}$"
+    },
+    {
+     "q": "$10\\pi$",
+     "r": "$0$ ; $2\\pi$ ; $-2\\pi$"
+    },
+    {
+     "q": "$-\\dfrac{\\pi}{4}$",
+     "r": "$\\dfrac{7\\pi}{4}$ ; $\\dfrac{15\\pi}{4}$ ; $-\\dfrac{9\\pi}{4}$"
+    }
+   ],
+   "page": 1,
+   "consigne": "Donne trois autres réels associés au même point (d'autres réponses sont possibles).",
+   "doc": "exercices",
+   "indice": "On ajoute ou on retire un tour complet : $2\\pi$."
+  },
+  {
+   "id": "ex-03",
+   "titre": "Associés au même point que −π/12 ?",
+   "niveau": 2,
+   "items": [
+    {
+     "q": "$\\dfrac{47\\pi}{12}$ ; $-\\dfrac{49\\pi}{12}$ ; $\\dfrac{11\\pi}{12}$ ; $-\\dfrac{241\\pi}{12}$ ; $-\\dfrac{37\\pi}{12}$ ; $-\\dfrac{313\\pi}{12}$",
+     "r": "Oui : $\\dfrac{47\\pi}{12}$, $-\\dfrac{49\\pi}{12}$, $-\\dfrac{241\\pi}{12}$, $-\\dfrac{313\\pi}{12}$. Non : $\\dfrac{11\\pi}{12}$ et $-\\dfrac{37\\pi}{12}$.",
+     "etapes": [
+      "On calcule la différence avec $-\\dfrac{\\pi}{12}$ : elle doit être un multiple de $2\\pi = \\dfrac{24\\pi}{12}$.",
+      "$47 + 1 = 48$ ✓ ; $-49 + 1 = -48$ ✓ ; $11 + 1 = 12$ ✗ ; $-241 + 1 = -240$ ✓ ; $-37 + 1 = -36$ ✗ ; $-313 + 1 = -312$ ✓ (multiples de 24 ?)"
+     ]
+    }
+   ],
+   "page": 1,
+   "doc": "exercices"
+  },
+  {
+   "id": "ex-04",
+   "titre": "Même angle orienté ?",
+   "niveau": 2,
+   "items": [
+    {
+     "q": "$x = \\dfrac{\\pi}{2}$ ; $y = \\dfrac{3\\pi}{2}$",
+     "r": "Non",
+     "etapes": [
+      "$y - x = \\pi$ : ce n'est pas un multiple de $2\\pi$."
+     ]
+    },
+    {
+     "q": "$x = \\dfrac{5\\pi}{3}$ ; $y = -\\dfrac{21\\pi}{4}$",
+     "r": "Non",
+     "etapes": [
+      "$x - y = \\dfrac{20\\pi + 63\\pi}{12} = \\dfrac{83\\pi}{12}$"
+     ]
+    },
+    {
+     "q": "$x = \\dfrac{29\\pi}{3}$ ; $y = -\\dfrac{2\\pi}{3}$",
+     "r": "Non",
+     "etapes": [
+      "$x - y = \\dfrac{31\\pi}{3}$ : pas un multiple de $2\\pi$."
+     ]
+    },
+    {
+     "q": "$x = \\dfrac{43\\pi}{12}$ ; $y = -\\dfrac{5\\pi}{12}$",
+     "r": "Oui",
+     "etapes": [
+      "$x - y = \\dfrac{48\\pi}{12} = 4\\pi$ (2 tours)."
+     ]
+    }
+   ],
+   "page": 1,
+   "doc": "exercices",
+   "indice": "Deux mesures désignent le même angle si leur différence vaut $k \\cdot 2\\pi$ ($k$ entier)."
+  },
+  {
+   "id": "ex-05",
+   "titre": "Placer des points sur le cercle",
+   "niveau": 1,
+   "items": [
+    {
+     "q": "$\\dfrac{2\\pi}{3}$",
+     "r": "$120^{\\circ}$, 2ᵉ quadrant"
+    },
+    {
+     "q": "$\\dfrac{3\\pi}{4}$",
+     "r": "$135^{\\circ}$, 2ᵉ quadrant"
+    },
+    {
+     "q": "$-\\dfrac{\\pi}{6}$",
+     "r": "$-30^{\\circ}$ (= 330°), 4ᵉ quadrant"
+    },
+    {
+     "q": "$\\dfrac{7\\pi}{6}$",
+     "r": "$210^{\\circ}$, 3ᵉ quadrant"
+    },
+    {
+     "q": "$-\\dfrac{5\\pi}{4}$",
+     "r": "$-225^{\\circ}$ = $135^{\\circ}$ : **même point** que $\\dfrac{3\\pi}{4}$"
+    },
+    {
+     "q": "$-\\dfrac{2\\pi}{3}$",
+     "r": "$-120^{\\circ}$ (= 240°), 3ᵉ quadrant"
+    }
+   ],
+   "page": 1,
+   "consigne": "Dessine le cercle sur ta feuille et place les points A à F.",
+   "doc": "exercices",
+   "indice": "Convertis en degrés ; un angle négatif se parcourt dans le sens des aiguilles d'une montre."
+  },
+  {
+   "id": "ex-06",
+   "titre": "Angles associés du 2ᵉ et du 4ᵉ quadrant",
+   "niveau": 2,
+   "items": [
+    {
+     "q": "2ᵉ quadrant : 120°, 135°, 150°",
+     "r": "$120^{\\circ}$ : $\\cos = -\\dfrac{1}{2}$, $\\sin = \\dfrac{\\sqrt{3}}{2}$, $\\tan = -\\sqrt{3}$\n$135^{\\circ}$ : $\\cos = -\\dfrac{\\sqrt{2}}{2}$, $\\sin = \\dfrac{\\sqrt{2}}{2}$, $\\tan = -1$\n$150^{\\circ}$ : $\\cos = -\\dfrac{\\sqrt{3}}{2}$, $\\sin = \\dfrac{1}{2}$, $\\tan = -\\dfrac{\\sqrt{3}}{3}$",
+     "etapes": [
+      "Angles supplémentaires de 60°, 45° et 30° : même sinus, cosinus opposé."
+     ]
+    },
+    {
+     "q": "4ᵉ quadrant : 300°, 315°, 330°",
+     "r": "$300^{\\circ}$ : $\\cos = \\dfrac{1}{2}$, $\\sin = -\\dfrac{\\sqrt{3}}{2}$, $\\tan = -\\sqrt{3}$\n$315^{\\circ}$ : $\\cos = \\dfrac{\\sqrt{2}}{2}$, $\\sin = -\\dfrac{\\sqrt{2}}{2}$, $\\tan = -1$\n$330^{\\circ}$ : $\\cos = \\dfrac{\\sqrt{3}}{2}$, $\\sin = -\\dfrac{1}{2}$, $\\tan = -\\dfrac{\\sqrt{3}}{3}$",
+     "etapes": [
+      "Angles opposés de 60°, 45° et 30° : même cosinus, sinus opposé."
+     ]
+    }
+   ],
+   "page": 3,
+   "consigne": "Retrouve les angles associés et donne leur cos, sin et tan.",
+   "doc": "cercle"
+  },
+  {
+   "id": "ex-07",
+   "titre": "Signes de cos, sin et tan",
+   "niveau": 1,
+   "items": [
+    {
+     "q": "$120^{\\circ}$",
+     "r": "II : cos −, sin +, tan −"
+    },
+    {
+     "q": "$210^{\\circ}$",
+     "r": "III : cos −, sin −, tan +"
+    },
+    {
+     "q": "$330^{\\circ}$",
+     "r": "IV : cos +, sin −, tan −"
+    },
+    {
+     "q": "$75^{\\circ}$",
+     "r": "I : cos +, sin +, tan +"
+    },
+    {
+     "q": "$225^{\\circ}$",
+     "r": "III : cos −, sin −, tan +"
+    },
+    {
+     "q": "$240^{\\circ}$",
+     "r": "III : cos −, sin −, tan +"
+    }
+   ],
+   "page": 4,
+   "consigne": "Donne le quadrant et le signe de cos, sin et tan.",
+   "doc": "cercle",
+   "indice": "I : tout positif. II : seul le sinus est positif. III : seule la tangente est positive. IV : seul le cosinus est positif."
+  },
+  {
+   "id": "ex-08",
+   "titre": "Raisonner avec les quadrants",
+   "niveau": 2,
+   "items": [
+    {
+     "q": "Calcule $\\tan 60^{\\circ}$ et $\\tan 240^{\\circ}$. Compare.",
+     "r": "Les deux valent $\\sqrt{3}$",
+     "etapes": [
+      "$240^{\\circ} = 60^{\\circ} + 180^{\\circ}$ : au 3ᵉ quadrant, cos et sin sont tous deux négatifs, leur quotient est positif."
+     ]
+    },
+    {
+     "q": "$\\cos\\theta = -\\dfrac{\\sqrt{3}}{2}$ et $\\sin\\theta = \\dfrac{1}{2}$ : quadrant ?",
+     "r": "2ᵉ quadrant ($\\theta = 150^{\\circ}$)"
+    },
+    {
+     "q": "$\\tan\\theta = -1$ et $\\sin\\theta < 0$ : $\\theta$ ?",
+     "r": "$\\theta = 315^{\\circ}$ (ou $-45^{\\circ}$)",
+     "etapes": [
+      "tan < 0 : quadrant II ou IV ; sin < 0 → IV."
+     ]
+    },
+    {
+     "q": "$\\cos\\theta = 0$",
+     "r": "$90^{\\circ}$ ou $270^{\\circ}$"
+    },
+    {
+     "q": "$\\sin\\theta = -\\dfrac{\\sqrt{3}}{2}$",
+     "r": "$240^{\\circ}$ ou $300^{\\circ}$"
+    },
+    {
+     "q": "$\\tan\\theta = 1$",
+     "r": "$45^{\\circ}$ ou $225^{\\circ}$"
+    },
+    {
+     "q": "$\\cos\\theta > 0$ et $\\sin\\theta < 0$",
+     "r": "4ᵉ quadrant"
+    },
+    {
+     "q": "$\\sin\\theta > 0$ et $\\cos\\theta < 0$",
+     "r": "2ᵉ quadrant"
+    }
+   ],
+   "page": 4,
+   "doc": "cercle"
+  },
+  {
+   "id": "ex-09",
+   "titre": "La formule fondamentale",
+   "niveau": 2,
+   "items": [
+    {
+     "q": "$\\sin\\alpha = \\dfrac{1}{4}$ et $\\cos\\alpha < 0$",
+     "r": "2ᵉ quadrant ; $\\cos\\alpha = -\\dfrac{\\sqrt{15}}{4} \\approx -0{,}968$ ; $\\alpha \\approx 166^{\\circ}$",
+     "etapes": [
+      "$\\cos^2\\alpha = 1 - \\dfrac{1}{16} = \\dfrac{15}{16}$",
+      "Calculatrice : $\\sin^{-1}(0{,}25) \\approx 14{,}5^{\\circ}$, donc $\\alpha = 180^{\\circ} - 14{,}5^{\\circ} \\approx 165{,}5^{\\circ}$"
+     ]
+    },
+    {
+     "q": "$\\sin\\alpha = -0{,}6$ et $-90^{\\circ} < \\alpha < 0^{\\circ}$",
+     "r": "4ᵉ quadrant ; $\\cos\\alpha = 0{,}8$ ; $\\alpha \\approx -37^{\\circ}$",
+     "etapes": [
+      "$\\cos^2\\alpha = 1 - 0{,}36 = 0{,}64$ et $\\cos\\alpha > 0$"
+     ]
+    },
+    {
+     "q": "$\\sin\\alpha = -0{,}8$ et $\\cos\\alpha > 0$",
+     "r": "4ᵉ quadrant ; $\\cos\\alpha = 0{,}6$ ; $\\alpha \\approx -53^{\\circ}$ (= 307°)",
+     "etapes": [
+      "$\\cos^2\\alpha = 1 - 0{,}64 = 0{,}36$",
+      "Cohérent : un angle entre −90° et 0° est bien au 4ᵉ quadrant."
+     ]
+    }
+   ],
+   "page": 7,
+   "consigne": "Trouve le quadrant, calcule cos α, puis α (calculatrice).",
+   "doc": "cercle",
+   "indice": "$\\sin^2\\alpha + \\cos^2\\alpha = 1$, puis choisis le signe grâce au quadrant."
+  },
+  {
+   "id": "ex-10",
+   "titre": "Cosinus à partir du sinus",
+   "niveau": 2,
+   "items": [
+    {
+     "q": "$x \\in \\left[\\dfrac{\\pi}{2} ; \\pi\\right]$ et $\\sin x = \\dfrac{1}{4}$",
+     "r": "$\\cos x = -\\dfrac{\\sqrt{15}}{4}$",
+     "etapes": [
+      "$\\cos^2 x = \\dfrac{15}{16}$ ; 2ᵉ quadrant → cosinus négatif."
+     ]
+    },
+    {
+     "q": "$x \\in \\left[-\\dfrac{\\pi}{2} ; 0\\right]$ et $\\sin x = -\\dfrac{2}{3}$",
+     "r": "$\\cos x = \\dfrac{\\sqrt{5}}{3}$",
+     "etapes": [
+      "$\\cos^2 x = 1 - \\dfrac{4}{9} = \\dfrac{5}{9}$ ; 4ᵉ quadrant → cosinus positif."
+     ]
+    }
+   ],
+   "page": 1,
+   "doc": "exercices"
+  },
+  {
+   "id": "ex-11",
+   "titre": "Valeurs exactes (π/12 et π/5)",
+   "niveau": 3,
+   "items": [
+    {
+     "q": "$x \\in \\left[-\\dfrac{\\pi}{2} ; \\dfrac{\\pi}{2}\\right]$ et $\\sin x = \\dfrac{\\sqrt{2} - \\sqrt{6}}{4}$. Trouve $\\cos x$, puis $x$ parmi $\\dfrac{\\pi}{12}$ ; $\\dfrac{5\\pi}{12}$ ; $-\\dfrac{\\pi}{12}$ ; $-\\dfrac{5\\pi}{12}$.",
+     "r": "$\\cos x = \\dfrac{\\sqrt{6} + \\sqrt{2}}{4}$ et $x = -\\dfrac{\\pi}{12}$",
+     "etapes": [
+      "$\\sin^2 x = \\dfrac{2 - 2\\sqrt{12} + 6}{16} = \\dfrac{8 - 4\\sqrt{3}}{16}$, donc $\\cos^2 x = \\dfrac{8 + 4\\sqrt{3}}{16}$",
+      "Sur l'intervalle, $\\cos x \\geq 0$. Et $\\left(\\dfrac{\\sqrt{6} + \\sqrt{2}}{4}\\right)^2 = \\dfrac{8 + 4\\sqrt{3}}{16}$ ✓",
+      "$\\sin x < 0$ et petit (≈ −0,26) : $x = -\\dfrac{\\pi}{12}$ (−15°)."
+     ]
+    },
+    {
+     "q": "$\\cos\\dfrac{9\\pi}{5} = \\dfrac{\\sqrt{5} + 1}{4}$ : calcule $\\sin\\dfrac{9\\pi}{5}$, puis $\\cos\\dfrac{\\pi}{5}$ et $\\sin\\dfrac{\\pi}{5}$.",
+     "r": "$\\sin\\dfrac{9\\pi}{5} = -\\dfrac{\\sqrt{10 - 2\\sqrt{5}}}{4}$ ; $\\cos\\dfrac{\\pi}{5} = \\dfrac{\\sqrt{5} + 1}{4}$ ; $\\sin\\dfrac{\\pi}{5} = \\dfrac{\\sqrt{10 - 2\\sqrt{5}}}{4}$",
+     "etapes": [
+      "$\\sin^2 = 1 - \\dfrac{6 + 2\\sqrt{5}}{16} = \\dfrac{10 - 2\\sqrt{5}}{16}$",
+      "$\\dfrac{9\\pi}{5}$ (324°) est au 4ᵉ quadrant : sinus négatif.",
+      "$\\dfrac{9\\pi}{5} = 2\\pi - \\dfrac{\\pi}{5}$ : angles opposés → même cosinus, sinus opposé."
+     ]
+    }
+   ],
+   "page": 1,
+   "doc": "exercices"
+  },
+  {
+   "id": "ex-12",
+   "titre": "Pour aller plus loin",
+   "niveau": 2,
+   "items": [
+    {
+     "q": "$\\dfrac{\\pi}{4}$ ; $\\dfrac{2\\pi}{3}$ ; $\\dfrac{5\\pi}{6}$ ; $\\dfrac{7\\pi}{4}$ en degrés",
+     "r": "$45^{\\circ}$ ; $120^{\\circ}$ ; $150^{\\circ}$ ; $315^{\\circ}$",
+     "etapes": [
+      "On multiplie par $\\dfrac{180}{\\pi}$."
+     ]
+    },
+    {
+     "q": "$\\cos\\alpha = -0{,}6$ et $\\alpha$ au 2ᵉ quadrant : $\\sin\\alpha$ et $\\tan\\alpha$ ?",
+     "r": "$\\sin\\alpha = 0{,}8$ ; $\\tan\\alpha = -\\dfrac{4}{3}$",
+     "etapes": [
+      "$\\sin^2\\alpha = 1 - 0{,}36 = 0{,}64$, sinus positif au 2ᵉ quadrant",
+      "$\\tan\\alpha = \\dfrac{0{,}8}{-0{,}6}$"
+     ]
+    }
+   ],
+   "page": 7,
+   "doc": "cercle",
+   "complement": true
+  }
+ ]
 }

@@ -309,5 +309,638 @@
    "complement": true
   }
  ],
- "exercices": []
+ "exercices": [
+  {
+   "id": "ex-01",
+   "titre": "Racines carrées sans calculatrice",
+   "niveau": 1,
+   "items": [
+    {
+     "q": "$\\left(\\sqrt{3}\\right)^2$",
+     "r": "$3$"
+    },
+    {
+     "q": "$\\sqrt{3^2}$",
+     "r": "$3$"
+    },
+    {
+     "q": "$\\sqrt{(-3)^2}$",
+     "r": "$3$",
+     "etapes": [
+      "$\\sqrt{9}$ : toujours positif."
+     ]
+    },
+    {
+     "q": "$\\sqrt{9 \\cdot 25}$",
+     "r": "$15$",
+     "etapes": [
+      "$3 \\times 5$"
+     ]
+    },
+    {
+     "q": "$\\sqrt{2^4}$",
+     "r": "$4$",
+     "etapes": [
+      "$\\sqrt{16}$"
+     ]
+    },
+    {
+     "q": "$\\sqrt{10\\,000}$",
+     "r": "$100$"
+    },
+    {
+     "q": "$\\sqrt{6\\,400}$",
+     "r": "$80$"
+    },
+    {
+     "q": "$\\sqrt{0{,}25}$",
+     "r": "$0{,}5$"
+    },
+    {
+     "q": "$\\sqrt{0{,}0049}$",
+     "r": "$0{,}07$"
+    },
+    {
+     "q": "$\\sqrt{\\dfrac{25}{4}}$",
+     "r": "$\\dfrac{5}{2}$"
+    },
+    {
+     "q": "$\\sqrt{\\dfrac{36}{49}}$",
+     "r": "$\\dfrac{6}{7}$"
+    },
+    {
+     "q": "$\\sqrt{\\dfrac{0{,}81}{49}}$",
+     "r": "$\\dfrac{0{,}9}{7} = \\dfrac{9}{70}$"
+    }
+   ],
+   "page": 1,
+   "consigne": "Calcule sans calculatrice."
+  },
+  {
+   "id": "ex-02",
+   "titre": "Racines cubiques de tête",
+   "niveau": 1,
+   "items": [
+    {
+     "q": "$\\sqrt[3]{8}$",
+     "r": "$2$"
+    },
+    {
+     "q": "$\\sqrt[3]{-8}$",
+     "r": "$-2$"
+    },
+    {
+     "q": "$\\sqrt[3]{\\dfrac{1}{8}}$",
+     "r": "$\\dfrac{1}{2}$"
+    },
+    {
+     "q": "$\\sqrt[3]{27}$",
+     "r": "$3$"
+    },
+    {
+     "q": "$\\sqrt[3]{-27}$",
+     "r": "$-3$"
+    },
+    {
+     "q": "$\\sqrt[3]{\\dfrac{1}{27}}$",
+     "r": "$\\dfrac{1}{3}$"
+    },
+    {
+     "q": "$\\sqrt[3]{5^3}$",
+     "r": "$5$"
+    },
+    {
+     "q": "$\\sqrt[3]{(-5)^3}$",
+     "r": "$-5$"
+    },
+    {
+     "q": "$\\sqrt[3]{5^{-3}}$",
+     "r": "$\\dfrac{1}{5}$",
+     "etapes": [
+      "$5^{-3} = \\left(\\dfrac{1}{5}\\right)^3$"
+     ]
+    }
+   ],
+   "page": 1,
+   "consigne": "Calcule mentalement."
+  },
+  {
+   "id": "ex-03",
+   "titre": "Racines d'indice 4 et 5",
+   "niveau": 2,
+   "items": [
+    {
+     "q": "$\\sqrt[4]{16}$",
+     "r": "$2$"
+    },
+    {
+     "q": "$\\sqrt[4]{(-2)^8}$",
+     "r": "$4$",
+     "etapes": [
+      "$(-2)^8 = 256 = 4^4$"
+     ]
+    },
+    {
+     "q": "$\\sqrt[4]{625}$",
+     "r": "$5$"
+    },
+    {
+     "q": "$\\sqrt[5]{243}$",
+     "r": "$3$"
+    },
+    {
+     "q": "$\\sqrt[5]{-243}$",
+     "r": "$-3$",
+     "etapes": [
+      "Indice impair : la racine d'un négatif existe."
+     ]
+    },
+    {
+     "q": "$\\sqrt[5]{\\dfrac{32}{243}}$",
+     "r": "$\\dfrac{2}{3}$"
+    }
+   ],
+   "page": 1,
+   "consigne": "Calcule sans calculatrice, sans laisser d'exposant."
+  },
+  {
+   "id": "ex-04",
+   "titre": "Puissances d'un radical",
+   "niveau": 2,
+   "items": [
+    {
+     "q": "$x = \\sqrt{2}$",
+     "r": "$x^2 = 2$ ; $x^3 = 2\\sqrt{2}$ ; $x^4 = 4$ ; $x^5 = 4\\sqrt{2}$ ; $x^6 = 8$",
+     "etapes": [
+      "$x^2 = 2$, puis on multiplie chaque fois par $\\sqrt{2}$."
+     ]
+    },
+    {
+     "q": "$x = 2\\sqrt{3}$",
+     "r": "$x^2 = 12$ ; $x^3 = 24\\sqrt{3}$ ; $x^4 = 144$ ; $x^5 = 288\\sqrt{3}$ ; $x^6 = 1\\,728$",
+     "etapes": [
+      "$x^2 = 4 \\times 3 = 12$ ; $x^4 = 12^2$ ; $x^6 = 12^3$"
+     ]
+    },
+    {
+     "q": "$x = -3\\sqrt{5}$",
+     "r": "$x^2 = 45$ ; $x^3 = -135\\sqrt{5}$ ; $x^4 = 2\\,025$ ; $x^5 = -6\\,075\\sqrt{5}$ ; $x^6 = 91\\,125$",
+     "etapes": [
+      "$x^2 = 9 \\times 5 = 45$ ; les puissances impaires restent négatives."
+     ]
+    }
+   ],
+   "page": 1,
+   "consigne": "Calcule $x^2$, $x^3$, $x^4$, $x^5$ et $x^6$.",
+   "indice": "Calcule $x^2$ d'abord : $x^4 = (x^2)^2$, $x^6 = (x^2)^3$, et $x^3 = x^2 \\cdot x$."
+  },
+  {
+   "id": "ex-05",
+   "titre": "Exposants fractionnaires → radicaux",
+   "niveau": 1,
+   "items": [
+    {
+     "q": "$a^{1/2}$",
+     "r": "$\\sqrt{a}$"
+    },
+    {
+     "q": "$a^{1/3}$",
+     "r": "$\\sqrt[3]{a}$"
+    },
+    {
+     "q": "$a^{1/4}$",
+     "r": "$\\sqrt[4]{a}$"
+    },
+    {
+     "q": "$a^{3/2}$",
+     "r": "$\\sqrt{a^3} = a\\sqrt{a}$"
+    },
+    {
+     "q": "$a^{2/3}$",
+     "r": "$\\sqrt[3]{a^2}$"
+    },
+    {
+     "q": "$a^{0{,}75}$",
+     "r": "$\\sqrt[4]{a^3}$",
+     "etapes": [
+      "$0{,}75 = \\dfrac{3}{4}$"
+     ]
+    },
+    {
+     "q": "$a^{1{,}5}$",
+     "r": "$\\sqrt{a^3}$",
+     "etapes": [
+      "$1{,}5 = \\dfrac{3}{2}$"
+     ]
+    },
+    {
+     "q": "$a^{2/4}$",
+     "r": "$\\sqrt{a}$",
+     "etapes": [
+      "$\\dfrac{2}{4} = \\dfrac{1}{2}$"
+     ]
+    },
+    {
+     "q": "$a^{3/6}$",
+     "r": "$\\sqrt{a}$"
+    },
+    {
+     "q": "$a^{3/9}$",
+     "r": "$\\sqrt[3]{a}$"
+    }
+   ],
+   "page": 1,
+   "consigne": "Que représentent ces expressions ? (règle $(a^m)^n = a^{m \\cdot n}$)",
+   "indice": "Simplifie d'abord la fraction de l'exposant."
+  },
+  {
+   "id": "ex-06",
+   "titre": "Écrire sous forme de radicaux",
+   "niveau": 2,
+   "items": [
+    {
+     "q": "$2^{1/3}$",
+     "r": "$\\sqrt[3]{2}$"
+    },
+    {
+     "q": "$-2^{1/3}$",
+     "r": "$-\\sqrt[3]{2}$",
+     "etapes": [
+      "L'exposant ne porte que sur 2."
+     ]
+    },
+    {
+     "q": "$(-2)^{1/3}$",
+     "r": "**Pas défini** avec un exposant fractionnaire",
+     "etapes": [
+      "L'exposant fractionnaire suppose une base positive (même si $\\sqrt[3]{-2}$ existe)."
+     ]
+    },
+    {
+     "q": "$2^{-1/3}$",
+     "r": "$\\dfrac{1}{\\sqrt[3]{2}}$"
+    },
+    {
+     "q": "$3^{1/2}$",
+     "r": "$\\sqrt{3}$"
+    },
+    {
+     "q": "$(-3)^{1/2}$",
+     "r": "**N'existe pas** dans ℝ",
+     "etapes": [
+      "Il faudrait $\\sqrt{-3}$."
+     ]
+    },
+    {
+     "q": "$-3^{1/2}$",
+     "r": "$-\\sqrt{3}$"
+    },
+    {
+     "q": "$3^{-1/2}$",
+     "r": "$\\dfrac{1}{\\sqrt{3}} = \\dfrac{\\sqrt{3}}{3}$"
+    }
+   ],
+   "page": 1,
+   "indice": "$a^{1/n} = \\sqrt[n]{a}$ seulement pour $a > 0$. Un exposant négatif donne l'inverse."
+  },
+  {
+   "id": "ex-07",
+   "titre": "Valeurs approchées avec √2",
+   "niveau": 2,
+   "items": [
+    {
+     "q": "$\\sqrt{200}$",
+     "r": "$10\\sqrt{2} \\approx 14{,}142$",
+     "etapes": [
+      "$\\sqrt{100 \\times 2}$"
+     ]
+    },
+    {
+     "q": "$20\\,000^{1/2}$",
+     "r": "$100\\sqrt{2} \\approx 141{,}42$",
+     "etapes": [
+      "$\\sqrt{10\\,000 \\times 2}$"
+     ]
+    },
+    {
+     "q": "$\\sqrt{0{,}02}$",
+     "r": "$\\dfrac{\\sqrt{2}}{10} \\approx 0{,}1414$",
+     "etapes": [
+      "$\\sqrt{\\dfrac{2}{100}}$"
+     ]
+    }
+   ],
+   "page": 1,
+   "consigne": "Sachant que $\\sqrt{2} = 1{,}414\\,213\\,562\\dots$, calcule sans calculatrice une valeur approchée."
+  },
+  {
+   "id": "ex-08",
+   "titre": "Exposant ½ et puissances de 10",
+   "niveau": 2,
+   "items": [
+    {
+     "q": "$100^{1/2}$",
+     "r": "$10$"
+    },
+    {
+     "q": "$(10^4)^{1/2}$",
+     "r": "$100$",
+     "etapes": [
+      "$10^{4/2} = 10^2$"
+     ]
+    },
+    {
+     "q": "$0{,}01^{1/2}$",
+     "r": "$0{,}1$"
+    },
+    {
+     "q": "$(10^{-4})^{1/2}$",
+     "r": "$0{,}01$",
+     "etapes": [
+      "$10^{-2}$"
+     ]
+    },
+    {
+     "q": "$(10^6)^{1/2}$",
+     "r": "$1\\,000$"
+    },
+    {
+     "q": "$(10^{-12})^{1/2}$",
+     "r": "$10^{-6} = 0{,}000\\,001$"
+    },
+    {
+     "q": "$100^{-1/2}$",
+     "r": "$0{,}1$",
+     "etapes": [
+      "$\\dfrac{1}{\\sqrt{100}}$"
+     ]
+    },
+    {
+     "q": "$0{,}01^{-1/2}$",
+     "r": "$10$",
+     "etapes": [
+      "$\\dfrac{1}{0{,}1}$"
+     ]
+    },
+    {
+     "q": "$(10^4)^{-1/2}$",
+     "r": "$0{,}01$",
+     "etapes": [
+      "$10^{-2}$"
+     ]
+    }
+   ],
+   "page": 1,
+   "consigne": "Calcule mentalement."
+  },
+  {
+   "id": "ex-09",
+   "titre": "Additions et soustractions de radicaux",
+   "niveau": 3,
+   "items": [
+    {
+     "q": "$5\\sqrt{2} - \\dfrac{1}{2}\\sqrt{2} + \\dfrac{2}{3}\\sqrt{2} - 2\\sqrt{2}$",
+     "r": "$\\dfrac{19}{6}\\sqrt{2}$",
+     "etapes": [
+      "$5 - \\dfrac{1}{2} + \\dfrac{2}{3} - 2 = \\dfrac{30 - 3 + 4 - 12}{6} = \\dfrac{19}{6}$"
+     ]
+    },
+    {
+     "q": "$50^{1/2} - 2 \\cdot 8^{1/2} + 3 \\cdot 18^{1/2} - 7 \\cdot 2^{1/2}$",
+     "r": "$3\\sqrt{2}$",
+     "etapes": [
+      "$5\\sqrt{2} - 4\\sqrt{2} + 9\\sqrt{2} - 7\\sqrt{2}$"
+     ]
+    },
+    {
+     "q": "$2\\sqrt{54} - 2\\sqrt{24} - \\sqrt{150} + \\sqrt{6}$",
+     "r": "$-2\\sqrt{6}$",
+     "etapes": [
+      "$6\\sqrt{6} - 4\\sqrt{6} - 5\\sqrt{6} + \\sqrt{6}$"
+     ]
+    },
+    {
+     "q": "$2 \\cdot 28^{1/2} - 6 \\cdot \\left(\\dfrac{7}{4}\\right)^{1/2} + 14 \\cdot \\left(\\dfrac{1}{7}\\right)^{1/2}$",
+     "r": "$3\\sqrt{7}$",
+     "etapes": [
+      "$4\\sqrt{7} - 6 \\cdot \\dfrac{\\sqrt{7}}{2} + \\dfrac{14}{\\sqrt{7}}$",
+      "$\\dfrac{14}{\\sqrt{7}} = 2\\sqrt{7}$ : $4\\sqrt{7} - 3\\sqrt{7} + 2\\sqrt{7}$"
+     ]
+    },
+    {
+     "q": "$\\sqrt{72} + 3 - \\sqrt{50} - \\sqrt{25}$",
+     "r": "$\\sqrt{2} - 2$",
+     "etapes": [
+      "$6\\sqrt{2} + 3 - 5\\sqrt{2} - 5$"
+     ]
+    }
+   ],
+   "page": 1,
+   "indice": "Simplifie chaque racine pour faire apparaître le même radical."
+  },
+  {
+   "id": "ex-10",
+   "titre": "Multiplications de radicaux",
+   "niveau": 2,
+   "items": [
+    {
+     "q": "$\\sqrt{28} \\cdot \\sqrt{7}$",
+     "r": "$14$",
+     "etapes": [
+      "$\\sqrt{196}$"
+     ]
+    },
+    {
+     "q": "$\\sqrt{10} \\cdot \\sqrt{15}$",
+     "r": "$5\\sqrt{6}$",
+     "etapes": [
+      "$\\sqrt{150} = \\sqrt{25 \\times 6}$"
+     ]
+    },
+    {
+     "q": "$-\\sqrt{7} \\cdot \\sqrt{42}$",
+     "r": "$-7\\sqrt{6}$",
+     "etapes": [
+      "$-\\sqrt{294} = -\\sqrt{49 \\times 6}$"
+     ]
+    },
+    {
+     "q": "$\\sqrt{7} \\cdot \\sqrt{\\dfrac{1}{7}}$",
+     "r": "$1$"
+    },
+    {
+     "q": "$2\\sqrt{18} \\cdot \\sqrt{8}$",
+     "r": "$24$",
+     "etapes": [
+      "$2\\sqrt{144}$"
+     ]
+    },
+    {
+     "q": "$(4 - \\sqrt{3}) \\cdot \\sqrt{3}$",
+     "r": "$4\\sqrt{3} - 3$",
+     "etapes": [
+      "On distribue."
+     ]
+    },
+    {
+     "q": "$(\\sqrt{5} - \\sqrt{3}) \\cdot \\sqrt{15}$",
+     "r": "$5\\sqrt{3} - 3\\sqrt{5}$",
+     "etapes": [
+      "$\\sqrt{75} - \\sqrt{45}$"
+     ]
+    },
+    {
+     "q": "$(\\sqrt{3} - \\sqrt{2})(-\\sqrt{6})$",
+     "r": "$2\\sqrt{3} - 3\\sqrt{2}$",
+     "etapes": [
+      "$-\\sqrt{18} + \\sqrt{12}$"
+     ]
+    }
+   ],
+   "page": 2
+  },
+  {
+   "id": "ex-11",
+   "titre": "Vrai ou faux ?",
+   "niveau": 2,
+   "items": [
+    {
+     "q": "$\\sqrt{a^2} = a$",
+     "r": "**Faux** en général",
+     "etapes": [
+      "$\\sqrt{a^2} = |a|$ : pour $a = -3$, $\\sqrt{9} = 3 \\neq -3$."
+     ]
+    },
+    {
+     "q": "$\\left(\\sqrt{a}\\right)^2 = a$",
+     "r": "**Vrai** (pour $a \\geq 0$)"
+    },
+    {
+     "q": "$\\left(\\sqrt{a}\\right)^2 = \\sqrt{a^2}$",
+     "r": "**Vrai** quand $\\sqrt{a}$ existe ($a \\geq 0$) : les deux valent $a$"
+    },
+    {
+     "q": "$\\sqrt[3]{a^3} = a$",
+     "r": "**Vrai**"
+    },
+    {
+     "q": "$\\left(\\sqrt[3]{a}\\right)^3 = a$",
+     "r": "**Vrai**"
+    },
+    {
+     "q": "$\\sqrt[3]{a^3} = \\left(\\sqrt[3]{a}\\right)^3$",
+     "r": "**Vrai**"
+    },
+    {
+     "q": "$\\sqrt[3]{a^2} = \\sqrt{a^3}$",
+     "r": "**Faux**",
+     "etapes": [
+      "$a^{2/3} \\neq a^{3/2}$"
+     ]
+    },
+    {
+     "q": "$\\sqrt[3]{a^6} = a^2$",
+     "r": "**Vrai**",
+     "etapes": [
+      "$a^{6/3}$"
+     ]
+    },
+    {
+     "q": "$\\sqrt[3]{a^3} = 1$",
+     "r": "**Faux** : ça vaut $a$"
+    }
+   ],
+   "page": 2,
+   "consigne": "Lesquelles de ces affirmations sont exactes ?"
+  },
+  {
+   "id": "ex-12",
+   "titre": "Quand l'expression existe-t-elle ?",
+   "niveau": 3,
+   "items": [
+    {
+     "q": "$\\sqrt{a}$",
+     "r": "$a \\geq 0$"
+    },
+    {
+     "q": "$\\sqrt[3]{a + 3}$",
+     "r": "Pour tout réel $a$",
+     "etapes": [
+      "Racine cubique : pas de condition."
+     ]
+    },
+    {
+     "q": "$\\sqrt[4]{ab^2}$",
+     "r": "$a \\geq 0$ (ou $b = 0$)",
+     "etapes": [
+      "$b^2 \\geq 0$, donc il faut $a \\geq 0$."
+     ]
+    },
+    {
+     "q": "$\\sqrt{-3a}$",
+     "r": "$a \\leq 0$",
+     "etapes": [
+      "$-3a \\geq 0$"
+     ]
+    },
+    {
+     "q": "$\\sqrt[3]{ab}$",
+     "r": "Pour tous réels $a$ et $b$"
+    },
+    {
+     "q": "$\\sqrt[4]{\\dfrac{a}{b}}$",
+     "r": "$b \\neq 0$ et $\\dfrac{a}{b} \\geq 0$ ($a$ et $b$ de même signe, ou $a = 0$)"
+    }
+   ],
+   "page": 2,
+   "consigne": "Quelles conditions sur $a$ et $b$ ?",
+   "indice": "Indice pair (2, 4…) : il faut un nombre ≥ 0 sous la racine. Indice impair : aucune condition."
+  },
+  {
+   "id": "ex-13",
+   "titre": "Simplifier avec des lettres",
+   "niveau": 3,
+   "items": [
+    {
+     "q": "$\\sqrt{a^5}$",
+     "r": "$a^2\\sqrt{a}$",
+     "etapes": [
+      "$a^5 = a^4 \\cdot a$"
+     ]
+    },
+    {
+     "q": "$\\sqrt{a^4x^5}$",
+     "r": "$a^2x^2\\sqrt{x}$"
+    },
+    {
+     "q": "$\\sqrt{8x^4}$",
+     "r": "$2x^2\\sqrt{2}$"
+    },
+    {
+     "q": "$\\sqrt{162a^2}$",
+     "r": "$9a\\sqrt{2}$",
+     "etapes": [
+      "$162 = 81 \\times 2$"
+     ]
+    },
+    {
+     "q": "$\\sqrt{90x^2}$",
+     "r": "$3x\\sqrt{10}$",
+     "etapes": [
+      "$90 = 9 \\times 10$"
+     ]
+    },
+    {
+     "q": "$\\sqrt{\\dfrac{ax^5}{20}}$",
+     "r": "$\\dfrac{x^2\\sqrt{5ax}}{10}$",
+     "etapes": [
+      "$x^2\\sqrt{\\dfrac{ax}{20}}$ ; $\\sqrt{20} = 2\\sqrt{5}$",
+      "$\\dfrac{x^2\\sqrt{ax}}{2\\sqrt{5}} \\times \\dfrac{\\sqrt{5}}{\\sqrt{5}}$"
+     ]
+    }
+   ],
+   "page": 2,
+   "consigne": "$a > 0$ et $x > 0$."
+  }
+ ]
 }
