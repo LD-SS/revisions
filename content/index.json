@@ -120,15 +120,74 @@
       "ordre": 2,
       "chapitres": [
         {
-          "id": "ch01-vues",
-          "titre": "Projections orthogonales, traits et cotation",
+          "id": "ch01-generalites",
+          "titre": "Dessins techniques : généralités",
           "ordre": 1,
-          "fichier": "dessin/ch01-vues.json",
+          "fichier": "dessin/ch01-generalites.json",
           "maj": "2026-10-16",
-          "exemple": true,
           "nb": {
-            "sections": 4,
-            "flashcards": 8,
+            "sections": 9,
+            "flashcards": 22,
+            "exercices": 0
+          }
+        },
+        {
+          "id": "ch02-formes",
+          "titre": "Formes usuelles : vocabulaire",
+          "ordre": 2,
+          "fichier": "dessin/ch02-formes.json",
+          "maj": "2026-10-16",
+          "nb": {
+            "sections": 6,
+            "flashcards": 20,
+            "exercices": 0
+          }
+        },
+        {
+          "id": "ch03-projections",
+          "titre": "Projections orthogonales – normalisation",
+          "ordre": 3,
+          "fichier": "dessin/ch03-projections.json",
+          "maj": "2026-10-16",
+          "nb": {
+            "sections": 7,
+            "flashcards": 19,
+            "exercices": 0
+          }
+        },
+        {
+          "id": "ch04-coupes",
+          "titre": "Coupes et sections",
+          "ordre": 4,
+          "fichier": "dessin/ch04-coupes.json",
+          "maj": "2026-10-16",
+          "nb": {
+            "sections": 7,
+            "flashcards": 15,
+            "exercices": 0
+          }
+        },
+        {
+          "id": "ch05-perspectives",
+          "titre": "Perspectives",
+          "ordre": 5,
+          "fichier": "dessin/ch05-perspectives.json",
+          "maj": "2026-10-16",
+          "nb": {
+            "sections": 7,
+            "flashcards": 13,
+            "exercices": 0
+          }
+        },
+        {
+          "id": "ch06-cotation",
+          "titre": "Cotation : principes généraux",
+          "ordre": 6,
+          "fichier": "dessin/ch06-cotation.json",
+          "maj": "2026-10-16",
+          "nb": {
+            "sections": 8,
+            "flashcards": 16,
             "exercices": 0
           }
         }
