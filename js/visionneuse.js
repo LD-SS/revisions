@@ -2,14 +2,17 @@
    VISIONNEUSE — affiche une page d'un PDF de cours lié sur cet appareil
    ---------------------------------------------------------------------
    Ouverte en touchant une pastille de source (« Ch. 3 – Racines · p. 5 »).
-   - Si le PDF est déjà lié : affiche directement la page citée.
-   - Sinon : propose de choisir le fichier (il reste dans ce navigateur).
+   1. Si les images des pages sont publiées (pages/, chiffrées) : affiche l'image
+      de la page (mot de passe demandé une seule fois par appareil).
+   2. Sinon, si le PDF est lié sur cet appareil : affiche la page avec pdf.js.
+   3. Sinon : propose de choisir le fichier (il reste dans ce navigateur).
    Rendu avec pdf.js (lib/pdfjs/, licence Apache 2.0), chargé à la demande.
    ===================================================================== */
 
 import { esc, toast } from './utils.js';
 import { icone } from './icones.js';
 import { lirePdf, enregistrerPdf, correspond } from './pdfs.js';
+import { imagesDisponibles, cleConnue, essayerMotDePasse, imagePage } from './pages.js';
 
 let pdfjs = null;
 const documents = new Map(); // clé → document pdf.js déjà ouvert
@@ -63,6 +66,7 @@ export async function ouvrirVisionneuse(doc, page = 1) {
   const etat = { doc, page, zoom: 1, pdf: null, rendu: null };
 
   async function afficherPage() {
+    if (etat.mode === 'images') return afficherImage();
     const pdf = etat.pdf;
     etat.page = Math.min(Math.max(1, etat.page), pdf.numPages);
     fond.querySelector('.visio-num').textContent = `p. ${etat.page} / ${pdf.numPages}`;
@@ -84,6 +88,58 @@ export async function ouvrirVisionneuse(doc, page = 1) {
     try { await etat.rendu.promise; } catch { return; }
     corps.replaceChildren(canvas);
     corps.scrollTop = 0;
+  }
+
+  /* ----- Mode images (pages publiées, chiffrées) ----- */
+  async function afficherImage() {
+    etat.page = Math.min(Math.max(1, etat.page), etat.total);
+    fond.querySelector('.visio-num').textContent = `p. ${etat.page} / ${etat.total}`;
+    fond.querySelector('[data-v="prec"]').disabled = etat.page <= 1;
+    fond.querySelector('[data-v="suiv"]').disabled = etat.page >= etat.total;
+    const voulue = etat.page;
+    try {
+      const blob = await imagePage(doc.cle, voulue);
+      if (voulue !== etat.page) return; // l'utilisateur a déjà changé de page
+      const img = new Image();
+      img.className = 'visio-page';
+      img.alt = `Page ${voulue} — ${doc.nom}`;
+      img.src = URL.createObjectURL(blob);
+      img.onload = () => URL.revokeObjectURL(img.src);
+      img.style.width = `${Math.round(Math.max(280, corps.clientWidth - 24) * etat.zoom)}px`;
+      corps.replaceChildren(img);
+      corps.scrollTop = 0;
+    } catch (e) {
+      corps.innerHTML = `<div class="error-box">Page indisponible : ${esc(e.message)}. Vérifie ta connexion (elle sera ensuite gardée hors ligne).</div>`;
+    }
+  }
+
+  function demarrerImages(info) {
+    etat.mode = 'images';
+    etat.total = info.pages;
+    fond.querySelector('.visio-outils').hidden = false;
+    pied.textContent = doc.nom;
+    afficherImage();
+  }
+
+  function demanderMotDePasse(info, erreur = false) {
+    fond.querySelector('.visio-outils').hidden = true;
+    corps.innerHTML = `
+      <form class="visio-lier" data-v="mdp">
+        <h3>Pages de cours protégées</h3>
+        <p>Les pages des cours sont protégées par un mot de passe (droits d'auteur des professeurs).
+        Entre-le une seule fois : il sera retenu sur cet appareil.</p>
+        ${erreur ? '<p class="notice">Mot de passe incorrect.</p>' : ''}
+        <p><input class="field" type="password" name="mdp" autocomplete="current-password" placeholder="Mot de passe" required style="width:100%"></p>
+        <button class="btn primary" type="submit">${icone('cadenas')} Déverrouiller</button>
+      </form>`;
+    const form = corps.querySelector('form');
+    form.querySelector('input').focus();
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      form.querySelector('button').disabled = true;
+      const ok = await essayerMotDePasse(form.mdp.value);
+      if (ok) { toast('Pages déverrouillées sur cet appareil'); demarrerImages(info); } else demanderMotDePasse(info, true);
+    });
   }
 
   async function demarrer(blob) {
@@ -164,13 +220,19 @@ export async function ouvrirVisionneuse(doc, page = 1) {
   });
   clavier = (e) => {
     if (e.key === 'Escape') fermer();
-    else if (etat.pdf && e.key === 'ArrowLeft') { etat.page--; afficherPage(); }
-    else if (etat.pdf && e.key === 'ArrowRight') { etat.page++; afficherPage(); }
+    else if ((etat.pdf || etat.mode === 'images') && e.key === 'ArrowLeft') { etat.page--; afficherPage(); }
+    else if ((etat.pdf || etat.mode === 'images') && e.key === 'ArrowRight') { etat.page++; afficherPage(); }
     else return;
     e.preventDefault(); e.stopPropagation();
   };
   document.addEventListener('keydown', clavier, true);
 
+  const images = await imagesDisponibles(doc.cle);
+  if (images) {
+    if (await cleConnue()) demarrerImages(images);
+    else demanderMotDePasse(images);
+    return;
+  }
   const enregistre = await lirePdf(doc.cle);
   if (enregistre?.blob) await demarrer(enregistre.blob);
   else demanderFichier();
