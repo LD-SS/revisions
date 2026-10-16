@@ -9,12 +9,14 @@
     "id": "cours",
     "nom": "Dessin technique et DAO – Chapitre 6 : Cotation, principes généraux",
     "court": "Ch. 6 – Cotation",
+    "fichier": "6Dessin techn DAO-Chapitre-6.pdf",
     "pages": 23
    },
    {
     "id": "guide",
     "nom": "Guide des sciences et technologies industrielles (J.-L. Fanchon)",
     "court": "Guide Fanchon",
+    "fichier": "1-135 dessin technique.pdf",
     "pages": 135
    }
   ],

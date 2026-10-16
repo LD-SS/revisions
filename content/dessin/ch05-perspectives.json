@@ -9,12 +9,14 @@
     "id": "cours",
     "nom": "Dessin technique et DAO – Chapitre 5 : Perspectives",
     "court": "Ch. 5 – Perspectives",
+    "fichier": "5Dessin techn DAO-Chapitre-5.pdf",
     "pages": 19
    },
    {
     "id": "guide",
     "nom": "Guide des sciences et technologies industrielles (J.-L. Fanchon)",
     "court": "Guide Fanchon",
+    "fichier": "1-135 dessin technique.pdf",
     "pages": 135
    }
   ],

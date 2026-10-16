@@ -9,12 +9,14 @@
     "id": "cours",
     "nom": "Dessin technique et DAO – Chapitre 1 : Dessins techniques, généralités",
     "court": "Ch. 1 – Généralités",
+    "fichier": "1Dessin techn DAO-Chapitre-1.pdf",
     "pages": 36
    },
    {
     "id": "guide",
     "nom": "Guide des sciences et technologies industrielles (J.-L. Fanchon)",
     "court": "Guide Fanchon",
+    "fichier": "1-135 dessin technique.pdf",
     "pages": 135
    }
   ],
