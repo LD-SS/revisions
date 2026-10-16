@@ -178,6 +178,7 @@ footer{padding:14px 16px;text-align:center;font-size:12.5px;color:var(--muted)}
 .syn-toc a.active{background:var(--mw);color:var(--mt);font-weight:600}
 .syn-intro{font-size:15.5px;margin:0 0 4px}
 .syn-source{font-size:13px;margin:6px 0 0;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.syn-source .badge{white-space:normal;max-width:100%}
 .syn-section{scroll-margin-top:80px;margin-bottom:16px}
 .syn-section>h2{display:flex;align-items:center;gap:10px;margin:0 0 12px;font-size:19px}
 .syn-section>h2 .num{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;background:var(--mw);color:var(--mt);font-size:15px;flex:none}
@@ -185,7 +186,8 @@ footer{padding:14px 16px;text-align:center;font-size:12.5px;color:var(--muted)}
 .bloc p{margin:0 0 6px} .bloc p:last-child{margin-bottom:0}
 .bloc ul,.bloc ol{margin:4px 0;padding-left:22px}
 .bloc li{margin:3px 0}
-.bloc-head{display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;padding-right:60px}
+.bloc-head{display:flex;align-items:center;gap:7px;flex-wrap:wrap;font-size:12.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
+.bloc-head .pg{position:static;margin-left:auto;text-transform:none;letter-spacing:0}
 .bloc-head svg{width:16px;height:16px}
 .bloc-head .t{text-transform:none;letter-spacing:0;font-size:14.5px;color:var(--text)}
 .bloc.texte{padding:4px 2px}
@@ -208,8 +210,9 @@ table.tbl{border-collapse:collapse;width:100%;font-size:14.5px}
 .tbl tr:last-child td{border-bottom:0}
 .pg{position:absolute;top:8px;right:10px;display:inline-flex;align-items:center;gap:3px;font-size:11.5px;font-weight:600;color:var(--muted);background:var(--panel);border:1px solid var(--border);border-radius:99px;padding:0 7px;line-height:18px;cursor:help}
 .pg svg{width:12px;height:12px}
-.bloc.texte .pg,.bloc.tableau .pg{position:static;margin-left:6px;vertical-align:middle}
-.bloc.tableau .pg-row{display:flex;justify-content:flex-end;margin-top:4px}
+.bloc.texte .pg,.bloc.liste .pg,.bloc.tableau .pg{position:static;margin-left:6px;vertical-align:middle}
+.pg.cplt{background:var(--warn-weak);color:var(--warn);border-color:transparent}
+.bloc.cplt{outline:1px dashed color-mix(in srgb,var(--warn) 50%,transparent);outline-offset:-1px}
 
 /* ===================== 10. FLASHCARDS ===================== */
 .fc-wrap{max-width:760px;margin:0 auto}
