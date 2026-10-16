@@ -214,6 +214,29 @@ table.tbl{border-collapse:collapse;width:100%;font-size:14.5px}
 .pg.cplt{background:var(--warn-weak);color:var(--warn);border-color:transparent}
 .bloc.cplt{outline:1px dashed color-mix(in srgb,var(--warn) 50%,transparent);outline-offset:-1px}
 
+/* Figures (schémas SVG redessinés) : couleurs liées au thème */
+.fig{margin:6px 0 0;text-align:center}
+.fig svg{max-width:100%;height:auto;color:var(--text);font:13px system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow:visible}
+.fig figcaption{font-size:13.5px;color:var(--muted);margin-top:6px;text-align:center}
+.fig svg text{fill:currentColor}
+.fig svg .petit{font-size:11px}
+.fig svg .grand{font-size:16px}
+.fig svg .gras{font-weight:700}
+.fig svg .exemple{font-size:12.5px;fill:var(--muted)}
+.fig svg .ax{stroke:var(--muted);stroke-width:1.2;fill:none}
+.fig svg .f-ax{fill:var(--muted)}
+.fig svg .cer{stroke:currentColor;stroke-width:1.5;fill:none}
+.fig svg .trait{stroke:currentColor;stroke-width:1.5;fill:none}
+.fig svg .epais{stroke-width:4;fill:none;stroke-linecap:round}
+.fig svg .fin{stroke-width:1.1;stroke-dasharray:5 4;opacity:.85}
+.fig svg .pt{fill:currentColor}
+.fig svg .s-def{stroke:var(--def)} .fig svg .f-def{fill:var(--def)}
+.fig svg .s-ok{stroke:var(--ok)} .fig svg .f-ok{fill:var(--ok)}
+.fig svg .s-bad{stroke:var(--bad)} .fig svg .f-bad{fill:var(--bad)}
+.fig svg .s-mt{stroke:var(--mt,var(--accent))} .fig svg .f-mt{fill:var(--mt,var(--accent))}
+.fig svg .s-warn{stroke:var(--warn)} .fig svg .f-warn{fill:var(--warn)}
+.bloc.figure{border:1px solid var(--border);background:var(--panel)}
+
 /* ===================== 10. FLASHCARDS ===================== */
 .fc-wrap{max-width:760px;margin:0 auto}
 .fc-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
