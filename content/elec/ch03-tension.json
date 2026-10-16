@@ -1,0 +1,527 @@
+{
+ "format": 1,
+ "id": "ch03-tension",
+ "matiere": "elec",
+ "titre": "La tension et la loi des mailles",
+ "source": {
+  "pdfs": [
+   {
+    "id": "tensions",
+    "nom": "Elec 2180 – DC : les tensions (diapos 68 à 106)",
+    "court": "Les tensions",
+    "fichier": "2026.10.05 - BacEM_Elec_2180 - DC les tensions - pg68-106.pdf",
+    "pages": 20
+   },
+   {
+    "id": "exo",
+    "nom": "Elec 2180 – Exercices U, I, Q, R, P, W",
+    "court": "Exercices",
+    "fichier": "2026.10.14 - BacEmElec2180 - Exo U_I_Q_R_P_W - pg01-10 .pdf",
+    "pages": 10
+   }
+  ],
+  "genereLe": "2026-10-16",
+  "modele": "Claude (rédigé dans la conversation)"
+ },
+ "synthese": {
+  "intro": "Potentiels, tensions, voltmètre, loi des mailles, domaines de tension et liaisons équipotentielles.",
+  "sections": [
+   {
+    "id": "s1",
+    "titre": "Tension et potentiel",
+    "blocs": [
+     {
+      "type": "definition",
+      "contenu": "Une grandeur présente **en chaque point** d'un circuit. Unité : le **volt (V)**.",
+      "titre": "Potentiel électrique V",
+      "pages": [
+       2
+      ],
+      "doc": "tensions"
+     },
+     {
+      "type": "definition",
+      "contenu": "La **différence de potentiel** (ddp) entre les deux bornes d'un élément : $U_{AB} = V_A - V_B$. Unité : le volt.",
+      "titre": "Tension U",
+      "pages": [
+       1,
+       2
+      ],
+      "doc": "tensions"
+     },
+     {
+      "type": "figure",
+      "svg": "<svg viewBox=\"0 0 400 200\" width=\"400\" role=\"img\" aria-label=\"La tension est une différence de potentiel\" xmlns=\"http://www.w3.org/2000/svg\"><title>La tension est une différence de potentiel</title><path class=\"trait\" d=\"M70 105 L70 40 L290 40 L290 180 L70 180 L70 115\" stroke-linejoin=\"round\"/><line class=\"s-mt\" stroke-width=\"2.4\" x1=\"55\" y1=\"105\" x2=\"85\" y2=\"105\"/><line class=\"s-mt\" stroke-width=\"5\" x1=\"63\" y1=\"115\" x2=\"77\" y2=\"115\"/><text x=\"90\" y=\"101\" text-anchor=\"middle\" class=\"gras f-mt\">+</text><circle class=\"cmp\" cx=\"290\" cy=\"110\" r=\"11\"/><path class=\"trait\" d=\"M282.2 102.2 L297.8 117.8 M282.2 117.8 L297.8 102.2\"/><circle class=\"pt\" cx=\"290\" cy=\"40\" r=\"3.2\"/><circle class=\"pt\" cx=\"290\" cy=\"180\" r=\"3.2\"/><text x=\"300\" y=\"36\" text-anchor=\"start\" class=\"gras\">a</text><text x=\"300\" y=\"194\" text-anchor=\"start\" class=\"gras\">b</text><line stroke-width=\"2\" class=\"s-def\" x1=\"36\" y1=\"160\" x2=\"36\" y2=\"60\"/><polygon class=\"f-def\" points=\"36,60 39.1,67.4 32.9,67.4\"/><text x=\"30\" y=\"110\" text-anchor=\"end\" class=\"gras f-def\">Ug</text><line stroke-width=\"2\" class=\"s-def\" x1=\"325\" y1=\"160\" x2=\"325\" y2=\"60\"/><polygon class=\"f-def\" points=\"325,60 328.1,67.4 321.9,67.4\"/><text x=\"333\" y=\"110\" text-anchor=\"start\" class=\"gras f-def\">UL</text><text x=\"180\" y=\"112\" text-anchor=\"middle\" class=\"gras f-def\">Ug = UL = Va − Vb</text></svg>",
+      "legende": "La tension du générateur se retrouve aux bornes de la lampe.",
+      "pages": [
+       1
+      ],
+      "doc": "tensions"
+     },
+     {
+      "type": "figure",
+      "svg": "<svg viewBox=\"0 0 400 150\" width=\"400\" role=\"img\" aria-label=\"La flèche U_AB pointe vers A : U_AB = V_A − V_B\" xmlns=\"http://www.w3.org/2000/svg\"><title>La flèche U_AB pointe vers A : U_AB = V_A − V_B</title><path class=\"trait\" d=\"M40 60 L360 60\" stroke-linejoin=\"round\"/><rect class=\"cmp\" x=\"181\" y=\"53\" width=\"38\" height=\"14\" rx=\"1.5\"/><circle class=\"cmp\" cx=\"120\" cy=\"60\" r=\"3.6\"/><text x=\"120\" y=\"50\" text-anchor=\"middle\" class=\"gras\">A</text><circle class=\"cmp\" cx=\"280\" cy=\"60\" r=\"3.6\"/><text x=\"280\" y=\"50\" text-anchor=\"middle\" class=\"gras\">B</text><line stroke-width=\"2\" class=\"s-def\" x1=\"270\" y1=\"95\" x2=\"130\" y2=\"95\"/><polygon class=\"f-def\" points=\"130,95 137.4,91.9 137.4,98.1\"/><text x=\"200\" y=\"115\" text-anchor=\"middle\" class=\"gras f-def\">U_AB = V_A − V_B</text><text x=\"130\" y=\"140\" text-anchor=\"middle\" class=\"petit f-def\">pointe = A (côté +)</text><text x=\"270\" y=\"140\" text-anchor=\"middle\" class=\"petit muet\">queue = B</text></svg>",
+      "legende": "La **pointe** de la flèche est du côté du potentiel le plus haut (+).",
+      "pages": [
+       2,
+       4
+      ],
+      "doc": "tensions"
+     },
+     {
+      "type": "point-cle",
+      "contenu": "**Sans tension, pas de courant** : dès qu'un courant circule dans un dipôle, c'est qu'il y a une tension à ses bornes.",
+      "pages": [
+       10
+      ],
+      "doc": "tensions"
+     },
+     {
+      "type": "texte",
+      "contenu": "Une tension **constante** dans le temps donne un **régime continu** (DC, symbole V=) ; une tension **sinusoïdale**, comme celle d'une prise secteur, donne un **régime alternatif** (AC, symbole V~).",
+      "pages": [
+       1,
+       2
+      ],
+      "doc": "tensions"
+     }
+    ]
+   },
+   {
+    "id": "s2",
+    "titre": "Mesurer une tension : le voltmètre",
+    "blocs": [
+     {
+      "type": "figure",
+      "svg": "<svg viewBox=\"0 0 420 220\" width=\"420\" role=\"img\" aria-label=\"Le voltmètre se branche en parallèle, aux bornes du dipôle\" xmlns=\"http://www.w3.org/2000/svg\"><title>Le voltmètre se branche en parallèle, aux bornes du dipôle</title><path class=\"trait\" d=\"M60 105 L60 40 L300 40 L300 180 L60 180 L60 115\" stroke-linejoin=\"round\"/><line class=\"s-mt\" stroke-width=\"2.4\" x1=\"45\" y1=\"105\" x2=\"75\" y2=\"105\"/><line class=\"s-mt\" stroke-width=\"5\" x1=\"53\" y1=\"115\" x2=\"67\" y2=\"115\"/><text x=\"80\" y=\"101\" text-anchor=\"middle\" class=\"gras f-mt\">+</text><rect class=\"cmp\" x=\"293\" y=\"91\" width=\"14\" height=\"38\" rx=\"1.5\"/><path class=\"trait\" d=\"M300 65 L360 65 L360 98\" stroke-linejoin=\"round\"/><path class=\"trait\" d=\"M360 122 L360 155 L300 155\" stroke-linejoin=\"round\"/><circle class=\"pt\" cx=\"300\" cy=\"65\" r=\"3.2\"/><circle class=\"pt\" cx=\"300\" cy=\"155\" r=\"3.2\"/><circle class=\"cmp s-def\" cx=\"360\" cy=\"110\" r=\"12.5\"/><text x=\"360\" y=\"115\" text-anchor=\"middle\" class=\"gras\">V</text><text x=\"330\" y=\"210\" text-anchor=\"middle\" class=\"petit f-def\">en PARALLÈLE (aux bornes)</text></svg>",
+      "legende": "On ne coupe pas le circuit : on se branche sur les deux points.",
+      "pages": [
+       5
+      ],
+      "doc": "tensions"
+     },
+     {
+      "type": "point-cle",
+      "contenu": "Le voltmètre se branche **en parallèle**, **aux bornes** de l'élément.",
+      "pages": [
+       5
+      ],
+      "doc": "tensions"
+     },
+     {
+      "type": "tableau",
+      "entetes": [
+       "Unité",
+       "Valeur"
+      ],
+      "lignes": [
+       [
+        "kV",
+        "1 kV = 1 000 V"
+       ],
+       [
+        "V",
+        "unité de base"
+       ],
+       [
+        "mV",
+        "1 mV = 0,001 V"
+       ]
+      ],
+      "pages": [
+       7
+      ],
+      "titre": "Ordre de grandeur",
+      "doc": "tensions"
+     }
+    ]
+   },
+   {
+    "id": "s3",
+    "titre": "Additivité et loi des mailles",
+    "blocs": [
+     {
+      "type": "figure",
+      "svg": "<svg viewBox=\"0 0 400 175\" width=\"400\" role=\"img\" aria-label=\"Loi d'additivité des tensions\" xmlns=\"http://www.w3.org/2000/svg\"><title>Loi d'additivité des tensions</title><path class=\"trait\" d=\"M30 60 L370 60\" stroke-linejoin=\"round\"/><rect class=\"cmp\" x=\"101\" y=\"53\" width=\"38\" height=\"14\" rx=\"1.5\"/><text x=\"120\" y=\"47\" text-anchor=\"middle\" class=\"gras\">R₁</text><rect class=\"cmp\" x=\"261\" y=\"53\" width=\"38\" height=\"14\" rx=\"1.5\"/><text x=\"280\" y=\"47\" text-anchor=\"middle\" class=\"gras\">R₂</text><circle class=\"cmp\" cx=\"60\" cy=\"60\" r=\"3.6\"/><text x=\"60\" y=\"50\" text-anchor=\"middle\" class=\"gras\">A</text><circle class=\"cmp\" cx=\"200\" cy=\"60\" r=\"3.6\"/><text x=\"200\" y=\"50\" text-anchor=\"middle\" class=\"gras\">B</text><circle class=\"cmp\" cx=\"340\" cy=\"60\" r=\"3.6\"/><text x=\"340\" y=\"50\" text-anchor=\"middle\" class=\"gras\">C</text><line stroke-width=\"2\" class=\"s-def\" x1=\"190\" y1=\"95\" x2=\"70\" y2=\"95\"/><polygon class=\"f-def\" points=\"70,95 77.4,91.9 77.4,98.1\"/><text x=\"130\" y=\"113\" text-anchor=\"middle\" class=\"gras f-def\">U_AB</text><line stroke-width=\"2\" class=\"s-def\" x1=\"330\" y1=\"95\" x2=\"210\" y2=\"95\"/><polygon class=\"f-def\" points=\"210,95 217.4,91.9 217.4,98.1\"/><text x=\"270\" y=\"113\" text-anchor=\"middle\" class=\"gras f-def\">U_BC</text><line stroke-width=\"2\" class=\"s-def\" x1=\"330\" y1=\"140\" x2=\"70\" y2=\"140\"/><polygon class=\"f-def\" points=\"70,140 77.4,136.9 77.4,143.1\"/><text x=\"200\" y=\"160\" text-anchor=\"middle\" class=\"gras f-def\">U_AC = U_AB + U_BC</text></svg>",
+      "legende": "Sur une branche, les tensions s'ajoutent.",
+      "pages": [
+       4
+      ],
+      "doc": "tensions"
+     },
+     {
+      "type": "formule",
+      "latex": "U_{AC} = U_{AB} + U_{BC}",
+      "legende": "Loi d'additivité",
+      "pages": [
+       4
+      ],
+      "doc": "tensions"
+     },
+     {
+      "type": "figure",
+      "svg": "<svg viewBox=\"0 0 400 175\" width=\"400\" role=\"img\" aria-label=\"Piles en série : les tensions s’additionnent\" xmlns=\"http://www.w3.org/2000/svg\"><title>Piles en série : les tensions s’additionnent</title><path class=\"trait\" d=\"M40 70 L75 70\" stroke-linejoin=\"round\"/><path class=\"trait\" d=\"M85 70 L155 70\" stroke-linejoin=\"round\"/><path class=\"trait\" d=\"M165 70 L235 70\" stroke-linejoin=\"round\"/><path class=\"trait\" d=\"M245 70 L315 70\" stroke-linejoin=\"round\"/><path class=\"trait\" d=\"M325 70 L360 70\" stroke-linejoin=\"round\"/><line class=\"s-mt\" stroke-width=\"2.4\" x1=\"75\" y1=\"55\" x2=\"75\" y2=\"85\"/><line class=\"s-mt\" stroke-width=\"5\" x1=\"85\" y1=\"63\" x2=\"85\" y2=\"77\"/><text x=\"67\" y=\"52\" text-anchor=\"middle\" class=\"gras f-mt\">+</text><text x=\"80\" y=\"112\" text-anchor=\"middle\" class=\"petit\">1,5 V</text><line class=\"s-mt\" stroke-width=\"2.4\" x1=\"155\" y1=\"55\" x2=\"155\" y2=\"85\"/><line class=\"s-mt\" stroke-width=\"5\" x1=\"165\" y1=\"63\" x2=\"165\" y2=\"77\"/><text x=\"147\" y=\"52\" text-anchor=\"middle\" class=\"gras f-mt\">+</text><text x=\"160\" y=\"112\" text-anchor=\"middle\" class=\"petit\">1,5 V</text><line class=\"s-mt\" stroke-width=\"2.4\" x1=\"235\" y1=\"55\" x2=\"235\" y2=\"85\"/><line class=\"s-mt\" stroke-width=\"5\" x1=\"245\" y1=\"63\" x2=\"245\" y2=\"77\"/><text x=\"227\" y=\"52\" text-anchor=\"middle\" class=\"gras f-mt\">+</text><text x=\"240\" y=\"112\" text-anchor=\"middle\" class=\"petit\">1,5 V</text><line class=\"s-mt\" stroke-width=\"2.4\" x1=\"315\" y1=\"55\" x2=\"315\" y2=\"85\"/><line class=\"s-mt\" stroke-width=\"5\" x1=\"325\" y1=\"63\" x2=\"325\" y2=\"77\"/><text x=\"307\" y=\"52\" text-anchor=\"middle\" class=\"gras f-mt\">+</text><text x=\"320\" y=\"112\" text-anchor=\"middle\" class=\"petit\">1,5 V</text><line stroke-width=\"2\" class=\"s-def\" x1=\"355\" y1=\"140\" x2=\"45\" y2=\"140\"/><polygon class=\"f-def\" points=\"45,140 52.4,136.9 52.4,143.1\"/><text x=\"200\" y=\"160\" text-anchor=\"middle\" class=\"gras f-def\">4 × 1,5 V = 6 V</text></svg>",
+      "legende": "Des piles en série additionnent leurs tensions.",
+      "pages": [
+       3
+      ],
+      "doc": "tensions"
+     },
+     {
+      "type": "definition",
+      "contenu": "Plusieurs branches qui forment un **circuit fermé**. On choisit un sens de parcours arbitraire.",
+      "titre": "Maille",
+      "pages": [
+       5
+      ],
+      "doc": "tensions"
+     },
+     {
+      "type": "figure",
+      "svg": "<svg viewBox=\"0 0 380 240\" width=\"380\" role=\"img\" aria-label=\"Loi des mailles : la somme algébrique des tensions est nulle sur une boucle\" xmlns=\"http://www.w3.org/2000/svg\"><title>Loi des mailles : la somme algébrique des tensions est nulle sur une boucle</title><path class=\"trait\" d=\"M90 50 L290 50 L290 190 L90 190 L90 50\" stroke-linejoin=\"round\"/><rect class=\"cmp\" x=\"171\" y=\"43\" width=\"38\" height=\"14\" rx=\"1.5\"/><rect class=\"cmp\" x=\"283\" y=\"101\" width=\"14\" height=\"38\" rx=\"1.5\"/><rect class=\"cmp\" x=\"171\" y=\"183\" width=\"38\" height=\"14\" rx=\"1.5\"/><rect class=\"cmp\" x=\"83\" y=\"101\" width=\"14\" height=\"38\" rx=\"1.5\"/><circle class=\"pt\" cx=\"90\" cy=\"50\" r=\"3.2\"/><text x=\"82\" y=\"44\" text-anchor=\"end\" class=\"gras\">A</text><circle class=\"pt\" cx=\"290\" cy=\"50\" r=\"3.2\"/><text x=\"298\" y=\"44\" text-anchor=\"start\" class=\"gras\">B</text><circle class=\"pt\" cx=\"290\" cy=\"190\" r=\"3.2\"/><text x=\"298\" y=\"206\" text-anchor=\"start\" class=\"gras\">C</text><circle class=\"pt\" cx=\"90\" cy=\"190\" r=\"3.2\"/><text x=\"82\" y=\"206\" text-anchor=\"end\" class=\"gras\">D</text><path class=\"trait s-ok\" d=\"M190 95 A30 30 0 1 1 160 120\"/><line class=\"s-ok\" x1=\"162\" y1=\"112\" x2=\"160\" y2=\"121\"/><polygon class=\"f-ok\" points=\"160,121 158.7,114.1 164.1,115.3\"/><text x=\"190\" y=\"125\" text-anchor=\"middle\" class=\"petit f-ok\">sens de</text><text x=\"190\" y=\"139\" text-anchor=\"middle\" class=\"petit f-ok\">parcours</text><text x=\"190\" y=\"228\" text-anchor=\"middle\" class=\"gras f-ok\">Sur une maille fermée : ΣU = 0</text></svg>",
+      "legende": "En faisant le tour de la maille, on revient au même potentiel.",
+      "pages": [
+       5
+      ],
+      "doc": "tensions"
+     },
+     {
+      "type": "formule",
+      "latex": "\\sum U = 0",
+      "legende": "Loi des mailles : sur une boucle fermée",
+      "pages": [
+       5
+      ],
+      "doc": "tensions"
+     },
+     {
+      "type": "exemple",
+      "contenu": "Pour la maille ABCD du cours : −U_AB + U_CB + U_DC + U_AD = 0, donc U_AB = U_CB + U_DC + U_AD.",
+      "pages": [
+       5
+      ],
+      "doc": "tensions"
+     },
+     {
+      "type": "point-cle",
+      "contenu": "Comme le courant, la tension est **algébrique** : une valeur négative signifie que la vraie flèche est dans l'autre sens. **U_BA = −U_AB**.",
+      "pages": [
+       5,
+       7
+      ],
+      "doc": "tensions"
+     },
+     {
+      "type": "exemple",
+      "contenu": "Avec U_BA = −5 V, U_CB = 15 V et U_DC = 10 V : U_DA = U_BA + U_CB + U_DC = −5 + 15 + 10 = **+20 V**.",
+      "pages": [
+       9
+      ],
+      "doc": "tensions"
+     },
+     {
+      "type": "piege",
+      "contenu": "Pour écrire un chemin en lettres : la **1ʳᵉ lettre = départ**, la dernière = arrivée. Vérifie le résultat par un 2ᵉ chemin.",
+      "pages": [
+       9
+      ],
+      "complement": true,
+      "doc": "tensions"
+     }
+    ]
+   },
+   {
+    "id": "s4",
+    "titre": "Mailles, nœuds et branches",
+    "blocs": [
+     {
+      "type": "definition",
+      "contenu": "Une portion de circuit qui relie **2 nœuds**.",
+      "titre": "Branche",
+      "pages": [
+       6
+      ],
+      "doc": "tensions"
+     },
+     {
+      "type": "figure",
+      "svg": "<svg viewBox=\"0 0 380 232\" width=\"380\" role=\"img\" aria-label=\"Mailles, nœuds et branches\" xmlns=\"http://www.w3.org/2000/svg\"><title>Mailles, nœuds et branches</title><path class=\"trait\" d=\"M60 60 L320 60\" stroke-linejoin=\"round\"/><path class=\"trait\" d=\"M60 180 L320 180\" stroke-linejoin=\"round\"/><path class=\"trait\" d=\"M60 60 L60 115\" stroke-linejoin=\"round\"/><path class=\"trait\" d=\"M60 125 L60 180\" stroke-linejoin=\"round\"/><path class=\"trait\" d=\"M190 60 L190 180\" stroke-linejoin=\"round\"/><path class=\"trait\" d=\"M320 60 L320 180\" stroke-linejoin=\"round\"/><line class=\"s-mt\" stroke-width=\"2.4\" x1=\"45\" y1=\"115\" x2=\"75\" y2=\"115\"/><line class=\"s-mt\" stroke-width=\"5\" x1=\"53\" y1=\"125\" x2=\"67\" y2=\"125\"/><text x=\"80\" y=\"111\" text-anchor=\"middle\" class=\"gras f-mt\">+</text><rect class=\"cmp\" x=\"106\" y=\"53\" width=\"38\" height=\"14\" rx=\"1.5\"/><rect class=\"cmp\" x=\"236\" y=\"53\" width=\"38\" height=\"14\" rx=\"1.5\"/><rect class=\"cmp\" x=\"183\" y=\"101\" width=\"14\" height=\"38\" rx=\"1.5\"/><rect class=\"cmp\" x=\"313\" y=\"101\" width=\"14\" height=\"38\" rx=\"1.5\"/><circle class=\"pt\" cx=\"190\" cy=\"60\" r=\"3.2\"/><circle class=\"pt\" cx=\"190\" cy=\"180\" r=\"3.2\"/><text x=\"200\" y=\"52\" text-anchor=\"start\" class=\"petit gras\">nœud</text><text x=\"200\" y=\"198\" text-anchor=\"start\" class=\"petit gras\">nœud</text><rect class=\"trait fin s-ok\" x=\"72\" y=\"72\" width=\"106\" height=\"96\" rx=\"12\"/><rect class=\"trait fin s-warn\" x=\"202\" y=\"72\" width=\"106\" height=\"96\" rx=\"12\"/><rect class=\"trait fin s-def\" x=\"48\" y=\"48\" width=\"284\" height=\"144\" rx=\"16\"/><text x=\"125\" y=\"140\" text-anchor=\"middle\" class=\"petit f-ok\">maille 1</text><text x=\"255\" y=\"140\" text-anchor=\"middle\" class=\"petit f-warn\">maille 2</text><text x=\"190\" y=\"222\" text-anchor=\"middle\" class=\"gras\">3 mailles (dont le grand tour), 2 nœuds, 3 branches</text></svg>",
+      "legende": "Le grand tour du circuit compte aussi comme maille.",
+      "pages": [
+       6
+      ],
+      "doc": "tensions"
+     }
+    ]
+   },
+   {
+    "id": "s5",
+    "titre": "Les domaines de tension",
+    "blocs": [
+     {
+      "type": "tableau",
+      "entetes": [
+       "Domaine",
+       "Alternatif",
+       "Continu"
+      ],
+      "lignes": [
+       [
+        "TBT – très basse tension",
+        "U ≤ 50 V",
+        "U ≤ 120 V"
+       ],
+       [
+        "BTA – basse tension A",
+        "50 < U ≤ 500 V",
+        "120 < U ≤ 750 V"
+       ],
+       [
+        "BTB – basse tension B",
+        "500 V < U ≤ 1 kV",
+        "750 V < U ≤ 1,5 kV"
+       ],
+       [
+        "HTA – haute tension A",
+        "1 < U ≤ 50 kV",
+        "1,5 < U ≤ 75 kV"
+       ],
+       [
+        "HTB – haute tension B",
+        "U > 50 kV",
+        "U > 75 kV"
+       ]
+      ],
+      "pages": [
+       8
+      ],
+      "titre": "Classement (décret de 1988)",
+      "doc": "tensions"
+     },
+     {
+      "type": "texte",
+      "contenu": "En TBT, on distingue la **TBTF** (fonctionnelle), la **TBTS** (de sécurité) et la **TBTP** (de protection). Depuis le décret de 1995, BTA et BTB sont regroupées en un seul domaine **BT** : 50 à 1 000 V alternatif et 120 à 1 500 V continu.",
+      "pages": [
+       8
+      ],
+      "doc": "tensions"
+     },
+     {
+      "type": "point-cle",
+      "contenu": "Le transport se fait en **haute tension** : pour une même puissance (U·I), le courant est plus faible, donc les **pertes par effet Joule** dans les lignes ($R \\cdot I^2$) aussi.",
+      "pages": [
+       8,
+       9
+      ],
+      "doc": "tensions"
+     }
+    ]
+   },
+   {
+    "id": "s6",
+    "titre": "Liaisons équipotentielles",
+    "blocs": [
+     {
+      "type": "texte",
+      "contenu": "Une personne qui touche deux éléments conducteurs à des potentiels différents (conduite d'eau, de gaz…) est traversée par un courant. La **liaison équipotentielle** relie ces éléments : la différence de potentiel devient nulle.",
+      "pages": [
+       18
+      ],
+      "doc": "tensions"
+     },
+     {
+      "type": "point-cle",
+      "contenu": "Les liaisons équipotentielles **réduisent fortement les risques électriques** dans les installations.",
+      "pages": [
+       18
+      ],
+      "doc": "tensions"
+     }
+    ]
+   },
+   {
+    "id": "s7",
+    "titre": "S'entraîner",
+    "blocs": [
+     {
+      "type": "texte",
+      "contenu": "Dessiner les flèches de tension manquantes et calculer les tensions de chaque dipôle : exercices du cours avec réponses.",
+      "pages": [
+       11,
+       12,
+       13,
+       14,
+       15,
+       16,
+       17
+      ],
+      "doc": "tensions"
+     },
+     {
+      "type": "texte",
+      "contenu": "Exercices 7 à 25 du recueil (tensions, potentiels, mailles).",
+      "pages": [
+       2,
+       3
+      ],
+      "doc": "exo"
+     }
+    ]
+   }
+  ]
+ },
+ "flashcards": [
+  {
+   "id": "fc-001",
+   "recto": "Qu'est-ce que la tension U_AB ?",
+   "verso": "La différence de potentiel **V_A − V_B**.",
+   "tags": [
+    "tension"
+   ],
+   "page": 2,
+   "doc": "tensions"
+  },
+  {
+   "id": "fc-002",
+   "recto": "Unité de la tension et du potentiel ?",
+   "verso": "Le **volt (V)**.",
+   "tags": [
+    "tension"
+   ],
+   "page": 2,
+   "doc": "tensions"
+  },
+  {
+   "id": "fc-003",
+   "recto": "De quel côté est la pointe de la flèche de tension ?",
+   "verso": "Du côté du **+** (potentiel le plus haut).",
+   "tags": [
+    "tension"
+   ],
+   "page": 4,
+   "doc": "tensions"
+  },
+  {
+   "id": "fc-004",
+   "recto": "Relation entre U_BA et U_AB ?",
+   "verso": "**U_BA = −U_AB**.",
+   "tags": [
+    "tension"
+   ],
+   "page": 5,
+   "doc": "tensions"
+  },
+  {
+   "id": "fc-005",
+   "recto": "Comment branche-t-on un voltmètre ?",
+   "verso": "En **parallèle**, aux bornes de l'élément.",
+   "tags": [
+    "mesure"
+   ],
+   "page": 5,
+   "doc": "tensions"
+  },
+  {
+   "id": "fc-006",
+   "recto": "Loi d'additivité ?",
+   "verso": "**U_AC = U_AB + U_BC**.",
+   "tags": [
+    "mailles"
+   ],
+   "page": 4,
+   "doc": "tensions"
+  },
+  {
+   "id": "fc-007",
+   "recto": "Énoncer la loi des mailles.",
+   "verso": "Sur une boucle fermée, la somme algébrique des tensions est **nulle** : ΣU = 0.",
+   "tags": [
+    "mailles"
+   ],
+   "page": 5,
+   "doc": "tensions"
+  },
+  {
+   "id": "fc-008",
+   "recto": "Qu'est-ce qu'une branche ?",
+   "verso": "Une portion de circuit entre **2 nœuds**.",
+   "tags": [
+    "mailles"
+   ],
+   "page": 6,
+   "doc": "tensions"
+  },
+  {
+   "id": "fc-009",
+   "recto": "4 piles de 1,5 V en série : tension totale ?",
+   "verso": "**6 V**.",
+   "tags": [
+    "calcul"
+   ],
+   "page": 3,
+   "doc": "tensions"
+  },
+  {
+   "id": "fc-010",
+   "recto": "U_BA = −5 V, U_CB = 15 V, U_DC = 10 V : U_DA ?",
+   "verso": "−5 + 15 + 10 = **+20 V**.",
+   "tags": [
+    "mailles",
+    "calcul"
+   ],
+   "page": 9,
+   "doc": "tensions"
+  },
+  {
+   "id": "fc-011",
+   "recto": "Limite de la TBT en alternatif ? en continu ?",
+   "verso": "**50 V** AC, **120 V** DC.",
+   "tags": [
+    "domaines"
+   ],
+   "page": 8,
+   "doc": "tensions"
+  },
+  {
+   "id": "fc-012",
+   "recto": "Que couvre le domaine BT depuis 1995 ?",
+   "verso": "**50 à 1 000 V** AC et **120 à 1 500 V** DC.",
+   "tags": [
+    "domaines"
+   ],
+   "page": 8,
+   "doc": "tensions"
+  },
+  {
+   "id": "fc-013",
+   "recto": "Pourquoi transporte-t-on l'électricité en haute tension ?",
+   "verso": "Courant plus faible → **pertes Joule** (R·I²) réduites dans les lignes.",
+   "tags": [
+    "domaines"
+   ],
+   "page": 9,
+   "doc": "tensions"
+  },
+  {
+   "id": "fc-014",
+   "recto": "Rôle d'une liaison équipotentielle ?",
+   "verso": "Annuler la différence de potentiel entre éléments conducteurs → moins de risque d'électrocution.",
+   "tags": [
+    "sécurité"
+   ],
+   "page": 18,
+   "doc": "tensions"
+  },
+  {
+   "id": "fc-015",
+   "recto": "Régime continu ou alternatif : la prise secteur ?",
+   "verso": "**Alternatif sinusoïdal**.",
+   "tags": [
+    "tension"
+   ],
+   "page": 1,
+   "doc": "tensions"
+  }
+ ],
+ "exercices": []
+}

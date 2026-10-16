@@ -1,0 +1,467 @@
+{
+ "format": 1,
+ "id": "ch08-thermique",
+ "matiere": "elec",
+ "titre": "Énergie électrique et chaleur",
+ "source": {
+  "pdfs": [
+   {
+    "id": "puiss",
+    "nom": "Elec 2180 – DC : P, E/W, rendement, Q·C (diapos 200 à 257)",
+    "court": "Puissance, énergie",
+    "fichier": "2026.10.14 - BacEM_Elec_2180 - DC - P E_W Rdt Q C - pg200-257 .pdf",
+    "pages": 29
+   },
+   {
+    "id": "exo",
+    "nom": "Elec 2180 – Exercices U, I, Q, R, P, W",
+    "court": "Exercices",
+    "fichier": "2026.10.14 - BacEmElec2180 - Exo U_I_Q_R_P_W - pg01-10 .pdf",
+    "pages": 10
+   }
+  ],
+  "genereLe": "2026-10-16",
+  "modele": "Claude (rédigé dans la conversation)"
+ },
+ "synthese": {
+  "intro": "Q = m·c·Δθ, chaleur massique, temps de chauffe et chauffe-eau électrique.",
+  "sections": [
+   {
+    "id": "s1",
+    "titre": "De l'énergie électrique à la chaleur",
+    "blocs": [
+     {
+      "type": "texte",
+      "contenu": "Par effet Joule, l'énergie électrique se transforme en chaleur : four à arc, taques, chauffe-eau. Il existe de multiples formes d'énergie (chaleur, travail mécanique, rayonnement, chimique, électrique) et des dispositifs pour passer de l'une à l'autre.",
+      "pages": [
+       20,
+       21,
+       25,
+       26
+      ],
+      "doc": "puiss"
+     },
+     {
+      "type": "point-cle",
+      "contenu": "L'unité officielle (SI) de l'énergie et de la chaleur est le **joule (J)**. Ancienne unité : la **calorie**, 1 cal = **4,186 J** (chaleur pour élever 1 g d'eau de 1 °C).",
+      "pages": [
+       23,
+       25
+      ],
+      "doc": "puiss"
+     }
+    ]
+   },
+   {
+    "id": "s2",
+    "titre": "Quantité de chaleur",
+    "blocs": [
+     {
+      "type": "formule",
+      "latex": "Q = m \\cdot c \\cdot \\Delta\\theta",
+      "legende": "Chaleur pour échauffer un corps (sans changement d'état)",
+      "pages": [
+       21,
+       22
+      ],
+      "variables": [
+       {
+        "symbole": "Q",
+        "nom": "quantité de chaleur",
+        "unite": "J"
+       },
+       {
+        "symbole": "m",
+        "nom": "masse",
+        "unite": "kg"
+       },
+       {
+        "symbole": "c",
+        "nom": "chaleur massique",
+        "unite": "J/(kg·°C)"
+       },
+       {
+        "symbole": "Δθ",
+        "nom": "élévation de température",
+        "unite": "°C ou K"
+       }
+      ],
+      "doc": "puiss"
+     },
+     {
+      "type": "figure",
+      "svg": "<svg viewBox=\"0 0 380 245\" width=\"380\" role=\"img\" aria-label=\"Chauffer une masse m de capacité thermique massique c\" xmlns=\"http://www.w3.org/2000/svg\"><title>Chauffer une masse m de capacité thermique massique c</title><rect class=\"cmp\" x=\"60\" y=\"40\" width=\"160\" height=\"150\" rx=\"10\"/><rect class=\"f-def\" opacity=\".25\" x=\"62\" y=\"80\" width=\"156\" height=\"108\" rx=\"8\"/><text x=\"140\" y=\"120\" text-anchor=\"middle\" class=\"gras\">m (kg)</text><text x=\"140\" y=\"142\" text-anchor=\"middle\" class=\"petit\">c (J/kg·°C)</text><path class=\"trait s-bad\" stroke-width=\"3\" d=\"M95 186 L95 160 L110 170 L125 160 L140 170 L155 160 L170 170 L185 160 L185 186\"/><path class=\"trait\" d=\"M95 186 L95 215 L40 215\" stroke-linejoin=\"round\"/><path class=\"trait\" d=\"M185 186 L185 215 L250 215\" stroke-linejoin=\"round\"/><text x=\"140\" y=\"236\" text-anchor=\"middle\" class=\"petit f-mt\">Énergie électrique W = P·t</text><line class=\"s-bad\" x1=\"262\" y1=\"160\" x2=\"262\" y2=\"60\"/><polygon class=\"f-bad\" points=\"262,60 265.1,67.4 258.9,67.4\"/><text x=\"272\" y=\"100\" text-anchor=\"start\" class=\"gras f-bad\">θ₁ → θ₂</text><text x=\"272\" y=\"120\" text-anchor=\"start\" class=\"gras f-bad\">Δθ</text><text x=\"200\" y=\"26\" text-anchor=\"middle\" class=\"grand gras f-ok\">Q = m · c · Δθ</text></svg>",
+      "legende": "L'énergie dépend de la masse, de la matière et de l'écart de température.",
+      "pages": [
+       21,
+       25
+      ],
+      "doc": "puiss"
+     },
+     {
+      "type": "definition",
+      "contenu": "La quantité de chaleur nécessaire pour élever de **1 °C** la température de **1 kg** de ce corps. Elle dépend de la **nature** du corps.",
+      "titre": "Chaleur massique c",
+      "pages": [
+       22
+      ],
+      "doc": "puiss"
+     },
+     {
+      "type": "tableau",
+      "entetes": [
+       "Matériau",
+       "c (J/kg·°C)"
+      ],
+      "lignes": [
+       [
+        "Eau liquide",
+        "4 185"
+       ],
+       [
+        "Glace",
+        "2 000"
+       ],
+       [
+        "PVC",
+        "1 900"
+       ],
+       [
+        "Bois",
+        "1 600"
+       ],
+       [
+        "Air",
+        "1 004"
+       ],
+       [
+        "Béton, pierres",
+        "1 000"
+       ],
+       [
+        "Aluminium",
+        "880"
+       ],
+       [
+        "Verre",
+        "750"
+       ],
+       [
+        "Fer, fonte, acier",
+        "450"
+       ],
+       [
+        "Cuivre, laiton, zinc",
+        "380"
+       ]
+      ],
+      "pages": [
+       22
+      ],
+      "titre": "Quelques chaleurs massiques",
+      "doc": "puiss"
+     },
+     {
+      "type": "piege",
+      "contenu": "Un écart de température est le même en °C et en K (Δθ = 10 °C = 10 K). Pour l'eau : **1 L = 1 kg**.",
+      "pages": [
+       21,
+       27
+      ],
+      "doc": "puiss"
+     }
+    ]
+   },
+   {
+    "id": "s3",
+    "titre": "Relier chaleur et électricité",
+    "blocs": [
+     {
+      "type": "texte",
+      "contenu": "Sans pertes, l'énergie électrique fournie sert entièrement à chauffer : **P · t = m · c · Δθ**. Avec un rendement η : η · P · t = m · c · Δθ.",
+      "pages": [
+       25,
+       28,
+       29
+      ],
+      "doc": "puiss"
+     },
+     {
+      "type": "formule",
+      "latex": "t = \\dfrac{m \\cdot c \\cdot \\Delta\\theta}{P}",
+      "legende": "Temps de chauffe (sans pertes)",
+      "pages": [
+       28,
+       29
+      ],
+      "doc": "puiss"
+     },
+     {
+      "type": "exemple",
+      "contenu": "Chauffe-eau de 2 400 W, 200 L de 15 à 65 °C : Q = 200 × 4 180 × 50 = **41 800 kJ**. t = 41 800 000 / 2 400 = 17 417 s ≈ **4 h 50 min**. Sous 220 V : I = 2 400 / 220 = **10,9 A** et R = 220 / 10,9 = **20,2 Ω**.",
+      "pages": [
+       28,
+       29
+      ],
+      "doc": "puiss"
+     },
+     {
+      "type": "exemple",
+      "contenu": "Bouilloire 27 Ω sous 230 V : P = 230² / 27 = 1 959 W. Pour 1 L de 14 à 100 °C : Q = 4 186 × 86 = 360 kJ → t = **184 s** (3 min 04 s).",
+      "pages": [
+       7
+      ],
+      "doc": "exo"
+     }
+    ]
+   },
+   {
+    "id": "s4",
+    "titre": "Le chauffe-eau électrique (boiler)",
+    "blocs": [
+     {
+      "type": "texte",
+      "contenu": "Il accumule un volume d'**eau chaude sanitaire (ECS)** pour la journée. Il fonctionne souvent **la nuit** (horloge ou relais) pour profiter du tarif « heures creuses ».",
+      "pages": [
+       23
+      ],
+      "doc": "puiss"
+     },
+     {
+      "type": "texte",
+      "contenu": "Le cours présente son schéma hydraulique (eau froide en bas, eau chaude en haut) et son schéma électrique (disjoncteur, contacteur commandé par le compteur bi-horaire, thermostat).",
+      "pages": [
+       24
+      ],
+      "doc": "puiss"
+     },
+     {
+      "type": "formule",
+      "latex": "V_{\\text{cylindre}} = \\pi \\cdot \\dfrac{D^2}{4} \\cdot H \\qquad V_{\\text{cuve}} = L \\cdot l \\cdot H",
+      "legende": "Volume de liquide à chauffer",
+      "pages": [
+       25
+      ],
+      "doc": "puiss"
+     }
+    ]
+   },
+   {
+    "id": "s5",
+    "titre": "Exemples du cours",
+    "blocs": [
+     {
+      "type": "tableau",
+      "entetes": [
+       "Question",
+       "Réponse"
+      ],
+      "lignes": [
+       [
+        "1 000 J pour 1 kg d'eau : Δθ ?",
+        "1 000 / 4 185 = **0,24 °C**"
+       ],
+       [
+        "100 g de cuivre de 10 à 100 °C",
+        "Q = 0,1 × 380 × 90 = **3,42 kJ**"
+       ],
+       [
+        "3 kg d'eau de 20 à 80 °C",
+        "Q ≈ **752 kJ**"
+       ],
+       [
+        "41,85 kJ portent 1 kg de bois de 20 à 44 °C",
+        "c = 41 850 / 24 = **1 744 J/kg·°C**"
+       ],
+       [
+        "3 000 L d'eau avec 540 MJ",
+        "Δθ ≈ **43 °C**"
+       ],
+       [
+        "Machine de 750 W, 3 h 30 par jour",
+        "**2,625 kWh**/jour ; 819 kWh/an (6 j/sem, 52 sem) ≈ 2,95 GJ"
+       ],
+       [
+        "Écran en veille 1,3 W pendant 20 h 30",
+        "**26,65 Wh**/jour, 9,73 kWh/an"
+       ]
+      ],
+      "pages": [
+       26,
+       27,
+       28,
+       29
+      ],
+      "doc": "puiss"
+     }
+    ]
+   },
+   {
+    "id": "s6",
+    "titre": "S'entraîner",
+    "blocs": [
+     {
+      "type": "texte",
+      "contenu": "Exercices 77 à 95 du recueil : bouilloire, chauffe-eau, cuve d'huile, brame d'acier, piscine, durée pour consommer 1 kWh.",
+      "pages": [
+       7,
+       10
+      ],
+      "doc": "exo"
+     },
+     {
+      "type": "exemple",
+      "contenu": "Cuve de 5 m³ d'huile (900 kg/m³, 1,8 kJ/kg·°C) de 20 à 250 °C en 5 h : W = 4 500 × 1,8 × 230 = **1 863 MJ** = 517,5 kWh, soit P = **103,5 kW**.",
+      "pages": [
+       7
+      ],
+      "doc": "exo"
+     }
+    ]
+   }
+  ]
+ },
+ "flashcards": [
+  {
+   "id": "fc-001",
+   "recto": "Formule de la quantité de chaleur ?",
+   "verso": "**Q = m · c · Δθ**.",
+   "tags": [
+    "chaleur"
+   ],
+   "page": 21,
+   "doc": "puiss"
+  },
+  {
+   "id": "fc-002",
+   "recto": "Définition de la chaleur massique ?",
+   "verso": "L'énergie pour élever **1 kg** d'un corps de **1 °C**.",
+   "tags": [
+    "chaleur"
+   ],
+   "page": 22,
+   "doc": "puiss"
+  },
+  {
+   "id": "fc-003",
+   "recto": "Chaleur massique de l'eau ?",
+   "verso": "Environ **4 185 J/(kg·°C)** (4,18 kJ).",
+   "tags": [
+    "chaleur"
+   ],
+   "page": 22,
+   "doc": "puiss"
+  },
+  {
+   "id": "fc-004",
+   "recto": "1 cal = combien de joules ?",
+   "verso": "**4,186 J**.",
+   "tags": [
+    "unités"
+   ],
+   "page": 23,
+   "doc": "puiss"
+  },
+  {
+   "id": "fc-005",
+   "recto": "Unité SI de la chaleur ?",
+   "verso": "Le **joule (J)**.",
+   "tags": [
+    "unités"
+   ],
+   "page": 23,
+   "doc": "puiss"
+  },
+  {
+   "id": "fc-006",
+   "recto": "Un écart de 10 °C vaut combien de kelvins ?",
+   "verso": "**10 K**.",
+   "tags": [
+    "unités"
+   ],
+   "page": 21,
+   "doc": "puiss"
+  },
+  {
+   "id": "fc-007",
+   "recto": "Relation électricité-chaleur sans pertes ?",
+   "verso": "**P · t = m · c · Δθ**.",
+   "tags": [
+    "chaleur"
+   ],
+   "page": 25,
+   "doc": "puiss"
+  },
+  {
+   "id": "fc-008",
+   "recto": "1 000 J pour 1 kg d'eau : élévation ?",
+   "verso": "≈ **0,24 °C**.",
+   "tags": [
+    "calcul"
+   ],
+   "page": 27,
+   "doc": "puiss"
+  },
+  {
+   "id": "fc-009",
+   "recto": "200 L d'eau de 15 à 65 °C : énergie ?",
+   "verso": "**41 800 kJ** (≈ 11,6 kWh).",
+   "tags": [
+    "calcul"
+   ],
+   "page": 29,
+   "doc": "puiss"
+  },
+  {
+   "id": "fc-010",
+   "recto": "Ce chauffe-eau fait 2 400 W : durée ?",
+   "verso": "≈ **4 h 50 min**.",
+   "tags": [
+    "calcul"
+   ],
+   "page": 29,
+   "doc": "puiss"
+  },
+  {
+   "id": "fc-011",
+   "recto": "Pourquoi un boiler chauffe-t-il la nuit ?",
+   "verso": "Pour profiter du tarif **heures creuses**.",
+   "tags": [
+    "boiler"
+   ],
+   "page": 23,
+   "doc": "puiss"
+  },
+  {
+   "id": "fc-012",
+   "recto": "Que signifie ECS ?",
+   "verso": "**Eau chaude sanitaire**.",
+   "tags": [
+    "boiler"
+   ],
+   "page": 23,
+   "doc": "puiss"
+  },
+  {
+   "id": "fc-013",
+   "recto": "Volume d'une cuve cylindrique ?",
+   "verso": "**V = π · D²/4 · H**.",
+   "tags": [
+    "boiler"
+   ],
+   "page": 25,
+   "doc": "puiss"
+  },
+  {
+   "id": "fc-014",
+   "recto": "1 L d'eau pèse ?",
+   "verso": "**1 kg**.",
+   "tags": [
+    "chaleur"
+   ],
+   "page": 27,
+   "doc": "puiss"
+  }
+ ],
+ "exercices": []
+}

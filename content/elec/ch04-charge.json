@@ -1,0 +1,374 @@
+{
+ "format": 1,
+ "id": "ch04-charge",
+ "matiere": "elec",
+ "titre": "Quantité d'électricité et batteries",
+ "source": {
+  "pdfs": [
+   {
+    "id": "charge",
+    "nom": "Elec 2180 – DC : U, I, Q, Ah (diapos 108 à 126)",
+    "court": "Q = I·t",
+    "fichier": "2026.10.07 - BacEM_Elec_2180 - DC - U I Q C Ah - pg108-126 .pdf",
+    "pages": 10
+   },
+   {
+    "id": "exo",
+    "nom": "Elec 2180 – Exercices U, I, Q, R, P, W",
+    "court": "Exercices",
+    "fichier": "2026.10.14 - BacEmElec2180 - Exo U_I_Q_R_P_W - pg01-10 .pdf",
+    "pages": 10
+   }
+  ],
+  "genereLe": "2026-10-16",
+  "modele": "Claude (rédigé dans la conversation)"
+ },
+ "synthese": {
+  "intro": "Q = I·t, coulombs et ampères-heures, autonomie d'une batterie et groupements série / parallèle.",
+  "sections": [
+   {
+    "id": "s1",
+    "titre": "Quantité d'électricité",
+    "blocs": [
+     {
+      "type": "definition",
+      "contenu": "Le nombre de charges déplacées par le courant pendant un temps donné. Unité officielle : le **coulomb (C)** ; en pratique, pour les batteries : l'**ampère-heure (Ah)**.",
+      "titre": "Quantité d'électricité Q",
+      "pages": [
+       2
+      ],
+      "doc": "charge"
+     },
+     {
+      "type": "formule",
+      "latex": "Q = I \\cdot t",
+      "legende": "Charge = courant × temps",
+      "pages": [
+       1,
+       2
+      ],
+      "variables": [
+       {
+        "symbole": "Q",
+        "nom": "quantité d'électricité",
+        "unite": "C ou Ah"
+       },
+       {
+        "symbole": "I",
+        "nom": "courant",
+        "unite": "A"
+       },
+       {
+        "symbole": "t",
+        "nom": "temps",
+        "unite": "s ou h"
+       }
+      ],
+      "doc": "charge"
+     },
+     {
+      "type": "formule",
+      "latex": "1\\ \\text{Ah} = 1\\ \\text{A} \\times 3600\\ \\text{s} = 3600\\ \\text{C}",
+      "legende": "Conversion",
+      "pages": [
+       2
+      ],
+      "doc": "charge"
+     },
+     {
+      "type": "piege",
+      "contenu": "Unités cohérentes : **A × s → C**, **A × h → Ah**. Pour passer des Ah aux coulombs, on multiplie par **3 600**.",
+      "pages": [
+       2
+      ],
+      "doc": "charge"
+     },
+     {
+      "type": "texte",
+      "contenu": "Une batterie de **40 Ah** peut fournir par exemple 1 A pendant 40 h, ou 2 A pendant 20 h. Mais à fort courant, la capacité réellement disponible **diminue** (courbes de décharge).",
+      "pages": [
+       1,
+       3
+      ],
+      "doc": "charge"
+     }
+    ]
+   },
+   {
+    "id": "s2",
+    "titre": "Exemples",
+    "blocs": [
+     {
+      "type": "exemple",
+      "contenu": "Une batterie de **50 Ah** contient 50 × 3 600 = **180 kC** ; un accu de 9 900 mAh contient 9,9 × 3 600 = **35,64 kC**.",
+      "pages": [
+       3,
+       4
+      ],
+      "doc": "charge"
+     },
+     {
+      "type": "exemple",
+      "contenu": "Un point lumineux absorbe **10 A** pendant **3 h 30** : Q = 10 × 3,5 = **35 Ah** = 35 × 3 600 = **126 kC**.",
+      "pages": [
+       3,
+       4
+      ],
+      "doc": "charge"
+     },
+     {
+      "type": "exemple",
+      "contenu": "Batterie de **5 Ah** : elle fournit 100 mA pendant **50 h**, 1 A pendant **5 h**, 5 A pendant **1 h**, 10 A pendant **½ h** (t = Q / I).",
+      "pages": [
+       5
+      ],
+      "doc": "charge"
+     },
+     {
+      "type": "exemple",
+      "contenu": "2,5 A pendant 35 min : Q = 2,5 × 2 100 s = **5 250 C**.",
+      "pages": [
+       6
+      ],
+      "doc": "charge"
+     },
+     {
+      "type": "point-cle",
+      "contenu": "Il y a toujours une **limite** : une batterie stocke une quantité finie d'électricité (et d'énergie).",
+      "pages": [
+       4
+      ],
+      "doc": "charge"
+     }
+    ]
+   },
+   {
+    "id": "s3",
+    "titre": "Grouper des batteries",
+    "blocs": [
+     {
+      "type": "figure",
+      "svg": "<svg viewBox=\"0 0 300 195\" width=\"300\" role=\"img\" aria-label=\"Deux batteries en série : tension doublée, capacité inchangée\" xmlns=\"http://www.w3.org/2000/svg\"><title>Deux batteries en série : tension doublée, capacité inchangée</title><path class=\"trait\" d=\"M40 80 L95 80\" stroke-linejoin=\"round\"/><path class=\"trait\" d=\"M105 80 L195 80\" stroke-linejoin=\"round\"/><path class=\"trait\" d=\"M205 80 L260 80\" stroke-linejoin=\"round\"/><line class=\"s-mt\" stroke-width=\"2.4\" x1=\"95\" y1=\"65\" x2=\"95\" y2=\"95\"/><line class=\"s-mt\" stroke-width=\"5\" x1=\"105\" y1=\"73\" x2=\"105\" y2=\"87\"/><text x=\"87\" y=\"62\" text-anchor=\"middle\" class=\"gras f-mt\">+</text><line class=\"s-mt\" stroke-width=\"2.4\" x1=\"195\" y1=\"65\" x2=\"195\" y2=\"95\"/><line class=\"s-mt\" stroke-width=\"5\" x1=\"205\" y1=\"73\" x2=\"205\" y2=\"87\"/><text x=\"187\" y=\"62\" text-anchor=\"middle\" class=\"gras f-mt\">+</text><text x=\"100\" y=\"124\" text-anchor=\"middle\" class=\"petit\">12 V · 10 Ah</text><text x=\"200\" y=\"124\" text-anchor=\"middle\" class=\"petit\">12 V · 10 Ah</text><circle class=\"cmp\" cx=\"40\" cy=\"80\" r=\"3.6\"/><text x=\"40\" y=\"70\" text-anchor=\"middle\" class=\"gras\">+</text><circle class=\"cmp\" cx=\"260\" cy=\"80\" r=\"3.6\"/><text x=\"260\" y=\"70\" text-anchor=\"middle\" class=\"gras\">−</text><text x=\"150\" y=\"160\" text-anchor=\"middle\" class=\"gras f-def\">U = 24 V</text><text x=\"150\" y=\"182\" text-anchor=\"middle\" class=\"gras f-ok\">Q = 10 Ah</text></svg>",
+      "legende": "En série, le + de l'une est relié au − de la suivante.",
+      "pages": [
+       7
+      ],
+      "doc": "charge"
+     },
+     {
+      "type": "figure",
+      "svg": "<svg viewBox=\"0 0 300 230\" width=\"300\" role=\"img\" aria-label=\"Deux batteries en parallèle : tension inchangée, capacité doublée\" xmlns=\"http://www.w3.org/2000/svg\"><title>Deux batteries en parallèle : tension inchangée, capacité doublée</title><path class=\"trait\" d=\"M60 40 L240 40\" stroke-linejoin=\"round\"/><path class=\"trait\" d=\"M60 140 L240 140\" stroke-linejoin=\"round\"/><path class=\"trait\" d=\"M110 40 L110 85\" stroke-linejoin=\"round\"/><path class=\"trait\" d=\"M110 95 L110 140\" stroke-linejoin=\"round\"/><line class=\"s-mt\" stroke-width=\"2.4\" x1=\"95\" y1=\"85\" x2=\"125\" y2=\"85\"/><line class=\"s-mt\" stroke-width=\"5\" x1=\"103\" y1=\"95\" x2=\"117\" y2=\"95\"/><text x=\"90\" y=\"81\" text-anchor=\"middle\" class=\"gras f-mt\">+</text><circle class=\"pt\" cx=\"110\" cy=\"40\" r=\"3.2\"/><circle class=\"pt\" cx=\"110\" cy=\"140\" r=\"3.2\"/><text x=\"110\" y=\"166\" text-anchor=\"middle\" class=\"petit\">12 V · 10 Ah</text><path class=\"trait\" d=\"M190 40 L190 85\" stroke-linejoin=\"round\"/><path class=\"trait\" d=\"M190 95 L190 140\" stroke-linejoin=\"round\"/><line class=\"s-mt\" stroke-width=\"2.4\" x1=\"175\" y1=\"85\" x2=\"205\" y2=\"85\"/><line class=\"s-mt\" stroke-width=\"5\" x1=\"183\" y1=\"95\" x2=\"197\" y2=\"95\"/><text x=\"170\" y=\"81\" text-anchor=\"middle\" class=\"gras f-mt\">+</text><circle class=\"pt\" cx=\"190\" cy=\"40\" r=\"3.2\"/><circle class=\"pt\" cx=\"190\" cy=\"140\" r=\"3.2\"/><text x=\"190\" y=\"166\" text-anchor=\"middle\" class=\"petit\">12 V · 10 Ah</text><circle class=\"cmp\" cx=\"60\" cy=\"40\" r=\"3.6\"/><text x=\"50\" y=\"45\" text-anchor=\"end\" class=\"gras\">+</text><circle class=\"cmp\" cx=\"60\" cy=\"140\" r=\"3.6\"/><text x=\"50\" y=\"145\" text-anchor=\"end\" class=\"gras\">−</text><text x=\"150\" y=\"196\" text-anchor=\"middle\" class=\"gras f-def\">U = 12 V</text><text x=\"150\" y=\"218\" text-anchor=\"middle\" class=\"gras f-ok\">Q = 20 Ah</text></svg>",
+      "legende": "En parallèle, toutes les bornes + ensemble et toutes les bornes − ensemble.",
+      "pages": [
+       7
+      ],
+      "doc": "charge"
+     },
+     {
+      "type": "tableau",
+      "entetes": [
+       "Montage",
+       "Tension U",
+       "Capacité Q"
+      ],
+      "lignes": [
+       [
+        "Série",
+        "s'**additionne**",
+        "celle d'**une** batterie"
+       ],
+       [
+        "Parallèle",
+        "celle d'**une** batterie",
+        "s'**additionne**"
+       ]
+      ],
+      "pages": [
+       7
+      ],
+      "doc": "charge"
+     },
+     {
+      "type": "exemple",
+      "contenu": "4 batteries de 6 V – 100 Ah en parallèle : **6 V, 400 Ah**.",
+      "pages": [
+       7
+      ],
+      "doc": "charge"
+     },
+     {
+      "type": "exemple",
+      "contenu": "Montage mixte : 4 batteries de 24 V – 10 Ah, reliées **2 par 2 en série**, et ces 2 séries **en parallèle** : U = 2 × 24 = **48 V**, Q = 2 × 10 = **20 Ah**.",
+      "pages": [
+       7
+      ],
+      "doc": "charge"
+     },
+     {
+      "type": "exemple",
+      "contenu": "9 batteries de 12 V – 5 Ah toutes en parallèle : **12 V, 45 Ah**. 10 batteries de 24 V – 80 Ah, 2 en série sur 5 rangées en parallèle : **48 V, 400 Ah**. 5 batteries de 12 V – 50 Ah en série : **60 V, 50 Ah**.",
+      "pages": [
+       8,
+       9
+      ],
+      "doc": "charge"
+     },
+     {
+      "type": "point-cle",
+      "contenu": "Méthode pour un montage mixte : la **tension** se lit sur **un chemin** du + au − (batteries en série) ; la **capacité** se multiplie par le **nombre de chemins** en parallèle.",
+      "pages": [
+       7,
+       9
+      ],
+      "doc": "charge"
+     }
+    ]
+   },
+   {
+    "id": "s4",
+    "titre": "S'entraîner",
+    "blocs": [
+     {
+      "type": "texte",
+      "contenu": "Exercices 26 à 40 du recueil : montre, batterie d'Arduino, accu-packs lithium, trottinette.",
+      "pages": [
+       4
+      ],
+      "doc": "exo"
+     },
+     {
+      "type": "exemple",
+      "contenu": "Une pile de montre de 20 mAh alimente une montre de 0,5 µA : t = 0,020 / 0,000 000 5 = **40 000 h** (≈ 4,5 ans).",
+      "pages": [
+       4
+      ],
+      "doc": "exo"
+     }
+    ]
+   }
+  ]
+ },
+ "flashcards": [
+  {
+   "id": "fc-001",
+   "recto": "Formule de la quantité d'électricité ?",
+   "verso": "**Q = I · t**.",
+   "tags": [
+    "charge"
+   ],
+   "page": 1,
+   "doc": "charge"
+  },
+  {
+   "id": "fc-002",
+   "recto": "1 Ah = combien de coulombs ?",
+   "verso": "**3 600 C**.",
+   "tags": [
+    "charge"
+   ],
+   "page": 2,
+   "doc": "charge"
+  },
+  {
+   "id": "fc-003",
+   "recto": "Unité officielle de la charge ?",
+   "verso": "Le **coulomb (C)**.",
+   "tags": [
+    "charge"
+   ],
+   "page": 2,
+   "doc": "charge"
+  },
+  {
+   "id": "fc-004",
+   "recto": "10 A pendant 3 h 30 : Q en Ah et en C ?",
+   "verso": "**35 Ah** = **126 000 C**.",
+   "tags": [
+    "calcul"
+   ],
+   "page": 4,
+   "doc": "charge"
+  },
+  {
+   "id": "fc-005",
+   "recto": "Batterie 5 Ah à 100 mA : durée ?",
+   "verso": "5 / 0,1 = **50 h**.",
+   "tags": [
+    "calcul"
+   ],
+   "page": 5,
+   "doc": "charge"
+  },
+  {
+   "id": "fc-006",
+   "recto": "Combien de coulombs dans une batterie de 50 Ah ?",
+   "verso": "50 × 3 600 = **180 000 C**.",
+   "tags": [
+    "calcul"
+   ],
+   "page": 4,
+   "doc": "charge"
+  },
+  {
+   "id": "fc-007",
+   "recto": "2,5 A pendant 35 min : Q ?",
+   "verso": "2,5 × 2 100 = **5 250 C**.",
+   "tags": [
+    "calcul"
+   ],
+   "page": 6,
+   "doc": "charge"
+  },
+  {
+   "id": "fc-008",
+   "recto": "Batteries en série : que deviennent U et Q ?",
+   "verso": "U **s'additionne**, Q reste celle d'une batterie.",
+   "tags": [
+    "groupements"
+   ],
+   "page": 7,
+   "doc": "charge"
+  },
+  {
+   "id": "fc-009",
+   "recto": "Batteries en parallèle : que deviennent U et Q ?",
+   "verso": "U reste celle d'une batterie, Q **s'additionne**.",
+   "tags": [
+    "groupements"
+   ],
+   "page": 7,
+   "doc": "charge"
+  },
+  {
+   "id": "fc-010",
+   "recto": "4 batteries 6 V – 100 Ah en parallèle ?",
+   "verso": "**6 V – 400 Ah**.",
+   "tags": [
+    "groupements"
+   ],
+   "page": 7,
+   "doc": "charge"
+  },
+  {
+   "id": "fc-011",
+   "recto": "2 batteries 12 V – 10 Ah en série ?",
+   "verso": "**24 V – 10 Ah**.",
+   "tags": [
+    "groupements"
+   ],
+   "page": 4,
+   "doc": "exo"
+  },
+  {
+   "id": "fc-012",
+   "recto": "La capacité réelle d'une batterie dépend-elle du courant ?",
+   "verso": "Oui : à fort courant de décharge, la capacité disponible **diminue**.",
+   "tags": [
+    "charge"
+   ],
+   "page": 3,
+   "doc": "charge"
+  }
+ ],
+ "exercices": []
+}

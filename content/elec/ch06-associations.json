@@ -1,0 +1,546 @@
+{
+ "format": 1,
+ "id": "ch06-associations",
+ "matiere": "elec",
+ "titre": "Associations de résistances",
+ "source": {
+  "pdfs": [
+   {
+    "id": "resist",
+    "nom": "Elec 2180 – DC : R, Rs, Rp, Rm, E/J (diapos 129 à 198)",
+    "court": "Résistances",
+    "fichier": "2026.10.14 - BacEM_Elec_2180 - DC - R Rs Rp Rm E_J - pg129-198 .pdf",
+    "pages": 35
+   },
+   {
+    "id": "exo",
+    "nom": "Elec 2180 – Exercices U, I, Q, R, P, W",
+    "court": "Exercices",
+    "fichier": "2026.10.14 - BacEmElec2180 - Exo U_I_Q_R_P_W - pg01-10 .pdf",
+    "pages": 10
+   }
+  ],
+  "genereLe": "2026-10-16",
+  "modele": "Claude (rédigé dans la conversation)"
+ },
+ "synthese": {
+  "intro": "Série, parallèle, diviseurs de tension et de courant, et la méthode pour résoudre un circuit mixte.",
+  "sections": [
+   {
+    "id": "s1",
+    "titre": "Résistances en série",
+    "blocs": [
+     {
+      "type": "definition",
+      "contenu": "Des dipôles sont en série lorsqu'ils sont traversés par le **même courant**.",
+      "titre": "Série",
+      "pages": [
+       16
+      ],
+      "doc": "resist"
+     },
+     {
+      "type": "formule",
+      "latex": "R_s = R_1 + R_2 + R_3 + \\dots",
+      "legende": "Résistance équivalente en série",
+      "pages": [
+       16
+      ],
+      "doc": "resist"
+     },
+     {
+      "type": "point-cle",
+      "contenu": "En série, les **tensions s'additionnent** et Rs est **plus grande** que la plus grande des résistances.",
+      "pages": [
+       16,
+       17
+      ],
+      "doc": "resist"
+     },
+     {
+      "type": "exemple",
+      "contenu": "100 Ω + 1 000 Ω + 10 000 Ω = **11 100 Ω** = 11,1 kΩ.",
+      "pages": [
+       17
+      ],
+      "doc": "resist"
+     }
+    ]
+   },
+   {
+    "id": "s2",
+    "titre": "Résistances en parallèle",
+    "blocs": [
+     {
+      "type": "definition",
+      "contenu": "Des dipôles sont en parallèle lorsqu'ils sont soumis à la **même tension**.",
+      "titre": "Parallèle",
+      "pages": [
+       19
+      ],
+      "doc": "resist"
+     },
+     {
+      "type": "figure",
+      "svg": "<svg viewBox=\"0 0 350 312\" width=\"350\" role=\"img\" aria-label=\"Associations en série et en parallèle\" xmlns=\"http://www.w3.org/2000/svg\"><title>Associations en série et en parallèle</title><path class=\"trait\" d=\"M20 60 L330 60\" stroke-linejoin=\"round\"/><rect class=\"cmp\" x=\"61\" y=\"53\" width=\"38\" height=\"14\" rx=\"1.5\"/><text x=\"80\" y=\"47\" text-anchor=\"middle\" class=\"gras\">R₁</text><rect class=\"cmp\" x=\"151\" y=\"53\" width=\"38\" height=\"14\" rx=\"1.5\"/><text x=\"170\" y=\"47\" text-anchor=\"middle\" class=\"gras\">R₂</text><rect class=\"cmp\" x=\"241\" y=\"53\" width=\"38\" height=\"14\" rx=\"1.5\"/><text x=\"260\" y=\"47\" text-anchor=\"middle\" class=\"gras\">R₃</text><circle class=\"cmp\" cx=\"20\" cy=\"60\" r=\"3.6\"/><circle class=\"cmp\" cx=\"330\" cy=\"60\" r=\"3.6\"/><polygon class=\"f-bad\" points=\"37,60 23,55 23,65\"/><text x=\"175\" y=\"100\" text-anchor=\"middle\" class=\"gras f-ok\">Même courant I · Rs = R₁ + R₂ + R₃</text><text x=\"175\" y=\"24\" text-anchor=\"middle\" class=\"gras f-mt\">SÉRIE</text><path class=\"trait\" d=\"M20 210 L90 210\" stroke-linejoin=\"round\"/><path class=\"trait\" d=\"M260 210 L330 210\" stroke-linejoin=\"round\"/><path class=\"trait\" d=\"M90 160 L90 260\" stroke-linejoin=\"round\"/><path class=\"trait\" d=\"M260 160 L260 260\" stroke-linejoin=\"round\"/><path class=\"trait\" d=\"M90 160 L260 160\" stroke-linejoin=\"round\"/><rect class=\"cmp\" x=\"156\" y=\"153\" width=\"38\" height=\"14\" rx=\"1.5\"/><text x=\"175\" y=\"147\" text-anchor=\"middle\" class=\"gras\">R₁</text><path class=\"trait\" d=\"M90 210 L260 210\" stroke-linejoin=\"round\"/><rect class=\"cmp\" x=\"156\" y=\"203\" width=\"38\" height=\"14\" rx=\"1.5\"/><text x=\"175\" y=\"197\" text-anchor=\"middle\" class=\"gras\">R₂</text><path class=\"trait\" d=\"M90 260 L260 260\" stroke-linejoin=\"round\"/><rect class=\"cmp\" x=\"156\" y=\"253\" width=\"38\" height=\"14\" rx=\"1.5\"/><text x=\"175\" y=\"247\" text-anchor=\"middle\" class=\"gras\">R₃</text><circle class=\"pt\" cx=\"90\" cy=\"210\" r=\"3.2\"/><circle class=\"pt\" cx=\"260\" cy=\"210\" r=\"3.2\"/><circle class=\"cmp\" cx=\"20\" cy=\"210\" r=\"3.6\"/><circle class=\"cmp\" cx=\"330\" cy=\"210\" r=\"3.6\"/><text x=\"175\" y=\"300\" text-anchor=\"middle\" class=\"gras f-ok\">Même tension U · 1/Rp = 1/R₁ + 1/R₂ + 1/R₃</text><text x=\"175\" y=\"134\" text-anchor=\"middle\" class=\"gras f-mt\">PARALLÈLE</text></svg>",
+      "legende": "Série : même courant. Parallèle : même tension.",
+      "pages": [
+       16,
+       19
+      ],
+      "doc": "resist"
+     },
+     {
+      "type": "formule",
+      "latex": "\\dfrac{1}{R_p} = \\dfrac{1}{R_1} + \\dfrac{1}{R_2} + \\dfrac{1}{R_3} + \\dots",
+      "legende": "Résistance équivalente en parallèle",
+      "pages": [
+       19
+      ],
+      "doc": "resist"
+     },
+     {
+      "type": "formule",
+      "latex": "R_p = \\dfrac{R_1 \\cdot R_2}{R_1 + R_2}",
+      "legende": "Cas de 2 résistances (produit sur somme)",
+      "pages": [
+       20
+      ],
+      "doc": "resist"
+     },
+     {
+      "type": "point-cle",
+      "contenu": "Rp est **toujours plus petite** que la plus petite des résistances. **n** résistances identiques R en parallèle : Rp = R / n.",
+      "pages": [
+       20
+      ],
+      "doc": "resist"
+     },
+     {
+      "type": "exemple",
+      "contenu": "Deux résistances de 10 Ω en parallèle : **5 Ω**. 20 Ω, 30 Ω et 30 Ω en parallèle : 1/Rp = 1/20 + 1/30 + 1/30 → Rp = **8,57 Ω**.",
+      "pages": [
+       20
+      ],
+      "doc": "resist"
+     },
+     {
+      "type": "piege",
+      "contenu": "Avec la formule 1/Rp, n'oublie pas de **retourner** le résultat à la fin : 1/Rp = 0,05 donne Rp = 20 Ω, pas 0,05 Ω.",
+      "pages": [
+       20
+      ],
+      "doc": "resist"
+     }
+    ]
+   },
+   {
+    "id": "s3",
+    "titre": "Diviseur de tension (série)",
+    "blocs": [
+     {
+      "type": "figure",
+      "svg": "<svg viewBox=\"0 0 360 225\" width=\"360\" role=\"img\" aria-label=\"Diviseur de tension : deux résistances en série\" xmlns=\"http://www.w3.org/2000/svg\"><title>Diviseur de tension : deux résistances en série</title><path class=\"trait\" d=\"M70 105 L70 40 L250 40 L250 180 L70 180 L70 115\" stroke-linejoin=\"round\"/><line class=\"s-mt\" stroke-width=\"2.4\" x1=\"55\" y1=\"105\" x2=\"85\" y2=\"105\"/><line class=\"s-mt\" stroke-width=\"5\" x1=\"63\" y1=\"115\" x2=\"77\" y2=\"115\"/><text x=\"90\" y=\"101\" text-anchor=\"middle\" class=\"gras f-mt\">+</text><text x=\"49\" y=\"115\" text-anchor=\"end\" class=\"gras f-mt\">U</text><rect class=\"cmp\" x=\"243\" y=\"61\" width=\"14\" height=\"38\" rx=\"1.5\"/><text x=\"237\" y=\"78\" text-anchor=\"end\" class=\"gras\">R₁</text><rect class=\"cmp\" x=\"243\" y=\"126\" width=\"14\" height=\"38\" rx=\"1.5\"/><text x=\"237\" y=\"143\" text-anchor=\"end\" class=\"gras\">R₂</text><polygon class=\"f-bad\" points=\"167,40 153,35 153,45\"/><text x=\"160\" y=\"30\" text-anchor=\"middle\" class=\"gras f-bad\">I (le même)</text><line stroke-width=\"2\" class=\"s-def\" x1=\"285\" y1=\"105\" x2=\"285\" y2=\"58\"/><polygon class=\"f-def\" points=\"285,58 288.1,65.4 281.9,65.4\"/><text x=\"293\" y=\"81.5\" text-anchor=\"start\" class=\"gras f-def\">U₁</text><line stroke-width=\"2\" class=\"s-def\" x1=\"285\" y1=\"168\" x2=\"285\" y2=\"122\"/><polygon class=\"f-def\" points=\"285,122 288.1,129.4 281.9,129.4\"/><text x=\"293\" y=\"145\" text-anchor=\"start\" class=\"gras f-def\">U₂</text><text x=\"180\" y=\"214\" text-anchor=\"middle\" class=\"gras f-ok\">U₂ = U · R₂ / (R₁ + R₂)</text></svg>",
+      "legende": "Les deux résistances se partagent la tension U.",
+      "pages": [
+       17
+      ],
+      "doc": "resist"
+     },
+     {
+      "type": "formule",
+      "latex": "U_2 = U \\cdot \\dfrac{R_2}{R_1 + R_2}",
+      "legende": "Diviseur de tension",
+      "pages": [
+       17
+      ],
+      "doc": "resist"
+     },
+     {
+      "type": "exemple",
+      "contenu": "12 V appliqués à 120 kΩ et 10 kΩ en série : la tension sur 10 kΩ vaut 12 × 10 / 130 = **923 mV**.",
+      "pages": [
+       17
+      ],
+      "doc": "resist"
+     },
+     {
+      "type": "point-cle",
+      "contenu": "La **plus grande** résistance prend la **plus grande** tension. Le diviseur évite de calculer le courant.",
+      "pages": [
+       17
+      ],
+      "doc": "resist"
+     }
+    ]
+   },
+   {
+    "id": "s4",
+    "titre": "Diviseur de courant (parallèle)",
+    "blocs": [
+     {
+      "type": "figure",
+      "svg": "<svg viewBox=\"0 0 360 225\" width=\"360\" role=\"img\" aria-label=\"Diviseur de courant : deux résistances en parallèle\" xmlns=\"http://www.w3.org/2000/svg\"><title>Diviseur de courant : deux résistances en parallèle</title><path class=\"trait\" d=\"M60 105 L60 40 L300 40\" stroke-linejoin=\"round\"/><path class=\"trait\" d=\"M60 115 L60 180 L300 180\" stroke-linejoin=\"round\"/><path class=\"trait\" d=\"M180 40 L180 180\" stroke-linejoin=\"round\"/><path class=\"trait\" d=\"M300 40 L300 180\" stroke-linejoin=\"round\"/><line class=\"s-mt\" stroke-width=\"2.4\" x1=\"45\" y1=\"105\" x2=\"75\" y2=\"105\"/><line class=\"s-mt\" stroke-width=\"5\" x1=\"53\" y1=\"115\" x2=\"67\" y2=\"115\"/><text x=\"80\" y=\"101\" text-anchor=\"middle\" class=\"gras f-mt\">+</text><rect class=\"cmp\" x=\"173\" y=\"91\" width=\"14\" height=\"38\" rx=\"1.5\"/><text x=\"167\" y=\"108\" text-anchor=\"end\" class=\"gras\">R₁</text><rect class=\"cmp\" x=\"293\" y=\"91\" width=\"14\" height=\"38\" rx=\"1.5\"/><text x=\"287\" y=\"108\" text-anchor=\"end\" class=\"gras\">R₂</text><circle class=\"pt\" cx=\"180\" cy=\"40\" r=\"3.2\"/><circle class=\"pt\" cx=\"180\" cy=\"180\" r=\"3.2\"/><polygon class=\"f-bad\" points=\"127,40 113,35 113,45\"/><text x=\"120\" y=\"30\" text-anchor=\"middle\" class=\"gras f-bad\">I</text><polygon class=\"f-bad\" points=\"180,77 175,63 185,63\"/><text x=\"191\" y=\"75\" text-anchor=\"start\" class=\"gras f-bad\">I₁</text><polygon class=\"f-bad\" points=\"300,77 295,63 305,63\"/><text x=\"311\" y=\"75\" text-anchor=\"start\" class=\"gras f-bad\">I₂</text><text x=\"180\" y=\"214\" text-anchor=\"middle\" class=\"gras f-ok\">I₁ = I · R₂ / (R₁ + R₂)   (R de l’AUTRE branche)</text></svg>",
+      "legende": "Le courant I se partage entre les deux branches.",
+      "pages": [
+       20
+      ],
+      "doc": "resist"
+     },
+     {
+      "type": "formule",
+      "latex": "I_1 = I \\cdot \\dfrac{R_2}{R_1 + R_2} \\qquad I_2 = I \\cdot \\dfrac{R_1}{R_1 + R_2}",
+      "legende": "Diviseur de courant",
+      "pages": [
+       20
+      ],
+      "doc": "resist"
+     },
+     {
+      "type": "piege",
+      "contenu": "Au numérateur, on met la résistance de **l'autre** branche : la branche la **plus faible** reçoit le **plus** de courant.",
+      "pages": [
+       20
+      ],
+      "doc": "resist"
+     }
+    ]
+   },
+   {
+    "id": "s5",
+    "titre": "Circuits mixtes : la méthode",
+    "blocs": [
+     {
+      "type": "texte",
+      "contenu": "En pratique, on rencontre surtout des **circuits mixtes** : des groupes en série combinés à des groupes en parallèle. On **associe pour simplifier**, pas à pas, jusqu'à une seule résistance équivalente.",
+      "pages": [
+       22,
+       23
+      ],
+      "doc": "resist"
+     },
+     {
+      "type": "liste",
+      "items": [
+       "**Simplifier** : repérer ce qui est en parallèle (entre les deux mêmes nœuds) ou en série (même courant), en commençant **par le fond** du circuit. Noter chaque résistance équivalente (R₄₅, R₄₅₆…).",
+       "**Courants** : Ig = U / R_tot, puis redescendre : diviseur de courant à chaque nœud ; dans un bloc série, le courant est le même partout.",
+       "**Tensions** : U = R·I pour chaque résistance (ou diviseur de tension). En parallèle, même tension sur chaque branche.",
+       "**Contrôler** : loi des nœuds, loi des mailles, et puissance du générateur = somme des puissances des résistances."
+      ],
+      "pages": [
+       23,
+       29,
+       30
+      ],
+      "titre": "La méthode en 4 étapes",
+      "ordonnee": true,
+      "doc": "resist"
+     }
+    ]
+   },
+   {
+    "id": "s6",
+    "titre": "Exemple complet (diapos 184 à 187)",
+    "blocs": [
+     {
+      "type": "figure",
+      "svg": "<svg viewBox=\"0 0 470 270\" width=\"470\" role=\"img\" aria-label=\"Circuit mixte (exemple du cours) : R1 en série avec (R2+R3) // (R4//R5 + R6)\" xmlns=\"http://www.w3.org/2000/svg\"><title>Circuit mixte (exemple du cours) : R1 en série avec (R2+R3) // (R4//R5 + R6)</title><path class=\"trait\" d=\"M40 135 L40 40 L150 40\" stroke-linejoin=\"round\"/><path class=\"trait\" d=\"M40 145 L40 240 L380 240\" stroke-linejoin=\"round\"/><line class=\"s-mt\" stroke-width=\"2.4\" x1=\"25\" y1=\"135\" x2=\"55\" y2=\"135\"/><line class=\"s-mt\" stroke-width=\"5\" x1=\"33\" y1=\"145\" x2=\"47\" y2=\"145\"/><text x=\"60\" y=\"131\" text-anchor=\"middle\" class=\"gras f-mt\">+</text><text x=\"19\" y=\"145\" text-anchor=\"end\" class=\"gras f-mt\">24 V</text><rect class=\"cmp\" x=\"86\" y=\"33\" width=\"38\" height=\"14\" rx=\"1.5\"/><text x=\"105\" y=\"27\" text-anchor=\"middle\" class=\"gras\">R₁</text><text x=\"105\" y=\"64\" text-anchor=\"middle\" class=\"petit muet\">100 Ω</text><path class=\"trait\" d=\"M150 40 L380 40\" stroke-linejoin=\"round\"/><path class=\"trait\" d=\"M150 40 L150 240\" stroke-linejoin=\"round\"/><circle class=\"pt\" cx=\"150\" cy=\"40\" r=\"3.2\"/><circle class=\"pt\" cx=\"150\" cy=\"240\" r=\"3.2\"/><text x=\"158\" y=\"34\" text-anchor=\"start\" class=\"gras\">A</text><text x=\"158\" y=\"258\" text-anchor=\"start\" class=\"gras\">B</text><rect class=\"cmp\" x=\"143\" y=\"86\" width=\"14\" height=\"38\" rx=\"1.5\"/><text x=\"163\" y=\"103\" text-anchor=\"start\" class=\"gras\">R₂</text><text x=\"163\" y=\"118\" text-anchor=\"start\" class=\"petit muet\">47 Ω</text><rect class=\"cmp\" x=\"143\" y=\"161\" width=\"14\" height=\"38\" rx=\"1.5\"/><text x=\"163\" y=\"178\" text-anchor=\"start\" class=\"gras\">R₃</text><text x=\"163\" y=\"193\" text-anchor=\"start\" class=\"petit muet\">47 Ω</text><path class=\"trait\" d=\"M380 40 L380 70\" stroke-linejoin=\"round\"/><path class=\"trait\" d=\"M340 70 L420 70\" stroke-linejoin=\"round\"/><path class=\"trait\" d=\"M340 70 L340 140\" stroke-linejoin=\"round\"/><path class=\"trait\" d=\"M420 70 L420 140\" stroke-linejoin=\"round\"/><path class=\"trait\" d=\"M340 140 L420 140\" stroke-linejoin=\"round\"/><path class=\"trait\" d=\"M380 140 L380 240\" stroke-linejoin=\"round\"/><circle class=\"pt\" cx=\"380\" cy=\"70\" r=\"3.2\"/><circle class=\"pt\" cx=\"380\" cy=\"140\" r=\"3.2\"/><rect class=\"cmp\" x=\"333\" y=\"86\" width=\"14\" height=\"38\" rx=\"1.5\"/><text x=\"327\" y=\"103\" text-anchor=\"end\" class=\"gras\">R₄</text><text x=\"327\" y=\"118\" text-anchor=\"end\" class=\"petit muet\">68 Ω</text><rect class=\"cmp\" x=\"413\" y=\"86\" width=\"14\" height=\"38\" rx=\"1.5\"/><text x=\"433\" y=\"103\" text-anchor=\"start\" class=\"gras\">R₅</text><text x=\"433\" y=\"118\" text-anchor=\"start\" class=\"petit muet\">39 Ω</text><rect class=\"cmp\" x=\"373\" y=\"171\" width=\"14\" height=\"38\" rx=\"1.5\"/><text x=\"393\" y=\"188\" text-anchor=\"start\" class=\"gras\">R₆</text><text x=\"393\" y=\"203\" text-anchor=\"start\" class=\"petit muet\">75 Ω</text><polygon class=\"f-bad\" points=\"82,40 68,35 68,45\"/><text x=\"75\" y=\"30\" text-anchor=\"middle\" class=\"gras f-bad\">Ig</text><polygon class=\"f-bad\" points=\"150,77 145,63 155,63\"/><text x=\"161\" y=\"75\" text-anchor=\"start\" class=\"gras f-bad\">I₂</text><polygon class=\"f-bad\" points=\"380,227 375,213 385,213\"/><text x=\"369\" y=\"225\" text-anchor=\"end\" class=\"gras f-bad\">I₆</text></svg>",
+      "legende": "Vs = 24 V. R₁ = 100 Ω est en série avec le bloc A-B.",
+      "pages": [
+       28,
+       29
+      ],
+      "doc": "resist"
+     },
+     {
+      "type": "figure",
+      "svg": "<svg viewBox=\"0 0 440 262\" width=\"440\" role=\"img\" aria-label=\"Simplification pas à pas du circuit mixte jusqu’à R_tot\" xmlns=\"http://www.w3.org/2000/svg\"><title>Simplification pas à pas du circuit mixte jusqu’à R_tot</title><rect class=\"cmp\" x=\"10\" y=\"6\" width=\"110\" height=\"30\" rx=\"6\"/><text x=\"65\" y=\"26\" text-anchor=\"middle\" class=\"gras\">R₄ // R₅</text><line class=\"ax\" x1=\"126\" y1=\"21\" x2=\"152\" y2=\"21\"/><polygon class=\"f-ax\" points=\"152,21 146.5,23.3 146.5,18.7\"/><text x=\"160\" y=\"26\" text-anchor=\"start\" class=\"\">68·39 / 107 = 24,79 Ω</text><text x=\"430\" y=\"26\" text-anchor=\"end\" class=\"gras f-mt\">R₄₅</text><rect class=\"cmp\" x=\"10\" y=\"52\" width=\"110\" height=\"30\" rx=\"6\"/><text x=\"65\" y=\"72\" text-anchor=\"middle\" class=\"gras\">R₄₅ + R₆</text><line class=\"ax\" x1=\"126\" y1=\"67\" x2=\"152\" y2=\"67\"/><polygon class=\"f-ax\" points=\"152,67 146.5,69.3 146.5,64.7\"/><text x=\"160\" y=\"72\" text-anchor=\"start\" class=\"\">24,79 + 75 = 99,79 Ω</text><text x=\"430\" y=\"72\" text-anchor=\"end\" class=\"gras f-mt\">R₄₅₆</text><rect class=\"cmp\" x=\"10\" y=\"98\" width=\"110\" height=\"30\" rx=\"6\"/><text x=\"65\" y=\"118\" text-anchor=\"middle\" class=\"gras\">R₂ + R₃</text><line class=\"ax\" x1=\"126\" y1=\"113\" x2=\"152\" y2=\"113\"/><polygon class=\"f-ax\" points=\"152,113 146.5,115.3 146.5,110.7\"/><text x=\"160\" y=\"118\" text-anchor=\"start\" class=\"\">47 + 47 = 94 Ω</text><text x=\"430\" y=\"118\" text-anchor=\"end\" class=\"gras f-mt\">R₂₃</text><rect class=\"cmp\" x=\"10\" y=\"144\" width=\"110\" height=\"30\" rx=\"6\"/><text x=\"65\" y=\"164\" text-anchor=\"middle\" class=\"gras\">R₂₃ // R₄₅₆</text><line class=\"ax\" x1=\"126\" y1=\"159\" x2=\"152\" y2=\"159\"/><polygon class=\"f-ax\" points=\"152,159 146.5,161.3 146.5,156.7\"/><text x=\"160\" y=\"164\" text-anchor=\"start\" class=\"\">94·99,79 / 193,79 = 48,40 Ω</text><text x=\"430\" y=\"164\" text-anchor=\"end\" class=\"gras f-mt\">R_AB</text><rect class=\"cmp\" x=\"10\" y=\"190\" width=\"110\" height=\"30\" rx=\"6\"/><text x=\"65\" y=\"210\" text-anchor=\"middle\" class=\"gras\">R₁ + R_AB</text><line class=\"ax\" x1=\"126\" y1=\"205\" x2=\"152\" y2=\"205\"/><polygon class=\"f-ax\" points=\"152,205 146.5,207.3 146.5,202.7\"/><text x=\"160\" y=\"210\" text-anchor=\"start\" class=\"\">100 + 48,40 = 148,40 Ω</text><text x=\"430\" y=\"210\" text-anchor=\"end\" class=\"gras f-mt\">R_tot</text><text x=\"220\" y=\"252\" text-anchor=\"middle\" class=\"gras f-bad\">Ig = 24 / 148,40 = 161,7 mA</text></svg>",
+      "legende": "On réduit le circuit de l'intérieur vers l'extérieur.",
+      "pages": [
+       29
+      ],
+      "doc": "resist"
+     },
+     {
+      "type": "tableau",
+      "entetes": [
+       "Grandeur",
+       "Calcul",
+       "Résultat"
+      ],
+      "lignes": [
+       [
+        "U_R1",
+        "100 × 0,1617",
+        "16,17 V"
+       ],
+       [
+        "U_AB",
+        "24 − 16,17",
+        "7,83 V"
+       ],
+       [
+        "I₂ = I₃",
+        "7,83 / 94",
+        "83,3 mA"
+       ],
+       [
+        "U_R2 = U_R3",
+        "47 × 0,0833",
+        "3,91 V"
+       ],
+       [
+        "I₆",
+        "7,83 / 99,79",
+        "78,4 mA"
+       ],
+       [
+        "U_R6",
+        "75 × 0,0784",
+        "5,88 V"
+       ],
+       [
+        "U_R4 = U_R5",
+        "7,83 − 5,88",
+        "1,95 V"
+       ],
+       [
+        "I₄ ; I₅",
+        "1,95 / 68 ; 1,95 / 39",
+        "28,7 mA ; 50,0 mA"
+       ]
+      ],
+      "pages": [
+       29,
+       30
+      ],
+      "titre": "Retour aux courants et tensions",
+      "doc": "resist"
+     },
+     {
+      "type": "point-cle",
+      "contenu": "Contrôle par la loi des nœuds : I₄ + I₅ = 28,7 + 50,0 ≈ 78,7 mA ≈ I₆ ✓ (aux arrondis près). Et I₂ + I₆ = 83,3 + 78,4 = 161,7 mA = Ig ✓.",
+      "pages": [
+       30
+      ],
+      "doc": "resist"
+     },
+     {
+      "type": "piege",
+      "contenu": "La diapo 184 écrit « I_R6 = 0,077 mA » : il faut lire **0,077 A**, soit environ 78 mA.",
+      "pages": [
+       28
+      ],
+      "doc": "resist"
+     }
+    ]
+   },
+   {
+    "id": "s7",
+    "titre": "S'entraîner",
+    "blocs": [
+     {
+      "type": "texte",
+      "contenu": "Associer pour simplifier : réseaux en échelle (R et 2R), ponts, circuits à plusieurs générateurs, avec réponses.",
+      "pages": [
+       23,
+       24,
+       25,
+       26,
+       30,
+       31,
+       32,
+       33,
+       34,
+       35
+      ],
+      "doc": "resist"
+     },
+     {
+      "type": "exemple",
+      "contenu": "Réseau en échelle de résistances R et 2R : chaque étage, vu depuis la droite, vaut **R + 2R // 2R = 2R** ; on remonte ainsi étage par étage.",
+      "pages": [
+       24
+      ],
+      "doc": "resist"
+     },
+     {
+      "type": "texte",
+      "contenu": "Exercices 41 à 53 du recueil (résistance totale, courants, puissances).",
+      "pages": [
+       5
+      ],
+      "doc": "exo"
+     }
+    ]
+   }
+  ]
+ },
+ "flashcards": [
+  {
+   "id": "fc-001",
+   "recto": "Quand des dipôles sont-ils en série ?",
+   "verso": "Quand ils sont traversés par le **même courant**.",
+   "tags": [
+    "série"
+   ],
+   "page": 16,
+   "doc": "resist"
+  },
+  {
+   "id": "fc-002",
+   "recto": "Quand des dipôles sont-ils en parallèle ?",
+   "verso": "Quand ils sont soumis à la **même tension**.",
+   "tags": [
+    "parallèle"
+   ],
+   "page": 19,
+   "doc": "resist"
+  },
+  {
+   "id": "fc-003",
+   "recto": "Résistance équivalente en série ?",
+   "verso": "**Rs = R₁ + R₂ + …**",
+   "tags": [
+    "série"
+   ],
+   "page": 16,
+   "doc": "resist"
+  },
+  {
+   "id": "fc-004",
+   "recto": "Résistance équivalente en parallèle ?",
+   "verso": "**1/Rp = 1/R₁ + 1/R₂ + …**",
+   "tags": [
+    "parallèle"
+   ],
+   "page": 19,
+   "doc": "resist"
+  },
+  {
+   "id": "fc-005",
+   "recto": "Deux résistances en parallèle : formule rapide ?",
+   "verso": "Rp = R₁·R₂ / (R₁ + R₂) (produit sur somme).",
+   "tags": [
+    "parallèle"
+   ],
+   "page": 20,
+   "doc": "resist"
+  },
+  {
+   "id": "fc-006",
+   "recto": "Rp par rapport à la plus petite résistance ?",
+   "verso": "Toujours **plus petite**.",
+   "tags": [
+    "parallèle"
+   ],
+   "page": 20,
+   "doc": "resist"
+  },
+  {
+   "id": "fc-007",
+   "recto": "4 résistances de 4 kΩ en parallèle ?",
+   "verso": "4 / 4 = **1 kΩ**.",
+   "tags": [
+    "parallèle",
+    "calcul"
+   ],
+   "page": 9,
+   "doc": "resist"
+  },
+  {
+   "id": "fc-008",
+   "recto": "Formule du diviseur de tension ?",
+   "verso": "**U₂ = U · R₂ / (R₁ + R₂)**.",
+   "tags": [
+    "diviseurs"
+   ],
+   "page": 17,
+   "doc": "resist"
+  },
+  {
+   "id": "fc-009",
+   "recto": "Formule du diviseur de courant ?",
+   "verso": "**I₁ = I · R₂ / (R₁ + R₂)** (R de l'autre branche au numérateur).",
+   "tags": [
+    "diviseurs"
+   ],
+   "page": 20,
+   "doc": "resist"
+  },
+  {
+   "id": "fc-010",
+   "recto": "Quelle branche reçoit le plus de courant ?",
+   "verso": "Celle qui a la **plus petite** résistance.",
+   "tags": [
+    "diviseurs"
+   ],
+   "page": 20,
+   "doc": "resist"
+  },
+  {
+   "id": "fc-011",
+   "recto": "Quelle résistance en série prend la plus grande tension ?",
+   "verso": "La **plus grande**.",
+   "tags": [
+    "diviseurs"
+   ],
+   "page": 17,
+   "doc": "resist"
+  },
+  {
+   "id": "fc-012",
+   "recto": "12 V sur 120 kΩ + 10 kΩ : tension sur 10 kΩ ?",
+   "verso": "12 × 10 / 130 = **0,923 V**.",
+   "tags": [
+    "diviseurs",
+    "calcul"
+   ],
+   "page": 17,
+   "doc": "resist"
+  },
+  {
+   "id": "fc-013",
+   "recto": "3 étapes pour un circuit mixte ?",
+   "verso": "1. Simplifier jusqu'à R_tot ; 2. Ig puis courants (diviseurs) ; 3. tensions (U = R·I) — puis contrôler.",
+   "tags": [
+    "méthode"
+   ],
+   "page": 29,
+   "doc": "resist"
+  },
+  {
+   "id": "fc-014",
+   "recto": "Exemple du cours (24 V) : R_tot et Ig ?",
+   "verso": "R_tot = **148,4 Ω**, Ig = **161,7 mA**.",
+   "tags": [
+    "méthode",
+    "calcul"
+   ],
+   "page": 29,
+   "doc": "resist"
+  },
+  {
+   "id": "fc-015",
+   "recto": "1/Rp = 0,05 : Rp ?",
+   "verso": "**20 Ω** (on retourne !).",
+   "tags": [
+    "parallèle",
+    "piège"
+   ],
+   "page": 20,
+   "doc": "resist"
+  },
+  {
+   "id": "fc-016",
+   "recto": "Comment vérifier un calcul de circuit ?",
+   "verso": "Loi des nœuds, loi des mailles, et Pg = somme des puissances des résistances.",
+   "tags": [
+    "méthode"
+   ],
+   "page": 30,
+   "doc": "resist"
+  }
+ ],
+ "exercices": []
+}

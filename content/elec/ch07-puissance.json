@@ -1,0 +1,560 @@
+{
+ "format": 1,
+ "id": "ch07-puissance",
+ "matiere": "elec",
+ "titre": "Puissance, énergie et rendement",
+ "source": {
+  "pdfs": [
+   {
+    "id": "puiss",
+    "nom": "Elec 2180 – DC : P, E/W, rendement, Q·C (diapos 200 à 257)",
+    "court": "Puissance, énergie",
+    "fichier": "2026.10.14 - BacEM_Elec_2180 - DC - P E_W Rdt Q C - pg200-257 .pdf",
+    "pages": 29
+   },
+   {
+    "id": "exo",
+    "nom": "Elec 2180 – Exercices U, I, Q, R, P, W",
+    "court": "Exercices",
+    "fichier": "2026.10.14 - BacEmElec2180 - Exo U_I_Q_R_P_W - pg01-10 .pdf",
+    "pages": 10
+   }
+  ],
+  "genereLe": "2026-10-16",
+  "modele": "Claude (rédigé dans la conversation)"
+ },
+ "synthese": {
+  "intro": "P = U·I, énergie W = P·t et ses unités, wattmètre, compteur et rendement.",
+  "sections": [
+   {
+    "id": "s1",
+    "titre": "La puissance électrique",
+    "blocs": [
+     {
+      "type": "formule",
+      "latex": "P = U \\cdot I",
+      "legende": "Puissance électrique",
+      "pages": [
+       1
+      ],
+      "variables": [
+       {
+        "symbole": "P",
+        "nom": "puissance",
+        "unite": "W (watt)"
+       },
+       {
+        "symbole": "U",
+        "nom": "tension",
+        "unite": "V"
+       },
+       {
+        "symbole": "I",
+        "nom": "courant",
+        "unite": "A"
+       }
+      ],
+      "doc": "puiss"
+     },
+     {
+      "type": "exemple",
+      "contenu": "Une ampoule sous 12 V parcourue par 2 A : P = 12 × 2 = **24 W**.",
+      "pages": [
+       1
+      ],
+      "doc": "puiss"
+     },
+     {
+      "type": "tableau",
+      "entetes": [
+       "Multiple",
+       "Valeur"
+      ],
+      "lignes": [
+       [
+        "1 kW",
+        "10³ W"
+       ],
+       [
+        "1 MW",
+        "10⁶ W"
+       ],
+       [
+        "1 GW",
+        "10⁹ W"
+       ]
+      ],
+      "pages": [
+       1
+      ],
+      "doc": "puiss"
+     },
+     {
+      "type": "definition",
+      "contenu": "La puissance reçue par l'appareil alimenté sous sa **tension nominale** : il fonctionne alors normalement. Elle figure sur la **plaque signalétique**, avec les autres valeurs nominales (maximales).",
+      "titre": "Puissance nominale",
+      "pages": [
+       1,
+       2
+      ],
+      "doc": "puiss"
+     },
+     {
+      "type": "texte",
+      "contenu": "La puissance se mesure avec un **wattmètre** : un circuit courant branché en **série** et un circuit tension branché en **parallèle**.",
+      "pages": [
+       2
+      ],
+      "doc": "puiss"
+     },
+     {
+      "type": "figure",
+      "svg": "<svg viewBox=\"0 0 380 200\" width=\"380\" role=\"img\" aria-label=\"Le wattmètre : un circuit courant en série et un circuit tension en parallèle\" xmlns=\"http://www.w3.org/2000/svg\"><title>Le wattmètre : un circuit courant en série et un circuit tension en parallèle</title><path class=\"trait\" d=\"M60 105 L60 40 L160 40\" stroke-linejoin=\"round\"/><path class=\"trait\" d=\"M200 40 L300 40 L300 180 L60 180 L60 115\" stroke-linejoin=\"round\"/><line class=\"s-mt\" stroke-width=\"2.4\" x1=\"45\" y1=\"105\" x2=\"75\" y2=\"105\"/><line class=\"s-mt\" stroke-width=\"5\" x1=\"53\" y1=\"115\" x2=\"67\" y2=\"115\"/><text x=\"80\" y=\"101\" text-anchor=\"middle\" class=\"gras f-mt\">+</text><rect class=\"cmp\" x=\"293\" y=\"91\" width=\"14\" height=\"38\" rx=\"1.5\"/><text x=\"313\" y=\"108\" text-anchor=\"start\" class=\"gras\">Charge</text><circle class=\"cmp\" cx=\"180\" cy=\"40\" r=\"20\"/><text x=\"180\" y=\"46\" text-anchor=\"middle\" class=\"gras\">W</text><path class=\"trait\" d=\"M180 60 L180 85 L240 85 L240 180\" stroke-linejoin=\"round\"/><circle class=\"pt\" cx=\"240\" cy=\"180\" r=\"3.2\"/><text x=\"150\" y=\"22\" text-anchor=\"end\" class=\"petit f-bad\">circuit courant (série)</text><text x=\"234\" y=\"130\" text-anchor=\"end\" class=\"petit f-def\">circuit tension</text><text x=\"234\" y=\"145\" text-anchor=\"end\" class=\"petit f-def\">(parallèle)</text></svg>",
+      "legende": "Un wattmètre combine un ampèremètre et un voltmètre.",
+      "pages": [
+       2
+      ],
+      "doc": "puiss"
+     }
+    ]
+   },
+   {
+    "id": "s2",
+    "titre": "Puissance et loi d'Ohm",
+    "blocs": [
+     {
+      "type": "formule",
+      "latex": "P = U \\cdot I = R \\cdot I^2 = \\dfrac{U^2}{R}",
+      "legende": "Trois formes de la puissance dans une résistance",
+      "pages": [
+       15
+      ],
+      "doc": "puiss"
+     },
+     {
+      "type": "figure",
+      "svg": "<svg viewBox=\"0 0 420 222\" width=\"420\" role=\"img\" aria-label=\"Les 12 formules qui relient P, U, I et R\" xmlns=\"http://www.w3.org/2000/svg\"><title>Les 12 formules qui relient P, U, I et R</title><rect class=\"cmp s-warn\" x=\"10\" y=\"10\" width=\"195\" height=\"95\" rx=\"10\"/><text x=\"40\" y=\"68\" text-anchor=\"middle\" class=\"grand gras f-warn\">P</text><text x=\"72\" y=\"40\" text-anchor=\"start\" class=\"gras\">= U·I</text><text x=\"72\" y=\"65\" text-anchor=\"start\" class=\"gras\">= R·I²</text><text x=\"72\" y=\"90\" text-anchor=\"start\" class=\"gras\">= U²/R</text><rect class=\"cmp s-def\" x=\"215\" y=\"10\" width=\"195\" height=\"95\" rx=\"10\"/><text x=\"245\" y=\"68\" text-anchor=\"middle\" class=\"grand gras f-def\">U</text><text x=\"277\" y=\"40\" text-anchor=\"start\" class=\"gras\">= R·I</text><text x=\"277\" y=\"65\" text-anchor=\"start\" class=\"gras\">= P/I</text><text x=\"277\" y=\"90\" text-anchor=\"start\" class=\"gras\">= √(P·R)</text><rect class=\"cmp s-bad\" x=\"10\" y=\"115\" width=\"195\" height=\"95\" rx=\"10\"/><text x=\"40\" y=\"173\" text-anchor=\"middle\" class=\"grand gras f-bad\">I</text><text x=\"72\" y=\"145\" text-anchor=\"start\" class=\"gras\">= U/R</text><text x=\"72\" y=\"170\" text-anchor=\"start\" class=\"gras\">= P/U</text><text x=\"72\" y=\"195\" text-anchor=\"start\" class=\"gras\">= √(P/R)</text><rect class=\"cmp s-mt\" x=\"215\" y=\"115\" width=\"195\" height=\"95\" rx=\"10\"/><text x=\"245\" y=\"173\" text-anchor=\"middle\" class=\"grand gras f-mt\">R</text><text x=\"277\" y=\"145\" text-anchor=\"start\" class=\"gras\">= U/I</text><text x=\"277\" y=\"170\" text-anchor=\"start\" class=\"gras\">= U²/P</text><text x=\"277\" y=\"195\" text-anchor=\"start\" class=\"gras\">= P/I²</text></svg>",
+      "legende": "En combinant P = U·I et U = R·I, on obtient 12 formules.",
+      "pages": [
+       12
+      ],
+      "doc": "puiss"
+     },
+     {
+      "type": "exemple",
+      "contenu": "Circuits de l'exemple 3-18 : 10 V et 2 A → **20 W** ; 2 A dans 47 Ω → P = 47 × 2² = **188 W** ; 5 V sur 10 Ω → P = 5² / 10 = **2,5 W**.",
+      "pages": [
+       15
+      ],
+      "doc": "puiss"
+     }
+    ]
+   },
+   {
+    "id": "s3",
+    "titre": "L'énergie électrique",
+    "blocs": [
+     {
+      "type": "formule",
+      "latex": "W = P \\cdot t \\qquad P = \\dfrac{W}{t} \\qquad t = \\dfrac{W}{P}",
+      "legende": "Énergie = puissance × temps",
+      "pages": [
+       4,
+       13
+      ],
+      "variables": [
+       {
+        "symbole": "W ou E",
+        "nom": "énergie",
+        "unite": "J ou Wh"
+       },
+       {
+        "symbole": "P",
+        "nom": "puissance",
+        "unite": "W"
+       },
+       {
+        "symbole": "t",
+        "nom": "temps",
+        "unite": "s ou h"
+       }
+      ],
+      "doc": "puiss"
+     },
+     {
+      "type": "texte",
+      "contenu": "Plus un appareil est **puissant**, et plus il fonctionne **longtemps**, plus il consomme d'énergie. Le **compteur** électrique mesure l'énergie en **kWh**.",
+      "pages": [
+       3,
+       4
+      ],
+      "doc": "puiss"
+     },
+     {
+      "type": "point-cle",
+      "contenu": "**1 W = 1 J/s**. Avec P en W et t en s, W est en **joules** ; avec t en h, W est en **Wh**.",
+      "pages": [
+       13,
+       25
+      ],
+      "doc": "puiss"
+     },
+     {
+      "type": "tableau",
+      "entetes": [
+       "Unité",
+       "Équivalence"
+      ],
+      "lignes": [
+       [
+        "1 Wh",
+        "3 600 J"
+       ],
+       [
+        "1 kWh",
+        "3,6·10⁶ J = 3,6 MJ"
+       ],
+       [
+        "1 tep (tonne équivalent pétrole)",
+        "11 630 kWh = 41 868 MJ"
+       ],
+       [
+        "1 cal",
+        "4,186 J"
+       ]
+      ],
+      "pages": [
+       5,
+       25
+      ],
+      "titre": "Unités et conversions",
+      "doc": "puiss"
+     },
+     {
+      "type": "piege",
+      "contenu": "Ne confonds pas le **watt** (puissance, un débit d'énergie) et le **kilowattheure** (énergie, une quantité). 10 kWh ≈ l'énergie de 1 m³ de gaz naturel, 1 L de mazout ou 2 kg de pellets.",
+      "pages": [
+       4,
+       5
+      ],
+      "doc": "puiss"
+     }
+    ]
+   },
+   {
+    "id": "s4",
+    "titre": "Le rendement",
+    "blocs": [
+     {
+      "type": "definition",
+      "contenu": "Le rapport entre l'énergie (ou la puissance) **utile** obtenue et l'énergie (ou la puissance) **absorbée** par un appareil : moteur, générateur, transformateur…",
+      "titre": "Rendement η (êta)",
+      "pages": [
+       7
+      ],
+      "doc": "puiss"
+     },
+     {
+      "type": "figure",
+      "svg": "<svg viewBox=\"0 0 400 220\" width=\"400\" role=\"img\" aria-label=\"Rendement : puissance utile sur puissance absorbée\" xmlns=\"http://www.w3.org/2000/svg\"><title>Rendement : puissance utile sur puissance absorbée</title><rect class=\"cmp s-mt\" x=\"130\" y=\"40\" width=\"140\" height=\"70\" rx=\"8\"/><text x=\"200\" y=\"80\" text-anchor=\"middle\" class=\"gras\">Convertisseur</text><line stroke-width=\"6\" class=\"s-def\" x1=\"10\" y1=\"75\" x2=\"128\" y2=\"75\"/><polygon class=\"f-def\" points=\"128,75 111.4,82 111.4,68\"/><line stroke-width=\"6\" class=\"s-ok\" x1=\"272\" y1=\"75\" x2=\"390\" y2=\"75\"/><polygon class=\"f-ok\" points=\"390,75 373.4,82 373.4,68\"/><line stroke-width=\"4\" class=\"s-bad\" x1=\"200\" y1=\"112\" x2=\"200\" y2=\"175\"/><polygon class=\"f-bad\" points=\"200,175 194.5,162.1 205.5,162.1\"/><text x=\"60\" y=\"60\" text-anchor=\"middle\" class=\"gras f-def\">Pa absorbée</text><text x=\"330\" y=\"60\" text-anchor=\"middle\" class=\"gras f-ok\">Pu utile</text><text x=\"210\" y=\"160\" text-anchor=\"start\" class=\"gras f-bad\">Pertes (chaleur…)</text><text x=\"200\" y=\"208\" text-anchor=\"middle\" class=\"gras\">η = Pu / Pa &lt; 1  ·  Pa = Pu + pertes</text></svg>",
+      "legende": "Tout convertisseur perd une partie de l'énergie, le plus souvent en chaleur.",
+      "pages": [
+       6,
+       7,
+       8
+      ],
+      "doc": "puiss"
+     },
+     {
+      "type": "formule",
+      "latex": "\\eta = \\dfrac{P_u}{P_a} = \\dfrac{W_u}{W_a} \\qquad P_a = P_u + P_{\\text{pertes}}",
+      "legende": "Rendement (sans unité, entre 0 et 1, souvent en %)",
+      "pages": [
+       7,
+       8,
+       11
+      ],
+      "doc": "puiss"
+     },
+     {
+      "type": "formule",
+      "latex": "\\eta_{\\text{global}} = \\eta_1 \\times \\eta_2 \\times \\eta_3 \\times \\dots",
+      "legende": "Chaîne de convertisseurs",
+      "pages": [
+       8
+      ],
+      "doc": "puiss"
+     },
+     {
+      "type": "exemple",
+      "contenu": "Éolienne : 0,44 × 0,968 × 0,965 × 0,975 × 0,980 = **0,393**, soit **39 %** de la puissance du vent arrive au réseau.",
+      "pages": [
+       9
+      ],
+      "doc": "puiss"
+     },
+     {
+      "type": "point-cle",
+      "contenu": "Le rendement est **toujours inférieur à 1** (100 %). Un convecteur a un rendement de 100 % pour l'utilisateur, mais le rendement **global** (production + transport de l'électricité) est **inférieur à 30 %**.",
+      "pages": [
+       12
+      ],
+      "doc": "puiss"
+     }
+    ]
+   },
+   {
+    "id": "s5",
+    "titre": "Exemples",
+    "blocs": [
+     {
+      "type": "tableau",
+      "entetes": [
+       "Situation",
+       "Résultat"
+      ],
+      "lignes": [
+       [
+        "Moteur : Pu = 9 kW, 92 kWh absorbés en 8 h",
+        "Pa = 92 / 8 = 11,5 kW → η = 9 / 11,5 = **78,3 %**"
+       ],
+       [
+        "Alternateur η = 85 %, 16 320 kWh fournis en 8 h",
+        "Pu = **2 040 kW**, Pa = 2 040 / 0,85 = **2,4 MW**"
+       ],
+       [
+        "Ce même alternateur sur un réseau de 1 000 V",
+        "I = 2 040 000 / 1 000 = **2 040 A**, R = 1 000 / 2 040 = **0,49 Ω**"
+       ],
+       [
+        "Pile bouton 0,20 Wh sous 3 V, 6,67 µA",
+        "Q = 0,2 / 3 = 0,0667 Ah → t ≈ **10 000 h**"
+       ]
+      ],
+      "pages": [
+       17,
+       18
+      ],
+      "doc": "puiss"
+     },
+     {
+      "type": "exemple",
+      "contenu": "Circuit sous 50 V avec R_tot = 100 Ω : U_R1 = 12,5 V et l'énergie consommée en 24 h vaut 25 W × 24 h = **600 Wh**, dont **225 Wh** dans R₄.",
+      "pages": [
+       16,
+       17
+      ],
+      "doc": "puiss"
+     }
+    ]
+   },
+   {
+    "id": "s6",
+    "titre": "S'entraîner",
+    "blocs": [
+     {
+      "type": "texte",
+      "contenu": "Exercices 54 à 76 du recueil : compteurs, radiateurs, moteurs, alternateurs, veille des écrans, chaîne de distribution.",
+      "pages": [
+       6,
+       7
+      ],
+      "doc": "exo"
+     },
+     {
+      "type": "exemple",
+      "contenu": "Radiateur : le compteur passe de 234 à 241,5 kWh en 150 min. W = **7,5 kWh** = 27 MJ et P = 7,5 / 2,5 = **3 kW**.",
+      "pages": [
+       6
+      ],
+      "doc": "exo"
+     },
+     {
+      "type": "exemple",
+      "contenu": "Moteur : 70 kW absorbés pour 84 CV (× 736 W) = 61,8 kW utiles → η = **88,3 %**.",
+      "pages": [
+       6
+      ],
+      "doc": "exo"
+     }
+    ]
+   }
+  ]
+ },
+ "flashcards": [
+  {
+   "id": "fc-001",
+   "recto": "Formule de la puissance électrique ?",
+   "verso": "**P = U · I** (W = V × A).",
+   "tags": [
+    "puissance"
+   ],
+   "page": 1,
+   "doc": "puiss"
+  },
+  {
+   "id": "fc-002",
+   "recto": "12 V et 2 A : P ?",
+   "verso": "**24 W**.",
+   "tags": [
+    "puissance",
+    "calcul"
+   ],
+   "page": 1,
+   "doc": "puiss"
+  },
+  {
+   "id": "fc-003",
+   "recto": "P en fonction de R et I ?",
+   "verso": "**P = R · I²**.",
+   "tags": [
+    "puissance"
+   ],
+   "page": 15,
+   "doc": "puiss"
+  },
+  {
+   "id": "fc-004",
+   "recto": "P en fonction de U et R ?",
+   "verso": "**P = U² / R**.",
+   "tags": [
+    "puissance"
+   ],
+   "page": 15,
+   "doc": "puiss"
+  },
+  {
+   "id": "fc-005",
+   "recto": "Qu'est-ce que la puissance nominale ?",
+   "verso": "La puissance reçue sous la **tension nominale** (fonctionnement normal), indiquée sur la plaque signalétique.",
+   "tags": [
+    "puissance"
+   ],
+   "page": 1,
+   "doc": "puiss"
+  },
+  {
+   "id": "fc-006",
+   "recto": "Comment est branché un wattmètre ?",
+   "verso": "Circuit courant en **série**, circuit tension en **parallèle**.",
+   "tags": [
+    "mesure"
+   ],
+   "page": 2,
+   "doc": "puiss"
+  },
+  {
+   "id": "fc-007",
+   "recto": "Formule de l'énergie ?",
+   "verso": "**W = P · t**.",
+   "tags": [
+    "énergie"
+   ],
+   "page": 4,
+   "doc": "puiss"
+  },
+  {
+   "id": "fc-008",
+   "recto": "1 kWh = combien de joules ?",
+   "verso": "**3,6·10⁶ J** (3,6 MJ).",
+   "tags": [
+    "énergie"
+   ],
+   "page": 5,
+   "doc": "puiss"
+  },
+  {
+   "id": "fc-009",
+   "recto": "1 Wh = combien de joules ?",
+   "verso": "**3 600 J**.",
+   "tags": [
+    "énergie"
+   ],
+   "page": 25,
+   "doc": "puiss"
+  },
+  {
+   "id": "fc-010",
+   "recto": "1 tep = ?",
+   "verso": "**11 630 kWh** = 41 868 MJ.",
+   "tags": [
+    "énergie"
+   ],
+   "page": 5,
+   "doc": "puiss"
+  },
+  {
+   "id": "fc-011",
+   "recto": "Différence entre W (watt) et kWh ?",
+   "verso": "Le watt mesure une **puissance**, le kWh une **énergie**.",
+   "tags": [
+    "énergie"
+   ],
+   "page": 4,
+   "doc": "puiss"
+  },
+  {
+   "id": "fc-012",
+   "recto": "Définition du rendement ?",
+   "verso": "**η = Pu / Pa** (utile / absorbée), toujours < 1.",
+   "tags": [
+    "rendement"
+   ],
+   "page": 7,
+   "doc": "puiss"
+  },
+  {
+   "id": "fc-013",
+   "recto": "Rendement d'une chaîne de convertisseurs ?",
+   "verso": "Le **produit** des rendements : η = η₁ × η₂ × …",
+   "tags": [
+    "rendement"
+   ],
+   "page": 8,
+   "doc": "puiss"
+  },
+  {
+   "id": "fc-014",
+   "recto": "Pu = 9 kW, 92 kWh en 8 h : η ?",
+   "verso": "Pa = 11,5 kW → **78,3 %**.",
+   "tags": [
+    "rendement",
+    "calcul"
+   ],
+   "page": 18,
+   "doc": "puiss"
+  },
+  {
+   "id": "fc-015",
+   "recto": "Alternateur η = 85 %, Pu = 2 040 kW : Pa ?",
+   "verso": "2 040 / 0,85 = **2 400 kW**.",
+   "tags": [
+    "rendement",
+    "calcul"
+   ],
+   "page": 18,
+   "doc": "puiss"
+  },
+  {
+   "id": "fc-016",
+   "recto": "Rendement global réel d'un convecteur électrique ?",
+   "verso": "**< 30 %** (production et transport compris).",
+   "tags": [
+    "rendement"
+   ],
+   "page": 12,
+   "doc": "puiss"
+  },
+  {
+   "id": "fc-017",
+   "recto": "Pa en fonction de Pu et des pertes ?",
+   "verso": "**Pa = Pu + pertes**.",
+   "tags": [
+    "rendement"
+   ],
+   "page": 11,
+   "doc": "puiss"
+  }
+ ],
+ "exercices": []
+}

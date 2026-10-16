@@ -1,0 +1,348 @@
+{
+ "format": 1,
+ "id": "ch01-circuit",
+ "matiere": "elec",
+ "titre": "Le circuit électrique et la sécurité",
+ "source": {
+  "pdfs": [
+   {
+    "id": "courants",
+    "nom": "Elec 2180 – DC : les courants (diapos 1 à 66)",
+    "court": "Les courants",
+    "fichier": "2026.10.04 - BacEM_Elec_2180 - DC les courants - pg01-66.pdf",
+    "pages": 33
+   },
+   {
+    "id": "simu",
+    "nom": "Elec 2180 – Séances de laboratoire (simulateur)",
+    "court": "Simulateur",
+    "fichier": "2026.10.06 - BacEmElec2180 - Simulateur.pdf",
+    "pages": 1
+   }
+  ],
+  "genereLe": "2026-10-16",
+  "modele": "Claude (rédigé dans la conversation)"
+ },
+ "synthese": {
+  "intro": "Ce qui compose un circuit, comment le schématiser, et les dangers du courant pour le corps humain.",
+  "sections": [
+   {
+    "id": "s1",
+    "titre": "Sécurité : l'électricité n'est pas sans danger",
+    "blocs": [
+     {
+      "type": "texte",
+      "contenu": "Travailler en électricité ouvre beaucoup de débouchés, mais **des règles strictes sont à respecter** : le cours y revient régulièrement. Toute tension supérieure à **50 V** est considérée comme dangereuse.",
+      "pages": [
+       3
+      ],
+      "doc": "courants"
+     },
+     {
+      "type": "figure",
+      "svg": "<svg viewBox=\"0 0 400 300\" width=\"400\" role=\"img\" aria-label=\"Effets du courant sur le corps humain selon son intensité\" xmlns=\"http://www.w3.org/2000/svg\"><title>Effets du courant sur le corps humain selon son intensité</title><defs><linearGradient id=\"gdanger\" x1=\"0\" y1=\"1\" x2=\"0\" y2=\"0\"><stop offset=\"0\" stop-color=\"#facc15\"/><stop offset=\".5\" stop-color=\"#f97316\"/><stop offset=\"1\" stop-color=\"#dc2626\"/></linearGradient></defs><rect x=\"70\" y=\"20\" width=\"16\" height=\"250\" rx=\"8\" fill=\"url(#gdanger)\"/><line class=\"trait\" x1=\"60\" y1=\"252\" x2=\"100\" y2=\"252\"/><text x=\"54\" y=\"257\" text-anchor=\"end\" class=\"gras\">0,5 mA</text><text x=\"110\" y=\"257\" text-anchor=\"start\" class=\"\">Seuil de perception</text><line class=\"trait\" x1=\"60\" y1=\"205\" x2=\"100\" y2=\"205\"/><text x=\"54\" y=\"210\" text-anchor=\"end\" class=\"gras f-warn\">10 mA</text><text x=\"110\" y=\"210\" text-anchor=\"start\" class=\"f-warn\">Seuil de non-lâcher (contraction)</text><line class=\"trait\" x1=\"60\" y1=\"158\" x2=\"100\" y2=\"158\"/><text x=\"54\" y=\"163\" text-anchor=\"end\" class=\"gras f-warn\">30 mA</text><text x=\"110\" y=\"163\" text-anchor=\"start\" class=\"f-warn\">Paralysie respiratoire</text><line class=\"trait\" x1=\"60\" y1=\"111\" x2=\"100\" y2=\"111\"/><text x=\"54\" y=\"116\" text-anchor=\"end\" class=\"gras f-bad\">75 mA</text><text x=\"110\" y=\"116\" text-anchor=\"start\" class=\"f-bad\">Fibrillation cardiaque irréversible</text><line class=\"trait\" x1=\"60\" y1=\"40\" x2=\"100\" y2=\"40\"/><text x=\"54\" y=\"45\" text-anchor=\"end\" class=\"gras f-bad\">1 A</text><text x=\"110\" y=\"45\" text-anchor=\"start\" class=\"f-bad\">Arrêt du cœur</text><text x=\"78\" y=\"292\" text-anchor=\"start\" class=\"petit muet\">Courant traversant le corps</text></svg>",
+      "legende": "Ce n'est pas la tension mais le **courant** qui traverse le corps qui fait les dégâts.",
+      "pages": [
+       4
+      ],
+      "doc": "courants"
+     },
+     {
+      "type": "point-cle",
+      "contenu": "Repères à connaître : **0,5 mA** perception, **10 mA** non-lâcher, **30 mA** paralysie respiratoire, **75 mA** fibrillation cardiaque, **1 A** arrêt du cœur.",
+      "pages": [
+       4
+      ],
+      "doc": "courants"
+     },
+     {
+      "type": "point-cle",
+      "contenu": "C'est pour cela que les disjoncteurs différentiels des habitations sont réglés à **30 mA**.",
+      "pages": [
+       4
+      ],
+      "complement": true,
+      "doc": "courants"
+     }
+    ]
+   },
+   {
+    "id": "s2",
+    "titre": "Le circuit électrique",
+    "blocs": [
+     {
+      "type": "figure",
+      "svg": "<svg viewBox=\"0 0 400 210\" width=\"400\" role=\"img\" aria-label=\"Circuit électrique minimal : générateur, interrupteur, récepteur et fils\" xmlns=\"http://www.w3.org/2000/svg\"><title>Circuit électrique minimal : générateur, interrupteur, récepteur et fils</title><path class=\"trait\" d=\"M60 105 L60 40 L150 40\" stroke-linejoin=\"round\"/><path class=\"trait\" d=\"M190 40 L280 40 L280 180 L60 180 L60 115\" stroke-linejoin=\"round\"/><line class=\"s-mt\" stroke-width=\"2.4\" x1=\"45\" y1=\"105\" x2=\"75\" y2=\"105\"/><line class=\"s-mt\" stroke-width=\"5\" x1=\"53\" y1=\"115\" x2=\"67\" y2=\"115\"/><text x=\"80\" y=\"101\" text-anchor=\"middle\" class=\"gras f-mt\">+</text><text x=\"39\" y=\"115\" text-anchor=\"end\" class=\"gras f-mt\">Générateur</text><circle class=\"cmp\" cx=\"150\" cy=\"40\" r=\"3.6\"/><circle class=\"cmp\" cx=\"190\" cy=\"40\" r=\"3.6\"/><line class=\"trait\" x1=\"153\" y1=\"38\" x2=\"187\" y2=\"22\"/><text x=\"170\" y=\"16\" text-anchor=\"middle\" class=\"petit muet\">Interrupteur</text><circle class=\"cmp\" cx=\"280\" cy=\"110\" r=\"11\"/><path class=\"trait\" d=\"M272.2 102.2 L287.8 117.8 M272.2 117.8 L287.8 102.2\"/><text x=\"298\" y=\"114\" text-anchor=\"start\" class=\"petit muet\">Récepteur</text><text x=\"170\" y=\"198\" text-anchor=\"middle\" class=\"petit muet\">Fils conducteurs</text></svg>",
+      "legende": "Le minimum : un générateur, un récepteur, des fils, et souvent une protection et un interrupteur.",
+      "pages": [
+       6,
+       15
+      ],
+      "doc": "courants"
+     },
+     {
+      "type": "liste",
+      "items": [
+       "un **générateur** (pile, batterie, alimentation…) ;",
+       "un **récepteur** ;",
+       "des **fils conducteurs** ;",
+       "et très souvent des **protections** et un **interrupteur** de commande."
+      ],
+      "pages": [
+       6,
+       15
+      ],
+      "titre": "On trouve au minimum",
+      "doc": "courants"
+     },
+     {
+      "type": "point-cle",
+      "contenu": "Un courant ne peut circuler que dans un **circuit fermé**. L'interrupteur autorise ou non le passage du courant.",
+      "pages": [
+       15
+      ],
+      "doc": "courants"
+     },
+     {
+      "type": "definition",
+      "contenu": "Tout élément qui **convertit l'énergie électrique** en une autre forme d'énergie : lumière (lampe), mouvement (moteur), chaleur (résistance)…",
+      "titre": "Récepteur",
+      "pages": [
+       15
+      ],
+      "doc": "courants"
+     },
+     {
+      "type": "definition",
+      "contenu": "Tout composant qui possède **2 bornes** de raccordement : pile, lampe, moteur, interrupteur, résistance, diode…",
+      "titre": "Dipôle",
+      "pages": [
+       16
+      ],
+      "doc": "courants"
+     }
+    ]
+   },
+   {
+    "id": "s3",
+    "titre": "Croquis, schéma et symboles normalisés",
+    "blocs": [
+     {
+      "type": "texte",
+      "contenu": "Un **croquis** (dessin réaliste) ne suffit pas : on représente le circuit par un **schéma** qui utilise des **symboles normalisés**, compris par tous les électriciens.",
+      "pages": [
+       6,
+       7
+      ],
+      "doc": "courants"
+     },
+     {
+      "type": "figure",
+      "svg": "<svg viewBox=\"0 0 540 255\" width=\"540\" role=\"img\" aria-label=\"Principaux symboles normalisés\" xmlns=\"http://www.w3.org/2000/svg\"><title>Principaux symboles normalisés</title><path class=\"trait\" d=\"M20 40 L65 40\" stroke-linejoin=\"round\"/><path class=\"trait\" d=\"M75 40 L120 40\" stroke-linejoin=\"round\"/><line class=\"s-mt\" stroke-width=\"2.4\" x1=\"65\" y1=\"25\" x2=\"65\" y2=\"55\"/><line class=\"s-mt\" stroke-width=\"5\" x1=\"75\" y1=\"33\" x2=\"75\" y2=\"47\"/><text x=\"57\" y=\"22\" text-anchor=\"middle\" class=\"gras f-mt\">+</text><text x=\"70\" y=\"76\" text-anchor=\"middle\" class=\"petit\">Pile / source continue</text><path class=\"trait\" d=\"M150 40 L250 40\" stroke-linejoin=\"round\"/><circle class=\"cmp\" cx=\"200\" cy=\"40\" r=\"11\"/><path class=\"trait\" d=\"M192.2 32.2 L207.8 47.8 M192.2 47.8 L207.8 32.2\"/><text x=\"200\" y=\"76\" text-anchor=\"middle\" class=\"petit\">Lampe</text><path class=\"trait\" d=\"M280 40 L380 40\" stroke-linejoin=\"round\"/><rect class=\"cmp\" x=\"311\" y=\"33\" width=\"38\" height=\"14\" rx=\"1.5\"/><text x=\"330\" y=\"76\" text-anchor=\"middle\" class=\"petit\">Résistance</text><path class=\"trait\" d=\"M410 40 L510 40\" stroke-linejoin=\"round\"/><circle class=\"cmp \" cx=\"460\" cy=\"40\" r=\"12.5\"/><text x=\"460\" y=\"45\" text-anchor=\"middle\" class=\"gras\">M</text><text x=\"460\" y=\"76\" text-anchor=\"middle\" class=\"petit\">Moteur</text><path class=\"trait\" d=\"M20 122 L52 122\" stroke-linejoin=\"round\"/><path class=\"trait\" d=\"M88 122 L120 122\" stroke-linejoin=\"round\"/><circle class=\"cmp\" cx=\"52\" cy=\"122\" r=\"3.6\"/><circle class=\"cmp\" cx=\"88\" cy=\"122\" r=\"3.6\"/><line class=\"trait\" x1=\"55\" y1=\"120\" x2=\"85\" y2=\"104\"/><text x=\"70\" y=\"158\" text-anchor=\"middle\" class=\"petit\">Interrupteur ouvert</text><path class=\"trait\" d=\"M150 122 L182 122\" stroke-linejoin=\"round\"/><path class=\"trait\" d=\"M218 122 L250 122\" stroke-linejoin=\"round\"/><circle class=\"cmp\" cx=\"182\" cy=\"122\" r=\"3.6\"/><circle class=\"cmp\" cx=\"218\" cy=\"122\" r=\"3.6\"/><line class=\"trait\" x1=\"182\" y1=\"122\" x2=\"218\" y2=\"122\"/><text x=\"200\" y=\"158\" text-anchor=\"middle\" class=\"petit\">Interrupteur fermé</text><path class=\"trait\" d=\"M280 122 L380 122\" stroke-linejoin=\"round\"/><circle class=\"cmp \" cx=\"330\" cy=\"122\" r=\"12.5\"/><text x=\"330\" y=\"127\" text-anchor=\"middle\" class=\"gras\">A</text><text x=\"330\" y=\"158\" text-anchor=\"middle\" class=\"petit\">Ampèremètre</text><path class=\"trait\" d=\"M410 122 L510 122\" stroke-linejoin=\"round\"/><circle class=\"cmp \" cx=\"460\" cy=\"122\" r=\"12.5\"/><text x=\"460\" y=\"127\" text-anchor=\"middle\" class=\"gras\">V</text><text x=\"460\" y=\"158\" text-anchor=\"middle\" class=\"petit\">Voltmètre</text><path class=\"trait\" d=\"M20 204 L120 204\" stroke-linejoin=\"round\"/><polygon class=\"pt\" points=\"61,194 61,214 78,204\"/><line class=\"trait\" stroke-width=\"2.4\" x1=\"79\" y1=\"194\" x2=\"79\" y2=\"214\"/><text x=\"70\" y=\"240\" text-anchor=\"middle\" class=\"petit\">Diode</text><path class=\"trait\" d=\"M150 204 L250 204\" stroke-linejoin=\"round\"/><rect class=\"cmp\" x=\"182\" y=\"197\" width=\"36\" height=\"14\"/><path class=\"trait\" d=\"M182 204 L218 204\" stroke-linejoin=\"round\"/><text x=\"200\" y=\"240\" text-anchor=\"middle\" class=\"petit\">Fusible</text><path class=\"trait\" d=\"M280 204 L380 204\" stroke-linejoin=\"round\"/><circle class=\"cmp s-mt\" cx=\"330\" cy=\"204\" r=\"13\"/><path class=\"trait s-mt\" d=\"M322 204 C325 194 329 194 330 204 S335 214 338 204\"/><text x=\"330\" y=\"240\" text-anchor=\"middle\" class=\"petit\">Source alternative</text><path class=\"trait\" d=\"M460 186 L460 204\" stroke-linejoin=\"round\"/><line class=\"trait\" x1=\"460\" y1=\"204\" x2=\"460\" y2=\"212\"/><line class=\"trait\" x1=\"450\" y1=\"212\" x2=\"470\" y2=\"212\"/><line class=\"trait\" x1=\"454\" y1=\"216\" x2=\"466\" y2=\"216\"/><line class=\"trait\" x1=\"458\" y1=\"220\" x2=\"462\" y2=\"220\"/><text x=\"460\" y=\"240\" text-anchor=\"middle\" class=\"petit\">Masse</text></svg>",
+      "legende": "Les symboles de base à reconnaître.",
+      "pages": [
+       8
+      ],
+      "doc": "courants"
+     },
+     {
+      "type": "texte",
+      "contenu": "Il existe aussi des symboles propres aux **plans d'architecte** (prises, interrupteurs, points lumineux) et aux schémas électroniques.",
+      "pages": [
+       9
+      ],
+      "doc": "courants"
+     }
+    ]
+   },
+   {
+    "id": "s4",
+    "titre": "Conducteurs, isolants et porteurs de charges",
+    "blocs": [
+     {
+      "type": "definition",
+      "contenu": "Un **mouvement de porteurs de charges** électriques : les **électrons** dans les métaux, les **ions** dans les électrolytes.",
+      "titre": "Courant électrique",
+      "pages": [
+       14,
+       16
+      ],
+      "doc": "courants"
+     },
+     {
+      "type": "tableau",
+      "entetes": [
+       "Conducteurs",
+       "Isolants"
+      ],
+      "lignes": [
+       [
+        "argent, cuivre, or, zinc, acier, électrolyte",
+        "verre, bois, air, papier, tissu, plastique"
+       ]
+      ],
+      "pages": [
+       17
+      ],
+      "doc": "courants"
+     },
+     {
+      "type": "point-cle",
+      "contenu": "Les **isolants** sont aussi importants que les conducteurs : ils **protègent** les personnes et les installations ; les conducteurs laissent passer le courant.",
+      "pages": [
+       17
+      ],
+      "doc": "courants"
+     }
+    ]
+   },
+   {
+    "id": "s5",
+    "titre": "Le laboratoire sur simulateur",
+    "blocs": [
+     {
+      "type": "texte",
+      "contenu": "Les séances de laboratoire se font sur un **simulateur web** gratuit, sans compte : **falstad.com/circuit**. Des tutoriels vidéo aident à le prendre en main.",
+      "pages": [
+       1
+      ],
+      "doc": "simu"
+     }
+    ]
+   }
+  ]
+ },
+ "flashcards": [
+  {
+   "id": "fc-001",
+   "recto": "Que faut-il au minimum dans un circuit électrique ?",
+   "verso": "Un **générateur**, un **récepteur** et des **fils** (souvent aussi une protection et un interrupteur).",
+   "tags": [
+    "circuit"
+   ],
+   "page": 6,
+   "doc": "courants"
+  },
+  {
+   "id": "fc-002",
+   "recto": "À quelle condition un courant peut-il circuler ?",
+   "verso": "Le circuit doit être **fermé**.",
+   "tags": [
+    "circuit"
+   ],
+   "page": 15,
+   "doc": "courants"
+  },
+  {
+   "id": "fc-003",
+   "recto": "Qu'est-ce qu'un récepteur ?",
+   "verso": "Un élément qui convertit l'énergie électrique en une autre forme (lumière, mouvement, chaleur…).",
+   "tags": [
+    "circuit"
+   ],
+   "page": 15,
+   "doc": "courants"
+  },
+  {
+   "id": "fc-004",
+   "recto": "Qu'est-ce qu'un dipôle ?",
+   "verso": "Un composant à **2 bornes**.",
+   "tags": [
+    "circuit"
+   ],
+   "page": 16,
+   "doc": "courants"
+  },
+  {
+   "id": "fc-005",
+   "recto": "Quels sont les 2 types de porteurs de charges ?",
+   "verso": "Les **électrons** (métaux) et les **ions** (électrolytes).",
+   "tags": [
+    "courant"
+   ],
+   "page": 16,
+   "doc": "courants"
+  },
+  {
+   "id": "fc-006",
+   "recto": "Rôle des isolants ?",
+   "verso": "Protéger les utilisateurs et les installations.",
+   "tags": [
+    "sécurité"
+   ],
+   "page": 17,
+   "doc": "courants"
+  },
+  {
+   "id": "fc-007",
+   "recto": "À partir de quel courant y a-t-il paralysie respiratoire ?",
+   "verso": "**30 mA**.",
+   "tags": [
+    "sécurité"
+   ],
+   "page": 4,
+   "doc": "courants"
+  },
+  {
+   "id": "fc-008",
+   "recto": "Seuil de fibrillation cardiaque irréversible ?",
+   "verso": "**75 mA**.",
+   "tags": [
+    "sécurité"
+   ],
+   "page": 4,
+   "doc": "courants"
+  },
+  {
+   "id": "fc-009",
+   "recto": "Seuil de non-lâcher ?",
+   "verso": "**10 mA** (contraction musculaire : on ne peut plus lâcher).",
+   "tags": [
+    "sécurité"
+   ],
+   "page": 4,
+   "doc": "courants"
+  },
+  {
+   "id": "fc-010",
+   "recto": "Au-delà de quelle tension est-on en danger ?",
+   "verso": "**50 V**.",
+   "tags": [
+    "sécurité"
+   ],
+   "page": 3,
+   "doc": "courants"
+  },
+  {
+   "id": "fc-011",
+   "recto": "Différence entre croquis et schéma ?",
+   "verso": "Le croquis est un dessin réaliste ; le schéma utilise des **symboles normalisés**.",
+   "tags": [
+    "schéma"
+   ],
+   "page": 7,
+   "doc": "courants"
+  },
+  {
+   "id": "fc-012",
+   "recto": "Symbole d'une lampe ?",
+   "verso": "Un cercle barré d'une **croix**.",
+   "tags": [
+    "schéma"
+   ],
+   "page": 8,
+   "doc": "courants"
+  },
+  {
+   "id": "fc-013",
+   "recto": "Quel simulateur utilise-t-on au labo ?",
+   "verso": "Le simulateur web de **falstad.com/circuit**.",
+   "tags": [
+    "labo"
+   ],
+   "page": 1,
+   "doc": "simu"
+  }
+ ],
+ "exercices": []
+}
