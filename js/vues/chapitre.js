@@ -5,12 +5,13 @@
    Pour ajouter un onglet : une entrée dans ONGLETS + son affichage dans afficherOnglet().
    ===================================================================== */
 
-import { esc, pluriel } from '../utils.js';
+import { esc } from '../utils.js';
 import { icone } from '../icones.js';
 import { styleMatiere } from '../matieres.js';
 import { matiere, infoChapitre, chargerChapitre, voisins } from '../store.js';
 import { rendreSynthese, activerSynthese, sourcesDe } from '../synthese.js';
 import { lecteurFlashcards } from '../flashcards.js';
+import { lecteurExercices } from '../exercices.js';
 
 const ONGLETS = [
   { id: 'synthese', libelle: 'Synthèse', icone: 'synthese' },
@@ -63,11 +64,7 @@ function afficherOnglet(zone, onglet, ch, adresse) {
     case 'flashcards':
       return lecteurFlashcards(zone, ch.flashcards, { docs: sourcesDe(ch) });
     case 'exercices':
-      zone.innerHTML = `<div class="panel empty"><div class="m-ic">${icone('exercices')}</div>
-        <h3>Exercices : bientôt disponibles</h3>
-        <p class="muted">Les exercices adaptés à chaque matière (calculs pas à pas, QCM, vrai/faux, lecture de plan,
-        questions ouvertes avec corrigé) arrivent à l'étape 3.${ch.exercices.length ? ` Ce chapitre en contient déjà ${pluriel(ch.exercices.length, 'exercice')}.` : ''}</p></div>`;
-      return null;
+      return lecteurExercices(zone, ch.exercices, { docs: sourcesDe(ch), prefixe: `${ch.matiere}/${ch.id}` });
     default:
       zone.innerHTML = rendreSynthese(ch, adresse);
       return activerSynthese(zone);
