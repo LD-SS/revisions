@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Révisions — synthèses, flashcards et exercices pour le bachelier en électromécanique.">
+<title>Révisions</title>
+<meta name="theme-color" content="#1d5fd1">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<!--
+  =====================================================================
+  RÉVISIONS — application de révision (HTML + CSS + JavaScript, sans compilation)
+  ---------------------------------------------------------------------
+  • Cette page ne contient que la structure. Le code est rangé en modules :
+      js/app.js            démarrage, navigation (#/…), barre du haut, thème
+      js/utils.js          petites fonctions communes (échappement, stockage, notifications)
+      js/store.js          chargement du contenu (content/index.json + chapitres)
+      js/matieres.js       profils de matière (types d'exercices) et libellés
+      js/icones.js         jeu d'icônes SVG intégrées           <- ajouter une icône ici
+      js/rendu.js          texte enrichi + formules (KaTeX)
+      js/synthese.js       affichage d'une synthèse
+      js/flashcards.js     lecteur de flashcards
+      js/vues/*.js         pages : accueil, matière, chapitre, paramètres
+  • Le contenu (matières, chapitres) est dans content/ : voir LISEZMOI.md.
+  • Bibliothèque externe copiée localement (hors ligne) : lib/katex/ (licence MIT).
+  =====================================================================
+-->
+<script>
+  /* Thème appliqué AVANT l'affichage (évite un flash blanc en mode sombre). */
+  try { var t = localStorage.getItem('revisions.theme'); if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t; } catch (e) {}
+  /* Application installable (PWA) : le manifeste n'est chargé que lorsque la page
+     est servie par un site web (GitHub Pages ou serveur local). */
+  if (/^https?:$/.test(location.protocol)) {
+    var lm = document.createElement('link'); lm.rel = 'manifest'; lm.href = 'manifest.webmanifest';
+    document.head.appendChild(lm);
+  }
+</script>
+<link rel="stylesheet" href="lib/katex/katex.min.css">
+<link rel="stylesheet" href="css/styles.css">
+<script src="lib/katex/katex.min.js" defer></script>
+<script type="module" src="js/app.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="#/" aria-label="Accueil">
+    <span class="logo" id="brand-logo"></span><span class="txt">Révisions</span>
+  </a>
+  <nav class="tabs" id="tabs" aria-label="Navigation principale"></nav>
+  <div class="top-actions">
+    <span class="badge" id="mode-badge" title="Mode de l'application">Mode étudiant</span>
+    <button class="btn icon" id="btn-theme" type="button" title="Changer de thème" aria-label="Changer de thème"></button>
+  </div>
+</header>
+
+<main id="vue" tabindex="-1">
+  <div class="loading">Chargement…</div>
+</main>
+
+<footer>
+  Les PDF de cours ne sont pas publiés : seuls les synthèses et exercices générés le sont.
+  Ils peuvent contenir des erreurs : en cas de doute, le cours du professeur fait foi.
+</footer>
+
+<div id="toasts" aria-live="polite"></div>
+
+<script>
+  /* Ouverte par double-clic (file://), la page ne peut pas charger ses modules ni content/.
+     On affiche alors une explication au lieu d'une page vide. */
+  if (location.protocol === 'file:') {
+    document.getElementById('vue').innerHTML =
+      '<div class="panel file-warning"><h2>Lance l\'appli avec le serveur local</h2>' +
+      '<p>Ouverte directement depuis l\'explorateur de fichiers, l\'application ne peut pas charger ses modules ni le contenu.</p>' +
+      '<p><b>Sur ton PC :</b> double-clique sur <code>lancer-local.bat</code> dans le dossier <code>revisions</code>. ' +
+      'Le navigateur s\'ouvre tout seul sur <code>http://localhost:8080</code>.</p>' +
+      '<p><b>En ligne :</b> ouvre le site GitHub Pages.</p></div>';
+  }
+</script>
+</body>
+</html>
