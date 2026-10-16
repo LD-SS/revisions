@@ -9,7 +9,7 @@ import { esc, pluriel } from '../utils.js';
 import { icone } from '../icones.js';
 import { styleMatiere } from '../matieres.js';
 import { matiere, infoChapitre, chargerChapitre, voisins } from '../store.js';
-import { rendreSynthese, activerSynthese } from '../synthese.js';
+import { rendreSynthese, activerSynthese, sourcesDe } from '../synthese.js';
 import { lecteurFlashcards } from '../flashcards.js';
 
 const ONGLETS = [
@@ -61,7 +61,7 @@ export async function vueChapitre(el, mid, cid, onglet = 'synthese') {
 function afficherOnglet(zone, onglet, ch, adresse) {
   switch (onglet) {
     case 'flashcards':
-      return lecteurFlashcards(zone, ch.flashcards);
+      return lecteurFlashcards(zone, ch.flashcards, { docs: sourcesDe(ch) });
     case 'exercices':
       zone.innerHTML = `<div class="panel empty"><div class="m-ic">${icone('exercices')}</div>
         <h3>Exercices : bientôt disponibles</h3>
