@@ -1,0 +1,87 @@
+{
+  "format": 1,
+  "id": "ch01-vues",
+  "matiere": "dessin",
+  "titre": "Projections orthogonales, traits et cotation",
+  "exemple": true,
+  "source": { "pdf": null, "pages": null, "genereLe": "2026-10-16", "modele": null },
+  "synthese": {
+    "intro": "Comment représenter une pièce en plusieurs vues, disposer ces vues selon la méthode européenne, choisir les bons traits et coter correctement.",
+    "sections": [
+      {
+        "id": "s1",
+        "titre": "Principe de la projection orthogonale",
+        "blocs": [
+          { "type": "definition", "titre": "Vue", "contenu": "On représente une pièce en 3D par plusieurs **vues** en 2D, obtenues en projetant la pièce **perpendiculairement** sur des plans. Chaque vue montre la pièce regardée depuis une direction.", "pages": [2] },
+          { "type": "point-cle", "contenu": "La **vue de face** (vue principale) est choisie pour être la plus parlante : elle montre la forme caractéristique de la pièce et le plus de détails possible.", "pages": [2] }
+        ]
+      },
+      {
+        "id": "s2",
+        "titre": "Disposition des vues (méthode européenne)",
+        "blocs": [
+          { "type": "texte", "contenu": "En Belgique et en Europe, on utilise la **méthode du premier dièdre** (méthode européenne, symbole « E »). Par rapport à la vue de face :", "pages": [3] },
+          {
+            "type": "tableau",
+            "entetes": ["Vue", "Position par rapport à la vue de face"],
+            "lignes": [
+              ["Vue de dessus", "**sous** la vue de face"],
+              ["Vue de gauche", "**à droite** de la vue de face"],
+              ["Vue de droite", "**à gauche** de la vue de face"],
+              ["Vue de dessous", "**au-dessus** de la vue de face"]
+            ],
+            "pages": [3]
+          },
+          { "type": "piege", "contenu": "La méthode américaine (troisième dièdre, symbole « A ») place les vues à l'inverse : la vue de dessus se trouve **au-dessus** de la vue de face. Vérifie toujours le symbole dans le cartouche.", "pages": [3] },
+          { "type": "point-cle", "contenu": "Les vues sont **alignées** : la largeur se reporte entre la vue de face et la vue de dessus, la hauteur entre la vue de face et la vue de côté.", "pages": [4] }
+        ]
+      },
+      {
+        "id": "s3",
+        "titre": "Types de traits",
+        "blocs": [
+          {
+            "type": "tableau",
+            "entetes": ["Trait", "Aspect", "Utilisation"],
+            "lignes": [
+              ["Continu fort", "━━━━━━", "Arêtes et contours **vus**"],
+              ["Interrompu fin", "‒ ‒ ‒ ‒ ‒", "Arêtes et contours **cachés**"],
+              ["Mixte fin (trait-point)", "—— · —— ·", "**Axes**, plans de symétrie"],
+              ["Continu fin", "──────", "Lignes de cote, lignes d'attache, hachures"]
+            ],
+            "pages": [5]
+          }
+        ]
+      },
+      {
+        "id": "s4",
+        "titre": "Cotation et tolérances",
+        "blocs": [
+          { "type": "liste", "titre": "Règles de base de la cotation", "items": [
+            "Les cotes sont exprimées en **mm**, sans indiquer l'unité.",
+            "Une cote comprend : lignes d'attache, ligne de cote (traits fins), flèches et valeur.",
+            "Chaque dimension n'est cotée **qu'une seule fois**.",
+            "On évite de coter sur des arêtes cachées."
+          ], "pages": [6] },
+          { "type": "definition", "titre": "Tolérance", "contenu": "Une **tolérance** indique l'écart admissible sur une cote.\nExemple : $20 \\pm 0{,}1$ → la cote réelle doit être comprise entre $19{,}9$ mm et $20{,}1$ mm.", "pages": [7] },
+          { "type": "formule", "latex": "IT = C_{\\max} - C_{\\min}", "legende": "Intervalle de tolérance", "variables": [
+            { "symbole": "IT", "nom": "intervalle de tolérance", "unite": "mm" },
+            { "symbole": "C_{\\max}", "nom": "cote maximale", "unite": "mm" },
+            { "symbole": "C_{\\min}", "nom": "cote minimale", "unite": "mm" }
+          ], "pages": [7] }
+        ]
+      }
+    ]
+  },
+  "flashcards": [
+    { "id": "fc-001", "recto": "Méthode européenne : où place-t-on la **vue de dessus** ?", "verso": "**Sous** la vue de face.", "tags": ["vues"], "page": 3 },
+    { "id": "fc-002", "recto": "Méthode européenne : où place-t-on la **vue de gauche** ?", "verso": "**À droite** de la vue de face.", "tags": ["vues"], "page": 3 },
+    { "id": "fc-003", "recto": "Quel trait pour les arêtes **cachées** ?", "verso": "Le trait **interrompu fin**.", "tags": ["traits"], "page": 5 },
+    { "id": "fc-004", "recto": "À quoi sert le trait **mixte fin** (trait-point) ?", "verso": "À représenter les **axes** et les plans de symétrie.", "tags": ["traits"], "page": 5 },
+    { "id": "fc-005", "recto": "Dans quelle unité sont les cotes d'un dessin, et l'indique-t-on ?", "verso": "En **mm**, sans indiquer l'unité.", "tags": ["cotation"], "page": 6 },
+    { "id": "fc-006", "recto": "Combien de fois cote-t-on une même dimension ?", "verso": "**Une seule fois.**", "tags": ["cotation"], "page": 6 },
+    { "id": "fc-007", "recto": "Quel est l'intervalle de tolérance de $20 \\pm 0{,}1$ ?", "verso": "$IT = 20{,}1 - 19{,}9 = 0{,}2$ mm", "tags": ["tolérances"], "page": 7 },
+    { "id": "fc-008", "recto": "Quelle méthode de projection utilise le symbole « A » ?", "verso": "La méthode **américaine** (troisième dièdre).", "tags": ["vues"], "page": 3 }
+  ],
+  "exercices": []
+}
