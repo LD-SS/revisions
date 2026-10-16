@@ -1,0 +1,92 @@
+{
+  "format": 1,
+  "titre": "Révisions — Bachelier électromécanique",
+  "maj": "2026-10-16",
+  "matieres": [
+    {
+      "id": "maths",
+      "nom": "Remédiation mathématique",
+      "court": "Maths",
+      "couleur": "#7c3aed",
+      "icone": "sigma",
+      "profil": "maths",
+      "ordre": 1,
+      "chapitres": [
+        {
+          "id": "ch01-puissances",
+          "titre": "Puissances et notation scientifique",
+          "ordre": 1,
+          "fichier": "maths/ch01-puissances.json",
+          "maj": "2026-10-16",
+          "exemple": true,
+          "nb": {
+            "sections": 3,
+            "flashcards": 8,
+            "exercices": 0
+          }
+        },
+        {
+          "id": "ch02-equations",
+          "titre": "Équations du premier degré",
+          "ordre": 2,
+          "fichier": "maths/ch02-equations.json",
+          "maj": "2026-10-16",
+          "exemple": true,
+          "nb": {
+            "sections": 2,
+            "flashcards": 4,
+            "exercices": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "dessin",
+      "nom": "Dessin technique",
+      "court": "Dessin",
+      "couleur": "#0f766e",
+      "icone": "equerre",
+      "profil": "dessin",
+      "ordre": 2,
+      "chapitres": [
+        {
+          "id": "ch01-vues",
+          "titre": "Projections orthogonales, traits et cotation",
+          "ordre": 1,
+          "fichier": "dessin/ch01-vues.json",
+          "maj": "2026-10-16",
+          "exemple": true,
+          "nb": {
+            "sections": 4,
+            "flashcards": 8,
+            "exercices": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "elec",
+      "nom": "Électricité",
+      "court": "Électricité",
+      "couleur": "#d97706",
+      "icone": "eclair",
+      "profil": "electricite",
+      "ordre": 3,
+      "chapitres": [
+        {
+          "id": "ch01-ohm",
+          "titre": "Loi d'Ohm, puissance et associations de résistances",
+          "ordre": 1,
+          "fichier": "elec/ch01-ohm.json",
+          "maj": "2026-10-16",
+          "exemple": true,
+          "nb": {
+            "sections": 4,
+            "flashcards": 9,
+            "exercices": 0
+          }
+        }
+      ]
+    }
+  ]
+}
