@@ -1,0 +1,87 @@
+{
+  "format": 1,
+  "id": "ch01-ohm",
+  "matiere": "elec",
+  "titre": "Loi d'Ohm, puissance et associations de résistances",
+  "exemple": true,
+  "source": { "pdf": null, "pages": null, "genereLe": "2026-10-16", "modele": null },
+  "synthese": {
+    "intro": "Les grandeurs électriques de base, la loi d'Ohm, la puissance et l'énergie, puis le calcul de résistances équivalentes.",
+    "sections": [
+      {
+        "id": "s1",
+        "titre": "Grandeurs et unités",
+        "blocs": [
+          {
+            "type": "tableau",
+            "entetes": ["Grandeur", "Symbole", "Unité", "Symbole de l'unité"],
+            "lignes": [
+              ["Tension", "$U$", "volt", "V"],
+              ["Courant (intensité)", "$I$", "ampère", "A"],
+              ["Résistance", "$R$", "ohm", "Ω"],
+              ["Puissance", "$P$", "watt", "W"],
+              ["Énergie", "$W$", "joule (ou wattheure)", "J (ou Wh)"]
+            ],
+            "pages": [1]
+          },
+          { "type": "piege", "contenu": "Ne confonds pas $W$ (l'**énergie**, une grandeur, en italique) et W (le **watt**, une unité). C'est le contexte qui tranche.", "pages": [1] }
+        ]
+      },
+      {
+        "id": "s2",
+        "titre": "Loi d'Ohm",
+        "blocs": [
+          { "type": "formule", "latex": "U = R \\cdot I", "legende": "Loi d'Ohm (pour un récepteur résistif)", "variables": [
+            { "symbole": "U", "nom": "tension", "unite": "V" },
+            { "symbole": "R", "nom": "résistance", "unite": "Ω" },
+            { "symbole": "I", "nom": "courant", "unite": "A" }
+          ], "pages": [2] },
+          { "type": "point-cle", "contenu": "Formes équivalentes : $I = \\dfrac{U}{R}$ et $R = \\dfrac{U}{I}$.", "pages": [2] },
+          { "type": "exemple", "contenu": "Une résistance de $220\\ \\Omega$ alimentée sous $12\\ \\text{V}$ :\n$I = \\dfrac{U}{R} = \\dfrac{12}{220} \\approx 0{,}055\\ \\text{A} = 55\\ \\text{mA}$", "pages": [3] },
+          { "type": "piege", "contenu": "Convertis toujours en unités de base **avant** de calculer : $4{,}7\\ \\text{k}\\Omega = 4\\,700\\ \\Omega$ et $20\\ \\text{mA} = 0{,}020\\ \\text{A}$.", "pages": [3] }
+        ]
+      },
+      {
+        "id": "s3",
+        "titre": "Puissance et énergie",
+        "blocs": [
+          { "type": "formule", "latex": "P = U \\cdot I", "legende": "Puissance électrique (courant continu)", "variables": [
+            { "symbole": "P", "nom": "puissance", "unite": "W" },
+            { "symbole": "U", "nom": "tension", "unite": "V" },
+            { "symbole": "I", "nom": "courant", "unite": "A" }
+          ], "pages": [4] },
+          { "type": "formule", "latex": "P = R \\cdot I^{2} = \\dfrac{U^{2}}{R}", "legende": "Pour une résistance (en combinant avec la loi d'Ohm)", "pages": [4] },
+          { "type": "formule", "latex": "W = P \\cdot t", "legende": "Énergie consommée", "variables": [
+            { "symbole": "W", "nom": "énergie", "unite": "J (ou Wh)" },
+            { "symbole": "P", "nom": "puissance", "unite": "W" },
+            { "symbole": "t", "nom": "durée", "unite": "s (ou h)" }
+          ], "pages": [5] },
+          { "type": "exemple", "contenu": "Un radiateur de $2\\ \\text{kW}$ fonctionne pendant $3\\ \\text{h}$ :\n$W = P \\cdot t = 2 \\times 3 = 6\\ \\text{kWh}$", "pages": [5] },
+          { "type": "point-cle", "contenu": "$1\\ \\text{kWh} = 1\\,000\\ \\text{W} \\times 3\\,600\\ \\text{s} = 3{,}6 \\times 10^{6}\\ \\text{J}$", "pages": [5] }
+        ]
+      },
+      {
+        "id": "s4",
+        "titre": "Associations de résistances",
+        "blocs": [
+          { "type": "formule", "latex": "R_{eq} = R_1 + R_2 + \\dots + R_n", "legende": "Résistances en **série**", "pages": [6] },
+          { "type": "formule", "latex": "\\dfrac{1}{R_{eq}} = \\dfrac{1}{R_1} + \\dfrac{1}{R_2} + \\dots + \\dfrac{1}{R_n}", "legende": "Résistances en **parallèle**", "pages": [6] },
+          { "type": "point-cle", "contenu": "Deux résistances en parallèle : $R_{eq} = \\dfrac{R_1 \\cdot R_2}{R_1 + R_2}$.\nEn parallèle, $R_{eq}$ est toujours **plus petite** que la plus petite des résistances.", "pages": [7] },
+          { "type": "piege", "contenu": "La formule « produit sur somme » ne vaut que pour **deux** résistances. Pour trois ou plus, utilise la somme des inverses.", "pages": [7] }
+        ]
+      }
+    ]
+  },
+  "flashcards": [
+    { "id": "fc-001", "recto": "Énonce la loi d'Ohm.", "verso": "$U = R \\cdot I$", "tags": ["lois"], "page": 2 },
+    { "id": "fc-002", "recto": "Unité et symbole de la résistance ?", "verso": "L'**ohm**, symbole **Ω**.", "tags": ["unités"], "page": 1 },
+    { "id": "fc-003", "recto": "Puissance en fonction de $U$ et $I$ ?", "verso": "$P = U \\cdot I$", "tags": ["puissance"], "page": 4 },
+    { "id": "fc-004", "recto": "Puissance dissipée dans une résistance en fonction de $R$ et $I$ ?", "verso": "$P = R \\cdot I^2$", "tags": ["puissance"], "page": 4 },
+    { "id": "fc-005", "recto": "Combien de joules dans $1\\ \\text{kWh}$ ?", "verso": "$3{,}6 \\times 10^{6}\\ \\text{J}$", "tags": ["unités"], "page": 5 },
+    { "id": "fc-006", "recto": "Résistance équivalente de résistances en **série** ?", "verso": "$R_{eq} = R_1 + R_2 + \\dots$", "tags": ["associations"], "page": 6 },
+    { "id": "fc-007", "recto": "Résistance équivalente de **deux** résistances en **parallèle** ?", "verso": "$R_{eq} = \\dfrac{R_1 \\cdot R_2}{R_1 + R_2}$", "tags": ["associations"], "page": 7 },
+    { "id": "fc-008", "recto": "$10\\ \\Omega$ en parallèle avec $10\\ \\Omega$ donne… ?", "verso": "$5\\ \\Omega$ (deux résistances égales en parallèle : la moitié).", "tags": ["associations"], "page": 7 },
+    { "id": "fc-009", "recto": "Courant dans $220\\ \\Omega$ sous $12\\ \\text{V}$ ?", "verso": "$I = \\dfrac{12}{220} \\approx 55\\ \\text{mA}$", "tags": ["lois"], "page": 3 }
+  ],
+  "exercices": []
+}
