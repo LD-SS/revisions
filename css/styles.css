@@ -401,3 +401,47 @@ kbd{font:12px ui-monospace,Consolas,monospace;border:1px solid var(--border);bor
 @keyframes exIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion: reduce){ .ex-step{animation:none} }
 @media (max-width:640px){ .ex-card{padding:14px 12px} .ex-items{font-size:17px;grid-template-columns:1fr 1fr} .ex-items.seul{grid-template-columns:1fr} }
+
+/* ---------- Planche de dessin (exercices de dessin technique) ---------- */
+.ex-dz{display:block}
+.ex-persp{float:right;width:min(42%,230px);margin:0 0 8px 12px}
+.ex-persp svg{width:100%}
+.ex-persp figcaption{font-size:12px}
+.ex-planche{clear:both;margin-top:8px}
+.pl-outils{display:flex;flex-wrap:wrap;gap:6px 10px;margin-bottom:8px;position:sticky;top:56px;z-index:5;background:var(--panel);padding:6px 0}
+.pl-groupe{display:flex;gap:4px;flex-wrap:wrap}
+.pl-b{padding:5px 8px;min-height:34px;font-size:13px;gap:5px}
+.pl-b.actif{background:var(--mw);border-color:var(--mt);color:var(--mt);font-weight:600}
+.pl-ech{width:30px;height:10px}
+.pl-cadre{overflow:auto;border:1px solid var(--border);border-radius:10px;background:var(--bg);text-align:left;margin:0;max-height:78vh}
+.pl-cadre.pl-pan{cursor:grab}
+.pl-svg{display:block;height:auto;user-select:none;-webkit-user-select:none;cursor:crosshair}
+.pl-pan .pl-svg{cursor:grab}
+.fig svg .pl-grille{stroke:var(--border);stroke-width:1}
+.fig svg .pl-nom{font-size:12px;fill:var(--muted)}
+.fig svg .pl-cible{fill:color-mix(in srgb,var(--mt,var(--accent)) 7%,transparent);stroke:var(--mt,var(--accent));stroke-width:1.5;stroke-dasharray:6 5}
+.fig svg .pl-45{stroke:var(--muted);opacity:.6}
+.fig svg .pl-eleve{stroke:var(--mt,var(--accent))}
+.fig svg .pl-pale{opacity:.35}
+.fig svg .pl-apercu{stroke:var(--mt,var(--accent));opacity:.7}
+.fig svg .pl-pt{fill:var(--mt,var(--accent))}
+.fig svg .pl-mesure{font-size:13px;font-weight:700;fill:var(--mt,var(--accent));paint-order:stroke;stroke:var(--panel);stroke-width:4px}
+.fig svg .pl-ok{stroke:var(--ok)}
+.fig svg .pl-manque{stroke:var(--bad)}
+.fig svg .pl-type{stroke:var(--warn)}
+.fig svg .pl-trop{stroke:#8b5cf6}
+.pl-aide{font-size:12.5px;margin:6px 0 0}
+.ex-bilan{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;padding:10px 12px;border-radius:9px;margin-top:10px;background:var(--panel2)}
+.ex-bilan b{font-size:22px}
+.ex-bilan.ok{background:var(--ok-weak)} .ex-bilan.ok b{color:var(--ok)}
+.ex-bilan.mid{background:var(--warn-weak)} .ex-bilan.mid b{color:var(--warn)}
+.ex-bilan.ko{background:var(--bad-weak)} .ex-bilan.ko b{color:var(--bad)}
+.pl-legende{font-size:13px;margin:6px 0 0}
+.pl-legende label{display:inline-flex;gap:5px;align-items:center;margin-left:8px;cursor:pointer}
+.pl-leg{font-weight:600}
+.pl-leg.ok{color:var(--ok)} .pl-leg.manque{color:var(--bad)} .pl-leg.type{color:var(--warn)} .pl-leg.trop{color:#8b5cf6}
+.fig svg .iso.matiere{stroke:color-mix(in srgb,#f2c94c 55%,var(--panel));stroke-width:.8}
+.fig svg .iso.matiere2{stroke:color-mix(in srgb,#f2c94c 35%,var(--panel));stroke-width:.8}
+.fig svg .iso.matiere3{stroke:color-mix(in srgb,#f2c94c 20%,var(--panel));stroke-width:.8}
+.fig svg .trou-iso{fill:color-mix(in srgb,currentColor 55%,var(--panel))}
+@media (max-width:640px){ .ex-persp{float:none;width:70%;margin:6px auto} .pl-outils{top:52px} .pl-b{font-size:12px;padding:5px 6px} }
