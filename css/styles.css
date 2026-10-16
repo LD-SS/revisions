@@ -352,3 +352,52 @@ kbd{font:12px ui-monospace,Consolas,monospace;border:1px solid var(--border);bor
   .panel{box-shadow:none;border:0;padding:0}
   .bloc{break-inside:avoid}
 }
+
+/* ---------- Exercices (papier + auto-correction) ---------- */
+.ex-points{display:flex;flex-wrap:wrap;gap:5px;margin:-4px 0 12px}
+.ex-pt{width:30px;height:30px;border-radius:8px;border:1px solid var(--border);background:var(--panel);color:var(--muted);font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;padding:0}
+.ex-pt.actif{border:2px solid var(--mt);color:var(--mt)}
+.ex-pt.ok{background:var(--ok-weak);color:var(--ok);border-color:transparent}
+.ex-pt.mid{background:var(--warn-weak);color:var(--warn);border-color:transparent}
+.ex-pt.ko{background:var(--bad-weak);color:var(--bad);border-color:transparent}
+.ex-pt.actif.ok,.ex-pt.actif.mid,.ex-pt.actif.ko{border:2px solid var(--mt)}
+.ex-card{padding:18px 20px}
+.ex-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.ex-head h3{margin:0;font-size:17px}
+.ex-head .grow{flex:1}
+.ex-head .pg{position:static}
+.ex-niv{color:var(--mt);letter-spacing:1px;font-size:14px}
+.badge.ex-ok{background:var(--ok-weak);color:var(--ok);border-color:transparent}
+.badge.ex-mid{background:var(--warn-weak);color:var(--warn);border-color:transparent}
+.badge.ex-ko{background:var(--bad-weak);color:var(--bad);border-color:transparent}
+.ex-consigne{color:var(--muted);margin-bottom:6px}
+.ex-consigne p{margin:0 0 4px}
+.ex-items{list-style:none;margin:6px 0 10px;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px 18px;font-size:18px}
+.ex-items.seul{grid-template-columns:1fr}
+.ex-items li{display:flex;gap:8px;align-items:baseline;min-width:0}
+.ex-items li>div{min-width:0;overflow-x:auto}
+.ex-items p{margin:0}
+.ex-l{font-weight:700;color:var(--mt);flex:none}
+.ex-papier{display:flex;gap:7px;align-items:center;color:var(--muted);font-size:13.5px;margin:6px 0}
+.ex-papier svg{width:16px;height:16px}
+.ex-indice{display:flex;gap:8px;padding:10px 12px;border-radius:9px;background:var(--warn-weak);color:var(--warn);margin:8px 0}
+.ex-indice svg{width:18px;height:18px;flex:none;margin-top:2px}
+.ex-indice p{margin:0}
+.ex-corr{margin-top:12px;border-top:1px dashed var(--border);padding-top:10px}
+.ex-corr h4{display:flex;gap:6px;align-items:center;margin:0 0 8px;color:var(--mt);font-size:14px;text-transform:uppercase;letter-spacing:.05em}
+.ex-corr h4 svg{width:16px;height:16px}
+.ex-sol{display:grid;grid-template-columns:auto 1fr;column-gap:8px;margin-bottom:10px}
+.ex-sol>.ex-l{grid-row:span 50}
+.ex-step{padding:4px 0;font-size:16px;min-width:0;overflow-x:auto;animation:exIn .2s ease-out}
+.ex-step p{margin:0 0 2px}
+.ex-step.rep{background:var(--ok-weak);border-radius:8px;padding:6px 10px;margin-top:2px}
+.ex-rep{display:inline-flex;gap:4px;align-items:center;font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--ok)}
+.ex-rep svg{width:13px;height:13px}
+.ex-q{width:100%;text-align:center;font-weight:600}
+.btn.ex-mid{background:var(--warn-weak);border-color:transparent;color:var(--warn);font-weight:600}
+.btn.ex-mid:hover{border-color:var(--warn)}
+.ex-nav{justify-content:space-between;margin-top:16px}
+.ex-nav .btn{min-width:0}
+@keyframes exIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){ .ex-step{animation:none} }
+@media (max-width:640px){ .ex-card{padding:14px 12px} .ex-items{font-size:17px;grid-template-columns:1fr 1fr} .ex-items.seul{grid-template-columns:1fr} }
