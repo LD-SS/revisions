@@ -7,6 +7,8 @@ import { icone } from '../icones.js';
 import { dateContenu, matieres, chargerChapitre } from '../store.js';
 import { listerPdfs, supprimerPdf, enregistrerPdf, cleFichier, cleSource } from '../pdfs.js';
 import { sourcesDe } from '../synthese.js';
+import { estAuteur, devenirAuteur, boiteActive, ouvrirProposition } from '../proposer.js';
+import { CONFIG } from '../config.js';
 
 /**
  * @param {HTMLElement} el
@@ -45,6 +47,18 @@ export function vueParametres(el, app) {
         <div class="liste-pdf muted">Chargement…</div>
       </div>
 
+
+      <div class="panel" id="boite-idees">
+        <h3>Boîte à idées</h3>
+        <p class="muted">Tout le monde peut proposer une correction ou une amélioration avec le bouton
+        <b>« Proposer »</b> (en haut) ou <b>« Une erreur ? Une idée ? »</b> sous chaque exercice.
+        ${esc(CONFIG.auteur)} reçoit les propositions et décide seul de ce qui est intégré.</p>
+        ${boiteActive() ? '' : '<p class="notice">La boîte à idées n\'est pas encore activée (formulaire à configurer).</p>'}
+        <div class="set-row"><button class="btn" data-action="proposer">Faire une proposition</button></div>
+        <label class="set-row choix-auteur"><input type="checkbox" data-action="auteur" ${estAuteur() ? 'checked' : ''}>
+          C'est moi l'auteur de l'appli (${esc(CONFIG.auteur)}) : masquer les boutons « Proposer » sur cet appareil</label>
+        ${estAuteur() ? '<p class="muted">Les propositions arrivent dans ta boîte e-mail et sur <a href="https://formspree.io/forms" target="_blank" rel="noopener">formspree.io</a>.</p>' : ''}
+      </div>
       <div class="panel">
         <h3>Mes données</h3>
         <p class="muted">Ta progression (flashcards, scores, planning) est enregistrée dans ce navigateur.
@@ -66,7 +80,9 @@ export function vueParametres(el, app) {
 
   el.addEventListener('change', (e) => {
     if (e.target.name === 'theme') app.changerTheme(e.target.value);
+    if (e.target.dataset.action === 'auteur') { devenirAuteur(e.target.checked); toast(e.target.checked ? 'Mode auteur : boutons « Proposer » masqués sur cet appareil' : 'Boutons « Proposer » affichés'); }
   });
+  el.querySelector('[data-action="proposer"]').addEventListener('click', () => ouvrirProposition('amelioration'));
   activerPdfs(el.querySelector('#mes-pdf'));
   el.querySelector('[data-action="maj"]').addEventListener('click', async () => {
     try {
