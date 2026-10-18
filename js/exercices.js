@@ -15,6 +15,7 @@ import { icone } from './icones.js';
 import { texte, enLigne } from './rendu.js';
 import { badgeSource } from './synthese.js';
 import { monterPlanche } from './planche.js';
+import { definirExerciceCourant, ouvrirProposition, estAuteur, boiteActive } from './proposer.js';
 import { svgSur } from './rendu.js';
 
 const NOTES = { ok: { lib: 'Juste', val: 1 }, mid: { lib: 'Presque', val: 0.5 }, ko: { lib: 'Faux', val: 0 } };
@@ -104,6 +105,8 @@ export function lecteurExercices(conteneur, tous, options = {}) {
     conteneur.innerHTML = `<div class="fc-wrap ex-wrap">${barre}${n ? carte(etat.liste[etat.pos], t) : `
       <div class="panel empty"><p class="muted">Aucun exercice pour ce filtre.</p>
       <button class="btn" data-action="tous">Voir tous les exercices</button></div>`}</div>`;
+    const ec = etat.liste[etat.pos];
+    definirExerciceCourant(ec ? { id: ec.id, titre: ec.titre, num: tous.indexOf(ec) + 1 } : null);
     monter();
   }
 
@@ -149,6 +152,7 @@ export function lecteurExercices(conteneur, tous, options = {}) {
         </div>
         <div class="fc-actions ex-nav">
           <button class="btn icon" data-action="prec" title="Exercice précédent" ${etat.pos === 0 ? 'disabled' : ''}>${icone('fleche-g')}</button>
+          ${estAuteur() || !boiteActive() ? '' : `<button class="btn ex-prop" data-action="proposer" title="Signaler une erreur ou proposer une amélioration pour cet exercice">${icone('ampoule')}<span>Une erreur ? Une idée ?</span></button>`}
           <button class="btn" data-action="suiv" ${etat.pos >= etat.liste.length - 1 ? 'disabled' : ''}>Passer ${icone('fleche-d')}</button>
         </div>
       </div>`;
@@ -191,6 +195,7 @@ export function lecteurExercices(conteneur, tous, options = {}) {
         </div>
         <div class="fc-actions ex-nav">
           <button class="btn icon" data-action="prec" title="Exercice précédent" ${etat.pos === 0 ? 'disabled' : ''}>${icone('fleche-g')}</button>
+          ${estAuteur() || !boiteActive() ? '' : `<button class="btn ex-prop" data-action="proposer" title="Signaler une erreur ou proposer une amélioration pour cet exercice">${icone('ampoule')}<span>Une erreur ? Une idée ?</span></button>`}
           <button class="btn" data-action="suiv" ${etat.pos >= etat.liste.length - 1 ? 'disabled' : ''}>Passer ${icone('fleche-d')}</button>
         </div>
       </div>`;
@@ -223,6 +228,7 @@ export function lecteurExercices(conteneur, tous, options = {}) {
   const actions = {
     etape: () => { etat.vus++; afficher(); conteneur.querySelector('.ex-step:last-child')?.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); },
     verifier: () => { etat.vus = 1; afficher(); conteneur.querySelector('[data-res]')?.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); },
+    proposer: () => ouvrirProposition('erreur'),
     retoucher: () => { etat.vus = 0; afficher(); },
     tout: () => { etat.vus = etapes(etat.liste[etat.pos]).length; afficher(); },
     indice: () => { etat.indice = true; afficher(); },

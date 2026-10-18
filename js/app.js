@@ -18,8 +18,9 @@ import { vueAccueil } from './vues/accueil.js';
 import { vueMatiere } from './vues/matiere.js';
 import { vueChapitre } from './vues/chapitre.js';
 import { vueParametres } from './vues/parametres.js';
+import { majBoutonProposer, viderAttente } from './proposer.js';
 
-const VERSION = '0.4.0 (dessin dans l’appli)';
+const VERSION = '0.5.0 (dessin + boîte à idées)';
 const vue = document.getElementById('vue');
 let nettoyer = null; // fonction fournie par la page affichée, appelée avant d'en changer
 
@@ -122,6 +123,8 @@ document.addEventListener('keydown', detailSource, true);
 /* ---------- Démarrage ---------- */
 async function demarrer() {
   document.getElementById('brand-logo').innerHTML = icone('logo');
+  majBoutonProposer();
+  setTimeout(viderAttente, 3000);
   majBoutonTheme();
   try {
     await chargerIndex();
