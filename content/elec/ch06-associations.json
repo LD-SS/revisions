@@ -542,5 +542,134 @@
    "doc": "resist"
   }
  ],
- "exercices": []
+ "exercices": [
+  {
+   "id": "ex-01",
+   "titre": "Trois résistances « cachées » en parallèle",
+   "niveau": 2,
+   "items": [
+    {
+     "q": "Courant débité sous 30 V",
+     "r": "$R_t = 33{,}3\\ \\Omega$ ; $I = 0{,}9\\ \\text{A}$",
+     "etapes": [
+      "Les fils relient A au sommet et B au bas du losange : les 3 résistances vont toutes de A à B → parallèle.",
+      "$R_t = 100/3$ ; $I = 30 / 33{,}3$"
+     ]
+    }
+   ],
+   "page": 5,
+   "consigne": "📄 **Schéma : PDF « Exercices », page 5** (touche le badge en haut à droite de l'exercice pour l'ouvrir). 3 résistances de 100 Ω (losange).",
+   "doc": "exo",
+   "indice": "Suis les fils : deux points reliés par un fil sont le même nœud."
+  },
+  {
+   "id": "ex-02",
+   "titre": "Réq avec des fils de court-circuit",
+   "niveau": 2,
+   "items": [
+    {
+     "q": "$R_{eq}$ entre A et B ($R = 100\\ \\Omega$)",
+     "r": "$R_{eq} = 33{,}33\\ \\Omega$",
+     "etapes": [
+      "Les fils relient A à C et B à D : il ne reste que 2 nœuds.",
+      "Les 3 résistances sont toutes entre ces 2 nœuds : $100/3$"
+     ]
+    }
+   ],
+   "page": 5,
+   "consigne": "📄 **Schéma : PDF « Exercices », page 5** (touche le badge en haut à droite de l'exercice pour l'ouvrir).",
+   "doc": "exo"
+  },
+  {
+   "id": "ex-03",
+   "titre": "Tension pour 1 kW",
+   "niveau": 2,
+   "items": [
+    {
+     "q": "$R_t$",
+     "r": "$R_t = 600\\ \\Omega$",
+     "etapes": [
+      "2 R en parallèle : 500 Ω ; + 1 R en série : 1 500 Ω ; // la 4e R : $\\dfrac{1\\,500 \\times 1\\,000}{2\\,500}$"
+     ]
+    },
+    {
+     "q": "$I$ et $U$ pour $P = 1$ kW",
+     "r": "$I ≈ 1{,}29$ A ; $U ≈ 774{,}6$ V",
+     "etapes": [
+      "$P = R I^2$ → $I = \\sqrt{1\\,000 / 600}$",
+      "$U = \\sqrt{P \\cdot R} = \\sqrt{600\\,000}$"
+     ]
+    }
+   ],
+   "page": 5,
+   "consigne": "📄 **Schéma : PDF « Exercices », page 5** (touche le badge en haut à droite de l'exercice pour l'ouvrir). 4 résistances de 1 kΩ.",
+   "doc": "exo"
+  },
+  {
+   "id": "ex-04",
+   "titre": "Réseau en échelle (R/2, 2R)",
+   "niveau": 3,
+   "items": [
+    {
+     "q": "$R_{eq}$ entre A1 et A2",
+     "r": "$R_{eq} = 2R$",
+     "etapes": [
+      "En partant de la droite : 2R // 2R = R",
+      "+ R/2 + R/2 = 2R ; // 2R = R",
+      "+ R/2 + R/2 = 2R"
+     ]
+    }
+   ],
+   "page": 5,
+   "consigne": "📄 **Schéma : PDF « Exercices », page 5** (touche le badge en haut à droite de l'exercice pour l'ouvrir).",
+   "doc": "exo",
+   "indice": "Pour une échelle, on réduit toujours depuis le bout opposé aux bornes."
+  },
+  {
+   "id": "ex-05",
+   "titre": "Grande échelle",
+   "niveau": 3,
+   "items": [
+    {
+     "q": "$R_{eq}$ entre A et B",
+     "r": "$R_{eq} ≈ 4{,}67\\,R$",
+     "etapes": [
+      "Les deux R tout à droite ne mènent nulle part (circuit ouvert) : on les ignore.",
+      "2R ; + 2R + 2R = 6R ; // 6R = 3R",
+      "+ 2R + 2R = 7R ; // 7R = 3,5R",
+      "+ 1,5R + 3R = 8R ; // 4R = 2,67R",
+      "+ R + R = 4,67R"
+     ]
+    }
+   ],
+   "page": 5,
+   "consigne": "📄 **Schéma : PDF « Exercices », page 5** (touche le badge en haut à droite de l'exercice pour l'ouvrir).",
+   "doc": "exo"
+  },
+  {
+   "id": "ex-06",
+   "titre": "Pont équilibré à 12 résistances",
+   "niveau": 3,
+   "items": [
+    {
+     "q": "Indication de M1",
+     "r": "$U_{M1} = 0\\ \\text{V}$",
+     "etapes": [
+      "Le montage est parfaitement symétrique : les deux bornes de M1 sont au même potentiel."
+     ]
+    },
+    {
+     "q": "Indication de M2 (courant débité)",
+     "r": "$R_t ≈ 1\\,333\\ \\Omega$ ; $I_g = 22{,}5\\ \\text{mA}$",
+     "etapes": [
+      "Comme M1 ne voit aucune tension, on peut l'enlever et réduire le réseau.",
+      "$I_g = 30 / 1\\,333$"
+     ]
+    }
+   ],
+   "page": 5,
+   "consigne": "📄 **Schéma : PDF « Exercices », page 5** (touche le badge en haut à droite de l'exercice pour l'ouvrir). 12 résistances de 2 kΩ ; $U_g = 30$ V.",
+   "doc": "exo"
+  }
+ ]
 }

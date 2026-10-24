@@ -408,5 +408,77 @@
    "doc": "resist"
   }
  ],
- "exercices": []
+ "exercices": [
+  {
+   "id": "ex-01",
+   "titre": "Loi d'Ohm avec trois sources",
+   "niveau": 2,
+   "items": [
+    {
+     "q": "Tensions aux bornes des 3 résistances",
+     "r": "$U_{AD} = 10$ V ; $U_{BC} = 5$ V ; $U_{AB} = 5$ V",
+     "etapes": [
+      "Ici E3 a son − vers les piles : $V_M - V_D = -5$ V.",
+      "$U_{AD} = 15 - 5$ ; $U_{BC} = 10 - 5$ ; $U_{AB} = 15 - 10$"
+     ]
+    },
+    {
+     "q": "Courants dans les 3 résistances (1 kΩ)",
+     "r": "$I_2 = 10$ mA ; $I_3 = 5$ mA ; $I_1 = 5$ mA",
+     "etapes": [
+      "$I = U/R$ : $10\\ \\text{V}/1\\ \\text{k}\\Omega = 10$ mA, etc."
+     ]
+    }
+   ],
+   "page": 2,
+   "consigne": "📄 **Schéma : PDF « Exercices », page 2** (touche le badge en haut à droite de l'exercice pour l'ouvrir). (dernier schéma de la page : attention, E3 est retournée par rapport à l'exercice 8).",
+   "doc": "exo"
+  },
+  {
+   "id": "ex-02",
+   "titre": "Circuit série-parallèle complet",
+   "niveau": 2,
+   "items": [
+    {
+     "q": "$R_T$ vue par E",
+     "r": "$R_T = 1{,}5\\ \\text{k}\\Omega$",
+     "etapes": [
+      "$R_4 + R_5 = 1$ kΩ",
+      "$R_2 /\\!/ R_3 /\\!/ 1\\ \\text{k}\\Omega$ : 2 k // 2 k = 1 k, puis 1 k // 1 k = 0,5 k",
+      "$R_T = R_1 + 0{,}5 = 1{,}5$ kΩ"
+     ]
+    },
+    {
+     "q": "Courant $I$ fourni par E",
+     "r": "$I = 10\\ \\text{mA}$",
+     "etapes": [
+      "$15\\ \\text{V} / 1{,}5\\ \\text{k}\\Omega$"
+     ]
+    },
+    {
+     "q": "$U_3$, $U_4$, $U_5$",
+     "r": "$U_3 = 5$ V ; $U_4 = 3{,}75$ V ; $U_5 = 1{,}25$ V",
+     "etapes": [
+      "$U_{R1} = 1\\ \\text{k}\\Omega \\times 10\\ \\text{mA} = 10$ V → il reste 5 V sur le bloc parallèle",
+      "Branche R5+R4 : 5 mA → $U_4 = 0{,}75 \\times 5$ ; $U_5 = 0{,}25 \\times 5$"
+     ]
+    },
+    {
+     "q": "Courants dans chaque branche",
+     "r": "$I_{R2} = I_{R3} = 2{,}5$ mA ; $I_{R4} = I_{R5} = 5$ mA"
+    },
+    {
+     "q": "Puissance dans chaque résistance",
+     "r": "$P_{R1} = 100$ ; $P_{R2} = P_{R3} = 12{,}5$ ; $P_{R4} = 18{,}75$ ; $P_{R5} = 6{,}25$ (mW) ; total 150 mW",
+     "etapes": [
+      "$P = U \\cdot I$ ou $P = R I^2$",
+      "Contrôle : $P_g = E \\cdot I = 15 \\times 10 = 150$ mW"
+     ]
+    }
+   ],
+   "page": 5,
+   "consigne": "📄 **Schéma : PDF « Exercices », page 5** (touche le badge en haut à droite de l'exercice pour l'ouvrir). $E = 15$ V ; $R_1 = 1$ k ; $R_2 = R_3 = 2$ k ; $R_4 = 0{,}75$ k ; $R_5 = 0{,}25$ k.",
+   "doc": "exo"
+  }
+ ]
 }

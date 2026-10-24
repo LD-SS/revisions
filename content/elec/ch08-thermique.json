@@ -463,5 +463,200 @@
    "doc": "puiss"
   }
  ],
- "exercices": []
+ "exercices": [
+  {
+   "id": "ex-01",
+   "titre": "Bouilloire",
+   "niveau": 1,
+   "items": [
+    {
+     "q": "Temps pour chauffer 1 L de 14 à 100 °C",
+     "r": "$t ≈ 184$ s ≈ 3 min 4 s",
+     "etapes": [
+      "$P = U^2/R = 230^2/27 ≈ 1\\,959$ W",
+      "$Q = 4{,}186 \\times 1 \\times 86 ≈ 360$ kJ (≈ 0,1 kWh)",
+      "$t = Q/P$"
+     ]
+    }
+   ],
+   "page": 7,
+   "consigne": "$U = 230$ V ; $R = 27\\ \\Omega$ ; $c = 4{,}186$ kJ/(°C·L).",
+   "doc": "exo"
+  },
+  {
+   "id": "ex-02",
+   "titre": "Chaleur massique du bois",
+   "niveau": 1,
+   "items": [
+    {
+     "q": "$c$ du bois",
+     "r": "$c ≈ 1{,}744$ kJ/(kg·°C)",
+     "etapes": [
+      "$c = \\dfrac{Q}{m \\cdot \\Delta T} = \\dfrac{41{,}85}{1 \\times 24}$"
+     ]
+    }
+   ],
+   "page": 7,
+   "consigne": "41,85 kJ chauffent 1 kg de bois de 20 à 44 °C.",
+   "doc": "exo"
+  },
+  {
+   "id": "ex-03",
+   "titre": "Chauffe-eau 200 L",
+   "niveau": 2,
+   "items": [
+    {
+     "q": "Temps de chauffe (15 → 65 °C)",
+     "r": "$t ≈ 17\\,417$ s = 4 h 50 min 17 s",
+     "etapes": [
+      "$Q = 200 \\times 4{,}18 \\times 50 = 41\\,800$ kJ",
+      "$t = 41{,}8 \\times 10^6 / 2\\,400$"
+     ]
+    },
+    {
+     "q": "Résistance et intensité",
+     "r": "$I ≈ 10{,}91$ A ; $R ≈ 20{,}17\\ \\Omega$",
+     "etapes": [
+      "$I = 2\\,400/220$",
+      "$R = U/I$"
+     ]
+    }
+   ],
+   "page": 7,
+   "consigne": "$P = 2\\,400$ W ; 220 V ; 200 L ; $c = 4{,}18$ kJ/(°C·L) ; pas de pertes.",
+   "doc": "exo"
+  },
+  {
+   "id": "ex-04",
+   "titre": "Coût d'un chauffe-eau 300 L",
+   "niveau": 2,
+   "items": [
+    {
+     "q": "Coût annuel",
+     "r": "≈ 1 412 €/an",
+     "etapes": [
+      "$W_u = 300 \\times 4{,}186 \\times 30 = 37\\,674$ kJ = 10,47 kWh",
+      "$W_a = W_u / 0{,}92 = 11{,}37$ kWh/jour",
+      "× 365 × 0,34 €"
+     ]
+    },
+    {
+     "q": "Durée quotidienne de chauffe",
+     "r": "6 h 30 min",
+     "etapes": [
+      "$11{,}37 / 1{,}75 = 6{,}5$ h"
+     ]
+    }
+   ],
+   "page": 7,
+   "consigne": "1 750 W ; 230 V ; eau de 35 à 65 °C chaque jour ; rendement 92 % ; 0,34 €/kWh.",
+   "doc": "exo"
+  },
+  {
+   "id": "ex-05",
+   "titre": "Cuve d'huile industrielle",
+   "niveau": 3,
+   "items": [
+    {
+     "q": "Énergie et puissance",
+     "r": "$W = 1\\,863$ MJ = 517,5 kWh ; $P = 103{,}5$ kW",
+     "etapes": [
+      "$m = 5 \\times 900 = 4\\,500$ kg",
+      "$W = 4\\,500 \\times 1{,}8 \\times 230$ kJ",
+      "$P = 517{,}5 / 5$ h"
+     ]
+    },
+    {
+     "q": "Valeur de chaque résistance (5 en parallèle, 400 V)",
+     "r": "$R ≈ 7{,}73\\ \\Omega$",
+     "etapes": [
+      "Par résistance : $20{,}7$ kW → $I = 20\\,700/400 = 51{,}75$ A",
+      "$R = 400 / 51{,}75$"
+     ]
+    },
+    {
+     "q": "Courant total",
+     "r": "$I ≈ 258{,}75$ A",
+     "etapes": [
+      "$5 \\times 51{,}75$"
+     ]
+    }
+   ],
+   "page": 7,
+   "consigne": "5 m³ d'huile (900 kg/m³ ; 1,8 kJ/(kg·°C)) de 20 à 250 °C en 5 h ; 400 V.",
+   "doc": "exo"
+  },
+  {
+   "id": "ex-06",
+   "titre": "Brame d'acier",
+   "niveau": 3,
+   "items": [
+    {
+     "q": "Courant sous 500 V",
+     "r": "$I ≈ 32$ kA",
+     "etapes": [
+      "$V = 12 \\times 1 \\times 0{,}2 = 2{,}4$ m³ → $m = 18\\,840$ kg",
+      "$W = 18\\,840 \\times 450 \\times 1\\,130 ≈ 9{,}58 \\times 10^9$ J (2,66 MWh)",
+      "$P = W / 600\\ \\text{s} ≈ 15{,}97$ MW ; $I = P/500$"
+     ]
+    },
+    {
+     "q": "Courant sous 10 kV",
+     "r": "$I ≈ 1{,}6$ kA",
+     "etapes": [
+      "$15{,}97 \\times 10^6 / 10\\,000$"
+     ]
+    }
+   ],
+   "page": 8,
+   "consigne": "Acier : 7 850 kg/m³ ; 450 J/(kg·°C) ; de 20 à 1 150 °C en 10 min.",
+   "doc": "exo"
+  },
+  {
+   "id": "ex-07",
+   "titre": "Piscine chauffée",
+   "niveau": 3,
+   "items": [
+    {
+     "q": "Énergie par jour pour rester à 28 °C",
+     "r": "≈ 27,9 kWh",
+     "etapes": [
+      "$V = \\pi \\times 1{,}8^2 \\times 1{,}18 ≈ 12{,}0$ m³",
+      "$W = 12\\,011 \\times 4{,}185 \\times 2$ kJ"
+     ]
+    },
+    {
+     "q": "Puissance moyenne",
+     "r": "≈ 1,16 kW",
+     "etapes": [
+      "27,9 / 24"
+     ]
+    },
+    {
+     "q": "Coût sur 90 jours (0,38 €/kWh)",
+     "r": "≈ 955 €",
+     "etapes": [
+      "27,9 × 90 × 0,38"
+     ]
+    },
+    {
+     "q": "Coût pour passer de 12 à 28 °C",
+     "r": "≈ 223 kWh ≈ 85 €",
+     "etapes": [
+      "$12\\,011 \\times 4{,}185 \\times 16$ kJ"
+     ]
+    },
+    {
+     "q": "Durée avec 3 kW",
+     "r": "≈ 74,5 h ≈ 3 j 2 h 28 min",
+     "etapes": [
+      "223,4 / 3"
+     ]
+    }
+   ],
+   "page": 8,
+   "consigne": "Diamètre 3,60 m ; hauteur 1,18 m ; eau 4,185 kJ/(kg·°C) ; perte de 2 °C par jour.",
+   "doc": "exo"
+  }
+ ]
 }

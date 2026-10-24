@@ -556,5 +556,380 @@
    "doc": "puiss"
   }
  ],
- "exercices": []
+ "exercices": [
+  {
+   "id": "ex-01",
+   "titre": "Radiateur et compteur",
+   "niveau": 1,
+   "items": [
+    {
+     "q": "Énergie consommée",
+     "r": "$W = 7{,}5$ kWh = 7 500 Wh = 27 MJ",
+     "etapes": [
+      "$241{,}5 - 234 = 7{,}5$ kWh",
+      "1 kWh = 3,6 MJ"
+     ]
+    },
+    {
+     "q": "Puissance du radiateur",
+     "r": "$P = 3\\ \\text{kW}$",
+     "etapes": [
+      "$P = W/t = 7{,}5\\ \\text{kWh} / 2{,}5\\ \\text{h}$ (150 min)"
+     ]
+    }
+   ],
+   "page": 6,
+   "consigne": "Un radiateur fonctionne 150 min ; le compteur passe de 234 kWh à 241,5 kWh.",
+   "doc": "exo"
+  },
+  {
+   "id": "ex-02",
+   "titre": "Rendement d'un moteur (CV)",
+   "niveau": 1,
+   "items": [
+    {
+     "q": "Rendement",
+     "r": "$\\eta ≈ 88{,}3\\ \\%$",
+     "etapes": [
+      "$P_u = 84 \\times 736 = 61\\,824$ W",
+      "$\\eta = \\dfrac{61\\,824}{70\\,000}$"
+     ]
+    }
+   ],
+   "page": 6,
+   "consigne": "Un moteur absorbe 70 kW et développe 84 CV (1 CV = 736 W).",
+   "doc": "exo"
+  },
+  {
+   "id": "ex-03",
+   "titre": "Radiateur 230 V",
+   "niveau": 2,
+   "items": [
+    {
+     "q": "Énergie en 20 min",
+     "r": "1,5 kWh = 1 500 Wh = 5,4 MJ",
+     "etapes": [
+      "$27\\,996{,}8 - 27\\,995{,}3$"
+     ]
+    },
+    {
+     "q": "Énergie en 1 h",
+     "r": "4,5 kWh = 16,2 MJ",
+     "etapes": [
+      "× 3"
+     ]
+    },
+    {
+     "q": "Puissance et courant",
+     "r": "$P = 4{,}5$ kW ; $I ≈ 19{,}6$ A",
+     "etapes": [
+      "$I = 4\\,500/230$"
+     ]
+    },
+    {
+     "q": "4 résistances identiques en dérivation : valeur de chacune",
+     "r": "$R_{eq} ≈ 11{,}8\\ \\Omega$ → $R ≈ 47\\ \\Omega$",
+     "etapes": [
+      "$R_{eq} = U^2/P = 230^2 / 4\\,500$",
+      "4 R identiques en parallèle : $R_{eq} = R/4$ → $R = 4 \\times 11{,}76$",
+      "Remarque : le corrigé du PDF donne 21,75 Ω et 87 Ω, ce qui correspondrait à ≈ 2,4 kW et non 4,5 kW."
+     ]
+    }
+   ],
+   "page": 6,
+   "consigne": "Compteur : 27 995,3 kWh → 27 996,8 kWh après 20 min ; tension 230 V.",
+   "doc": "exo"
+  },
+  {
+   "id": "ex-04",
+   "titre": "Rendement à partir de l'énergie",
+   "niveau": 1,
+   "items": [
+    {
+     "q": "Moteur 16,5 kW, 360 MJ en 5 h",
+     "r": "$\\eta = 82{,}5\\ \\%$",
+     "etapes": [
+      "$P_a = \\dfrac{360 \\times 10^6}{5 \\times 3\\,600} = 20$ kW",
+      "$\\eta = 16{,}5 / 20$"
+     ]
+    },
+    {
+     "q": "Moteur 9 kW, 92 kWh en 8 h",
+     "r": "$\\eta ≈ 78{,}3\\ \\%$",
+     "etapes": [
+      "$P_a = 92/8 = 11{,}5$ kW",
+      "$\\eta = 9 / 11{,}5$"
+     ]
+    }
+   ],
+   "page": 6,
+   "doc": "exo"
+  },
+  {
+   "id": "ex-05",
+   "titre": "Alternateur",
+   "niveau": 2,
+   "items": [
+    {
+     "q": "Puissances utile et absorbée",
+     "r": "$P_u = 2\\,040$ kW ; $P_a = 2\\,400$ kW = 2,4 MW",
+     "etapes": [
+      "$P_u = 16\\,320/8$",
+      "$P_a = P_u / 0{,}85$"
+     ]
+    },
+    {
+     "q": "Courant sur un réseau 1 000 V",
+     "r": "$I = 2\\,040\\ \\text{A}$",
+     "etapes": [
+      "$I = P_u / U$"
+     ]
+    },
+    {
+     "q": "Résistance globale du circuit",
+     "r": "$R ≈ 0{,}49\\ \\Omega$",
+     "etapes": [
+      "$R = U/I = 1\\,000 / 2\\,040$"
+     ]
+    }
+   ],
+   "page": 6,
+   "consigne": "Rendement 85 % ; fournit 16 320 kWh en 8 h.",
+   "doc": "exo"
+  },
+  {
+   "id": "ex-06",
+   "titre": "Durée de vie d'une pile bouton",
+   "niveau": 1,
+   "items": [
+    {
+     "q": "Durée de vie",
+     "r": "$t ≈ 10\\,000$ h",
+     "etapes": [
+      "$P = U \\cdot I = 3 \\times 6{,}67 \\times 10^{-6} = 20\\ \\mu$W",
+      "$t = W/P = 0{,}2 / 20 \\times 10^{-6}$"
+     ]
+    }
+   ],
+   "page": 6,
+   "consigne": "Pile 0,20 Wh ; 3 V ; 6,6667 μA.",
+   "doc": "exo"
+  },
+  {
+   "id": "ex-07",
+   "titre": "Circuit consommant 1,5 kWh",
+   "niveau": 2,
+   "items": [
+    {
+     "q": "$U_{AB}$ et courant",
+     "r": "$P = 150$ W ; $I = 0{,}5$ A ; $U = 300$ V",
+     "etapes": [
+      "Même circuit qu'à l'ex. 50 : $R_t = 600\\ \\Omega$",
+      "$P = 1{,}5\\ \\text{kWh} / 10\\ \\text{h} = 150$ W",
+      "$I = \\sqrt{P/R} = \\sqrt{0{,}25}$ ; $U = R I$"
+     ]
+    }
+   ],
+   "page": 6,
+   "consigne": "📄 **Schéma : PDF « Exercices », page 6** (touche le badge en haut à droite de l'exercice pour l'ouvrir). 4 résistances de 1 kΩ ; 1,5 kWh en 600 minutes (W = 5,4 MJ).",
+   "doc": "exo"
+  },
+  {
+   "id": "ex-08",
+   "titre": "Chauffe-eau 1 760 W",
+   "niveau": 1,
+   "items": [
+    {
+     "q": "Valeur ohmique",
+     "r": "$R ≈ 30\\ \\Omega$",
+     "etapes": [
+      "$R = U^2/P = 230^2 / 1\\,760$"
+     ]
+    },
+    {
+     "q": "Courant absorbé",
+     "r": "$I ≈ 7{,}65\\ \\text{A}$",
+     "etapes": [
+      "$I = P/U$"
+     ]
+    },
+    {
+     "q": "Coût annuel (6 h/j, 0,35 €/kWh)",
+     "r": "≈ 1 349 €/an",
+     "etapes": [
+      "$W = 1{,}76 \\times 6 \\times 365 = 3\\,854{,}4$ kWh",
+      "× 0,35 €"
+     ]
+    }
+   ],
+   "page": 6,
+   "doc": "exo"
+  },
+  {
+   "id": "ex-09",
+   "titre": "Batterie d'accumulateurs 48 V",
+   "niveau": 2,
+   "items": [
+    {
+     "q": "Caractéristiques globales",
+     "r": "$U = 48$ V ; $Q = 75$ Ah",
+     "etapes": [
+      "4 accus en série (4 × 12 V) et 3 branches en parallèle (3 × 25 Ah) — voir figure."
+     ]
+    },
+    {
+     "q": "Énergie disponible",
+     "r": "$W = 3{,}6$ kWh",
+     "etapes": [
+      "$W = U \\cdot Q = 48 \\times 75$ Wh"
+     ]
+    },
+    {
+     "q": "Durée de décharge à 1 A",
+     "r": "$t = 75$ h",
+     "etapes": [
+      "$t = Q/I$"
+     ]
+    }
+   ],
+   "page": 6,
+   "consigne": "📄 **Schéma : PDF « Exercices », page 6** (touche le badge en haut à droite de l'exercice pour l'ouvrir). Accus : 25 Ah, 12 V.",
+   "doc": "exo"
+  },
+  {
+   "id": "ex-10",
+   "titre": "Écran TV et veille",
+   "niveau": 2,
+   "items": [
+    {
+     "q": "Énergie annuelle et coût d'un écran",
+     "r": "≈ 99,9 kWh/an ≈ 33 €/an",
+     "etapes": [
+      "Par jour : 225 Wh (4,5 h) + 2,5 W × 19,5 h = 273,75 Wh",
+      "× 365 = 99,9 kWh ; × 0,33 €"
+     ]
+    },
+    {
+     "q": "7,5 millions d'écrans en veille : puissance et énergie annuelle",
+     "r": "18,75 MW ; ≈ 133,5 GWh/an",
+     "etapes": [
+      "$7{,}5 \\times 10^6 \\times 2{,}5$ W",
+      "× 19,5 h × 365 j"
+     ]
+    }
+   ],
+   "page": 7,
+   "doc": "exo"
+  },
+  {
+   "id": "ex-11",
+   "titre": "Chaîne énergétique",
+   "niveau": 2,
+   "items": [
+    {
+     "q": "$P_1$ et $P_3$",
+     "r": "$P_3 = 75$ kW ; $P_1 ≈ 248{,}5$ kW",
+     "etapes": [
+      "$\\eta_3 = 1$ → $P_3 = P_4$",
+      "$P_1 = P_2 / \\eta_1 = 82 / 0{,}33$"
+     ]
+    },
+    {
+     "q": "$\\eta_2$",
+     "r": "$\\eta_2 ≈ 91{,}5\\ \\%$",
+     "etapes": [
+      "$\\eta_2 = P_3/P_2 = 75/82$"
+     ]
+    },
+    {
+     "q": "Rendement global (2 méthodes)",
+     "r": "$\\eta_{tot} ≈ 30\\ \\%$",
+     "etapes": [
+      "$P_4 / P_1 = 75 / 248{,}5$",
+      "$\\eta_1 \\cdot \\eta_2 \\cdot \\eta_3 = 0{,}33 \\times 0{,}915 \\times 1$"
+     ]
+    }
+   ],
+   "page": 7,
+   "consigne": "Centrale (η1) → transport (η2) → convecteur (η3). $P_2 = 82$ kW, $P_4 = 75$ kW, $\\eta_1 = 33\\ \\%$, $\\eta_3 = 1$.",
+   "doc": "exo"
+  },
+  {
+   "id": "ex-12",
+   "titre": "Circuit à 11 résistances",
+   "niveau": 3,
+   "items": [
+    {
+     "q": "$R_3$, $R_{11}$, $R_{10}$",
+     "r": "$R_3 = 200\\ \\Omega$ ; $R_{11} ≈ 33{,}3\\ \\Omega$ ; $R_{10} ≈ 6{,}36\\ \\Omega$",
+     "etapes": [
+      "$R_3 = 3{,}2\\ \\text{V} / 16$ mA",
+      "$R_{11} = 0{,}8\\ \\text{V} / 24$ mA",
+      "Branche R9+R10 : 0,8 V et 22 mA → $R_9 + R_{10} = 36{,}36\\ \\Omega$ → $R_{10} = 36{,}36 - 30$"
+     ]
+    },
+    {
+     "q": "Tension E",
+     "r": "$E ≈ 30{,}04\\ \\text{V}$",
+     "etapes": [
+      "Courant total : 22 + 24 = 46 mA",
+      "$E = 0{,}046 \\times (220 + 220) + 5 + 4 + 0{,}8$ (R1, R2, bloc R3-R6, R8, R11)"
+     ]
+    },
+    {
+     "q": "Puissance et énergie sur un an (24/7)",
+     "r": "$P ≈ 1{,}38$ W ; $W ≈ 12{,}1$ kWh ≈ 43,6 MJ",
+     "etapes": [
+      "$P = E \\cdot I = 30{,}04 \\times 0{,}046$",
+      "× 8 760 h"
+     ]
+    },
+    {
+     "q": "Durée pour consommer 1 kWh",
+     "r": "≈ 723,7 h ≈ 30 j 3 h 40 min",
+     "etapes": [
+      "$1\\,000 / 1{,}382$"
+     ]
+    }
+   ],
+   "page": 9,
+   "consigne": "📄 **Schéma : PDF « Exercices », page 9** (touche le badge en haut à droite de l'exercice pour l'ouvrir).",
+   "doc": "exo"
+  },
+  {
+   "id": "ex-13",
+   "titre": "Réseau à 13 dipôles",
+   "niveau": 3,
+   "items": [
+    {
+     "q": "$U_g$ (entre A et B)",
+     "r": "$U_g = 25\\ \\text{V}$",
+     "etapes": [
+      "Chemin A → 1 → haut → 2 → nœud du bas : $V_N = V_A - 10$ V",
+      "Puis R5 (5 V) et R6 (10 V) jusqu'à B : $V_B = V_A - 25$ V"
+     ]
+    },
+    {
+     "q": "Courant $I_g$",
+     "r": "$I_g = 1{,}1\\ \\text{A}$",
+     "etapes": [
+      "En A sortent : 0,5 A (vers 13) + 0,5 A (vers 11) + 0,1 A (qui remonte dans 1)",
+      "Contrôle en B : 0,75 A (par 6 et 7) + 0,35 A (par 9) = 1,1 A"
+     ]
+    },
+    {
+     "q": "Durée pour consommer 1 kWh",
+     "r": "$P = 27{,}5$ W → ≈ 36,4 h ≈ 1 j 12 h 22 min",
+     "etapes": [
+      "$1\\,000 / 27{,}5$",
+      "Le corrigé du PDF note « Ig = 100 mA » : avec les valeurs du schéma, la loi des nœuds donne 1,1 A."
+     ]
+    }
+   ],
+   "page": 10,
+   "consigne": "📄 **Schéma : PDF « Exercices », page 10** (touche le badge en haut à droite de l'exercice pour l'ouvrir).",
+   "doc": "exo",
+   "indice": "Fais d'abord le bilan des courants à chaque nœud du haut (le fil entre les nœuds porte aussi un courant)."
+  }
+ ]
 }

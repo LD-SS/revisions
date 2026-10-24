@@ -422,5 +422,161 @@
    "doc": "courants"
   }
  ],
- "exercices": []
+ "exercices": [
+  {
+   "id": "ex-01",
+   "titre": "Deux lampes en parallèle",
+   "niveau": 1,
+   "items": [
+    {
+     "q": "Calcule le courant $I_2$.",
+     "r": "$I_2 = 5\\ \\text{A}$",
+     "etapes": [
+      "L'ampèremètre mesure le courant total qui sort de la pile : $I = 8\\ \\text{A}$.",
+      "Loi des nœuds : $I = I_1 + I_2$, donc $I_2 = I - I_1 = 8 - 3$."
+     ]
+    }
+   ],
+   "page": 1,
+   "consigne": "📄 **Schéma : PDF « Exercices », page 1** (touche le badge en haut à droite de l'exercice pour l'ouvrir). Une pile alimente deux lampes en parallèle ; l'ampèremètre indique 8 A et $I_1 = 3\\ \\text{A}$.",
+   "doc": "exo",
+   "indice": "Le courant qui arrive à un nœud est égal à la somme des courants qui en repartent."
+  },
+  {
+   "id": "ex-02",
+   "titre": "Courant débité par les générateurs",
+   "niveau": 1,
+   "items": [
+    {
+     "q": "Calcule le courant total débité par les générateurs.",
+     "r": "$|I_g| = 7\\ \\text{A}$ (le corrigé note $I_g = -7\\ \\text{A}$)",
+     "etapes": [
+      "Chaque lampe a son ampèremètre : 4 A et 3 A.",
+      "Le générateur fournit la somme des deux : $4 + 3 = 7\\ \\text{A}$.",
+      "Son ampèremètre est traversé dans le sens « entre par la borne − » : il affiche donc **−7 A**."
+     ]
+    }
+   ],
+   "page": 1,
+   "consigne": "📄 **Schéma : PDF « Exercices », page 1** (touche le badge en haut à droite de l'exercice pour l'ouvrir).",
+   "doc": "exo"
+  },
+  {
+   "id": "ex-03",
+   "titre": "Courant dans l'ampoule",
+   "niveau": 1,
+   "items": [
+    {
+     "q": "Calcule le courant qui traverse l'ampoule.",
+     "r": "$I_a = 14{,}7\\ \\text{mA} = 0{,}0147\\ \\text{A}$",
+     "etapes": [
+      "Tout en mA : $0{,}02\\ \\text{A} = 20\\ \\text{mA}$ et $300\\ \\mu\\text{A} = 0{,}3\\ \\text{mA}$.",
+      "Les 20 mA se partagent entre l'ampoule, la résistance (5 mA) et la diode (0,3 mA).",
+      "$I_a = 20 - 5 - 0{,}3 = 14{,}7\\ \\text{mA}$"
+     ]
+    }
+   ],
+   "page": 1,
+   "consigne": "📄 **Schéma : PDF « Exercices », page 1** (touche le badge en haut à droite de l'exercice pour l'ouvrir).",
+   "doc": "exo",
+   "indice": "Convertis tout dans la même unité (mA) avant de calculer."
+  },
+  {
+   "id": "ex-04",
+   "titre": "Courant total dans un montage fermé",
+   "niveau": 2,
+   "items": [
+    {
+     "q": "Calcule le courant total $I$ qui traverse le circuit.",
+     "r": "$I = 9\\ \\text{A}$",
+     "etapes": [
+      "Le courant $I$ qui entre par le fil du bas repart vers le haut par trois branches : 6 A, 1 A et 2 A.",
+      "Les courants « internes » (1 A et 4 A dans le circuit bobine/condensateurs) tournent à l'intérieur et ne changent pas le total.",
+      "$I = 6 + 1 + 2 = 9\\ \\text{A}$ ; c'est aussi le courant qui ressort en haut (même courant à l'entrée et à la sortie d'une « boîte »)."
+     ]
+    }
+   ],
+   "page": 1,
+   "consigne": "📄 **Schéma : PDF « Exercices », page 1** (touche le badge en haut à droite de l'exercice pour l'ouvrir).",
+   "doc": "exo",
+   "indice": "Entoure la boîte grise : ce qui entre dans la boîte = ce qui en sort."
+  },
+  {
+   "id": "ex-05",
+   "titre": "Loi des nœuds en cascade",
+   "niveau": 2,
+   "items": [
+    {
+     "q": "$I_1$",
+     "r": "$I_1 = 10\\ \\text{A}$ (de gauche à droite)",
+     "etapes": [
+      "Nœud A : $I_1 = I_2 + I_3 = 7 + 3$"
+     ]
+    },
+    {
+     "q": "$I_4$",
+     "r": "$I_4 = 2\\ \\text{A}$ (de B vers C, de droite à gauche)",
+     "etapes": [
+      "Nœud C : $I_2 + I_4 = I_7 + I_6$ → $7 + I_4 = 5 + 4$"
+     ]
+    },
+    {
+     "q": "$I_5$",
+     "r": "$I_5 = 1\\ \\text{A}$",
+     "etapes": [
+      "Nœud B : $I_3 = I_4 + I_5$ → $3 = 2 + I_5$"
+     ]
+    },
+    {
+     "q": "$I_8$",
+     "r": "$I_8 = 5\\ \\text{A}$ (de D vers E)",
+     "etapes": [
+      "Nœud D : $I_8 = I_6 + I_5 = 4 + 1$"
+     ]
+    },
+    {
+     "q": "$I_9$",
+     "r": "$I_9 = 10\\ \\text{A}$ (de E vers le générateur, de bas en haut)",
+     "etapes": [
+      "Nœud E : $I_9 = I_7 + I_8 = 5 + 5$ ; on retrouve bien $I_9 = I_1$."
+     ]
+    }
+   ],
+   "page": 1,
+   "consigne": "📄 **Schéma : PDF « Exercices », page 1** (touche le badge en haut à droite de l'exercice pour l'ouvrir). Calcule $I_1$, $I_4$, $I_5$, $I_8$ et $I_9$ (on donne $I_2 = 7$ A, $I_3 = 3$ A, $I_6 = 4$ A, $I_7 = 5$ A).",
+   "doc": "exo",
+   "indice": "Commence par un nœud où il ne manque qu'un seul courant (A), puis avance de nœud en nœud."
+  },
+  {
+   "id": "ex-06",
+   "titre": "Courants manquants (signes)",
+   "niveau": 3,
+   "items": [
+    {
+     "q": "$I_w$",
+     "r": "$I_w = -2\\ \\text{A}$"
+    },
+    {
+     "q": "$I_x$",
+     "r": "$I_x = -5\\ \\text{A}$"
+    },
+    {
+     "q": "$I_y$",
+     "r": "$I_y = -3\\ \\text{A}$"
+    },
+    {
+     "q": "$I_z$",
+     "r": "$I_z = -8\\ \\text{A}$",
+     "etapes": [
+      "À chaque nœud : somme des courants qui entrent = somme des courants qui sortent, **en respectant le sens des flèches**.",
+      "Un résultat négatif veut dire que le courant réel circule dans le sens contraire de la flèche dessinée."
+     ]
+    }
+   ],
+   "page": 1,
+   "consigne": "📄 **Schéma : PDF « Exercices », page 1** (touche le badge en haut à droite de l'exercice pour l'ouvrir).",
+   "doc": "exo",
+   "indice": "Écris une équation par nœud avec les flèches telles qu'elles sont dessinées, puis résous. Les signes « − » sont normaux."
+  }
+ ]
 }

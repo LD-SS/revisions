@@ -523,5 +523,319 @@
    "doc": "tensions"
   }
  ],
- "exercices": []
+ "exercices": [
+  {
+   "id": "ex-01",
+   "titre": "Tensions dans un circuit à deux mailles",
+   "niveau": 2,
+   "items": [
+    {
+     "q": "$U_{BD}$",
+     "r": "$U_{BD} = 4\\ \\text{V}$",
+     "etapes": [
+      "Lecture des flèches : $U_{AB} = 4$ V, $U_{BC} = 1$ V, $U_{ED} = -4$ V (donc $U_{DE} = 4$ V) et $U_{CD} = 3$ V.",
+      "Maille B-C-D : $U_{BD} = U_{BC} + U_{CD} = 1 + 3$"
+     ]
+    },
+    {
+     "q": "$U_{AE}$",
+     "r": "$U_{AE} = 12\\ \\text{V}$",
+     "etapes": [
+      "$U_{AE} = U_{AB} + U_{BD} + U_{DE} = 4 + 4 + 4$"
+     ]
+    }
+   ],
+   "page": 2,
+   "consigne": "📄 **Schéma : PDF « Exercices », page 2** (touche le badge en haut à droite de l'exercice pour l'ouvrir). Convention du cours : une flèche de tension dessinée **de B vers A** (pointe sur A) représente $U_{AB} = V_A - V_B$.",
+   "doc": "exo",
+   "indice": "Une tension entre deux points = somme des tensions rencontrées sur **n'importe quel** chemin qui va de l'un à l'autre."
+  },
+  {
+   "id": "ex-02",
+   "titre": "Vecteurs tensions avec trois sources",
+   "niveau": 2,
+   "items": [
+    {
+     "q": "$U_{R1} = U_{AB}$",
+     "r": "$U_{AB} = 5\\ \\text{V}$",
+     "etapes": [
+      "Le point commun des 3 piles est M. E1 : $V_A - V_M = 15$ V ; E2 : $V_B - V_M = 10$ V.",
+      "$U_{AB} = 15 - 10$"
+     ]
+    },
+    {
+     "q": "$U_{R2} = U_{AD}$",
+     "r": "$U_{AD} = 20\\ \\text{V}$",
+     "etapes": [
+      "Ici E3 a son + vers M : $V_M - V_D = 5$ V.",
+      "$U_{AD} = 15 + 5$"
+     ]
+    },
+    {
+     "q": "$U_{R3} = U_{BC}$",
+     "r": "$U_{BC} = 15\\ \\text{V}$",
+     "etapes": [
+      "D et C sont reliés par un fil : $V_C = V_D$.",
+      "$U_{BC} = 10 + 5$"
+     ]
+    }
+   ],
+   "page": 2,
+   "consigne": "📄 **Schéma : PDF « Exercices », page 2** (touche le badge en haut à droite de l'exercice pour l'ouvrir). Dessine d'abord tous les vecteurs tensions sur le schéma (ex. 8), puis calcule leur valeur (ex. 9).",
+   "doc": "exo",
+   "indice": "Repère le côté + de chaque pile (trait long). Passe par le point commun des trois piles."
+  },
+  {
+   "id": "ex-03",
+   "titre": "Potentiels par rapport à la masse",
+   "niveau": 1,
+   "items": [
+    {
+     "q": "$V_a$, $V_b$, $V_c$, $V_d$",
+     "r": "$V_a = 12$ V ; $V_b = 8$ V ; $V_c = 6$ V ; $V_d = 4$ V",
+     "etapes": [
+      "Le potentiel d'un point = sa tension par rapport à la masse m : $V_a = U_{am}$, etc."
+     ]
+    },
+    {
+     "q": "$U_{ab}$",
+     "r": "$U_{ab} = 4\\ \\text{V}$ (soit $U_{ba} = -4$ V)",
+     "etapes": [
+      "$U_{ab} = V_a - V_b = 12 - 8$"
+     ]
+    },
+    {
+     "q": "$U_{bc}$",
+     "r": "$U_{bc} = 2\\ \\text{V}$",
+     "etapes": [
+      "$8 - 6$"
+     ]
+    },
+    {
+     "q": "$U_{dc}$",
+     "r": "$U_{dc} = -2\\ \\text{V}$",
+     "etapes": [
+      "$V_d - V_c = 4 - 6$"
+     ]
+    }
+   ],
+   "page": 2,
+   "consigne": "📄 **Schéma : PDF « Exercices », page 2** (touche le badge en haut à droite de l'exercice pour l'ouvrir). On donne $U_{am} = 12$ V, $U_{bm} = 8$ V, $U_{cm} = 6$ V, $U_{dm} = 4$ V.",
+   "doc": "exo"
+  },
+  {
+   "id": "ex-04",
+   "titre": "Vecteurs tensions et potentiels",
+   "niveau": 3,
+   "items": [
+    {
+     "q": "Valeur des 4 vecteurs tensions dessinés",
+     "r": "$U_{jd} = 4$ V ; $U_{gf} = 2$ V ; $U_{ef} = -4$ V ; $U_{jh} = 4$ V",
+     "etapes": [
+      "j est relié à c par un fil, g et h sont reliés à d : $V_j = V_c$ et $V_g = V_h = V_d$.",
+      "$U_{cd} = U_{bd} - U_{bc} = 10 - 6 = 4$ V, donc $U_{jd} = U_{jh} = 4$ V.",
+      "$U_{gf} = U_{df} = 2$ V ; $U_{ef} = U_{ed} + U_{df} = -6 + 2 = -4$ V."
+     ]
+    },
+    {
+     "q": "Tension de la pile $U_{ae}$",
+     "r": "$U_{ae} = 24\\ \\text{V}$",
+     "etapes": [
+      "$U_{ae} = U_{ab} + U_{bd} + U_{de} = 8 + 10 + 6$"
+     ]
+    },
+    {
+     "q": "Potentiels avec $V_e = 0$ V",
+     "r": "$V_a = 24$ ; $V_b = 16$ ; $V_c = V_j = 10$ ; $V_d = V_g = V_h = 6$ ; $V_f = 4$ (en V)",
+     "etapes": [
+      "$U_{ed} = -6$ V → $V_d = V_e + 6 = 6$ V",
+      "$V_b = V_d + U_{bd} = 16$ V ; $V_a = V_b + 8 = 24$ V ; $V_c = V_b - 6 = 10$ V ; $V_f = V_d - 2 = 4$ V"
+     ]
+    }
+   ],
+   "page": 2,
+   "consigne": "📄 **Schéma : PDF « Exercices », page 2** (touche le badge en haut à droite de l'exercice pour l'ouvrir). On donne $U_{ab} = 8$ V, $U_{bd} = 10$ V, $U_{ed} = -6$ V, $U_{bc} = 6$ V, $U_{df} = 2$ V.",
+   "doc": "exo",
+   "indice": "Repère d'abord les points reliés par un simple fil : ils ont le même potentiel."
+  },
+  {
+   "id": "ex-05",
+   "titre": "Tensions et loi des mailles (U1, U2)",
+   "niveau": 2,
+   "items": [
+    {
+     "q": "$U_2$ (tension sur la résistance du milieu)",
+     "r": "$U_2 = 15\\ \\text{V}$ (flèche de bas en haut)",
+     "etapes": [
+      "Maille E-C-D : $U_2 = U_3 + U_4 = 7 + 8$"
+     ]
+    },
+    {
+     "q": "$U_1$",
+     "r": "$U_1 = 10\\ \\text{V}$ (flèche de droite à gauche)",
+     "etapes": [
+      "Grande maille : $U = U_1 + U_2$ → $U_1 = 25 - 15$"
+     ]
+    },
+    {
+     "q": "$I_1$ si $R_1 = 10\\ \\Omega$",
+     "r": "$I_1 = 1\\ \\text{A}$ (de gauche à droite)",
+     "etapes": [
+      "$I_1 = \\dfrac{U_1}{R_1} = \\dfrac{10}{10}$",
+      "Dans une résistance, le courant va du + vers le − : il est dessiné en sens **inverse** du vecteur tension."
+     ]
+    }
+   ],
+   "page": 3,
+   "consigne": "📄 **Schéma : PDF « Exercices », page 3** (touche le badge en haut à droite de l'exercice pour l'ouvrir). On donne $U = 25$ V, $U_3 = 7$ V, $U_4 = 8$ V.",
+   "doc": "exo"
+  },
+  {
+   "id": "ex-06",
+   "titre": "Pont de résistances : courants et tensions",
+   "niveau": 2,
+   "items": [
+    {
+     "q": "$I$",
+     "r": "$I = 10\\ \\text{A}$",
+     "etapes": [
+      "Nœud A : $I = I_1 + I_2 = 6 + 4$"
+     ]
+    },
+    {
+     "q": "$I_3$ et $I_4$",
+     "r": "$I_3 = 4\\ \\text{A}$ ; $I_4 = 6\\ \\text{A}$",
+     "etapes": [
+      "Nœud B : $I_3 = I_1 - I_5 = 6 - 2$",
+      "Nœud D : $I_4 = I_2 + I_5 = 4 + 2$"
+     ]
+    },
+    {
+     "q": "$U_{AB}$, $U_{AD}$, $U_{DB}$",
+     "r": "$U_{AB} = 100$ V ; $U_{AD} = 120$ V ; $U_{DB} = -20$ V",
+     "etapes": [
+      "$U_{AB} = U_{AC} - U_{BC} = 150 - 50$",
+      "$U_{AD} = U_{AC} - U_{DC} = 150 - 30$",
+      "$U_{DB} = U_{DC} - U_{BC} = 30 - 50$"
+     ]
+    }
+   ],
+   "page": 3,
+   "consigne": "📄 **Schéma : PDF « Exercices », page 3** (touche le badge en haut à droite de l'exercice pour l'ouvrir). On donne $U_{AC} = 150$ V, $I_1 = 6$ A, $I_2 = 4$ A, $I_5 = 2$ A, $U_{DC} = 30$ V, $U_{BC} = 50$ V.",
+   "doc": "exo"
+  },
+  {
+   "id": "ex-07",
+   "titre": "Tensions avec des valeurs négatives",
+   "niveau": 3,
+   "items": [
+    {
+     "q": "$i_1$, $i_2$, $i_3$",
+     "r": "$i_1 = -2$ A ; $i_2 = +1$ A ; $i_3 = +2$ A",
+     "etapes": [
+      "Nœud du haut (milieu) : $1 + i_1 = -1$ → $i_1 = -2$ A",
+      "R4 et R3 sont parcourues par 1 A. Nœud du haut (droite) : $-1 + i_3 = 1$ → $i_3 = 2$ A",
+      "Nœud du bas (droite) : $1 + i_2 = i_3$ → $i_2 = 1$ A"
+     ]
+    },
+    {
+     "q": "$u_3$ (sur R1)",
+     "r": "$u_3 = +3\\ \\text{V}$",
+     "etapes": [
+      "Maille de gauche : $6 = 3 + u_3$ (la pile du milieu vaut 3 V entre son haut et son bas)."
+     ]
+    },
+    {
+     "q": "$u_1$ (pile de droite)",
+     "r": "$u_1 = +4\\ \\text{V}$",
+     "etapes": [
+      "Maille du milieu : $u_1 = 3 + 1$ (pile du milieu + tension de R2)."
+     ]
+    },
+    {
+     "q": "$u_2$ (sur R4)",
+     "r": "$u_2 = -3\\ \\text{V}$",
+     "etapes": [
+      "Maille de droite : $u_2 = 1 - u_1 = 1 - 4$ (R3 a 1 V)."
+     ]
+    }
+   ],
+   "page": 3,
+   "consigne": "📄 **Schéma : PDF « Exercices », page 3** (touche le badge en haut à droite de l'exercice pour l'ouvrir). Calcule la tension aux bornes de chaque dipôle et les courants $i_1$, $i_2$, $i_3$.",
+   "doc": "exo",
+   "indice": "Une flèche « −3 V » vers le bas = 3 V vers le haut. Travaille maille par maille, de gauche à droite."
+  },
+  {
+   "id": "ex-08",
+   "titre": "Trois branches en parallèle sur E",
+   "niveau": 3,
+   "items": [
+    {
+     "q": "$U_{R1}$ (tel que dessiné)",
+     "r": "$U_{R1} = -13\\ \\text{V}$",
+     "etapes": [
+      "Branche 1 : $E = U_{E1} + U_{R1,\\text{réel}}$ → $10 = -3 + 13$ : R1 a 13 V, + en haut ; dessinée vers le bas, elle vaut −13 V."
+     ]
+    },
+    {
+     "q": "$U_{R2}$",
+     "r": "$U_{R2} = +15\\ \\text{V}$",
+     "etapes": [
+      "Branche 2 : la pile E2 ajoute 5 V : $10 + 5 = 15$ V sur R2."
+     ]
+    },
+    {
+     "q": "$U_{R3}$",
+     "r": "$U_{R3} = -17\\ \\text{V}$",
+     "etapes": [
+      "Branche 3 : $10 + 7 = 17$ V sur R3, dessinée dans l'autre sens."
+     ]
+    },
+    {
+     "q": "$I_{R1}$, $I_{R2}$, $I_{R3}$",
+     "r": "$I_{R1} = +10$ mA ; $I_{R2} = -20$ mA ; $I_{R3} = -10$ mA",
+     "etapes": [
+      "$13/1{,}3\\ \\text{k}\\Omega = 10$ mA ; $15/0{,}75\\ \\text{k}\\Omega = 20$ mA ; $17/1{,}7\\ \\text{k}\\Omega = 10$ mA",
+      "Le signe dépend du sens de la flèche de courant dessinée."
+     ]
+    }
+   ],
+   "page": 3,
+   "consigne": "📄 **Schéma : PDF « Exercices », page 3** (touche le badge en haut à droite de l'exercice pour l'ouvrir). $E = 10$ V ; $E_1 = -3$ V ; $E_2 = +5$ V ; $E_3 = +7$ V ; $R_1 = 1{,}3$ kΩ ; $R_2 = 0{,}75$ kΩ ; $R_3 = 1{,}7$ kΩ.",
+   "doc": "exo",
+   "indice": "Chaque branche est soumise à la même tension E : la résistance prend « ce qui reste » une fois la petite pile comptée."
+  },
+  {
+   "id": "ex-09",
+   "titre": "Deux sources et loi des nœuds",
+   "niveau": 2,
+   "items": [
+    {
+     "q": "$I_2$",
+     "r": "$I_2 = 3\\ \\text{A}$",
+     "etapes": [
+      "Nœud B : $I_1 + I_2 = I_3$ → $I_2 = 11 - 8$"
+     ]
+    },
+    {
+     "q": "$U_{BA}$ (résistance A-B)",
+     "r": "$U_{BA} = -40\\ \\text{V}$",
+     "etapes": [
+      "$V_A - V_D = 120$ V et $V_B - V_D = 80$ V → $U_{BA} = 80 - 120$"
+     ]
+    },
+    {
+     "q": "Tension sur la résistance C-E",
+     "r": "$U_{EC} = +20\\ \\text{V}$ (le corrigé note −20 V : c'est $U_{CE}$)",
+     "etapes": [
+      "C est relié à B par un fil : $V_C = 80$ V ; $V_E = 100$ V",
+      "$U_{EC} = 100 - 80 = 20$ V : le courant $I_2$ monte bien de E vers C."
+     ]
+    }
+   ],
+   "page": 3,
+   "consigne": "📄 **Schéma : PDF « Exercices », page 3** (touche le badge en haut à droite de l'exercice pour l'ouvrir). On donne $U_1 = 120$ V, $U_2 = 100$ V, $U_{BD} = 80$ V, $I_1 = 8$ A, $I_3 = 11$ A.",
+   "doc": "exo"
+  }
+ ]
 }

@@ -370,5 +370,173 @@
    "doc": "charge"
   }
  ],
- "exercices": []
+ "exercices": [
+  {
+   "id": "ex-01",
+   "titre": "Autonomie d'une montre",
+   "niveau": 1,
+   "items": [
+    {
+     "q": "Combien de temps la montre peut-elle fonctionner ?",
+     "r": "$t = 40\\,000$ h ≈ 1 666 jours et 16 h ≈ 4,5 ans",
+     "etapes": [
+      "$t = \\dfrac{Q}{I} = \\dfrac{20\\ \\text{mAh}}{0{,}5\\ \\mu\\text{A}} = \\dfrac{20 \\times 10^{-3}}{0{,}5 \\times 10^{-6}}$",
+      "$40\\,000 \\div 24 = 1\\,666{,}67$ jours"
+     ]
+    }
+   ],
+   "page": 4,
+   "consigne": "La pile d'une montre affiche 20 mAh ; la montre absorbe 0,5 μA.",
+   "doc": "exo",
+   "indice": "Mets tout en ampères (A) et ampères-heures (Ah) avant de diviser."
+  },
+  {
+   "id": "ex-02",
+   "titre": "Quantité d'électricité transportée",
+   "niveau": 1,
+   "items": [
+    {
+     "q": "$Q$ en coulombs",
+     "r": "$Q = 108\\ \\text{C}$",
+     "etapes": [
+      "$Q = I \\cdot t = 0{,}015\\ \\text{A} \\times 7\\,200\\ \\text{s}$"
+     ]
+    },
+    {
+     "q": "$Q$ en ampères-heures",
+     "r": "$Q = 0{,}03\\ \\text{Ah}$",
+     "etapes": [
+      "$0{,}015\\ \\text{A} \\times 2\\ \\text{h}$ (ou $108 \\div 3\\,600$)"
+     ]
+    }
+   ],
+   "page": 4,
+   "consigne": "Un conducteur est traversé par 15 mA pendant 2 heures.",
+   "doc": "exo"
+  },
+  {
+   "id": "ex-03",
+   "titre": "Intensité et nombre d'électrons",
+   "niveau": 2,
+   "items": [
+    {
+     "q": "Intensité $I$",
+     "r": "$I = 10\\ \\text{A}$",
+     "etapes": [
+      "$I = \\dfrac{Q}{t} = \\dfrac{1\\,800}{180}$ (3 min = 180 s)"
+     ]
+    },
+    {
+     "q": "Nombre d'électrons par seconde",
+     "r": "$n = 6{,}25 \\times 10^{19}$ électrons/s",
+     "etapes": [
+      "En 1 s : $Q = 10$ C",
+      "$n = \\dfrac{Q}{e} = \\dfrac{10}{1{,}6 \\times 10^{-19}}$"
+     ]
+    }
+   ],
+   "page": 4,
+   "consigne": "$Q = 1\\,800$ C traverse un circuit pendant 3 minutes. Charge de l'électron : $e = 1{,}6 \\times 10^{-19}$ C.",
+   "doc": "exo"
+  },
+  {
+   "id": "ex-04",
+   "titre": "Recharge d'une batterie d'Arduino",
+   "niveau": 1,
+   "items": [
+    {
+     "q": "Courant de charge",
+     "r": "$I = 0{,}8\\ \\text{A}$",
+     "etapes": [
+      "$I = \\dfrac{Q}{t} = \\dfrac{8\\ \\text{Ah}}{10\\ \\text{h}}$"
+     ]
+    },
+    {
+     "q": "Quantité d'électricité à fournir",
+     "r": "$Q = 8\\ \\text{Ah} = 28\\,800\\ \\text{C}$",
+     "etapes": [
+      "$8 \\times 3\\,600$"
+     ]
+    }
+   ],
+   "page": 4,
+   "consigne": "Une batterie de 8 Ah se recharge complètement en 10 h.",
+   "doc": "exo"
+  },
+  {
+   "id": "ex-05",
+   "titre": "Deux batteries : parallèle puis série",
+   "niveau": 1,
+   "items": [
+    {
+     "q": "En dérivation (parallèle)",
+     "r": "$U = 12$ V ; $Q = 20$ Ah",
+     "etapes": [
+      "En parallèle : même tension, les capacités s'additionnent."
+     ]
+    },
+    {
+     "q": "En série",
+     "r": "$U = 24$ V ; $Q = 10$ Ah",
+     "etapes": [
+      "En série : les tensions s'additionnent, la capacité reste celle d'une batterie."
+     ]
+    }
+   ],
+   "page": 4,
+   "consigne": "Deux batteries identiques : 12 V – 10 Ah.",
+   "doc": "exo",
+   "indice": "Série → U s'additionne. Parallèle → Q (Ah) s'additionne."
+  },
+  {
+   "id": "ex-06",
+   "titre": "Accu-pack lithium",
+   "niveau": 2,
+   "items": [
+    {
+     "q": "Tension nominale du pack",
+     "r": "$U = 43{,}2\\ \\text{V}$",
+     "etapes": [
+      "Le pack de la figure compte 12 cellules en série : $12 \\times 3{,}6$"
+     ]
+    },
+    {
+     "q": "Quantité d'électricité du pack",
+     "r": "$Q = 2\\ \\text{Ah} = 7\\,200\\ \\text{C}$ (le corrigé indique 7 500 C : $2 \\times 3\\,600 = 7\\,200$)",
+     "etapes": [
+      "En série, la capacité reste celle d'une cellule."
+     ]
+    },
+    {
+     "q": "2 packs en parallèle",
+     "r": "$U = 43{,}2$ V ; $Q = 4$ Ah"
+    },
+    {
+     "q": "Deux groupes (1//2) et (3//4) mis en série",
+     "r": "$U = 86{,}4$ V ; $Q = 4$ Ah"
+    }
+   ],
+   "page": 4,
+   "consigne": "Une cellule lithium : 3,6 V – 2 Ah. Un accu-pack = cellules en série (figure p. 4).",
+   "doc": "exo"
+  },
+  {
+   "id": "ex-07",
+   "titre": "Autonomie d'une trottinette",
+   "niveau": 1,
+   "items": [
+    {
+     "q": "Durée de fonctionnement",
+     "r": "$t ≈ 6{,}67$ h = 6 h 40 min",
+     "etapes": [
+      "$t = \\dfrac{50\\ \\text{Ah}}{7{,}5\\ \\text{A}}$",
+      "$0{,}67\\ \\text{h} \\times 60 = 40$ min"
+     ]
+    }
+   ],
+   "page": 4,
+   "consigne": "Batterie de 50 Ah ; le moteur absorbe 7,5 A.",
+   "doc": "exo"
+  }
+ ]
 }
