@@ -18,6 +18,7 @@ import { monterPlanche, AIDES, niveauAide, choisirAide, corriger, prochainManqua
 import { monterPiece3D } from './piece3d.js';
 import { definirExerciceCourant, ouvrirProposition, estAuteur, boiteActive } from './proposer.js';
 import { svgSur } from './rendu.js';
+import { construire, CONSIGNES } from './geometrie.js';
 
 const NOTES = { ok: { lib: 'Juste', val: 1 }, mid: { lib: 'Presque', val: 0.5 }, ko: { lib: 'Faux', val: 0 } };
 const LETTRES = 'abcdefghijklmnopqrstuvwxyz';
@@ -39,9 +40,19 @@ export function scoreExos(prefixe, exos) {
   return { pct: Math.round(100 * notes.reduce((s, n) => s + NOTES[n.r].val, 0) / notes.length), faits: notes.length };
 }
 
+/** Exercice de dessin décrit seulement par sa pièce et sa tâche : on calcule la planche. */
+export function preparerDessin(e) {
+  if (e.type !== 'dessin' || !e.piece || !e.tache || e.solution) return e;
+  Object.assign(e, construire(e.piece, e.tache));
+  if (!e.consigne) e.consigne = CONSIGNES[e.tache.type === 'vue' ? e.tache.vue : e.tache.type];
+  if (!e.items) e.items = [{ q: e.consigne, r: 'Voir la correction sur la planche.' }];
+  return e;
+}
+
 export function lecteurExercices(conteneur, tous, options = {}) {
   const prefixe = options.prefixe || '';
   const cle = (e) => e._cle || `${prefixe}/${e.id}`;
+  for (const e of tous) preparerDessin(e);
   const etat = { filtre: 'tous', liste: [], pos: 0, vus: 0, indice: false };
 
   const FILTRES = [
@@ -192,7 +203,7 @@ export function lecteurExercices(conteneur, tous, options = {}) {
         </div>
         <div class="ex-dz">
           <div class="ex-consigne">${texte(e.consigne || '')}</div>
-          <div class="ex-3d" data-p3d>${!A.rotation && e.perspective ? `<figure class="fig ex-persp-fixe">${svgSur(e.perspective)}<figcaption>Perspective · F = sens de la vue de face</figcaption></figure>` : ''}</div>
+          <div class="ex-3d" data-p3d>${!A.rotation && e.perspective ? `<figure class="fig ex-persp-fixe">${svgSur(e.perspective)}<figcaption>Perspective · F = sens de la vue de face${e.tache?.type === 'coupe' ? ' · plan A-A dans la vue de dessus' : ''}</figcaption></figure>` : ''}</div>
         </div>
         ${e.indice && niv !== 'difficile' ? (etat.indice ? `<div class="ex-indice">${icone('ampoule')}<div>${texte(e.indice)}</div></div>`
           : (!corrige ? `<button class="btn" data-action="indice">${icone('ampoule')} Un conseil</button>` : '')) : ''}
@@ -232,6 +243,7 @@ export function lecteurExercices(conteneur, tous, options = {}) {
     const z3 = conteneur.querySelector('[data-p3d]');
     d.p3d = null;
     if (z3 && e.piece && A.rotation) d.p3d = monterPiece3D(z3, e.piece, { boutons: A.boutonsVues, rotation: true });
+    else if (z3 && e.piece && !e.perspective) monterPiece3D(z3, e.piece, { rotation: false });
     const expliquer = (i) => {
       const x = e.expl?.[i]; const zx = conteneur.querySelector('[data-expl]');
       if (!x || !zx) return;

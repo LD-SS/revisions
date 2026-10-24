@@ -17,6 +17,7 @@
 
 import { stockage } from './utils.js';
 import { icone } from './icones.js';
+import { toast } from './utils.js';
 
 const K = 30;                 // pixels SVG par carreau
 const PAS = 0.5;              // accrochage
@@ -40,6 +41,8 @@ function echantillons(e, pas = 0.25) {
   return Array.from({ length: n }, (_, i) => [cx + r * Math.cos(2 * Math.PI * i / n), cy + r * Math.sin(2 * Math.PI * i / n)]);
 }
 function distance(p, e) {
+  if (e[0] === 'h') return e[1].some(([x, y]) => p[0] >= x && p[0] <= x + 0.5 && p[1] >= y && p[1] <= y + 0.5) ? 0 : 9;
+  if (e[0] !== 'l' && e[0] !== 'c') return 9;
   if (e[0] === 'c') return Math.abs(Math.hypot(p[0] - e[1], p[1] - e[2]) - e[3]);
   const [, x1, y1, x2, y2] = e; const dx = x2 - x1, dy = y2 - y1; const L2 = dx * dx + dy * dy;
   const t = L2 ? Math.max(0, Math.min(1, ((p[0] - x1) * dx + (p[1] - y1) * dy) / L2)) : 0;
@@ -51,8 +54,18 @@ const couverture = (e, els) => { const pts = echantillons(e); return pts.filter(
 
 /** Compare le dessin de l'élève à la solution. */
 export function corriger(solution, eleve, donnees = []) {
-  const traits = eleve.filter((u) => u[u.length - 1] !== 'n');
+  const traits = eleve.filter((u) => u[u.length - 1] !== 'n' && (u[0] === 'l' || u[0] === 'c'));
+  const hach = eleve.filter((u) => u[0] === 'h');
+  const hUser = new Set(hach.flatMap((u) => u[1].map((c) => c.join(','))));
+  const solLignes = solution.filter((x) => x[0] === 'l' || x[0] === 'c');
+  const donLignes = donnees.filter((x) => x[0] === 'l' || x[0] === 'c');
+  const hSol = new Set(solution.filter((x) => x[0] === 'h').flatMap((x) => x[1].map((c) => c.join(','))));
   const res = solution.map((s) => {
+    if (s[0] === 'h') {
+      const S = s[1].map((c) => c.join(','));
+      const rec = S.length ? S.filter((k) => hUser.has(k)).length / S.length : 1;
+      return { s, etat: rec >= 0.9 ? 'ok' : 'manque' };
+    }
     const type = s[s.length - 1];
     const memes = traits.filter((u) => u[u.length - 1] === type);
     const seuil = type === 'a' ? 0.6 : 0.85;
@@ -62,10 +75,15 @@ export function corriger(solution, eleve, donnees = []) {
   });
   const enTrop = traits.filter((u) => {
     const pts = echantillons(u);
-    const bons = pts.filter((p) => proche(p, solution) || proche(p, donnees)).length;
+    const bons = pts.filter((p) => proche(p, solLignes) || proche(p, donLignes)).length;
     return bons / pts.length < 0.6;
   });
-  const poids = (r) => longueur(r.s) * (r.s[r.s.length - 1] === 'a' ? 0.5 : 1);
+  for (const u of hach) {   // hachures sur du vide ou hors de la coupe
+    const hors = u[1].filter((c) => !hSol.has(c.join(','))).length;
+    if (hors > Math.max(3, 0.1 * u[1].length)) enTrop.push(u);
+  }
+  const lignesPoids = res.filter((r) => r.s[0] !== 'h').reduce((a, r) => a + longueur(r.s) * (r.s[r.s.length - 1] === 'a' ? 0.5 : 1), 0);
+  const poids = (r) => (r.s[0] === 'h' ? Math.max(4, 0.3 * lignesPoids) : longueur(r.s) * (r.s[r.s.length - 1] === 'a' ? 0.5 : 1));
   const total = res.reduce((a, r) => a + poids(r), 0) || 1;
   const bon = res.filter((r) => r.etat === 'ok').reduce((a, r) => a + poids(r), 0);
   const pct = Math.max(0, Math.round(100 * bon / total) - 5 * enTrop.length);
@@ -88,7 +106,16 @@ export const niveauAide = () => (AIDES[stockage.lire('dessin.aide', 'facile')] ?
 export const choisirAide = (n) => stockage.ecrire('dessin.aide', n);
 
 /* ---------- rendu SVG ---------- */
+const MOTIFS = ['eleve', 'ok', 'manque', 'type', 'trop', 'indice', 'donne'];
+const motif = (cls) => MOTIFS.find((m) => cls.includes(`pl-${m}`)) || 'eleve';
+const DEFS = `<defs>${MOTIFS.map((m) => `<pattern id="ph-${m}" patternUnits="userSpaceOnUse" width="8" height="8" patternTransform="rotate(45)"><line class="ph ph-${m}" x1="0" y1="0" x2="0" y2="8"/></pattern>`).join('')}</defs>`;
 function svgEl(e, cls, extra = '') {
+  if (e[0] === 'h') return `<g class="pl-h ${cls}">${e[1].map(([x, y]) => `<rect x="${r2(x * K)}" y="${r2(y * K)}" width="${K / 2 + 0.4}" height="${K / 2 + 0.4}" fill="url(#ph-${motif(cls)})"/>`).join('')}</g>`;
+  if (e[0] === 't') return `<text class="pl-txt" x="${r2(e[1] * K)}" y="${r2(e[2] * K)}" text-anchor="middle">${e[3]}</text>`;
+  if (e[0] === 'f') {
+    const [, x1, y1, x2, y2] = e; const a = Math.atan2(y2 - y1, x2 - x1); const t = 0.35;
+    return `<line class="tf pl-donne" x1="${r2(x1 * K)}" y1="${r2(y1 * K)}" x2="${r2(x2 * K)}" y2="${r2(y2 * K)}"/><polygon class="pl-fl" points="${r2(x2 * K)},${r2(y2 * K)} ${r2((x2 - t * Math.cos(a - 0.4)) * K)},${r2((y2 - t * Math.sin(a - 0.4)) * K)} ${r2((x2 - t * Math.cos(a + 0.4)) * K)},${r2((y2 - t * Math.sin(a + 0.4)) * K)}"/>`;
+  }
   const s = e[e.length - 1];
   if (e[0] === 'l') return `<line class="${CLASSE[s]} ${cls}" x1="${r2(e[1] * K)}" y1="${r2(e[2] * K)}" x2="${r2(e[3] * K)}" y2="${r2(e[4] * K)}" ${extra}/>`;
   return `<circle class="${CLASSE[s]} ${cls}" cx="${r2(e[1] * K)}" cy="${r2(e[2] * K)}" r="${r2(e[3] * K)}" fill="none" ${extra}/>`;
@@ -126,6 +153,7 @@ export function monterPlanche(el, ex, opts) {
         <button class="btn pl-b" type="button" data-outil="ligne" title="Ligne (L) : glisser, ou toucher 2 points (les traits s'enchaînent)"><svg viewBox="0 0 24 24" class="ic"><path d="M4 20 20 4" stroke="currentColor" stroke-width="2"/><circle cx="4" cy="20" r="2" fill="currentColor"/><circle cx="20" cy="4" r="2" fill="currentColor"/></svg>Ligne</button>
         <button class="btn pl-b" type="button" data-outil="cercle" title="Cercle (O) : du centre vers le bord"><svg viewBox="0 0 24 24" class="ic"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/></svg>Cercle</button>
         <button class="btn pl-b" type="button" data-outil="selection" title="Sélection (S) : toucher un trait pour changer son type, le déplacer ou le supprimer"><svg viewBox="0 0 24 24" class="ic"><path d="M5 3l14 8-6 2-3 6z" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/></svg>Sélection</button>
+        ${ex.solution.some((x) => x[0] === 'h') ? `<button class="btn pl-b" type="button" data-outil="hachures" title="Hachures (H) : toucher l'intérieur d'une zone fermée par des traits forts (toucher une zone hachurée l'efface)"><svg viewBox="0 0 24 24" class="ic"><rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2" fill="none"/><path d="M3 15 15 3M3 21 21 3M9 21 21 9" stroke="currentColor" stroke-width="1.6"/></svg>Hachures</button>` : ''}
         <button class="btn pl-b" type="button" data-outil="gomme" title="Gomme (G) : toucher un trait pour l'effacer"><svg viewBox="0 0 24 24" class="ic"><path d="M7 21h10M5 15l9-11 6 5-9 11H8z" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/></svg>Gomme</button>
         <button class="btn pl-b" type="button" data-outil="main" title="Déplacer la planche (quand elle est agrandie)"><svg viewBox="0 0 24 24" class="ic"><path d="M12 2v20M2 12h20M12 2l-3 3M12 2l3 3M12 22l-3-3M12 22l3-3M2 12l3-3M2 12l3 3M22 12l-3-3M22 12l-3 3" stroke="currentColor" stroke-width="1.8" fill="none"/></svg>Déplacer</button>
       </div>
@@ -158,7 +186,7 @@ export function monterPlanche(el, ex, opts) {
   function pointsCles() {
     const pts = [];
     for (const e of [...ex.donnees, ...etat.els]) {
-      if (e[e.length - 1] === 'n') continue;
+      if (e[e.length - 1] === 'n' || (e[0] !== 'l' && e[0] !== 'c')) continue;
       if (e[0] === 'l') pts.push([e[1], e[2]], [e[3], e[4]]);
       else pts.push([e[1], e[2]], [e[1] - e[3], e[2]], [e[1] + e[3], e[2]], [e[1], e[2] - e[3]], [e[1], e[2] + e[3]]);
     }
@@ -201,7 +229,7 @@ export function monterPlanche(el, ex, opts) {
     for (let x = 0; x <= P.w; x += 1) g += `<line class="pl-grille" x1="${x * K}" y1="0" x2="${x * K}" y2="${H}"/>`;
     for (let y = 0; y <= P.h; y += 1) g += `<line class="pl-grille" x1="0" y1="${y * K}" x2="${W}" y2="${y * K}"/>`;
     const noms = { face: 'Vue de face', gauche: 'Vue de gauche', dessus: 'Vue de dessus' };
-    for (const [v, [x, y]] of Object.entries(P.cadres || {})) g += `<text class="pl-nom" x="${x * K}" y="${(y - 0.35) * K}">${noms[v] || v}</text>`;
+    for (const [v, [x, y]] of Object.entries(P.cadres || {})) g += `<text class="pl-nom" x="${x * K}" y="${(y - 0.35) * K}">${(P.noms && P.noms[v]) || noms[v] || v}</text>`;
     if (P.cible) {
       const [x, y, w, h] = P.cible; const m = 0.5;
       g += `<rect class="pl-cible" x="${(x - m) * K}" y="${(y - m) * K}" width="${(w + 2 * m) * K}" height="${(h + 2 * m) * K}" rx="6"/>`;
@@ -211,7 +239,7 @@ export function monterPlanche(el, ex, opts) {
   }
 
   function contenu(apercu = '') {
-    let s = fond() + ex.donnees.map((e) => svgEl(e, 'pl-donne')).join('');
+    let s = DEFS + fond() + ex.donnees.map((e) => svgEl(e, 'pl-donne')).join('');
     if (etat.correction && resultat && etat.voirCorr) {
       const trop = new Set(resultat.enTrop);
       s += etat.els.map((e) => svgEl(e, trop.has(e) ? 'pl-trop' : 'pl-eleve pl-pale')).join('');
@@ -304,6 +332,7 @@ export function monterPlanche(el, ex, opts) {
       if (i >= 0) { etat.focus = i; dessiner(); opts.onExpliquer?.(i); }
       return;
     }
+    if (etat.outil === 'hachures') { hachurer(p); return; }
     if (etat.outil === 'gomme') {
       const i = plusProche(p, etat.els);
       if (i >= 0) changer(etat.els.filter((_, k) => k !== i));
@@ -312,7 +341,7 @@ export function monterPlanche(el, ex, opts) {
     if (etat.outil === 'selection') {
       const i = plusProche(p, etat.els);
       etat.sel = i; maj();
-      if (i >= 0) { etat.deplace = { depart: accroche(p, false), origine: [...etat.els[i]], bouge: false }; try { svg.setPointerCapture(ev.pointerId); } catch { /* rien */ } }
+      if (i >= 0 && etat.els[i][0] !== 'h') { etat.deplace = { depart: accroche(p, false), origine: [...etat.els[i]], bouge: false }; try { svg.setPointerCapture(ev.pointerId); } catch { /* rien */ } }
       dessiner();
       return;
     }
@@ -375,10 +404,36 @@ export function monterPlanche(el, ex, opts) {
   svg.addEventListener('pointercancel', () => { etat.cours = null; etat.deplace = null; loupe.hidden = true; etat.loupe = null; dessiner(); });
   svg.addEventListener('pointerleave', (ev) => { if (ev.pointerType === 'mouse' && !etat.cours) { etat.guides = []; dessiner(); } });
 
+  /** Remplit (cellules de ½ carreau) la zone fermée par des traits forts autour du point touché. */
+  function hachurer(p) {
+    const k = (x, y) => `${x},${y}`;
+    const c0 = [Math.floor(p[0] * 2) / 2, Math.floor(p[1] * 2) / 2];
+    const existant = etat.els.findIndex((e) => e[0] === 'h' && e[1].some(([x, y]) => x === c0[0] && y === c0[1]));
+    if (existant >= 0) { changer(etat.els.filter((_, i) => i !== existant)); return; }
+    const zone = P.cible && dans(p, P.cible, 0) ? P.cible : Object.values(P.cadres || {}).find((c) => dans(p, c, 0));
+    if (!zone) { toast('Touche l\'intérieur d\'une vue pour hachurer.'); return; }
+    const [bx, by, bw, bh] = zone;
+    const murs = [...ex.donnees, ...etat.els].filter((e) => (e[0] === 'l' || e[0] === 'c') && e[e.length - 1] === 'v');
+    const bloque = (m) => murs.some((e) => distance(m, e) < 0.06);
+    const vus = new Set([k(...c0)]); const file = [c0]; const cells = [];
+    while (file.length) {
+      const [x, y] = file.pop(); cells.push([x, y]);
+      if (cells.length > 4 * bw * bh + 8) break;
+      for (const [dx, dy, mx, my] of [[0.5, 0, x + 0.5, y + 0.25], [-0.5, 0, x, y + 0.25], [0, 0.5, x + 0.25, y + 0.5], [0, -0.5, x + 0.25, y]]) {
+        const nx = x + dx, ny = y + dy;
+        if (nx < bx - 1e-9 || ny < by - 1e-9 || nx + 0.5 > bx + bw + 1e-9 || ny + 0.5 > by + bh + 1e-9) continue;
+        if (vus.has(k(nx, ny)) || bloque([mx, my])) continue;
+        vus.add(k(nx, ny)); file.push([nx, ny]);
+      }
+    }
+    if (cells.length >= 4 * bw * bh) { toast('Zone non fermée : trace d\'abord tout le contour en trait fort.', 4000); return; }
+    changer([...etat.els, ['h', cells, 'h']]);
+  }
+
   function annuler() { if (!etat.historique.length) return; etat.refaire.push(etat.els); etat.els = etat.historique.pop(); etat.sel = -1; sauver(opts.cle, etat.els); dessiner(); maj(); }
   function refaire() { if (!etat.refaire.length) return; etat.historique.push(etat.els); etat.els = etat.refaire.pop(); etat.sel = -1; sauver(opts.cle, etat.els); dessiner(); maj(); }
   function supprimerSel() { if (etat.sel >= 0) changer(etat.els.filter((_, k) => k !== etat.sel)); }
-  function changerType(s) { if (etat.sel < 0) return; const e = [...etat.els[etat.sel]]; e[e.length - 1] = s; changer(etat.els.map((x, i) => (i === etat.sel ? e : x)), true); }
+  function changerType(s) { if (etat.sel < 0 || etat.els[etat.sel][0] === 'h') return; const e = [...etat.els[etat.sel]]; e[e.length - 1] = s; changer(etat.els.map((x, i) => (i === etat.sel ? e : x)), true); }
   function pleinEcran(force) {
     const on = force ?? !el.classList.contains('pl-plein');
     el.classList.toggle('pl-plein', on);
@@ -419,7 +474,7 @@ export function monterPlanche(el, ex, opts) {
       return;
     }
     if (etat.correction) return;
-    const styles = { f: 'v', c: 'c', a: 'a', n: 'n' }; const outils = { l: 'ligne', o: 'cercle', s: 'selection', g: 'gomme' };
+    const styles = { f: 'v', c: 'c', a: 'a', n: 'n' }; const outils = { l: 'ligne', o: 'cercle', s: 'selection', g: 'gomme', ...(ex.solution.some((x) => x[0] === 'h') ? { h: 'hachures' } : {}) };
     if (styles[k]) { etat.style = styles[k]; if (etat.sel >= 0) changerType(styles[k]); }
     else if (outils[k]) { etat.outil = outils[k]; etat.chaine = null; if (etat.outil !== 'selection') etat.sel = -1; dessiner(); }
     else if ((k === 'delete' || k === 'backspace') && etat.sel >= 0) { e.preventDefault(); supprimerSel(); }
