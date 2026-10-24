@@ -7,7 +7,7 @@
    Quand on ajoute un fichier JS / CSS : l'ajouter dans FICHIERS_APP.
    ===================================================================== */
 
-const CACHE = 'revisions-v9';
+const CACHE = 'revisions-v10';
 
 const FICHIERS_APP = [
   './',
@@ -30,6 +30,7 @@ const FICHIERS_APP = [
   'js/pages.js',
   'js/exercices.js',
   'js/planche.js',
+  'js/piece3d.js',
   'js/proposer.js',
   'js/config.js',
   'lib/pdfjs/pdf.min.mjs',
