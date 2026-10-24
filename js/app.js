@@ -20,7 +20,7 @@ import { vueChapitre } from './vues/chapitre.js';
 import { vueParametres } from './vues/parametres.js';
 import { majBoutonProposer, viderAttente } from './proposer.js';
 
-const VERSION = '0.5.0 (dessin + boîte à idées)';
+const VERSION = '0.6.0 (planche de dessin améliorée)';
 const vue = document.getElementById('vue');
 let nettoyer = null; // fonction fournie par la page affichée, appelée avant d'en changer
 

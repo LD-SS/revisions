@@ -14,7 +14,8 @@ import { esc, melanger, stockage, pluriel } from './utils.js';
 import { icone } from './icones.js';
 import { texte, enLigne } from './rendu.js';
 import { badgeSource } from './synthese.js';
-import { monterPlanche } from './planche.js';
+import { monterPlanche, AIDES, niveauAide, choisirAide, corriger, prochainManquant } from './planche.js';
+import { monterPiece3D } from './piece3d.js';
 import { definirExerciceCourant, ouvrirProposition, estAuteur, boiteActive } from './proposer.js';
 import { svgSur } from './rendu.js';
 
@@ -23,10 +24,10 @@ const LETTRES = 'abcdefghijklmnopqrstuvwxyz';
 
 const lireNotes = () => stockage.lire('exos', {});
 export function noteExo(cle) { return lireNotes()[cle] || null; }
-function noter(cle, r) {
+function noter(cle, r, plus = null) {
   const t = lireNotes();
   const avant = t[cle];
-  t[cle] = { r, n: (avant?.n || 0) + 1, d: new Date().toISOString().slice(0, 10) };
+  t[cle] = { r, n: (avant?.n || 0) + 1, d: new Date().toISOString().slice(0, 10), ...(plus || {}) };
   stockage.ecrire('exos', t);
 }
 
@@ -173,18 +174,35 @@ export function lecteurExercices(conteneur, tous, options = {}) {
   function carteDessin(e, t) {
     const note = t[cle(e)];
     const corrige = etat.vus > 0;
+    const niv = niveauAide(); const A = AIDES[niv];
+    const d = etatDessin(e);
+    const restIndices = A.indices === Infinity ? '' : ` (${Math.max(0, A.indices - d.indices.length)})`;
+    const restBilans = A.bilans === Infinity ? '' : ` (${Math.max(0, A.bilans - d.bilans)})`;
     return `
       <div class="panel ex-card ex-dessin">
         ${entete(e, note)}
-        <div class="ex-dz">
-          <div class="ex-consigne">${texte(e.consigne || '')}
-            ${e.perspective ? `<figure class="fig ex-persp">${svgSur(e.perspective)}<figcaption>Perspective · F = sens de la vue de face</figcaption></figure>` : ''}
-          </div>
+        <div class="ex-aides-niv" role="radiogroup" aria-label="Niveau d'aide">
+          <span>Aides :</span>
+          ${Object.entries(AIDES).map(([k, v]) => `<label class="chip"><input type="radio" name="aide" value="${k}" ${k === niv ? 'checked' : ''} ${corrige ? 'disabled' : ''}><span>${v.nom}</span></label>`).join('')}
+          <span class="muted ex-aides-txt">${{
+            facile: 'lignes de rappel, ligne à 45°, pièce 3D avec boutons de vue, traits d’aide illimités.',
+            moyen: 'lignes de rappel, ligne à 45°, pièce 3D sans boutons de vue, 3 traits d’aide et 3 vérifications.',
+            difficile: 'comme à l’examen : perspective fixe, pas de ligne à 45° ni de rappels, aucune aide.',
+          }[niv]}</span>
         </div>
-        ${e.indice ? (etat.indice ? `<div class="ex-indice">${icone('ampoule')}<div>${texte(e.indice)}</div></div>`
-          : (!corrige ? `<button class="btn" data-action="indice">${icone('ampoule')} Un indice</button>` : '')) : ''}
+        <div class="ex-dz">
+          <div class="ex-consigne">${texte(e.consigne || '')}</div>
+          <div class="ex-3d" data-p3d>${!A.rotation && e.perspective ? `<figure class="fig ex-persp-fixe">${svgSur(e.perspective)}<figcaption>Perspective · F = sens de la vue de face</figcaption></figure>` : ''}</div>
+        </div>
+        ${e.indice && niv !== 'difficile' ? (etat.indice ? `<div class="ex-indice">${icone('ampoule')}<div>${texte(e.indice)}</div></div>`
+          : (!corrige ? `<button class="btn" data-action="indice">${icone('ampoule')} Un conseil</button>` : '')) : ''}
         <div class="ex-planche" data-planche></div>
-        ${corrige ? '<div class="ex-res" data-res></div>' : ''}
+        ${!corrige && (A.indices || A.bilans) ? `<div class="ex-aides">
+          ${A.indices ? `<button class="btn" data-action="traitaide" ${d.indices.length >= A.indices ? 'disabled' : ''} title="Montre un trait manquant (−${A.penalite} % par trait d'aide)">${icone('ampoule')} Un trait d'aide${restIndices}</button>` : ''}
+          ${A.bilans ? `<button class="btn" data-action="bilan" ${d.bilans >= A.bilans ? 'disabled' : ''} title="Combien de traits sont justes, sans dire lesquels">${icone('progression')} Où j'en suis ?${restBilans}</button>` : ''}
+          <div class="ex-aide-msg" data-aidemsg></div>
+        </div>` : ''}
+        ${corrige ? '<div class="ex-res" data-res></div><div class="ex-expl" data-expl><p class="muted">👉 Touche un trait de la correction (sur la planche) pour savoir d\'où il vient : il s\'allume aussi sur la pièce 3D.</p></div>' : ''}
         <div class="fc-actions">
           ${!corrige ? `<button class="btn primary" data-action="verifier">${icone('check')} Vérifier mon dessin</button>` : `
             <span class="ex-q">Comment ça s'est passé ?</span>
@@ -200,24 +218,51 @@ export function lecteurExercices(conteneur, tous, options = {}) {
         </div>
       </div>`;
   }
+  /* aides utilisées pour l'exercice affiché (remises à zéro en changeant d'exercice) */
+  function etatDessin(e) {
+    if (!etat.dessin || etat.dessin.id !== e.id) etat.dessin = { id: e.id, indices: [], bilans: 0, p3d: null, planche: null };
+    return etat.dessin;
+  }
   function monter() {
     const zone = conteneur.querySelector('[data-planche]');
     if (!zone) return;
     const e = etat.liste[etat.pos];
-    const p = monterPlanche(zone, e, { cle: cle(e), correction: etat.vus > 0 });
-    const r = p.resultat; const res = conteneur.querySelector('[data-res]');
+    const d = etatDessin(e);
+    const niv = niveauAide(); const A = AIDES[niv];
+    const z3 = conteneur.querySelector('[data-p3d]');
+    d.p3d = null;
+    if (z3 && e.piece && A.rotation) d.p3d = monterPiece3D(z3, e.piece, { boutons: A.boutonsVues, rotation: true });
+    const expliquer = (i) => {
+      const x = e.expl?.[i]; const zx = conteneur.querySelector('[data-expl]');
+      if (!x || !zx) return;
+      const r = d.planche?.resultat?.res?.[i];
+      const etatTxt = r ? { ok: '<span class="pl-leg ok">Tu l\'as trouvé ✓</span>', manque: '<span class="pl-leg manque">Il manque sur ton dessin</span>', type: '<span class="pl-leg type">Bon tracé, mais mauvais type de trait</span>' }[r.etat] : '';
+      zx.innerHTML = `<div class="ex-expl-box"><div>${etatTxt}</div>${texte(x.t)}</div>`;
+      d.p3d?.surligner(x.e3);
+    };
+    d.planche = monterPlanche(zone, e, { cle: cle(e), correction: etat.vus > 0, aide: niv, indices: d.indices, onExpliquer: expliquer });
+    const r = d.planche.resultat; const res = conteneur.querySelector('[data-res]');
     if (r && res) {
-      const verdict = r.pct >= 95 && !r.enTrop.length ? 'ok' : r.pct >= 70 ? 'mid' : 'ko';
-      res.innerHTML = `<div class="ex-bilan ${verdict}"><b>${r.pct} %</b>
+      const pen = A.penalite * d.indices.length;
+      const pct = Math.max(0, r.pct - pen);
+      d.pct = pct;
+      const verdict = pct >= 95 && !r.enTrop.length ? 'ok' : pct >= 70 ? 'mid' : 'ko';
+      res.innerHTML = `<div class="ex-bilan ${verdict}"><b>${pct} %</b>
         <span>${r.ok} / ${r.n} traits justes</span>
         ${r.manque ? `<span class="pl-leg manque">${r.manque} manquant${r.manque > 1 ? 's' : ''}</span>` : ''}
         ${r.type ? `<span class="pl-leg type">${r.type} mauvais type de trait</span>` : ''}
-        ${r.enTrop.length ? `<span class="pl-leg trop">${r.enTrop.length} en trop</span>` : ''}</div>
+        ${r.enTrop.length ? `<span class="pl-leg trop">${r.enTrop.length} en trop</span>` : ''}
+        ${pen ? `<span class="muted">(${d.indices.length} trait${d.indices.length > 1 ? 's' : ''} d'aide : −${pen} %)</span>` : ''}
+        <span class="muted">· aides : ${A.nom}</span></div>
         <p class="muted pl-legende"><span class="pl-leg ok">vert</span> trouvé · <span class="pl-leg manque">rouge</span> manquant · <span class="pl-leg type">orange</span> bon tracé mais mauvais type de trait · <span class="pl-leg trop">violet</span> en trop.
         <label><input type="checkbox" checked data-action="voircorr"> Afficher la correction</label></p>`;
-      res.querySelector('[data-action=voircorr]').addEventListener('change', (ev) => p.basculer(ev.target.checked));
+      res.querySelector('[data-action=voircorr]').addEventListener('change', (ev) => d.planche.basculer(ev.target.checked));
+      const premier = r.res.findIndex((x) => x.etat !== 'ok');
+      if (premier >= 0) { d.planche.focus(premier); expliquer(premier); }
     }
+    conteneur.querySelectorAll('input[name=aide]').forEach((i) => i.addEventListener('change', () => { choisirAide(i.value); afficher(); }));
   }
+  function aideMsg(html) { const z = conteneur.querySelector('[data-aidemsg]'); if (z) z.innerHTML = html; }
 
   function aller(p) {
     if (p < 0 || p >= etat.liste.length) return;
@@ -230,10 +275,27 @@ export function lecteurExercices(conteneur, tous, options = {}) {
     verifier: () => { etat.vus = 1; afficher(); conteneur.querySelector('[data-res]')?.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); },
     proposer: () => ouvrirProposition('erreur'),
     retoucher: () => { etat.vus = 0; afficher(); },
+    traitaide: () => {
+      const e = etat.liste[etat.pos]; const d = etatDessin(e); const A = AIDES[niveauAide()];
+      if (d.indices.length >= A.indices) return;
+      const i = prochainManquant(e, d.planche?.elements() || [], d.indices);
+      if (i < 0) { aideMsg('<p class="pl-leg ok">Tous les traits sont déjà là : vérifie ton dessin !</p>'); return; }
+      d.indices.push(i); afficher();
+      aideMsg(`<div class="ex-expl-box"><b>Trait d'aide</b> (en pointillé bleu sur la planche) : ${texte(e.expl?.[i]?.t || '')}</div>`);
+      d.p3d?.surligner(e.expl?.[i]?.e3);
+    },
+    bilan: () => {
+      const e = etat.liste[etat.pos]; const d = etatDessin(e); const A = AIDES[niveauAide()];
+      if (d.bilans >= A.bilans) return;
+      const r = corriger(e.solution, d.planche?.elements() || [], e.donnees);
+      d.bilans++; afficher();
+      aideMsg(`<div class="ex-expl-box"><b>Où j'en suis :</b> ${r.ok} / ${r.n} traits justes${r.type ? ` · ${r.type} avec un mauvais type de trait` : ''}${r.enTrop.length ? ` · ${r.enTrop.length} en trop` : ''} · ${r.manque} encore à trouver.</div>`);
+    },
     tout: () => { etat.vus = etapes(etat.liste[etat.pos]).length; afficher(); },
     indice: () => { etat.indice = true; afficher(); },
     noter: (b) => {
-      noter(cle(etat.liste[etat.pos]), b.dataset.r);
+      const ec = etat.liste[etat.pos];
+      noter(cle(ec), b.dataset.r, ec.type === 'dessin' ? { aide: niveauAide(), pct: etat.dessin?.pct } : null);
       options.onNote?.(etat.liste[etat.pos], b.dataset.r);
       if (etat.pos < etat.liste.length - 1) aller(etat.pos + 1); else afficher();
     },

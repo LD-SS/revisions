@@ -9,6 +9,10 @@
    Correction automatique : chaque élément de la solution est-il recouvert par
    un trait du même type ? Les traits de l'élève hors solution sont « en trop ».
    Le dessin est gardé dans ce navigateur (clé « dessins »).
+   Aides selon le niveau (facile / moyen / difficile) : guides de correspondance,
+   ligne à 45°, traits d'aide, « où j'en suis ? ».
+   Tracé : glisser, ou toucher deux points (enchaînement de contour) ; loupe au doigt ;
+   sélection pour changer le type ou déplacer un trait ; plein écran ; raccourcis clavier.
    ===================================================================== */
 
 import { stockage } from './utils.js';
@@ -74,51 +78,123 @@ export function corriger(solution, eleve, donnees = []) {
   };
 }
 
+/* ---------- niveaux d'aide ---------- */
+export const AIDES = {
+  facile: { nom: 'Facile', guides: true, l45: true, indices: Infinity, bilans: Infinity, rotation: true, boutonsVues: true, penalite: 3 },
+  moyen: { nom: 'Moyen', guides: true, l45: true, indices: 3, bilans: 3, rotation: true, boutonsVues: false, penalite: 5 },
+  difficile: { nom: 'Difficile', guides: false, l45: false, indices: 0, bilans: 0, rotation: false, boutonsVues: false, penalite: 0 },
+};
+export const niveauAide = () => (AIDES[stockage.lire('dessin.aide', 'facile')] ? stockage.lire('dessin.aide', 'facile') : 'facile');
+export const choisirAide = (n) => stockage.ecrire('dessin.aide', n);
+
 /* ---------- rendu SVG ---------- */
 function svgEl(e, cls, extra = '') {
   const s = e[e.length - 1];
   if (e[0] === 'l') return `<line class="${CLASSE[s]} ${cls}" x1="${r2(e[1] * K)}" y1="${r2(e[2] * K)}" x2="${r2(e[3] * K)}" y2="${r2(e[4] * K)}" ${extra}/>`;
   return `<circle class="${CLASSE[s]} ${cls}" cx="${r2(e[1] * K)}" cy="${r2(e[2] * K)}" r="${r2(e[3] * K)}" fill="none" ${extra}/>`;
 }
+const memeElement = (a, b) => a.length === b.length && a.every((v, i) => v === b[i]);
+
+let instance = null;   // une seule planche active (raccourcis clavier)
 
 /**
  * Monte une planche interactive dans « el ».
- * @param {object} ex  exercice de type « dessin » (planche, donnees, solution)
- * @param {{cle: string, correction?: boolean, solutionSeule?: boolean}} opts
- * @returns {{ resultat: object|null }}
+ * @param {object} ex  exercice de type « dessin » (planche, donnees, solution, expl)
+ * @param {{cle: string, correction?: boolean, aide?: string, indices?: number[],
+ *          onExpliquer?: (i: number) => void, onPlein?: (b: boolean) => void}} opts
  */
 export function monterPlanche(el, ex, opts) {
+  instance?.detruire();
   const P = ex.planche;
+  const A = AIDES[opts.aide || 'facile'];
   const W = P.w * K, H = P.h * K;
   const etat = {
     els: dessinSauve(opts.cle).map((e) => [...e]),
-    style: 'v', outil: 'ligne', zoom: 1, cours: null, historique: [],
-    correction: !!opts.correction, voirCorr: true,
+    style: 'v', outil: 'ligne', zoom: 1, cours: null, chaine: null, sel: -1, deplace: null,
+    historique: [], refaire: [], guides: [], loupe: null,
+    correction: !!opts.correction, voirCorr: true, focus: -1,
+    indices: opts.indices || [],
   };
-  let resultat = etat.correction ? corriger(ex.solution, etat.els, ex.donnees) : null;
+  const resultat = etat.correction ? corriger(ex.solution, etat.els, ex.donnees) : null;
 
   el.innerHTML = `
     <div class="pl-outils" role="toolbar" aria-label="Outils de dessin">
       <div class="pl-groupe" role="group" aria-label="Type de trait">
-        ${['v', 'c', 'a', 'n'].map((s) => `<button class="btn pl-b" data-style="${s}" title="${TITRE[s]}"><svg viewBox="0 0 34 10" class="pl-ech"><line class="${CLASSE[s]}" x1="2" y1="5" x2="32" y2="5"/></svg>${NOM[s]}</button>`).join('')}
+        ${['v', 'c', 'a', 'n'].map((s) => `<button class="btn pl-b" type="button" data-style="${s}" title="${TITRE[s]} (touche ${{ v: 'F', c: 'C', a: 'A', n: 'N' }[s]})"><svg viewBox="0 0 34 10" class="pl-ech"><line class="${CLASSE[s]}" x1="2" y1="5" x2="32" y2="5"/></svg>${NOM[s]}</button>`).join('')}
       </div>
       <div class="pl-groupe" role="group" aria-label="Outil">
-        <button class="btn pl-b" data-outil="ligne" title="Tracer un segment (glisser d'un point à l'autre)"><svg viewBox="0 0 24 24" class="ic"><path d="M4 20 20 4" stroke="currentColor" stroke-width="2"/><circle cx="4" cy="20" r="2" fill="currentColor"/><circle cx="20" cy="4" r="2" fill="currentColor"/></svg>Ligne</button>
-        <button class="btn pl-b" data-outil="cercle" title="Tracer un cercle (glisser du centre vers le bord)"><svg viewBox="0 0 24 24" class="ic"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/></svg>Cercle</button>
-        <button class="btn pl-b" data-outil="gomme" title="Gomme : toucher un trait pour l'effacer"><svg viewBox="0 0 24 24" class="ic"><path d="M7 21h10M5 15l9-11 6 5-9 11H8z" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/></svg>Gomme</button>
-        <button class="btn pl-b" data-outil="main" title="Déplacer la planche (quand elle est agrandie)"><svg viewBox="0 0 24 24" class="ic"><path d="M12 2v20M2 12h20M12 2l-3 3M12 2l3 3M12 22l-3-3M12 22l3-3M2 12l3-3M2 12l3 3M22 12l-3-3M22 12l-3 3" stroke="currentColor" stroke-width="1.8" fill="none"/></svg>Déplacer</button>
+        <button class="btn pl-b" type="button" data-outil="ligne" title="Ligne (L) : glisser, ou toucher 2 points (les traits s'enchaînent)"><svg viewBox="0 0 24 24" class="ic"><path d="M4 20 20 4" stroke="currentColor" stroke-width="2"/><circle cx="4" cy="20" r="2" fill="currentColor"/><circle cx="20" cy="4" r="2" fill="currentColor"/></svg>Ligne</button>
+        <button class="btn pl-b" type="button" data-outil="cercle" title="Cercle (O) : du centre vers le bord"><svg viewBox="0 0 24 24" class="ic"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/></svg>Cercle</button>
+        <button class="btn pl-b" type="button" data-outil="selection" title="Sélection (S) : toucher un trait pour changer son type, le déplacer ou le supprimer"><svg viewBox="0 0 24 24" class="ic"><path d="M5 3l14 8-6 2-3 6z" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/></svg>Sélection</button>
+        <button class="btn pl-b" type="button" data-outil="gomme" title="Gomme (G) : toucher un trait pour l'effacer"><svg viewBox="0 0 24 24" class="ic"><path d="M7 21h10M5 15l9-11 6 5-9 11H8z" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/></svg>Gomme</button>
+        <button class="btn pl-b" type="button" data-outil="main" title="Déplacer la planche (quand elle est agrandie)"><svg viewBox="0 0 24 24" class="ic"><path d="M12 2v20M2 12h20M12 2l-3 3M12 2l3 3M12 22l-3-3M12 22l3-3M2 12l3-3M2 12l3 3M22 12l-3-3M22 12l-3 3" stroke="currentColor" stroke-width="1.8" fill="none"/></svg>Déplacer</button>
       </div>
       <div class="pl-groupe">
-        <button class="btn icon" data-act="annuler" title="Annuler le dernier trait">${icone('recommencer')}</button>
-        <button class="btn icon" data-act="moins" title="Réduire">−</button>
-        <button class="btn icon" data-act="plus" title="Agrandir">+</button>
-        <button class="btn" data-act="effacer" title="Tout effacer">${icone('croix')}<span>Effacer</span></button>
+        <button class="btn icon" type="button" data-act="annuler" title="Annuler (Ctrl+Z)">↶</button>
+        <button class="btn icon" type="button" data-act="refaire" title="Rétablir (Ctrl+Y)">↷</button>
+        <button class="btn icon" type="button" data-act="moins" title="Réduire">−</button>
+        <button class="btn icon" type="button" data-act="plus" title="Agrandir">+</button>
+        <button class="btn icon" type="button" data-act="plein" title="Plein écran">⛶</button>
+        <button class="btn" type="button" data-act="effacer" title="Tout effacer">${icone('croix')}<span>Effacer</span></button>
+      </div>
+      <div class="pl-selbar" hidden>
+        <span>Trait sélectionné :</span>
+        ${['v', 'c', 'a', 'n'].map((s) => `<button class="btn pl-b" type="button" data-chg="${s}">${NOM[s]}</button>`).join('')}
+        <button class="btn pl-b bad" type="button" data-act="suppr" title="Supprimer (Suppr)">${icone('croix')}Supprimer</button>
       </div>
     </div>
-    <div class="pl-cadre fig"><svg class="pl-svg" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Planche de dessin"></svg></div>
-    <p class="pl-aide muted">Glisse pour tracer · les points s'accrochent tous les 5 mm (½ carreau) · 1 carreau = 10 mm</p>`;
+    <div class="pl-cadre fig">
+      <svg class="pl-svg" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Planche de dessin"></svg>
+      <div class="pl-loupe" hidden><svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg"></svg></div>
+    </div>
+    <p class="pl-aide muted">Glisse pour tracer, ou touche deux points (les traits s'enchaînent ; touche deux fois le même point pour arrêter).
+      Accrochage tous les 5 mm · 1 carreau = 10 mm${A.guides ? ' · les pointillés bleus sont des lignes de rappel' : ''}.</p>`;
   const svg = el.querySelector('svg.pl-svg');
   const cadre = el.querySelector('.pl-cadre');
+  const loupe = el.querySelector('.pl-loupe');
+  const selbar = el.querySelector('.pl-selbar');
+
+  /* ----- points remarquables pour les guides ----- */
+  function pointsCles() {
+    const pts = [];
+    for (const e of [...ex.donnees, ...etat.els]) {
+      if (e[e.length - 1] === 'n') continue;
+      if (e[0] === 'l') pts.push([e[1], e[2]], [e[3], e[4]]);
+      else pts.push([e[1], e[2]], [e[1] - e[3], e[2]], [e[1] + e[3], e[2]], [e[1], e[2] - e[3]], [e[1], e[2] + e[3]]);
+    }
+    return pts;
+  }
+  const dans = (p, c, m = 0.6) => c && p[0] >= c[0] - m && p[0] <= c[0] + c[2] + m && p[1] >= c[1] - m && p[1] <= c[1] + c[3] + m;
+
+  /** Accroche un point : grille ½ carreau, puis lignes de rappel (aide). */
+  function accroche(brut, avecGuides = true) {
+    let x = Math.round(brut[0] / PAS) * PAS, y = Math.round(brut[1] / PAS) * PAS;
+    const guides = [];
+    if (A.guides && avecGuides) {
+      const T = 0.3; const cd = P.cadres || {};
+      let bx = null, by = null;
+      for (const q of pointsCles()) {
+        if (Math.abs(q[0] - brut[0]) < T && (bx === null || Math.abs(q[0] - brut[0]) < Math.abs(bx.q[0] - brut[0])) && Math.abs(q[1] - brut[1]) > 0.4) bx = { q, x: q[0], via: null };
+        if (Math.abs(q[1] - brut[1]) < T && (by === null || Math.abs(q[1] - brut[1]) < Math.abs(by.q[1] - brut[1])) && Math.abs(q[0] - brut[0]) > 0.4) by = { q, y: q[1], via: null };
+        if (P.l45) {  // report par la ligne à 45° (dessus ↔ gauche)
+          const cx = P.l45[1], cy = P.l45[2];
+          if (dans(q, cd.dessus, 0.05) && dans(brut, cd.gauche)) {
+            const xx = cx + (q[1] - cy);
+            if (Math.abs(xx - brut[0]) < T && (bx === null || Math.abs(xx - brut[0]) < Math.abs(bx.x - brut[0]))) bx = { q, x: xx, via: [xx, q[1]] };
+          }
+          if (dans(q, cd.gauche, 0.05) && dans(brut, cd.dessus)) {
+            const yy = cy + (q[0] - cx);
+            if (Math.abs(yy - brut[1]) < T && (by === null || Math.abs(yy - brut[1]) < Math.abs(by.y - brut[1]))) by = { q, y: yy, via: [q[0], yy] };
+          }
+        }
+      }
+      if (bx) { x = bx.x; guides.push(bx.via ? [bx.q, bx.via, 'x'] : [bx.q, null, 'x']); }
+      if (by) { y = by.y; guides.push(by.via ? [by.q, by.via, 'y'] : [by.q, null, 'y']); }
+    }
+    x = Math.max(0, Math.min(P.w, x)); y = Math.max(0, Math.min(P.h, y));
+    etat.guides = guides.map(([q, via, ax]) => ({ q, via, ax, p: [x, y] }));
+    return [x, y];
+  }
 
   function fond() {
     let g = '';
@@ -130,22 +206,36 @@ export function monterPlanche(el, ex, opts) {
       const [x, y, w, h] = P.cible; const m = 0.5;
       g += `<rect class="pl-cible" x="${(x - m) * K}" y="${(y - m) * K}" width="${(w + 2 * m) * K}" height="${(h + 2 * m) * K}" rx="6"/>`;
     }
-    if (P.l45) g += svgEl(P.l45, 'pl-45');
+    if (P.l45 && A.l45) g += svgEl(P.l45, 'pl-45');
     return g;
   }
 
-  function dessiner(apercu = '') {
+  function contenu(apercu = '') {
     let s = fond() + ex.donnees.map((e) => svgEl(e, 'pl-donne')).join('');
     if (etat.correction && resultat && etat.voirCorr) {
       const trop = new Set(resultat.enTrop);
       s += etat.els.map((e) => svgEl(e, trop.has(e) ? 'pl-trop' : 'pl-eleve pl-pale')).join('');
-      s += resultat.res.map((r) => svgEl(r.s, `pl-${r.etat}`)).join('');
-    } else if (opts.solutionSeule) {
-      s += ex.solution.map((e) => svgEl(e, 'pl-ok')).join('');
+      s += resultat.res.map((r, i) => svgEl(r.s, `pl-${r.etat}${i === etat.focus ? ' pl-focus' : ''}`)).join('');
     } else {
-      s += etat.els.map((e) => svgEl(e, 'pl-eleve')).join('');
+      s += etat.indices.map((i) => svgEl(ex.solution[i], 'pl-indice')).join('');
+      s += etat.els.map((e, i) => svgEl(e, `pl-eleve${i === etat.sel ? ' pl-sel' : ''}`)).join('');
     }
-    svg.innerHTML = s + apercu;
+    for (const g of etat.guides) {
+      const pts = g.via ? [g.q, g.via, g.p] : [g.q, g.p];
+      s += `<polyline class="pl-guide" points="${pts.map((p) => `${p[0] * K},${p[1] * K}`).join(' ')}"/>`;
+    }
+    if (etat.chaine) s += `<circle class="pl-pt pl-attente" cx="${etat.chaine[0] * K}" cy="${etat.chaine[1] * K}" r="6"/>`;
+    return s + apercu;
+  }
+  function dessiner(apercu = '') {
+    const s = contenu(apercu);
+    svg.innerHTML = s;
+    if (etat.loupe) {
+      const [x, y] = etat.loupe; const r = 1.7 * K;
+      const ls = loupe.querySelector('svg');
+      ls.setAttribute('viewBox', `${x * K - r} ${y * K - r} ${2 * r} ${2 * r}`);
+      ls.innerHTML = s + `<circle class="pl-mire" cx="${x * K}" cy="${y * K}" r="5"/>`;
+    }
   }
 
   function maj() {
@@ -155,7 +245,12 @@ export function monterPlanche(el, ex, opts) {
     svg.style.maxWidth = 'none';
     svg.style.touchAction = etat.outil === 'main' ? 'auto' : 'none';
     cadre.classList.toggle('pl-pan', etat.outil === 'main');
-    el.querySelectorAll('.pl-outils button').forEach((b) => { b.disabled = etat.correction && !b.dataset.act?.match(/plus|moins/) && b.dataset.outil !== 'main'; });
+    el.querySelector('[data-act=annuler]').disabled = !etat.historique.length;
+    el.querySelector('[data-act=refaire]').disabled = !etat.refaire.length;
+    selbar.hidden = etat.sel < 0;
+    if (etat.sel >= 0) selbar.querySelectorAll('[data-chg]').forEach((b) => b.classList.toggle('actif', etat.els[etat.sel]?.at(-1) === b.dataset.chg));
+    if (etat.correction) el.querySelectorAll('.pl-outils button').forEach((b) => { b.disabled = !(b.dataset.act === 'plus' || b.dataset.act === 'moins' || b.dataset.act === 'plein' || b.dataset.outil === 'main'); });
+    svg.style.cursor = etat.correction ? 'pointer' : '';
   }
 
   const pointUnite = (ev) => {
@@ -163,70 +258,190 @@ export function monterPlanche(el, ex, opts) {
     const p = pt.matrixTransform(svg.getScreenCTM().inverse());
     return [p.x / K, p.y / K];
   };
-  const accroche = ([x, y]) => [Math.max(0, Math.min(P.w, Math.round(x / PAS) * PAS)), Math.max(0, Math.min(P.h, Math.round(y / PAS) * PAS))];
 
-  function changer(nouveaux) {
+  function changer(nouveaux, garderSel = false) {
     etat.historique.push(etat.els.map((e) => [...e]));
-    if (etat.historique.length > 100) etat.historique.shift();
+    if (etat.historique.length > 200) etat.historique.shift();
+    etat.refaire = [];
     etat.els = nouveaux;
+    if (!garderSel) etat.sel = -1;
     sauver(opts.cle, etat.els);
-    dessiner();
+    dessiner(); maj();
   }
-
-  svg.addEventListener('pointerdown', (ev) => {
-    if (etat.correction || etat.outil === 'main' || opts.solutionSeule) return;
-    ev.preventDefault();
-    const p = pointUnite(ev);
-    if (etat.outil === 'gomme') {
-      let meilleur = -1, d = 0.45;
-      etat.els.forEach((e, i) => { const di = distance(p, e); if (di < d) { d = di; meilleur = i; } });
-      if (meilleur >= 0) changer(etat.els.filter((_, i) => i !== meilleur));
-      return;
-    }
-    svg.setPointerCapture(ev.pointerId);
-    etat.cours = { a: accroche(p), b: accroche(p) };
-    apercu();
-  });
-  svg.addEventListener('pointermove', (ev) => {
-    if (!etat.cours) return;
-    etat.cours.b = accroche(pointUnite(ev));
-    apercu();
-  });
-  function apercu() {
-    const { a, b } = etat.cours;
-    const e = forme(a, b);
-    const mm = etat.outil === 'cercle' ? `Ø ${Math.round(e[3] * 20)} mm` : `${Math.round(Math.hypot(b[0] - a[0], b[1] - a[1]) * 10)} mm`;
-    dessiner(`${e[0] === 'c' && e[3] === 0 ? '' : svgEl(e, 'pl-apercu')}<circle class="pl-pt" cx="${a[0] * K}" cy="${a[1] * K}" r="4"/><circle class="pl-pt" cx="${b[0] * K}" cy="${b[1] * K}" r="4"/>
-      <text class="pl-mesure" x="${b[0] * K + 8}" y="${b[1] * K - 8}">${mm}</text>`);
-  }
+  const plusProche = (p, liste, max = 0.45) => {
+    let m = -1, d = max;
+    liste.forEach((e, i) => { const di = distance(p, e); if (di < d) { d = di; m = i; } });
+    return m;
+  };
   const forme = (a, b) => (etat.outil === 'cercle'
     ? ['c', a[0], a[1], Math.round(Math.hypot(b[0] - a[0], b[1] - a[1]) / PAS) * PAS, etat.style]
     : ['l', a[0], a[1], b[0], b[1], etat.style]);
+  const vide = (e) => (e[0] === 'l' ? (e[1] === e[3] && e[2] === e[4]) : e[3] === 0);
+
+  function apercu() {
+    const { a, b } = etat.cours;
+    const de = etat.chaine && !etat.cours.glisse ? etat.chaine : a;
+    const e = forme(de, b);
+    const mm = etat.outil === 'cercle' ? `Ø ${Math.round(e[3] * 20)} mm` : `${Math.round(Math.hypot(b[0] - de[0], b[1] - de[1]) * 10)} mm`;
+    dessiner(`${vide(e) ? '' : svgEl(e, 'pl-apercu')}<circle class="pl-pt" cx="${de[0] * K}" cy="${de[1] * K}" r="4"/><circle class="pl-pt" cx="${b[0] * K}" cy="${b[1] * K}" r="4"/>
+      ${vide(e) ? '' : `<text class="pl-mesure" x="${b[0] * K + 8}" y="${b[1] * K - 8}">${mm}</text>`}`);
+  }
+  function placerLoupe(ev, p) {
+    if (ev.pointerType !== 'touch') { loupe.hidden = true; etat.loupe = null; return; }
+    etat.loupe = p;
+    const r = cadre.getBoundingClientRect();
+    loupe.hidden = false;
+    loupe.style.left = `${ev.clientX - r.left + cadre.scrollLeft - 55}px`;
+    loupe.style.top = `${ev.clientY - r.top + cadre.scrollTop - 140}px`;
+  }
+
+  svg.addEventListener('pointerdown', (ev) => {
+    if (etat.outil === 'main') return;
+    ev.preventDefault();
+    const p = pointUnite(ev);
+    if (etat.correction) {  // correction expliquée : toucher un trait de la solution
+      const i = plusProche(p, ex.solution, 0.5);
+      if (i >= 0) { etat.focus = i; dessiner(); opts.onExpliquer?.(i); }
+      return;
+    }
+    if (etat.outil === 'gomme') {
+      const i = plusProche(p, etat.els);
+      if (i >= 0) changer(etat.els.filter((_, k) => k !== i));
+      return;
+    }
+    if (etat.outil === 'selection') {
+      const i = plusProche(p, etat.els);
+      etat.sel = i; maj();
+      if (i >= 0) { etat.deplace = { depart: accroche(p, false), origine: [...etat.els[i]], bouge: false }; try { svg.setPointerCapture(ev.pointerId); } catch { /* rien */ } }
+      dessiner();
+      return;
+    }
+    try { svg.setPointerCapture(ev.pointerId); } catch { /* rien */ }
+    const a = accroche(p);
+    etat.cours = { a, b: a, glisse: false };
+    placerLoupe(ev, a);
+    apercu();
+  });
+  svg.addEventListener('pointermove', (ev) => {
+    if (etat.deplace) {
+      const q = accroche(pointUnite(ev), false);
+      const dx = q[0] - etat.deplace.depart[0], dy = q[1] - etat.deplace.depart[1];
+      if (!dx && !dy && !etat.deplace.bouge) return;
+      etat.deplace.bouge = true;
+      const o = etat.deplace.origine;
+      etat.els[etat.sel] = o[0] === 'l' ? ['l', o[1] + dx, o[2] + dy, o[3] + dx, o[4] + dy, o[5]] : ['c', o[1] + dx, o[2] + dy, o[3], o[4]];
+      dessiner();
+      return;
+    }
+    if (!etat.cours) {   // survol (souris) : montrer le point accroché et les guides
+      if (ev.pointerType === 'mouse' && !etat.correction && (etat.outil === 'ligne' || etat.outil === 'cercle')) {
+        const b = accroche(pointUnite(ev));
+        const de = etat.chaine;
+        const e = de ? forme(de, b) : null;
+        dessiner(`${e && !vide(e) ? svgEl(e, 'pl-apercu') : ''}<circle class="pl-pt pl-survol" cx="${b[0] * K}" cy="${b[1] * K}" r="4"/>`);
+      }
+      return;
+    }
+    const b = accroche(pointUnite(ev));
+    if (b[0] !== etat.cours.a[0] || b[1] !== etat.cours.a[1]) etat.cours.glisse = true;
+    etat.cours.b = b;
+    placerLoupe(ev, b);
+    apercu();
+  });
   function finir() {
+    loupe.hidden = true; etat.loupe = null; etat.guides = [];
+    if (etat.deplace) {
+      const bouge = etat.deplace.bouge; const o = etat.deplace.origine; const n = etat.els[etat.sel];
+      etat.deplace = null;
+      if (bouge) { etat.els[etat.sel] = o; changer(etat.els.map((e, i) => (i === etat.sel ? n : [...e])), true); }
+      return;
+    }
     if (!etat.cours) return;
-    const e = forme(etat.cours.a, etat.cours.b);
+    const { a, b, glisse } = etat.cours;
     etat.cours = null;
-    const vide = e[0] === 'l' ? (e[1] === e[3] && e[2] === e[4]) : e[3] === 0;
-    if (vide) { dessiner(); return; }
+    if (glisse) {                       // tracé en glissant
+      const e = forme(a, b); etat.chaine = null;
+      if (!vide(e)) changer([...etat.els, e]); else dessiner();
+      return;
+    }
+    // toucher : premier point, puis point suivant (contour enchaîné)
+    if (!etat.chaine) { etat.chaine = a; dessiner(); return; }
+    if (etat.chaine[0] === a[0] && etat.chaine[1] === a[1]) { etat.chaine = null; dessiner(); return; }  // 2e toucher au même endroit : fin
+    const e = forme(etat.chaine, a);
+    etat.chaine = etat.outil === 'cercle' ? null : a;
     changer([...etat.els, e]);
   }
   svg.addEventListener('pointerup', finir);
-  svg.addEventListener('pointercancel', () => { etat.cours = null; dessiner(); });
+  svg.addEventListener('pointercancel', () => { etat.cours = null; etat.deplace = null; loupe.hidden = true; etat.loupe = null; dessiner(); });
+  svg.addEventListener('pointerleave', (ev) => { if (ev.pointerType === 'mouse' && !etat.cours) { etat.guides = []; dessiner(); } });
+
+  function annuler() { if (!etat.historique.length) return; etat.refaire.push(etat.els); etat.els = etat.historique.pop(); etat.sel = -1; sauver(opts.cle, etat.els); dessiner(); maj(); }
+  function refaire() { if (!etat.refaire.length) return; etat.historique.push(etat.els); etat.els = etat.refaire.pop(); etat.sel = -1; sauver(opts.cle, etat.els); dessiner(); maj(); }
+  function supprimerSel() { if (etat.sel >= 0) changer(etat.els.filter((_, k) => k !== etat.sel)); }
+  function changerType(s) { if (etat.sel < 0) return; const e = [...etat.els[etat.sel]]; e[e.length - 1] = s; changer(etat.els.map((x, i) => (i === etat.sel ? e : x)), true); }
+  function pleinEcran(force) {
+    const on = force ?? !el.classList.contains('pl-plein');
+    el.classList.toggle('pl-plein', on);
+    document.body.classList.toggle('pl-plein-ouvert', on);
+    el.querySelector('[data-act=plein]').textContent = on ? '✕' : '⛶';
+    el.querySelector('[data-act=plein]').title = on ? 'Quitter le plein écran (Échap)' : 'Plein écran';
+    opts.onPlein?.(on);
+  }
 
   el.querySelector('.pl-outils').addEventListener('click', (ev) => {
     const b = ev.target.closest('button'); if (!b || b.disabled) return;
-    if (b.dataset.style) { etat.style = b.dataset.style; if (etat.outil !== 'ligne' && etat.outil !== 'cercle') etat.outil = 'ligne'; }
-    else if (b.dataset.outil) etat.outil = b.dataset.outil;
-    else if (b.dataset.act === 'annuler') { if (etat.historique.length) { etat.els = etat.historique.pop(); sauver(opts.cle, etat.els); dessiner(); } }
+    if (b.dataset.style) {
+      etat.style = b.dataset.style;
+      if (etat.sel >= 0) changerType(b.dataset.style);
+      else if (etat.outil !== 'ligne' && etat.outil !== 'cercle') etat.outil = 'ligne';
+    } else if (b.dataset.chg) changerType(b.dataset.chg);
+    else if (b.dataset.outil) { etat.outil = b.dataset.outil; etat.chaine = null; if (etat.outil !== 'selection') etat.sel = -1; dessiner(); }
+    else if (b.dataset.act === 'annuler') annuler();
+    else if (b.dataset.act === 'refaire') refaire();
+    else if (b.dataset.act === 'suppr') supprimerSel();
     else if (b.dataset.act === 'effacer') { if (etat.els.length) changer([]); }
     else if (b.dataset.act === 'plus') etat.zoom = Math.min(3, etat.zoom * 1.3);
     else if (b.dataset.act === 'moins') etat.zoom = Math.max(1, etat.zoom / 1.3);
+    else if (b.dataset.act === 'plein') pleinEcran();
     maj();
   });
 
+  function clavier(e) {
+    const t = e.target.tagName;
+    if (t === 'INPUT' || t === 'TEXTAREA' || t === 'SELECT' || document.querySelector('.prop-fond, .visio-fond:not(.prop-fond)')) return;
+    const k = e.key.toLowerCase();
+    if ((e.ctrlKey || e.metaKey) && k === 'z' && !e.shiftKey) { e.preventDefault(); annuler(); return; }
+    if ((e.ctrlKey || e.metaKey) && (k === 'y' || (k === 'z' && e.shiftKey))) { e.preventDefault(); refaire(); return; }
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    if (k === 'escape') {
+      if (etat.chaine || etat.sel >= 0) { etat.chaine = null; etat.sel = -1; dessiner(); maj(); e.preventDefault(); }
+      else if (el.classList.contains('pl-plein')) { pleinEcran(false); maj(); e.preventDefault(); }
+      return;
+    }
+    if (etat.correction) return;
+    const styles = { f: 'v', c: 'c', a: 'a', n: 'n' }; const outils = { l: 'ligne', o: 'cercle', s: 'selection', g: 'gomme' };
+    if (styles[k]) { etat.style = styles[k]; if (etat.sel >= 0) changerType(styles[k]); }
+    else if (outils[k]) { etat.outil = outils[k]; etat.chaine = null; if (etat.outil !== 'selection') etat.sel = -1; dessiner(); }
+    else if ((k === 'delete' || k === 'backspace') && etat.sel >= 0) { e.preventDefault(); supprimerSel(); }
+    else return;
+    maj();
+  }
+  document.addEventListener('keydown', clavier);
+
   dessiner(); maj();
-  return {
+  instance = {
     resultat,
+    elements: () => etat.els,
     basculer(v) { etat.voirCorr = v; dessiner(); },
+    focus(i) { etat.focus = i; dessiner(); },
+    detruire() { document.removeEventListener('keydown', clavier); document.body.classList.remove('pl-plein-ouvert'); if (instance === this) instance = null; },
   };
+  return instance;
+}
+
+/** Premier trait de la solution que l'élève n'a pas encore (pour un trait d'aide). */
+export function prochainManquant(ex, eleve, deja = []) {
+  const r = corriger(ex.solution, eleve, ex.donnees);
+  const i = r.res.findIndex((x, k) => x.etat !== 'ok' && !deja.includes(k));
+  return i;
 }
