@@ -39,29 +39,44 @@ function preparer(piece) {
       if (!voisinPlan(t2)) cotes.push([1, 2]);
       if (!voisinPlan(t3)) cotes.push([2, 3]);
       if (!voisinPlan(neg(t2))) cotes.push([3, 0]);
-      faces.push({ n, coins, cotes });
+      faces.push({ n, coins, cotes, trous: [] });
     }
   }
-  const disques = [];
+  // Trous : chaque ouverture (cercle) est dessinée DANS les carrés de face qu'elle recouvre,
+  // découpée à leur contour : elle est donc cachée/visible exactement comme ces faces.
+  const AX = { x: 0, y: 1, z: 2 };
   for (const t of piece.trous || []) {
+    const ax = AX[t.axe]; const [u, v] = [0, 1, 2].filter((i) => i !== ax);
+    const L = Math.abs(t.a - t.de);
     for (const [s, sens] of [[Math.min(t.de, t.a), -1], [Math.max(t.de, t.a), 1]]) {
-      const pts = [];
-      for (let q = 0; q < 28; q++) {
-        const th = 2 * Math.PI * q / 28; const c1 = t.c[0] + t.r * Math.cos(th), c2 = t.c[1] + t.r * Math.sin(th);
-        pts.push(t.axe === 'x' ? [s, c1, c2] : t.axe === 'y' ? [c1, s, c2] : [c1, c2, s]);
+      const cercle = (plan) => {
+        const pts = [];
+        for (let q = 0; q < 36; q++) {
+          const th = 2 * Math.PI * q / 36; const p = [0, 0, 0];
+          p[ax] = plan; p[u] = t.c[0] + t.r * Math.cos(th); p[v] = t.c[1] + t.r * Math.sin(th);
+          pts.push(p);
+        }
+        return pts;
+      };
+      const ouverture = cercle(s), fond = cercle(s - sens * L);   // fond = l'autre bout du trou (traversant)
+      for (const f of faces) {
+        if (f.n[ax] !== sens || f.coins[0][ax] !== s) continue;
+        const mu = Math.min(...f.coins.map((c) => c[u])), Mu = Math.max(...f.coins.map((c) => c[u]));
+        const mv = Math.min(...f.coins.map((c) => c[v])), Mv = Math.max(...f.coins.map((c) => c[v]));
+        if (t.c[0] + t.r <= mu || t.c[0] - t.r >= Mu || t.c[1] + t.r <= mv || t.c[1] - t.r >= Mv) continue;
+        f.trous.push({ ouverture, fond });
       }
-      const n = t.axe === 'x' ? [sens, 0, 0] : t.axe === 'y' ? [0, sens, 0] : [0, 0, sens];
-      disques.push({ pts, n });
     }
   }
-  return { faces, disques };
+  return { faces };
 }
 
 export function monterPiece3D(el, piece, opts = {}) {
   const [X, Y, Z] = piece.dim;
   const C = [X / 2, Y / 2, Z / 2];
   const R = Math.hypot(X, Y, Z) / 2 + 0.6;
-  const { faces, disques } = preparer(piece);
+  const { faces } = preparer(piece);
+  const uid = `p3d${Math.random().toString(36).slice(2, 8)}`;
   const cam = { ...VUES.iso };
   let surbrillance = [];
   let anim = null;
@@ -88,7 +103,7 @@ export function monterPiece3D(el, piece, opts = {}) {
   const lum = [-0.35, 0.75, -0.55]; // lumière (repère écran : x droite, y haut, profondeur)
 
   function dessiner() {
-    const items = [];
+    const items = []; let nq = 0;
     for (const f of faces) {
       const nr = rotN(f.n);
       if (nr[2] > -1e-6) continue;
@@ -98,16 +113,22 @@ export function monterPiece3D(el, piece, opts = {}) {
       const pct = Math.round(18 + 44 * (1 - l));
       const pts = P.map((p) => `${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' ');
       let s = `<polygon points="${pts}" style="fill:color-mix(in srgb,#f2c94c ${pct}%,var(--panel));stroke:color-mix(in srgb,#f2c94c ${pct}%,var(--panel));stroke-width:.8"/>`;
+      if (f.trous.length) {   // ouverture du trou, découpée au carré (légèrement agrandi pour éviter les joints)
+        const cx = P.reduce((a, p) => a + p[0], 0) / 4, cy = P.reduce((a, p) => a + p[1], 0) / 4;
+        const grand = P.map((p) => { const dx = p[0] - cx, dy = p[1] - cy, l = Math.hypot(dx, dy) || 1; return `${(p[0] + dx / l * 0.7).toFixed(1)},${(p[1] + dy / l * 0.7).toFixed(1)}`; }).join(' ');
+        const id = `${uid}q${nq++}`;
+        s += `<clipPath id="${id}"><polygon points="${grand}"/></clipPath><g clip-path="url(#${id})">`;
+        f.trous.forEach((tr, k) => {
+          const o = tr.ouverture.map(rot).map((p) => `${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' ');
+          const fd = tr.fond.map(rot).map((p) => `${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' ');
+          const ido = `${id}o${k}`;
+          s += `<polygon class="p3d-paroi" points="${o}"/><clipPath id="${ido}"><polygon points="${o}"/></clipPath>
+            <polygon class="p3d-jour" clip-path="url(#${ido})" points="${fd}"/><polygon class="p3d-bord" points="${o}"/>`;
+        });
+        s += '</g>';
+      }
       for (const [a, b] of f.cotes) s += `<line class="p3d-ar" x1="${P[a][0].toFixed(1)}" y1="${P[a][1].toFixed(1)}" x2="${P[b][0].toFixed(1)}" y2="${P[b][1].toFixed(1)}"/>`;
       items.push([prof, s]);
-    }
-    for (const d of disques) {
-      const nr = rotN(d.n);
-      if (nr[2] > -1e-6) continue;
-      const P = d.pts.map(rot);
-      const prof = P.reduce((s, p) => s + p[2], 0) / P.length - 0.02;
-      const pts = P.map((p) => `${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' ');
-      items.push([prof, `<polygon class="p3d-trou" points="${pts}"/>`]);
     }
     items.sort((a, b) => b[0] - a[0]);
     let s = items.map((i) => i[1]).join('');

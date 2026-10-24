@@ -203,7 +203,7 @@ export function lecteurExercices(conteneur, tous, options = {}) {
         </div>
         <div class="ex-dz">
           <div class="ex-consigne">${texte(e.consigne || '')}</div>
-          <div class="ex-3d" data-p3d>${!A.rotation && e.perspective ? `<figure class="fig ex-persp-fixe">${svgSur(e.perspective)}<figcaption>Perspective · F = sens de la vue de face${e.tache?.type === 'coupe' ? ' · plan A-A dans la vue de dessus' : ''}</figcaption></figure>` : ''}</div>
+          <div class="ex-3d" data-p3d>${!e.piece && e.perspective ? `<figure class="fig ex-persp-fixe">${svgSur(e.perspective)}<figcaption>Perspective · F = sens de la vue de face</figcaption></figure>` : ''}</div>
         </div>
         ${e.indice && niv !== 'difficile' ? (etat.indice ? `<div class="ex-indice">${icone('ampoule')}<div>${texte(e.indice)}</div></div>`
           : (!corrige ? `<button class="btn" data-action="indice">${icone('ampoule')} Un conseil</button>` : '')) : ''}
@@ -243,7 +243,7 @@ export function lecteurExercices(conteneur, tous, options = {}) {
     const z3 = conteneur.querySelector('[data-p3d]');
     d.p3d = null;
     if (z3 && e.piece && A.rotation) d.p3d = monterPiece3D(z3, e.piece, { boutons: A.boutonsVues, rotation: true });
-    else if (z3 && e.piece && !e.perspective) monterPiece3D(z3, e.piece, { rotation: false });
+    else if (z3 && e.piece) monterPiece3D(z3, e.piece, { rotation: false });
     const expliquer = (i) => {
       const x = e.expl?.[i]; const zx = conteneur.querySelector('[data-expl]');
       if (!x || !zx) return;
