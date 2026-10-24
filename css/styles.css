@@ -520,3 +520,24 @@ body.pl-plein-ouvert{overflow:hidden}
 @media (max-width:640px){ .ex-dessin .ex-dz{grid-template-columns:1fr} .ex-3d{max-width:320px;margin:0 auto;width:100%} }
 .pl-ech line{stroke:currentColor;fill:none}
 .pl-ech .tf{stroke-width:2.8} .pl-ech .ti{stroke-width:1.6;stroke-dasharray:5 3} .pl-ech .tm{stroke-width:1.3;stroke-dasharray:9 3 2 3} .pl-ech .tn{stroke-width:1}
+
+/* ---------- Atelier de dessin ---------- */
+.at-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:6px 0 14px}
+.at-stats .panel{text-align:center;padding:10px;font-size:13px;color:var(--muted)}
+.at-stats .big{font-size:24px;font-weight:700;color:var(--text)}
+.at-stats .big.ok{color:var(--ok)}
+.at-barre{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;justify-content:space-between;margin-bottom:12px;font-size:13.5px}
+.at-filtres{display:flex;flex-wrap:wrap;gap:5px}
+.at-filtres .chip span{padding:4px 11px;font-size:13px}
+.at-go{margin-bottom:14px}
+.at-grille{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.at-carte{display:flex;flex-direction:column;gap:6px;padding:10px;text-decoration:none;color:var(--text);transition:border-color .15s,transform .15s}
+.at-carte:hover{border-color:var(--mt);transform:translateY(-1px)}
+.at-img{height:130px;display:flex;align-items:center;justify-content:center;background:var(--bg);border-radius:8px;margin:0}
+.at-img svg{max-height:120px;width:auto;max-width:100%}
+.at-txt{display:flex;flex-direction:column;gap:2px;font-size:14px}
+.at-txt .muted{font-size:12.5px}
+.at-l1{display:flex;justify-content:space-between;align-items:center;gap:6px}
+.at-note{margin-top:14px;font-size:13px}
+.atelier-retour{margin:4px 0 10px}
+@media (max-width:640px){ .at-stats{grid-template-columns:repeat(2,1fr)} .at-grille{grid-template-columns:1fr 1fr} .at-img{height:100px} }
