@@ -34,14 +34,14 @@ function noter(cle, r, plus = null) {
 /** Score (%) d'une liste d'exercices déjà notés, ou null. */
 export function scoreExos(prefixe, exos) {
   const t = lireNotes();
-  const notes = exos.map((e) => t[`${prefixe}/${e.id}`]).filter(Boolean);
+  const notes = exos.map((e) => t[e._cle || `${prefixe}/${e.id}`]).filter(Boolean);
   if (!notes.length) return null;
   return { pct: Math.round(100 * notes.reduce((s, n) => s + NOTES[n.r].val, 0) / notes.length), faits: notes.length };
 }
 
 export function lecteurExercices(conteneur, tous, options = {}) {
   const prefixe = options.prefixe || '';
-  const cle = (e) => `${prefixe}/${e.id}`;
+  const cle = (e) => e._cle || `${prefixe}/${e.id}`;
   const etat = { filtre: 'tous', liste: [], pos: 0, vus: 0, indice: false };
 
   const FILTRES = [
@@ -63,7 +63,7 @@ export function lecteurExercices(conteneur, tous, options = {}) {
       }
     });
   }
-  function nouvelleListe(liste) { etat.liste = liste; etat.pos = 0; reset(); afficher(); }
+  function nouvelleListe(liste, pos = 0) { etat.liste = liste; etat.pos = Math.max(0, Math.min(pos, liste.length - 1)); reset(); afficher(); }
   function reset() { etat.vus = 0; etat.indice = false; }
 
   /* Étapes à dévoiler : pour chaque item, ses étapes puis sa réponse. */
@@ -134,7 +134,7 @@ export function lecteurExercices(conteneur, tous, options = {}) {
           <h3>${enLigne(e.titre || 'Exercice')}</h3>
           <span class="grow"></span>
           ${note ? `<span class="badge ex-${note.r}">${NOTES[note.r].lib}${note.n > 1 ? ` · ${note.n}×` : ''}</span>` : ''}
-          ${badgeSource(e, options.docs)}
+          ${badgeSource(e, e._docs || options.docs)}
         </div>
         ${e.consigne ? `<div class="ex-consigne">${texte(e.consigne)}</div>` : ''}
         <ol class="ex-items ${e.items.length > 1 ? '' : 'seul'}">${items}</ol>
@@ -168,7 +168,7 @@ export function lecteurExercices(conteneur, tous, options = {}) {
           <h3>${enLigne(e.titre || 'Exercice')}</h3>
           <span class="grow"></span>
           ${note ? `<span class="badge ex-${note.r}">${NOTES[note.r].lib}${note.n > 1 ? ` · ${note.n}×` : ''}</span>` : ''}
-          ${badgeSource(e, options.docs)}
+          ${badgeSource(e, e._docs || options.docs)}
         </div>`;
   }
   function carteDessin(e, t) {
@@ -315,6 +315,6 @@ export function lecteurExercices(conteneur, tous, options = {}) {
     if (e.target.dataset.action === 'filtre') { etat.filtre = e.target.value; nouvelleListe(filtrer()); }
   });
 
-  nouvelleListe(filtrer());
+  nouvelleListe(filtrer(), options.debut ? Math.max(0, tous.findIndex((x) => (x._cle || x.id) === options.debut)) : 0);
   return null;
 }

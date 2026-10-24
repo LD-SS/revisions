@@ -18,9 +18,10 @@ import { vueAccueil } from './vues/accueil.js';
 import { vueMatiere } from './vues/matiere.js';
 import { vueChapitre } from './vues/chapitre.js';
 import { vueParametres } from './vues/parametres.js';
+import { vueAtelier } from './vues/atelier.js';
 import { majBoutonProposer, viderAttente } from './proposer.js';
 
-const VERSION = '0.6.0 (planche de dessin améliorée)';
+const VERSION = '0.7.0 (atelier de dessin)';
 const vue = document.getElementById('vue');
 let nettoyer = null; // fonction fournie par la page affichée, appelée avant d'en changer
 
@@ -57,6 +58,8 @@ function rendreOnglets(route) {
     `<a class="tab ${actif(route[0] === '')}" href="#/">${icone('accueil')}<span class="txt">Accueil</span></a>`,
     ...matieres().map((m) => `<a class="tab mc ${actif(route[0] === 'm' && route[1] === m.id)}" ${styleMatiere(m)} href="#/m/${esc(m.id)}" title="${esc(m.nom)}">
       ${icone(m.icone)}<span class="txt">${esc(nomCourt(m))}</span></a>`),
+    ...(matieres().some((m) => m.id === 'dessin') ? [`<a class="tab mc ${actif(route[0] === 'dessin')}" ${styleMatiere(matieres().find((m) => m.id === 'dessin'))} href="#/dessin" title="Atelier de dessin : exercices à dessiner dans l'appli">
+      ${icone('crayon')}<span class="txt">Atelier dessin</span></a>`] : []),
     `<a class="tab future ${actif(route[0] === 'progression')}" href="#/progression">${icone('progression')}<span class="txt">Progression</span></a>`,
     `<a class="tab future ${actif(route[0] === 'planning')}" href="#/planning">${icone('calendrier')}<span class="txt">Planning</span></a>`,
     `<a class="tab ${actif(route[0] === 'parametres')}" href="#/parametres">${icone('reglages')}<span class="txt">Paramètres</span></a>`,
@@ -75,6 +78,7 @@ const ROUTES = {
   '': (el) => vueAccueil(el),
   m: (el, [mid, cid, onglet]) => (cid ? vueChapitre(el, mid, cid, onglet) : vueMatiere(el, mid)),
   parametres: (el) => vueParametres(el, { version: VERSION, theme, changerTheme }),
+  dessin: (el, params) => vueAtelier(el, params),
   progression: (el) => vueBientot(el, 'Progression : arrive à l\'étape 4', 'progression',
     'Scores par matière et par chapitre, points faibles, historique et examens blancs.'),
   planning: (el) => vueBientot(el, 'Planning : arrive à l\'étape 4', 'calendrier',

@@ -26,6 +26,12 @@ export const boiteActive = () => !!CONFIG.formulaire;
 function contexte() {
   const [page, mid, cid, onglet] = location.hash.replace(/^#\/?/, '').split('/').map(decodeURIComponent);
   const c = { lien: location.href, resume: 'Général' };
+  if (page === 'dessin') {
+    c.matiere = 'Dessin technique'; c.onglet = 'atelier';
+    c.resume = contexteExo && mid ? `Atelier dessin › ${contexteExo.titre} (${mid}/${cid})` : 'Atelier dessin';
+    if (contexteExo && mid) c.exercice = `${contexteExo.titre} (${mid}/${cid})`;
+    return c;
+  }
   if (page !== 'm' || !mid) return c;
   const m = matiere(mid); const ch = cid ? infoChapitre(mid, cid) : null;
   c.matiere = m?.nom || mid;
