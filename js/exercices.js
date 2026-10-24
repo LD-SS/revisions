@@ -75,18 +75,7 @@ export function lecteurExercices(conteneur, tous, options = {}) {
     });
   }
   function nouvelleListe(liste, pos = 0) { etat.liste = liste; etat.pos = Math.max(0, Math.min(pos, liste.length - 1)); reset(); afficher(); }
-  function reset() { etat.vus = 0; etat.indice = false; }
-
-  /* Étapes à dévoiler : pour chaque item, ses étapes puis sa réponse. */
-  function etapes(e) {
-    const out = [];
-    e.items.forEach((it, i) => {
-      const lettre = e.items.length > 1 ? `${LETTRES[i]}) ` : '';
-      (it.etapes || []).forEach((s, k) => out.push({ i, html: texte(s), premiere: k === 0, lettre }));
-      out.push({ i, html: texte(it.r), reponse: true, premiere: !(it.etapes || []).length, lettre });
-    });
-    return out;
-  }
+  function reset() { etat.vus = 0; etat.indice = false; etat.rep = false; etat.dev = new Set(); }
 
   function afficher() {
     if (!tous.length) {
@@ -125,18 +114,26 @@ export function lecteurExercices(conteneur, tous, options = {}) {
   function carte(e, t) {
     if (e.type === 'dessin') return carteDessin(e, t);
     const note = t[cle(e)];
-    const liste = etapes(e);
-    const fini = etat.vus >= liste.length;
+    const fini = etat.rep;
+    const avecDev = e.items.map((it) => (it.etapes || []).length > 0);
     const etoiles = '★'.repeat(e.niveau || 1) + '☆'.repeat(3 - (e.niveau || 1));
     const items = e.items.map((it, i) => `<li>${e.items.length > 1 ? `<span class="ex-l">${LETTRES[i]})</span>` : ''}<div>${texte(it.q)}</div></li>`).join('');
     let corr = '';
-    if (etat.vus) {
-      let html = ''; let item = -1;
-      for (const s of liste.slice(0, etat.vus)) {
-        if (s.i !== item) { if (item >= 0) html += '</div>'; item = s.i; html += `<div class="ex-sol">${s.lettre ? `<span class="ex-l">${s.lettre}</span>` : ''}`; }
-        html += `<div class="ex-step ${s.reponse ? 'rep' : ''}">${s.reponse ? `<span class="ex-rep">${icone('check')} Réponse</span>` : ''}${s.html}</div>`;
-      }
-      corr = `<div class="ex-corr"><h4>${icone('crayon')} Correction</h4>${html}</div></div>`;
+    if (etat.rep) {   // d'abord la réponse ; le développement du calcul s'ouvre à la demande
+      const html = e.items.map((it, i) => {
+        const lettre = e.items.length > 1 ? `<span class="ex-l">${LETTRES[i]})</span>` : '';
+        const ouvert = etat.dev.has(i);
+        return `<div class="ex-sol">${lettre}<div>
+          <div class="ex-step rep"><span class="ex-rep">${icone('check')} Réponse</span>${texte(it.r)}</div>
+          ${avecDev[i] ? (ouvert
+            ? `<div class="ex-dev"><div class="ex-dev-t">Développement du calcul <button class="btn ex-dev-b" data-action="dev" data-i="${i}" title="Masquer le développement">Masquer</button></div>
+                ${it.etapes.map((x, k) => `<div class="ex-step"><span class="ex-num">${k + 1}</span><div>${texte(x)}</div></div>`).join('')}</div>`
+            : `<button class="btn ex-dev-b" data-action="dev" data-i="${i}">${icone('fleche-d')} Voir le développement</button>`) : ''}
+        </div></div>`;
+      }).join('');
+      const nDev = avecDev.filter(Boolean).length;
+      corr = `<div class="ex-corr"><h4>${icone('crayon')} Correction
+        ${nDev > 1 ? `<button class="btn ex-dev-tout" data-action="devtout">${etat.dev.size >= nDev ? 'Tout masquer' : 'Tout développer'}</button>` : ''}</h4>${html}</div>`;
     }
     return `
       <div class="panel ex-card">
@@ -149,13 +146,12 @@ export function lecteurExercices(conteneur, tous, options = {}) {
         </div>
         ${e.consigne ? `<div class="ex-consigne">${texte(e.consigne)}</div>` : ''}
         <ol class="ex-items ${e.items.length > 1 ? '' : 'seul'}">${items}</ol>
-        ${!etat.vus ? `<p class="ex-papier">${icone('crayon')} Résous sur ta feuille, puis vérifie avec la correction.</p>` : ''}
+        ${!etat.rep ? `<p class="ex-papier">${icone('crayon')} Résous sur ta feuille, puis vérifie avec la correction.</p>` : ''}
         ${e.indice ? (etat.indice ? `<div class="ex-indice">${icone('ampoule')}<div>${texte(e.indice)}</div></div>`
-          : (!etat.vus ? `<button class="btn" data-action="indice">${icone('ampoule')} Un indice</button>` : '')) : ''}
+          : (!etat.rep ? `<button class="btn" data-action="indice">${icone('ampoule')} Un indice</button>` : '')) : ''}
         ${corr}
         <div class="fc-actions">
-          ${!fini ? `<button class="btn primary" data-action="etape">${icone('fleche-d')} ${etat.vus ? 'Étape suivante' : 'Voir la correction'}</button>
-                     <button class="btn" data-action="tout">Tout afficher</button>` : ''}
+          ${!fini ? `<button class="btn primary" data-action="reponse">${icone('check')} Voir la réponse</button>` : ''}
           ${fini ? `
             <span class="ex-q">Comment ça s'est passé ?</span>
             <button class="btn ok" data-action="noter" data-r="ok">${icone('check')} Juste</button>
@@ -283,7 +279,6 @@ export function lecteurExercices(conteneur, tous, options = {}) {
   }
 
   const actions = {
-    etape: () => { etat.vus++; afficher(); conteneur.querySelector('.ex-step:last-child')?.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); },
     verifier: () => { etat.vus = 1; afficher(); conteneur.querySelector('[data-res]')?.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); },
     proposer: () => ouvrirProposition('erreur'),
     retoucher: () => { etat.vus = 0; afficher(); },
@@ -303,7 +298,12 @@ export function lecteurExercices(conteneur, tous, options = {}) {
       d.bilans++; afficher();
       aideMsg(`<div class="ex-expl-box"><b>Où j'en suis :</b> ${r.ok} / ${r.n} traits justes${r.type ? ` · ${r.type} avec un mauvais type de trait` : ''}${r.enTrop.length ? ` · ${r.enTrop.length} en trop` : ''} · ${r.manque} encore à trouver.</div>`);
     },
-    tout: () => { etat.vus = etapes(etat.liste[etat.pos]).length; afficher(); },
+    reponse: () => { etat.rep = true; afficher(); conteneur.querySelector('.ex-corr')?.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); },
+    dev: (b) => { const i = +b.dataset.i; if (etat.dev.has(i)) etat.dev.delete(i); else etat.dev.add(i); afficher(); },
+    devtout: () => {
+      const e = etat.liste[etat.pos]; const idx = e.items.map((it, i) => ((it.etapes || []).length ? i : -1)).filter((i) => i >= 0);
+      etat.dev = etat.dev.size >= idx.length ? new Set() : new Set(idx); afficher();
+    },
     indice: () => { etat.indice = true; afficher(); },
     noter: (b) => {
       const ec = etat.liste[etat.pos];
