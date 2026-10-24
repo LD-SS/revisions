@@ -110,7 +110,7 @@ export async function vueAtelier(el, params = []) {
     const etoiles = '★'.repeat(e.niveau || 1) + '☆'.repeat(3 - (e.niveau || 1));
     const tache = tacheDe(e);
     return `<a class="panel at-carte" href="#/dessin/${esc(e._chap.id)}/${esc(e.id)}">
-      <div class="at-img fig" ${e.perspective ? '' : `data-mini="${i}"`}>${e.perspective ? svgSur(e.perspective) : ''}</div>
+      <div class="at-img fig" ${e.piece ? `data-mini="${i}"` : ''}>${!e.piece && e.perspective ? svgSur(e.perspective) : ''}</div>
       <div class="at-txt">
         <div class="at-l1"><span class="ex-niv">${etoiles}</span>${n ? `<span class="badge ex-${NOTES[n.r][1]}">${NOTES[n.r][0]}${n.pct != null ? ` · ${n.pct} %` : ''}</span>` : '<span class="badge">À faire</span>'}</div>
         <b>${esc(e.titre)}</b>
