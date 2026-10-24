@@ -21,7 +21,7 @@ import { vueParametres } from './vues/parametres.js';
 import { vueAtelier } from './vues/atelier.js';
 import { majBoutonProposer, viderAttente } from './proposer.js';
 
-const VERSION = '0.8.0 (coupes et pièces au hasard)';
+const VERSION = '0.8.1 (arrêt du tracé facilité)';
 const vue = document.getElementById('vue');
 let nettoyer = null; // fonction fournie par la page affichée, appelée avant d'en changer
 

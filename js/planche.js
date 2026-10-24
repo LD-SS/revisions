@@ -137,7 +137,7 @@ export function monterPlanche(el, ex, opts) {
   const W = P.w * K, H = P.h * K;
   const etat = {
     els: dessinSauve(opts.cle).map((e) => [...e]),
-    style: 'v', outil: 'ligne', zoom: 1, cours: null, chaine: null, sel: -1, deplace: null,
+    style: 'v', outil: 'ligne', zoom: 1, cours: null, chaine: null, chaineDebut: null, enchainer: stockage.lire('dessin.enchainer', false) === true, sel: -1, deplace: null,
     historique: [], refaire: [], guides: [], loupe: null,
     correction: !!opts.correction, voirCorr: true, focus: -1,
     indices: opts.indices || [],
@@ -156,6 +156,7 @@ export function monterPlanche(el, ex, opts) {
         ${ex.solution.some((x) => x[0] === 'h') ? `<button class="btn pl-b" type="button" data-outil="hachures" title="Hachures (H) : toucher l'intérieur d'une zone fermée par des traits forts (toucher une zone hachurée l'efface)"><svg viewBox="0 0 24 24" class="ic"><rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2" fill="none"/><path d="M3 15 15 3M3 21 21 3M9 21 21 9" stroke="currentColor" stroke-width="1.6"/></svg>Hachures</button>` : ''}
         <button class="btn pl-b" type="button" data-outil="gomme" title="Gomme (G) : toucher un trait pour l'effacer"><svg viewBox="0 0 24 24" class="ic"><path d="M7 21h10M5 15l9-11 6 5-9 11H8z" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/></svg>Gomme</button>
         <button class="btn pl-b" type="button" data-outil="main" title="Déplacer la planche (quand elle est agrandie)"><svg viewBox="0 0 24 24" class="ic"><path d="M12 2v20M2 12h20M12 2l-3 3M12 2l3 3M12 22l-3-3M12 22l3-3M2 12l3-3M2 12l3 3M22 12l-3-3M22 12l-3 3" stroke="currentColor" stroke-width="1.8" fill="none"/></svg>Déplacer</button>
+        <button class="btn pl-b" type="button" data-act="chaine" title="Enchaîner les traits : chaque clic continue le contour depuis le point précédent. Pour arrêter : clic droit, Échap, bouton « Terminer » ou revenir au point de départ."><svg viewBox="0 0 24 24" class="ic"><path d="M4 18 9 8l6 8 5-10" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/></svg>Enchaîner</button>
       </div>
       <div class="pl-groupe">
         <button class="btn icon" type="button" data-act="annuler" title="Annuler (Ctrl+Z)">↶</button>
@@ -164,6 +165,11 @@ export function monterPlanche(el, ex, opts) {
         <button class="btn icon" type="button" data-act="plus" title="Agrandir">+</button>
         <button class="btn icon" type="button" data-act="plein" title="Plein écran">⛶</button>
         <button class="btn" type="button" data-act="effacer" title="Tout effacer">${icone('croix')}<span>Effacer</span></button>
+      </div>
+      <div class="pl-chainbar" hidden>
+        <span>Contour en cours…</span>
+        <button class="btn pl-b primary" type="button" data-act="stop" title="Arrêter le contour (clic droit ou Échap)">✓ Terminer</button>
+        <span class="muted">ou clic droit / Échap / reviens au point de départ</span>
       </div>
       <div class="pl-selbar" hidden>
         <span>Trait sélectionné :</span>
@@ -175,12 +181,14 @@ export function monterPlanche(el, ex, opts) {
       <svg class="pl-svg" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Planche de dessin"></svg>
       <div class="pl-loupe" hidden><svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg"></svg></div>
     </div>
-    <p class="pl-aide muted">Glisse pour tracer, ou touche deux points (les traits s'enchaînent ; touche deux fois le même point pour arrêter).
+    <p class="pl-aide muted">Glisse pour tracer, ou clique deux points pour un trait. Avec « Enchaîner », les traits se suivent jusqu'à « Terminer » (ou clic droit / Échap).
       Accrochage tous les 5 mm · 1 carreau = 10 mm${A.guides ? ' · les pointillés bleus sont des lignes de rappel' : ''}.</p>`;
   const svg = el.querySelector('svg.pl-svg');
   const cadre = el.querySelector('.pl-cadre');
   const loupe = el.querySelector('.pl-loupe');
   const selbar = el.querySelector('.pl-selbar');
+  const chainbar = el.querySelector('.pl-chainbar');
+  const stopChaine = () => { etat.chaine = null; etat.chaineDebut = null; dessiner(); };
 
   /* ----- points remarquables pour les guides ----- */
   function pointsCles() {
@@ -256,6 +264,7 @@ export function monterPlanche(el, ex, opts) {
     return s + apercu;
   }
   function dessiner(apercu = '') {
+    chainbar.hidden = !(etat.chaine && etat.enchainer && etat.outil === 'ligne');
     const s = contenu(apercu);
     svg.innerHTML = s;
     if (etat.loupe) {
@@ -269,6 +278,7 @@ export function monterPlanche(el, ex, opts) {
   function maj() {
     el.querySelectorAll('[data-style]').forEach((b) => b.classList.toggle('actif', b.dataset.style === etat.style));
     el.querySelectorAll('[data-outil]').forEach((b) => b.classList.toggle('actif', b.dataset.outil === etat.outil));
+    el.querySelector('[data-act=chaine]')?.classList.toggle('actif', etat.enchainer);
     svg.style.width = `${Math.round(100 * etat.zoom)}%`;
     svg.style.maxWidth = 'none';
     svg.style.touchAction = etat.outil === 'main' ? 'auto' : 'none';
@@ -323,9 +333,11 @@ export function monterPlanche(el, ex, opts) {
     loupe.style.top = `${ev.clientY - r.top + cadre.scrollTop - 140}px`;
   }
 
+  svg.addEventListener('contextmenu', (ev) => ev.preventDefault());
   svg.addEventListener('pointerdown', (ev) => {
     if (etat.outil === 'main') return;
     ev.preventDefault();
+    if (ev.button === 2) { etat.cours = null; stopChaine(); return; }   // clic droit : arrêter le contour
     const p = pointUnite(ev);
     if (etat.correction) {  // correction expliquée : toucher un trait de la solution
       const i = plusProche(p, ex.solution, 0.5);
@@ -394,10 +406,11 @@ export function monterPlanche(el, ex, opts) {
       return;
     }
     // toucher : premier point, puis point suivant (contour enchaîné)
-    if (!etat.chaine) { etat.chaine = a; dessiner(); return; }
-    if (etat.chaine[0] === a[0] && etat.chaine[1] === a[1]) { etat.chaine = null; dessiner(); return; }  // 2e toucher au même endroit : fin
+    if (!etat.chaine) { etat.chaine = a; etat.chaineDebut = a; dessiner(); return; }
+    if (etat.chaine[0] === a[0] && etat.chaine[1] === a[1]) { stopChaine(); return; }  // 2e toucher au même endroit : fin
     const e = forme(etat.chaine, a);
-    etat.chaine = etat.outil === 'cercle' ? null : a;
+    const ferme = etat.chaineDebut && etat.chaineDebut[0] === a[0] && etat.chaineDebut[1] === a[1];   // retour au départ : contour fermé
+    if (etat.outil === 'cercle' || !etat.enchainer || ferme) { etat.chaine = null; etat.chaineDebut = null; } else etat.chaine = a;
     changer([...etat.els, e]);
   }
   svg.addEventListener('pointerup', finir);
@@ -450,7 +463,9 @@ export function monterPlanche(el, ex, opts) {
       if (etat.sel >= 0) changerType(b.dataset.style);
       else if (etat.outil !== 'ligne' && etat.outil !== 'cercle') etat.outil = 'ligne';
     } else if (b.dataset.chg) changerType(b.dataset.chg);
-    else if (b.dataset.outil) { etat.outil = b.dataset.outil; etat.chaine = null; if (etat.outil !== 'selection') etat.sel = -1; dessiner(); }
+    else if (b.dataset.outil) { etat.outil = b.dataset.outil; etat.chaine = null; etat.chaineDebut = null; if (etat.outil !== 'selection') etat.sel = -1; dessiner(); }
+    else if (b.dataset.act === 'stop') stopChaine();
+    else if (b.dataset.act === 'chaine') { etat.enchainer = !etat.enchainer; stockage.ecrire('dessin.enchainer', etat.enchainer); stopChaine(); }
     else if (b.dataset.act === 'annuler') annuler();
     else if (b.dataset.act === 'refaire') refaire();
     else if (b.dataset.act === 'suppr') supprimerSel();
@@ -469,14 +484,14 @@ export function monterPlanche(el, ex, opts) {
     if ((e.ctrlKey || e.metaKey) && (k === 'y' || (k === 'z' && e.shiftKey))) { e.preventDefault(); refaire(); return; }
     if (e.ctrlKey || e.metaKey || e.altKey) return;
     if (k === 'escape') {
-      if (etat.chaine || etat.sel >= 0) { etat.chaine = null; etat.sel = -1; dessiner(); maj(); e.preventDefault(); }
+      if (etat.chaine || etat.sel >= 0) { etat.chaine = null; etat.chaineDebut = null; etat.sel = -1; dessiner(); maj(); e.preventDefault(); }
       else if (el.classList.contains('pl-plein')) { pleinEcran(false); maj(); e.preventDefault(); }
       return;
     }
     if (etat.correction) return;
     const styles = { f: 'v', c: 'c', a: 'a', n: 'n' }; const outils = { l: 'ligne', o: 'cercle', s: 'selection', g: 'gomme', ...(ex.solution.some((x) => x[0] === 'h') ? { h: 'hachures' } : {}) };
     if (styles[k]) { etat.style = styles[k]; if (etat.sel >= 0) changerType(styles[k]); }
-    else if (outils[k]) { etat.outil = outils[k]; etat.chaine = null; if (etat.outil !== 'selection') etat.sel = -1; dessiner(); }
+    else if (outils[k]) { etat.outil = outils[k]; etat.chaine = null; etat.chaineDebut = null; if (etat.outil !== 'selection') etat.sel = -1; dessiner(); }
     else if ((k === 'delete' || k === 'backspace') && etat.sel >= 0) { e.preventDefault(); supprimerSel(); }
     else return;
     maj();
