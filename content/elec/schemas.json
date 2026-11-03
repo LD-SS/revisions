@@ -4998,7 +4998,7 @@
   },
   {
    "id": "labo-ex-04",
-   "titre": "Le piège de l'ampèremètre",
+   "titre": "Contacts NO et ampèremètre",
    "niveau": 2,
    "consigne": "Annote le schéma : pour chaque composant, le **sens du courant** et le **vecteur tension** avec leurs valeurs, puis vérifie. Générateurs et appareils de mesure parfaits (ampèremètre = fil, voltmètre = coupure).",
    "schema": {
@@ -5022,7 +5022,7 @@
       6
      ],
      [
-      1,
+      3,
       4,
       4,
       4
@@ -5030,7 +5030,7 @@
      [
       8,
       4,
-      11,
+      9,
       4
      ],
      [
@@ -5188,65 +5188,100 @@
       ],
       "nom": "R4",
       "val": "35 kΩ"
+     },
+     {
+      "id": "S1",
+      "t": "S",
+      "a": [
+       1,
+       4
+      ],
+      "b": [
+       3,
+       4
+      ],
+      "nom": "S1"
+     },
+     {
+      "id": "S2",
+      "t": "S",
+      "a": [
+       9,
+       4
+      ],
+      "b": [
+       11,
+       4
+      ],
+      "nom": "S2"
      }
     ]
    },
    "solution": {
     "G": {
      "I": -5,
-     "U": 0
+     "U": 300000.0
     },
     "R25": {
-     "I": 0,
-     "U": 0
+     "I": 5,
+     "U": 125000.0
     },
     "A": {
      "I": 5
     },
     "R35": {
+     "I": 5,
+     "U": 175000.0
+    },
+    "S1": {
      "I": 0,
-     "U": 0
+     "U": 125000.0
+    },
+    "S2": {
+     "I": 0,
+     "U": 175000.0
     }
    },
    "items": [
     {
-     "q": "Où sont branchés les appareils de mesure et qu'est-ce que ça change ?",
-     "r": "L'ampèremètre est **en parallèle** sur tout le montage → court-circuit.",
+     "q": "Où sont les contacts et les appareils de mesure, et qu'est-ce que ça change ?",
+     "r": "S1 et S2 sont des **contacts NO** (ouverts au repos) ; les deux 50 kΩ sont **en parallèle sur l'ampèremètre** → on les barre.",
      "etapes": [
-      "**A** relie le nœud de gauche (où arrive le fil de gauche de la pile) au nœud de droite : il est **en parallèle** sur les deux 50 kΩ et sur la pile.",
-      "C'est un fil : les deux 50 kΩ, **en parallèle sur l'ampèremètre**, disparaissent → on les **barre** et on ne les prend pas en compte. Les 25 kΩ et 35 kΩ sont en plus court-circuités chacun par un fil (leurs deux bornes sont sur le même nœud).",
-      "Les 5 A sont imposés par l'énoncé : le générateur se comporte ici comme une **source de courant** (une source de tension parfaite en court-circuit débiterait un courant infini)."
-     ]
-    },
-    {
-     "q": "Repère les nœuds",
-     "r": "Il n'y a que **2 nœuds** : gauche et droite… et l'ampèremètre les relie !",
-     "etapes": [
-      "Les deux 50 kΩ vont du nœud de gauche au nœud de droite : en parallèle sur l'ampèremètre → barrés.",
-      "Le 25 kΩ a ses deux bornes sur le nœud de gauche, le 35 kΩ sur celui de droite (court-circuités).",
-      "L'ampèremètre (un fil) relie la gauche à la droite."
+      "**S1 et S2** : contacts **NO** (normalement ouverts) → au repos, ils sont **ouverts** : aucun courant ne passe par eux.",
+      "Il ne reste qu'un seul chemin pour le courant : pile → **25 kΩ** → **A** → **35 kΩ** → pile. L'ampèremètre est bien **en série**.",
+      "Les deux **50 kΩ** sont branchés entre les deux bornes de l'ampèremètre (relié par des fils) : ils sont **en parallèle sur A**, donc sous 0 V → aucun courant : on les **barre**, ils ne comptent pas."
      ]
     },
     {
      "q": "Indication de A",
      "r": "$5\\ \\text{A}$",
      "etapes": [
-      "Tout le courant prend le chemin sans résistance : l'ampèremètre."
+      "Un seul chemin (circuit série) : le même courant partout, les 5 A de l'énoncé."
      ]
     },
     {
-     "q": "Courants et tensions des résistances",
-     "r": "Tous nuls : 0 A et 0 V",
+     "q": "Tensions sur 25 kΩ et 35 kΩ",
+     "r": "$U_{25k} = 125\\ \\text{kV}$ ; $U_{35k} = 175\\ \\text{kV}$",
      "etapes": [
-      "Elles sont toutes court-circuitées par A."
+      "$U = R \\cdot I$ : $25\\,000 \\times 5 = 125\\,000$ V ; $35\\,000 \\times 5 = 175\\,000$ V",
+      "(Valeurs énormes : 5 A dans des kΩ, c'est ce que donne le simulateur avec ces données.)"
      ]
     },
     {
      "q": "$U_g$",
-     "r": "$U_g = 0\\ \\text{V}$",
+     "r": "$U_g = 300\\ \\text{kV}$",
      "etapes": [
-      "Le générateur débite dans un court-circuit : la tension entre ses bornes est nulle.",
-      "À retenir : **un ampèremètre se branche toujours en série**, jamais en parallèle."
+      "Maille : $U_g = U_{25k} + U_A + U_{35k} = 125 + 0 + 175$ kV",
+      "Autre calcul : $R_t = 25 + 35 = 60$ kΩ → $U_g = 60\\,000 \\times 5$"
+     ]
+    },
+    {
+     "q": "Tension aux bornes des contacts ouverts",
+     "r": "$U_{S1} = 125\\ \\text{kV}$ ; $U_{S2} = 175\\ \\text{kV}$",
+     "etapes": [
+      "S1 relie le côté gauche (borne + de la pile) à la borne gauche de A : il voit la tension de la 25 kΩ.",
+      "S2 relie la borne droite de A au côté droit (borne − de la pile) : il voit la tension de la 35 kΩ.",
+      "Un contact ouvert : courant nul, mais il peut avoir une tension à ses bornes."
      ]
     }
    ],
