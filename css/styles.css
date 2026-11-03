@@ -620,6 +620,10 @@ body.pl-plein-ouvert{overflow:hidden}
 .sch-mini .ci{margin:0;width:100%}
 .sch-mini .ci-cadre{border:none;background:transparent}
 .sch-mini .ci-svg{max-height:122px;width:100%;pointer-events:none}
+.ci-svg .ci-bar{opacity:.35}
+.ci-svg path.ci-bar{stroke-dasharray:4 4}
+.ci-svg .ci-barre{stroke:#dc2626;stroke-width:3;stroke-linecap:round}
+.ci-leg-bar{color:#dc2626;text-decoration:line-through}
 .ci-svg .ci-tir{stroke-dasharray:9 6}
 .ci-svg .ci-ml.pt{font-size:14px}
 .ci-svg .ci-fi.don,.ci-svg .ci-fut.don{fill:#b45309}
