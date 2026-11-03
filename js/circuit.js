@@ -8,6 +8,7 @@
      t : R résistance · G pile · E source de tension (cercle) · J source de courant (flèche vers fl)
          A ampèremètre · V voltmètre · M multimètre (lettre) · L lampe · D diode (vers b)
          C condensateur · B bobine · F branche de fil (pour noter un courant)
+   barres: ['id', …], fils_barres: [[…]]   éléments barrés (comme sur le correctif : on ne les prend pas en compte)
    donnees = { id: { i: { d, txt }, u: { d, txt } } }   flèches données par l'énoncé (non notées)
    solution = { id: { I, U } }   I : courant de a vers b (A, signé) ; U = V(a) − V(b) (V, signé)
    Sans solution : schéma affiché seul (pas d'annotation).
@@ -57,7 +58,7 @@ export function monterCircuit(el, ex, opts = {}) {
   el.innerHTML = `
     <div class="ci">
       <div class="ci-cadre"><svg class="ci-svg" viewBox="-${K * 1.4} -${K * 0.6} ${W + K * 2.8} ${H + K * 1.2}" role="img" aria-label="Schéma électrique"></svg></div>
-      ${annotable ? `<p class="ci-aide muted">👆 Touche un composant pour dessiner le <b>sens du courant</b> et le <b>vecteur tension</b>, et écrire leurs valeurs.</p>
+      ${annotable ? `<p class="ci-aide muted">👆 Touche un composant pour dessiner le <b>sens du courant</b> et le <b>vecteur tension</b>, et écrire leurs valeurs.${S.barres?.length ? ' Les éléments <b class="ci-leg-bar">barrés</b> ne sont pas pris en compte.' : ''}</p>
       <div class="ci-panneau" hidden></div>
       <div class="ci-actions">
         <button class="btn primary" type="button" data-ci="verifier">✓ Vérifier mes annotations</button>
@@ -171,13 +172,20 @@ export function monterCircuit(el, ex, opts = {}) {
     const chemin = (f) => { let d = ''; for (let i = 0; i < f.length; i += 2) d += `${i ? 'L' : 'M'}${f[i] * K} ${f[i + 1] * K} `; return d; };
     for (const f of S.fils || []) s += `<path class="ci-fil" d="${chemin(f)}"/>`;
     for (const f of S.pointilles || []) s += `<path class="ci-fil ci-tir" d="${chemin(f)}"/>`;
+    for (const f of S.fils_barres || []) s += `<path class="ci-fil ci-bar" d="${chemin(f)}"/>`;
     for (const [x, y, r, t] of S.cercles || []) s += `<circle class="ci-m" cx="${x * K}" cy="${y * K}" r="${r * K}"/><text class="ci-ml" x="${x * K}" y="${y * K + 6}">${esc(t || '')}</text>`;
     for (const [x, y] of S.points || []) s += `<circle class="ci-pt" cx="${x * K}" cy="${y * K}" r="4.5"/>`;
     for (const [x, y] of S.masses || []) s += `<path class="ci-fil" d="M${x * K} ${y * K}v8M${x * K - 14} ${y * K + 8}h28M${x * K - 9} ${y * K + 14}h18M${x * K - 4} ${y * K + 20}h8"/>`;
     for (const [x, y, t] of S.bornes || []) s += `<circle class="ci-borne" cx="${x * K}" cy="${y * K}" r="5"/><text class="ci-lab" x="${x * K + 10}" y="${y * K - 10}" text-anchor="start">${esc(t)}</text>`;
     for (const [x, y, t] of S.textes || []) s += `<text class="ci-lab" x="${x * K}" y="${y * K}">${esc(t)}</text>`;
+    const barres = new Set(S.barres || []);
     for (const c of S.comps) {
       const v = etat.verif?.[c.id];
+      if (barres.has(c.id)) {   // barré : grisé + trait rouge
+        const { u, n, m } = geo(c); const h = Math.max(0.6, (LONG[c.t] || 0.8) / 2 + 0.25);
+        s += `<g class="ci-c ci-bar">${symbole(c)}</g>` + ligne([m[0] - u[0] * h - n[0] * 0.45, m[1] - u[1] * h - n[1] * 0.45], [m[0] + u[0] * h + n[0] * 0.45, m[1] + u[1] * h + n[1] * 0.45], 'ci-barre') + ligne([m[0] - u[0] * h + n[0] * 0.45, m[1] - u[1] * h + n[1] * 0.45], [m[0] + u[0] * h - n[0] * 0.45, m[1] + u[1] * h - n[1] * 0.45], 'ci-barre');
+        continue;
+      }
       s += `<g class="ci-c ${etat.sel === c.id ? 'sel' : ''} ${v ? `v-${v}` : ''}">${symbole(c)}</g>`;
     }
     for (const [x1, y1, x2, y2, t] of S.fleches || []) {
