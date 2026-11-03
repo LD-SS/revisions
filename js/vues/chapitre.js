@@ -55,7 +55,12 @@ export async function vueChapitre(el, mid, cid, onglet = 'synthese') {
       </div>
     </div>`;
 
-  return afficherOnglet(el.querySelector('#onglet'), onglet, ch, `${base}/${onglet}`);
+  let zone = el.querySelector('#onglet');
+  if (onglet === 'exercices' && info.nb?.schemas) {   // exercices de ce chapitre déplacés vers « Exercices sur schéma »
+    zone.innerHTML = `<a class="notice info sch-renvoi" href="#/m/${esc(m.id)}/schemas">${icone('eclair')}<div><b>${info.nb.schemas} exercice${info.nb.schemas > 1 ? 's' : ''} sur schéma</b> de ce chapitre ${info.nb.schemas > 1 ? 'sont' : 'est'} dans l'onglet <b>Exercices sur schéma</b> de la page ${esc(m.nom)} (schéma à annoter directement). ${icone('fleche-d')}</div></a><div></div>`;
+    zone = zone.lastElementChild;
+  }
+  return afficherOnglet(zone, onglet, ch, `${base}/${onglet}`);
 }
 
 /** Affiche le contenu de l'onglet ; renvoie une fonction de nettoyage. */

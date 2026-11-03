@@ -6,6 +6,7 @@ import { esc, pluriel, formatDate } from '../utils.js';
 import { icone } from '../icones.js';
 import { styleMatiere, profilDe } from '../matieres.js';
 import { matiere, totaux } from '../store.js';
+import { ongletsMatiere } from './schemas.js';
 
 export function vueMatiere(el, mid) {
   const m = matiere(mid);
@@ -20,7 +21,8 @@ export function vueMatiere(el, mid) {
         <div class="chap-meta">
           <span class="badge">${pluriel(c.nb?.sections || 0, 'section')} de synthèse</span>
           <span class="badge">${pluriel(c.nb?.flashcards || 0, 'flashcard')}</span>
-          <span class="badge">${pluriel(c.nb?.exercices || 0, 'exercice')}</span>
+          ${c.nb?.exercices || !c.nb?.schemas ? `<span class="badge">${pluriel(c.nb?.exercices || 0, 'exercice')}</span>` : ''}
+          ${c.nb?.schemas ? `<span class="badge">${pluriel(c.nb.schemas, 'exercice')} sur schéma</span>` : ''}
           ${c.exemple ? '<span class="badge warn">Exemple</span>' : ''}
           ${c.maj ? `<span class="badge">Mis à jour le ${esc(formatDate(c.maj))}</span>` : ''}
         </div>
@@ -38,6 +40,7 @@ export function vueMatiere(el, mid) {
           <p class="muted">${pluriel(t.chapitres, 'chapitre')} · ${pluriel(t.flashcards, 'flashcard')} · Exercices : ${esc(profilDe(m).description.toLowerCase())}</p>
         </div>
       </div>
+      ${ongletsMatiere(m, 'chapitres')}
       ${m.chapitres.length
         ? `<div class="chap-list">${chapitres}</div>`
         : `<div class="panel empty"><div class="m-ic">${icone('synthese')}</div><h3>Aucun chapitre pour l'instant</h3>
