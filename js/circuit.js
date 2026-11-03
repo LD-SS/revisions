@@ -172,7 +172,7 @@ export function monterCircuit(el, ex, opts = {}) {
     const chemin = (f) => { let d = ''; for (let i = 0; i < f.length; i += 2) d += `${i ? 'L' : 'M'}${f[i] * K} ${f[i + 1] * K} `; return d; };
     for (const f of S.fils || []) s += `<path class="ci-fil" d="${chemin(f)}"/>`;
     for (const f of S.pointilles || []) s += `<path class="ci-fil ci-tir" d="${chemin(f)}"/>`;
-    for (const f of S.fils_barres || []) s += `<path class="ci-fil ci-bar" d="${chemin(f)}"/>`;
+    for (const f of S.fils_barres || []) s += `<path class="ci-fil ci-bar" d="${chemin(f)}"/><path class="ci-barre" d="${chemin(f)}"/>`;
     for (const [x, y, r, t] of S.cercles || []) s += `<circle class="ci-m" cx="${x * K}" cy="${y * K}" r="${r * K}"/><text class="ci-ml" x="${x * K}" y="${y * K + 6}">${esc(t || '')}</text>`;
     for (const [x, y] of S.points || []) s += `<circle class="ci-pt" cx="${x * K}" cy="${y * K}" r="4.5"/>`;
     for (const [x, y] of S.masses || []) s += `<path class="ci-fil" d="M${x * K} ${y * K}v8M${x * K - 14} ${y * K + 8}h28M${x * K - 9} ${y * K + 14}h18M${x * K - 4} ${y * K + 20}h8"/>`;
@@ -183,7 +183,7 @@ export function monterCircuit(el, ex, opts = {}) {
       const v = etat.verif?.[c.id];
       if (barres.has(c.id)) {   // barré : grisé + trait rouge
         const { u, n, m } = geo(c); const h = Math.max(0.6, (LONG[c.t] || 0.8) / 2 + 0.25);
-        s += `<g class="ci-c ci-bar">${symbole(c)}</g>` + ligne([m[0] - u[0] * h - n[0] * 0.45, m[1] - u[1] * h - n[1] * 0.45], [m[0] + u[0] * h + n[0] * 0.45, m[1] + u[1] * h + n[1] * 0.45], 'ci-barre') + ligne([m[0] - u[0] * h + n[0] * 0.45, m[1] - u[1] * h + n[1] * 0.45], [m[0] + u[0] * h - n[0] * 0.45, m[1] + u[1] * h - n[1] * 0.45], 'ci-barre');
+        s += `<g class="ci-c ci-bar">${symbole(c)}</g>` + ligne(c.a, c.b, 'ci-barre') + ligne([m[0] - u[0] * h - n[0] * 0.45, m[1] - u[1] * h - n[1] * 0.45], [m[0] + u[0] * h + n[0] * 0.45, m[1] + u[1] * h + n[1] * 0.45], 'ci-barre') + ligne([m[0] - u[0] * h + n[0] * 0.45, m[1] - u[1] * h + n[1] * 0.45], [m[0] + u[0] * h - n[0] * 0.45, m[1] + u[1] * h - n[1] * 0.45], 'ci-barre');
         continue;
       }
       s += `<g class="ci-c ${etat.sel === c.id ? 'sel' : ''} ${v ? `v-${v}` : ''}">${symbole(c)}</g>`;
