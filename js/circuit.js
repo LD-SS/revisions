@@ -1,10 +1,16 @@
 /* =====================================================================
    CIRCUIT — schéma électrique à annoter (sens + valeur des courants et tensions)
    ---------------------------------------------------------------------
-   schema = { w, h, fils: [[x,y, x,y, …], …], points: [[x,y]], textes: [[x,y,'txt']],
-              masses: [[x,y]], bornes: [[x,y,'−12 V']],
-              comps: [{ id, t: 'R'|'A'|'V'|'G', a:[x,y], b:[x,y], nom, val, plus: 'a'|'b' }] }
+   schema = { w, h, fils: [[x,y, x,y, …], …], pointilles: [[…]], points: [[x,y]], textes: [[x,y,'txt']],
+              masses: [[x,y]], bornes: [[x,y,'−12 V']], cercles: [[x,y,r,'T']],
+              fleches: [[x1,y1,x2,y2,'txt']]   (flèches libres : courants entrant/sortant…),
+              comps: [{ id, t, a:[x,y], b:[x,y], nom, val, plus: 'a'|'b', fl: 'a'|'b', lettre, pm }] }
+     t : R résistance · G pile · E source de tension (cercle) · J source de courant (flèche vers fl)
+         A ampèremètre · V voltmètre · M multimètre (lettre) · L lampe · D diode (vers b)
+         C condensateur · B bobine · F branche de fil (pour noter un courant)
+   donnees = { id: { i: { d, txt }, u: { d, txt } } }   flèches données par l'énoncé (non notées)
    solution = { id: { I, U } }   I : courant de a vers b (A, signé) ; U = V(a) − V(b) (V, signé)
+   Sans solution : schéma affiché seul (pas d'annotation).
    L'élève touche un composant, choisit le sens des flèches et tape les valeurs.
    Convention du cours : la flèche de tension pointe vers le point au potentiel le plus haut
    (pointe sur a ⇒ U_ab).
@@ -13,7 +19,9 @@
 import { stockage, esc } from './utils.js';
 
 const K = 46;                    // pixels par unité de grille
-const LONG = { R: 1.4, A: 0.84, V: 0.84, G: 0.5 };
+const LONG = { R: 1.4, A: 0.84, V: 0.84, M: 0.84, E: 0.84, J: 0.84, L: 0.84, G: 0.5, D: 0.6, C: 0.3, B: 1.3, F: 0 };
+const ROND = new Set(['A', 'V', 'M', 'E', 'J', 'L']);
+const NOMS = { R: 'Résistance', A: 'Ampèremètre', V: 'Voltmètre', M: 'Appareil de mesure', G: 'Générateur', E: 'Source de tension', J: 'Source de courant', L: 'Lampe', D: 'Diode', C: 'Condensateur', B: 'Bobine', F: 'Fil' };
 const UNITES = { I: [['A', 1], ['mA', 1e-3], ['µA', 1e-6]], U: [['V', 1], ['mV', 1e-3], ['kV', 1e3]] };
 
 const lire = () => stockage.lire('circuits', {});
@@ -42,22 +50,24 @@ export function monterCircuit(el, ex, opts = {}) {
   const S = ex.schema; const sol = ex.solution || {};
   const W = S.w * K, H = S.h * K;
   const comps = Object.fromEntries(S.comps.map((c) => [c.id, c]));
-  const etat = { notes: lire()[opts.cle] || {}, sel: null, verif: null, voirSol: false };
+  const don = ex.donnees || {};
+  const annotable = Object.keys(sol).length > 0 && !opts.apercu;
+  const etat = { notes: (annotable && lire()[opts.cle]) || {}, sel: null, verif: null, voirSol: false };
 
   el.innerHTML = `
     <div class="ci">
-      <div class="ci-cadre"><svg class="ci-svg" viewBox="-${K * 1.4} -${K * 0.6} ${W + K * 2.8} ${H + K * 1.2}" role="img" aria-label="Schéma à annoter"></svg></div>
-      <p class="ci-aide muted">👆 Touche un composant pour dessiner le <b>sens du courant</b> et le <b>vecteur tension</b>, et écrire leurs valeurs.</p>
+      <div class="ci-cadre"><svg class="ci-svg" viewBox="-${K * 1.4} -${K * 0.6} ${W + K * 2.8} ${H + K * 1.2}" role="img" aria-label="Schéma électrique"></svg></div>
+      ${annotable ? `<p class="ci-aide muted">👆 Touche un composant pour dessiner le <b>sens du courant</b> et le <b>vecteur tension</b>, et écrire leurs valeurs.</p>
       <div class="ci-panneau" hidden></div>
       <div class="ci-actions">
         <button class="btn primary" type="button" data-ci="verifier">✓ Vérifier mes annotations</button>
         <button class="btn" type="button" data-ci="sol" hidden>Voir la solution sur le schéma</button>
         <button class="btn" type="button" data-ci="effacer">Effacer</button>
       </div>
-      <div class="ci-res" hidden></div>
+      <div class="ci-res" hidden></div>` : ''}
     </div>`;
   const svg = el.querySelector('svg');
-  svg.style.minWidth = `${Math.round((S.w + 2.8) * K * 0.68)}px`;   // lisible au téléphone (on fait défiler)
+  if (!opts.apercu) svg.style.minWidth = `${Math.round((S.w + 2.8) * K * 0.68)}px`;   // lisible au téléphone (on fait défiler)
   const pan = el.querySelector('.ci-panneau'); const res = el.querySelector('.ci-res');
 
   const geo = (c) => {
@@ -76,8 +86,34 @@ export function monterCircuit(el, ex, opts = {}) {
     const ang = Math.atan2(u[1], u[0]) * 180 / Math.PI;
     if (c.t === 'R') {
       s += `<rect class="ci-r" x="${-0.7 * K}" y="${-0.22 * K}" width="${1.4 * K}" height="${0.44 * K}" transform="translate(${P(...m)}) rotate(${ang})"/>`;
-    } else if (c.t === 'A' || c.t === 'V') {
-      s += `<circle class="ci-m" cx="${m[0] * K}" cy="${m[1] * K}" r="${0.42 * K}"/><text class="ci-ml" x="${m[0] * K}" y="${m[1] * K + 6}">${c.t}</text>`;
+    } else if (c.t === 'A' || c.t === 'V' || c.t === 'M') {
+      const l = c.lettre || (c.t === 'M' ? c.nom : c.t);
+      s += `<circle class="ci-m" cx="${m[0] * K}" cy="${m[1] * K}" r="${0.42 * K}"/><text class="ci-ml ${l.length > 1 ? 'pt' : ''}" x="${m[0] * K}" y="${m[1] * K + 6}">${esc(l)}</text>`;
+      if (c.pm) {   // bornes + et − de l'appareil
+        const pa = c.pm === 'a' ? p : q, pb = c.pm === 'a' ? q : p;
+        s += `<text class="ci-plus" x="${(pa[0] + n[0] * 0.3) * K}" y="${(pa[1] + n[1] * 0.3) * K + 5}">+</text><text class="ci-plus" x="${(pb[0] + n[0] * 0.3) * K}" y="${(pb[1] + n[1] * 0.3) * K + 5}">−</text>`;
+      }
+    } else if (c.t === 'L') {
+      const r = 0.42 * K, k = r * 0.7;
+      s += `<circle class="ci-m" cx="${m[0] * K}" cy="${m[1] * K}" r="${r}"/><path class="ci-fil" d="M${m[0] * K - k} ${m[1] * K - k}L${m[0] * K + k} ${m[1] * K + k}M${m[0] * K - k} ${m[1] * K + k}L${m[0] * K + k} ${m[1] * K - k}"/>`;
+    } else if (c.t === 'E') {   // source de tension : cercle traversé, + du côté « plus »
+      const g = c.plus === 'a' ? p : q;
+      s += `<circle class="ci-m" cx="${m[0] * K}" cy="${m[1] * K}" r="${0.42 * K}"/>` + ligne(p, q, 'ci-fil');
+      s += `<text class="ci-plus" x="${(g[0] + n[0] * 0.42) * K}" y="${(g[1] + n[1] * 0.42) * K + 5}">+</text>`;
+    } else if (c.t === 'J') {   // source de courant : flèche intérieure vers fl
+      const d = c.fl === 'a' ? -1 : 1; const t1 = [m[0] + u[0] * 0.26 * d, m[1] + u[1] * 0.26 * d], t0 = [m[0] - u[0] * 0.26 * d, m[1] - u[1] * 0.26 * d];
+      s += `<circle class="ci-m" cx="${m[0] * K}" cy="${m[1] * K}" r="${0.42 * K}"/>` + ligne(t0, t1, 'ci-fil');
+      s += `<polygon class="ci-pt" points="${P(...t1)} ${P(t1[0] - u[0] * 0.14 * d + n[0] * 0.1, t1[1] - u[1] * 0.14 * d + n[1] * 0.1)} ${P(t1[0] - u[0] * 0.14 * d - n[0] * 0.1, t1[1] - u[1] * 0.14 * d - n[1] * 0.1)}"/>`;
+    } else if (c.t === 'D') {   // diode : triangle vers b + barre
+      s += `<polygon class="ci-r" points="${P(p[0] + n[0] * 0.26, p[1] + n[1] * 0.26)} ${P(p[0] - n[0] * 0.26, p[1] - n[1] * 0.26)} ${P(...q)}"/>` + ligne([q[0] + n[0] * 0.26, q[1] + n[1] * 0.26], [q[0] - n[0] * 0.26, q[1] - n[1] * 0.26], 'ci-pl');
+    } else if (c.t === 'C') {
+      s += ligne([p[0] + n[0] * 0.38, p[1] + n[1] * 0.38], [p[0] - n[0] * 0.38, p[1] - n[1] * 0.38], 'ci-pl') + ligne([q[0] + n[0] * 0.38, q[1] + n[1] * 0.38], [q[0] - n[0] * 0.38, q[1] - n[1] * 0.38], 'ci-pl');
+    } else if (c.t === 'B') {   // bobine : 4 boucles
+      let d = `M${P(...p)}`; const st = LONG.B / 4;
+      for (let i = 1; i <= 4; i++) { const e = [p[0] + u[0] * st * i, p[1] + u[1] * st * i]; d += ` A${st * K / 2} ${st * K / 2} 0 0 1 ${P(...e)}`; }
+      s += `<path class="ci-fil" d="${d}"/>`;
+    } else if (c.t === 'F') {
+      s = ligne(c.a, c.b, 'ci-fil');
     } else if (c.t === 'G') {   // pile : grand trait = +
       const plusA = c.plus === 'a'; const g = plusA ? p : q, k = plusA ? q : p;
       s += ligne([g[0] + n[0] * 0.5, g[1] + n[1] * 0.5], [g[0] - n[0] * 0.5, g[1] - n[1] * 0.5], 'ci-pl');
@@ -86,11 +122,11 @@ export function monterCircuit(el, ex, opts = {}) {
       s += `<text class="ci-plus" x="${t[0] * K}" y="${t[1] * K + 5}">+</text>`;
     }
     // étiquette (nom, valeur) du côté −n
-    const lab = c.t === 'R' ? 0.4 : c.t === 'G' ? 0.62 : 0.55; const e = [m[0] - n[0] * lab, m[1] - n[1] * lab];
+    const lab = c.t === 'R' ? 0.4 : c.t === 'G' ? 0.62 : c.t === 'F' ? 0.3 : 0.55; const e = [m[0] - n[0] * lab, m[1] - n[1] * lab];
     const txt = [c.nom, c.val].filter(Boolean).join(' ');
     if (txt) s += `<text class="ci-lab" style="text-anchor:${anc(-n[0])}" x="${e[0] * K}" y="${e[1] * K + 5}">${esc(txt)}</text>`;
-    // zone tactile
-    s += `<rect class="ci-hit" data-comp="${c.id}" x="${-0.9 * K}" y="${-0.55 * K}" width="${1.8 * K}" height="${1.1 * K}" rx="8" transform="translate(${P(...m)}) rotate(${ang})"/>`;
+    // zone tactile (seulement pour les composants à annoter)
+    if (annotable && sol[c.id]) s += `<rect class="ci-hit" data-comp="${c.id}" x="${-0.9 * K}" y="${-0.55 * K}" width="${1.8 * K}" height="${1.1 * K}" rx="8" transform="translate(${P(...m)}) rotate(${ang})"/>`;
     return s;
   }
 
@@ -99,7 +135,7 @@ export function monterCircuit(el, ex, opts = {}) {
     const { u, n, m, p, L } = geo(c); let s = '';
     if (a?.i?.txt) {
       const d = a.i.d || 1; const off = Math.min(0.45, (L - LONG[c.t]) / 4 + 0.1);
-      const c0 = [p[0] - u[0] * off, p[1] - u[1] * off];          // sur le fil côté a
+      const c0 = c.t === 'F' ? m : [p[0] - u[0] * off, p[1] - u[1] * off];          // sur le fil côté a
       const t = [c0[0] + u[0] * 0.17 * d, c0[1] + u[1] * 0.17 * d];
       const b1 = [c0[0] - u[0] * 0.17 * d + n[0] * 0.13, c0[1] - u[1] * 0.17 * d + n[1] * 0.13];
       const b2 = [c0[0] - u[0] * 0.17 * d - n[0] * 0.13, c0[1] - u[1] * 0.17 * d - n[1] * 0.13];
@@ -108,7 +144,7 @@ export function monterCircuit(el, ex, opts = {}) {
       s += `<text class="ci-vi ${cls}" style="text-anchor:${anc(n[0])}" x="${lt[0] * K}" y="${lt[1] * K + 4}">${esc(a.i.txt || '')}</text>`;
     }
     if (a?.u?.txt) {
-      const d = a.u.d || 1; const h = Math.max(0.55, LONG[c.t] / 2 + 0.05); const o = c.t === 'R' ? 0.52 : 0.66;
+      const d = a.u.d || 1; const h = Math.max(0.55, LONG[c.t] / 2 + 0.05); const o = c.t === 'R' ? 0.52 : ROND.has(c.t) ? 0.66 : 0.5;
       const tip = [m[0] - u[0] * h * d + n[0] * o, m[1] - u[1] * h * d + n[1] * o];   // d = 1 : pointe vers a
       const queue = [m[0] + u[0] * h * d + n[0] * o, m[1] + u[1] * h * d + n[1] * o];
       if (a.u.d) s += ligne(queue, tip, `ci-fu ${cls}`);
@@ -132,7 +168,10 @@ export function monterCircuit(el, ex, opts = {}) {
 
   function dessiner() {
     let s = '';
-    for (const f of S.fils || []) { let d = ''; for (let i = 0; i < f.length; i += 2) d += `${i ? 'L' : 'M'}${f[i] * K} ${f[i + 1] * K} `; s += `<path class="ci-fil" d="${d}"/>`; }
+    const chemin = (f) => { let d = ''; for (let i = 0; i < f.length; i += 2) d += `${i ? 'L' : 'M'}${f[i] * K} ${f[i + 1] * K} `; return d; };
+    for (const f of S.fils || []) s += `<path class="ci-fil" d="${chemin(f)}"/>`;
+    for (const f of S.pointilles || []) s += `<path class="ci-fil ci-tir" d="${chemin(f)}"/>`;
+    for (const [x, y, r, t] of S.cercles || []) s += `<circle class="ci-m" cx="${x * K}" cy="${y * K}" r="${r * K}"/><text class="ci-ml" x="${x * K}" y="${y * K + 6}">${esc(t || '')}</text>`;
     for (const [x, y] of S.points || []) s += `<circle class="ci-pt" cx="${x * K}" cy="${y * K}" r="4.5"/>`;
     for (const [x, y] of S.masses || []) s += `<path class="ci-fil" d="M${x * K} ${y * K}v8M${x * K - 14} ${y * K + 8}h28M${x * K - 9} ${y * K + 14}h18M${x * K - 4} ${y * K + 20}h8"/>`;
     for (const [x, y, t] of S.bornes || []) s += `<circle class="ci-borne" cx="${x * K}" cy="${y * K}" r="5"/><text class="ci-lab" x="${x * K + 10}" y="${y * K - 10}" text-anchor="start">${esc(t)}</text>`;
@@ -141,6 +180,12 @@ export function monterCircuit(el, ex, opts = {}) {
       const v = etat.verif?.[c.id];
       s += `<g class="ci-c ${etat.sel === c.id ? 'sel' : ''} ${v ? `v-${v}` : ''}">${symbole(c)}</g>`;
     }
+    for (const [x1, y1, x2, y2, t] of S.fleches || []) {
+      const L = Math.hypot(x2 - x1, y2 - y1), u = [(x2 - x1) / L, (y2 - y1) / L], n = [-u[1], u[0]];
+      s += ligne([x1, y1], [x2, y2], 'ci-fu don') + `<polygon class="ci-fut don" points="${P(x2, y2)} ${P(x2 - u[0] * 0.24 + n[0] * 0.12, y2 - u[1] * 0.24 + n[1] * 0.12)} ${P(x2 - u[0] * 0.24 - n[0] * 0.12, y2 - u[1] * 0.24 - n[1] * 0.12)}"/>`;
+      if (t) s += `<text class="ci-vi don" x="${((x1 + x2) / 2 + n[0] * 0.32) * K}" y="${((y1 + y2) / 2 + n[1] * 0.32) * K + 5}">${esc(t)}</text>`;
+    }
+    for (const c of S.comps) if (don[c.id]) s += fleches(c, don[c.id], 'don');
     for (const c of S.comps) {
       const a = etat.notes[c.id];
       if (a) s += fleches(c, { i: a.i && { ...a.i, txt: texteNote(a.i, 'i') }, u: a.u && { ...a.u, txt: texteNote(a.u, 'u') } }, 'eleve');
@@ -165,7 +210,7 @@ export function monterCircuit(el, ex, opts = {}) {
         </div></div>`;
     };
     pan.hidden = false;
-    pan.innerHTML = `<div class="ci-t"><b>${esc([c.nom || ({ R: 'Résistance', A: 'Ampèremètre', V: 'Voltmètre', G: 'Générateur' })[c.t], c.val].filter(Boolean).join(' '))}</b>
+    pan.innerHTML = `<div class="ci-t"><b>${esc([c.nom || NOMS[c.t], c.val].filter(Boolean).join(' '))}</b>
         <button class="btn icon" type="button" data-ci="fermer" title="Fermer">✕</button></div>
       ${s.I !== undefined || !Object.keys(sol).length ? ligneG('i', 'Courant I', 'sens de la flèche sur le fil') : ''}
       ${s.U !== undefined || !Object.keys(sol).length ? ligneG('u', 'Tension U', 'la pointe du vecteur = côté +') : ''}`;
@@ -205,6 +250,8 @@ export function monterCircuit(el, ex, opts = {}) {
     opts.onVerifier?.(pct);
   }
 
+  dessiner();
+  if (!annotable) return { verifier() {} };
   svg.addEventListener('click', (ev) => {
     const h = ev.target.closest('[data-comp]'); if (!h) return;
     etat.sel = etat.sel === h.dataset.comp ? null : h.dataset.comp; dessiner(); panneau();
@@ -228,6 +275,5 @@ export function monterCircuit(el, ex, opts = {}) {
     if (b.dataset.ci === 'effacer') { etat.notes = {}; etat.verif = null; sauver(opts.cle, {}); res.hidden = true; etat.sel = null; dessiner(); panneau(); }
   });
   if (opts.solutionVisible) el.querySelector('[data-ci=sol]').hidden = false;
-  dessiner();
   return { verifier };
 }

@@ -68,6 +68,19 @@ export async function chargerChapitre(mid, cid) {
   return ch;
 }
 
+/** Exercices sur schéma d'une matière (fichier indiqué par « schemas » dans index.json). */
+export async function chargerSchemas(mid) {
+  const m = matiere(mid);
+  if (!m?.schemas) throw new Error(`Pas d'exercices sur schéma pour « ${mid} ».`);
+  const cle = `${mid}/schemas`;
+  if (chapitresEnMemoire.has(cle)) return chapitresEnMemoire.get(cle);
+  const d = await lireJson(`content/${m.schemas.fichier}`);
+  d.exercices = Array.isArray(d.exercices) ? d.exercices : [];
+  d.categories = Array.isArray(d.categories) ? d.categories : [];
+  chapitresEnMemoire.set(cle, d);
+  return d;
+}
+
 /* ---------- interne ---------- */
 function parOrdre(a, b) { return (a.ordre ?? 999) - (b.ordre ?? 999); }
 

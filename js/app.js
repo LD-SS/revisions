@@ -19,9 +19,10 @@ import { vueMatiere } from './vues/matiere.js';
 import { vueChapitre } from './vues/chapitre.js';
 import { vueParametres } from './vues/parametres.js';
 import { vueAtelier } from './vues/atelier.js';
+import { vueSchemas } from './vues/schemas.js';
 import { majBoutonProposer, viderAttente } from './proposer.js';
 
-const VERSION = '0.9.0 (circuits à annoter)';
+const VERSION = '0.10.0 (exercices sur schéma)';
 const vue = document.getElementById('vue');
 let nettoyer = null; // fonction fournie par la page affichée, appelée avant d'en changer
 
@@ -76,7 +77,7 @@ function vueBientot(el, titre, ic, texte) {
 /* ---------- Routeur ---------- */
 const ROUTES = {
   '': (el) => vueAccueil(el),
-  m: (el, [mid, cid, onglet]) => (cid ? vueChapitre(el, mid, cid, onglet) : vueMatiere(el, mid)),
+  m: (el, [mid, cid, onglet]) => (cid === 'schemas' ? vueSchemas(el, mid, onglet) : cid ? vueChapitre(el, mid, cid, onglet) : vueMatiere(el, mid)),
   parametres: (el) => vueParametres(el, { version: VERSION, theme, changerTheme }),
   dessin: (el, params) => vueAtelier(el, params),
   progression: (el) => vueBientot(el, 'Progression : arrive à l\'étape 4', 'progression',
