@@ -599,6 +599,32 @@ body.pl-plein-ouvert{overflow:hidden}
 .ci-svg .ci-fi.sol,.ci-svg .ci-fut.sol{fill:#16a34a}
 .ci-svg .ci-fu.sol{stroke:#16a34a;stroke-width:2.2;stroke-dasharray:6 3}
 .ci-svg .ci-vi.sol,.ci-svg .ci-vu.sol{fill:#16a34a}
+.m-onglets{display:flex;gap:4px;flex-wrap:nowrap;overflow-x:auto;margin:4px 0 16px;border-bottom:1px solid var(--border)}
+.m-onglet{display:inline-flex;align-items:center;gap:7px;padding:9px 14px;border:1px solid transparent;border-bottom:none;border-radius:10px 10px 0 0;color:var(--muted);text-decoration:none;font-weight:600;margin-bottom:-1px}
+.m-onglet svg{width:18px;height:18px}
+.m-onglet.actif{background:var(--panel);border-color:var(--border);color:var(--mt,var(--accent))}
+.m-onglet .badge{font-size:12px}
+@media (max-width:640px){ .m-onglet{padding:8px 10px;font-size:14px;white-space:nowrap} }
+.sch-renvoi{text-decoration:none;color:inherit;margin-bottom:12px}
+.sch-renvoi svg{flex-shrink:0}
+.sch-sommaire{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+.sch-sommaire .chip span{padding:4px 11px;font-size:13px}
+.sch-methode{margin:0 0 12px;padding:10px 14px}
+.sch-methode summary{cursor:pointer;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.sch-methode summary svg{width:18px;height:18px;vertical-align:-3px}
+.sch-methode h4{margin:12px 0 4px}
+.sch-cat{margin:18px 0 6px;scroll-margin-top:70px}
+.sch-cat-t{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.sch-cat h3{margin:0}
+.sch-cat>p{margin:2px 0 10px;font-size:14px}
+.sch-mini .ci{margin:0;width:100%}
+.sch-mini .ci-cadre{border:none;background:transparent}
+.sch-mini .ci-svg{max-height:122px;width:100%;pointer-events:none}
+.ci-svg .ci-tir{stroke-dasharray:9 6}
+.ci-svg .ci-ml.pt{font-size:14px}
+.ci-svg .ci-fi.don,.ci-svg .ci-fut.don{fill:#b45309}
+.ci-svg .ci-fu.don{stroke:#b45309;stroke-width:2}
+.ci-svg .ci-vi.don,.ci-svg .ci-vu.don{fill:#b45309}
 .ci-svg .ci-vi,.ci-svg .ci-vu{font-size:15px;font-weight:700;text-anchor:middle;paint-order:stroke;stroke:var(--bg);stroke-width:4px}
 .ci-aide{font-size:13.5px;margin:6px 2px}
 .ci-panneau{border:1px solid var(--accent);border-radius:12px;padding:10px 12px;margin:8px 0;background:var(--panel)}
