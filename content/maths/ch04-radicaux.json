@@ -317,11 +317,19 @@
    "items": [
     {
      "q": "$\\left(\\sqrt{3}\\right)^2$",
-     "r": "$3$"
+     "r": "$3$",
+     "etapes": [
+      "Le carré « annule » la racine carrée : $(\\sqrt{a})^2 = a$ (pour $a \\geq 0$).",
+      "$(\\sqrt{3})^2 = \\sqrt{3} \\times \\sqrt{3} = 3$"
+     ]
     },
     {
      "q": "$\\sqrt{3^2}$",
-     "r": "$3$"
+     "r": "$3$",
+     "etapes": [
+      "On calcule d'abord sous la racine : $3^2 = 9$",
+      "$\\sqrt{9} = 3$"
+     ]
     },
     {
      "q": "$\\sqrt{(-3)^2}$",
@@ -346,31 +354,60 @@
     },
     {
      "q": "$\\sqrt{10\\,000}$",
-     "r": "$100$"
+     "r": "$100$",
+     "etapes": [
+      "$10\\,000 = 100 \\times 100 = 100^2$",
+      "$\\sqrt{10\\,000} = 100$"
+     ]
     },
     {
      "q": "$\\sqrt{6\\,400}$",
-     "r": "$80$"
+     "r": "$80$",
+     "etapes": [
+      "$6\\,400 = 64 \\times 100$",
+      "$\\sqrt{64} \\times \\sqrt{100} = 8 \\times 10 = 80$"
+     ]
     },
     {
      "q": "$\\sqrt{0{,}25}$",
-     "r": "$0{,}5$"
+     "r": "$0{,}5$",
+     "etapes": [
+      "$0{,}25 = \\dfrac{25}{100}$",
+      "$\\dfrac{\\sqrt{25}}{\\sqrt{100}} = \\dfrac{5}{10} = 0{,}5$"
+     ]
     },
     {
      "q": "$\\sqrt{0{,}0049}$",
-     "r": "$0{,}07$"
+     "r": "$0{,}07$",
+     "etapes": [
+      "$0{,}0049 = \\dfrac{49}{10\\,000}$",
+      "$\\dfrac{\\sqrt{49}}{\\sqrt{10\\,000}} = \\dfrac{7}{100} = 0{,}07$"
+     ]
     },
     {
      "q": "$\\sqrt{\\dfrac{25}{4}}$",
-     "r": "$\\dfrac{5}{2}$"
+     "r": "$\\dfrac{5}{2}$",
+     "etapes": [
+      "Racine d'une fraction = racine du haut sur racine du bas.",
+      "$\\dfrac{\\sqrt{25}}{\\sqrt{4}} = \\dfrac{5}{2}$"
+     ]
     },
     {
      "q": "$\\sqrt{\\dfrac{36}{49}}$",
-     "r": "$\\dfrac{6}{7}$"
+     "r": "$\\dfrac{6}{7}$",
+     "etapes": [
+      "$\\dfrac{\\sqrt{36}}{\\sqrt{49}}$",
+      "$= \\dfrac{6}{7}$"
+     ]
     },
     {
      "q": "$\\sqrt{\\dfrac{0{,}81}{49}}$",
-     "r": "$\\dfrac{0{,}9}{7} = \\dfrac{9}{70}$"
+     "r": "$\\dfrac{0{,}9}{7} = \\dfrac{9}{70}$",
+     "etapes": [
+      "$\\dfrac{\\sqrt{0{,}81}}{\\sqrt{49}}$",
+      "$\\sqrt{0{,}81} = 0{,}9$ (car $0{,}9^2 = 0{,}81$) et $\\sqrt{49} = 7$",
+      "$\\dfrac{0{,}9}{7} = \\dfrac{9}{70}$ (on multiplie haut et bas par 10)"
+     ]
     }
    ],
    "page": 1,
@@ -383,35 +420,67 @@
    "items": [
     {
      "q": "$\\sqrt[3]{8}$",
-     "r": "$2$"
+     "r": "$2$",
+     "etapes": [
+      "On cherche le nombre qui, au cube, donne 8.",
+      "$2^3 = 2 \\times 2 \\times 2 = 8$ → $2$"
+     ]
     },
     {
      "q": "$\\sqrt[3]{-8}$",
-     "r": "$-2$"
+     "r": "$-2$",
+     "etapes": [
+      "Racine cubique d'un négatif = négative.",
+      "$(-2)^3 = -8$ → $-2$"
+     ]
     },
     {
      "q": "$\\sqrt[3]{\\dfrac{1}{8}}$",
-     "r": "$\\dfrac{1}{2}$"
+     "r": "$\\dfrac{1}{2}$",
+     "etapes": [
+      "$\\dfrac{\\sqrt[3]{1}}{\\sqrt[3]{8}}$",
+      "$= \\dfrac{1}{2}$"
+     ]
     },
     {
      "q": "$\\sqrt[3]{27}$",
-     "r": "$3$"
+     "r": "$3$",
+     "etapes": [
+      "$3^3 = 27$",
+      "→ $3$"
+     ]
     },
     {
      "q": "$\\sqrt[3]{-27}$",
-     "r": "$-3$"
+     "r": "$-3$",
+     "etapes": [
+      "$(-3)^3 = -27$",
+      "→ $-3$"
+     ]
     },
     {
      "q": "$\\sqrt[3]{\\dfrac{1}{27}}$",
-     "r": "$\\dfrac{1}{3}$"
+     "r": "$\\dfrac{1}{3}$",
+     "etapes": [
+      "$\\dfrac{\\sqrt[3]{1}}{\\sqrt[3]{27}}$",
+      "$= \\dfrac{1}{3}$"
+     ]
     },
     {
      "q": "$\\sqrt[3]{5^3}$",
-     "r": "$5$"
+     "r": "$5$",
+     "etapes": [
+      "La racine cubique « annule » le cube.",
+      "$\\sqrt[3]{5^3} = 5$"
+     ]
     },
     {
      "q": "$\\sqrt[3]{(-5)^3}$",
-     "r": "$-5$"
+     "r": "$-5$",
+     "etapes": [
+      "$\\sqrt[3]{(-5)^3} = -5$",
+      "Pour une racine cubique, le signe est conservé."
+     ]
     },
     {
      "q": "$\\sqrt[3]{5^{-3}}$",
@@ -431,7 +500,11 @@
    "items": [
     {
      "q": "$\\sqrt[4]{16}$",
-     "r": "$2$"
+     "r": "$2$",
+     "etapes": [
+      "On cherche le nombre qui, à la puissance 4, donne 16.",
+      "$2^4 = 2 \\times 2 \\times 2 \\times 2 = 16$ → $2$"
+     ]
     },
     {
      "q": "$\\sqrt[4]{(-2)^8}$",
@@ -442,11 +515,19 @@
     },
     {
      "q": "$\\sqrt[4]{625}$",
-     "r": "$5$"
+     "r": "$5$",
+     "etapes": [
+      "$5^4 = 25 \\times 25 = 625$",
+      "→ $5$"
+     ]
     },
     {
      "q": "$\\sqrt[5]{243}$",
-     "r": "$3$"
+     "r": "$3$",
+     "etapes": [
+      "$3^5 = 3 \\times 3 \\times 3 \\times 3 \\times 3 = 243$",
+      "→ $3$"
+     ]
     },
     {
      "q": "$\\sqrt[5]{-243}$",
@@ -457,7 +538,12 @@
     },
     {
      "q": "$\\sqrt[5]{\\dfrac{32}{243}}$",
-     "r": "$\\dfrac{2}{3}$"
+     "r": "$\\dfrac{2}{3}$",
+     "etapes": [
+      "$\\dfrac{\\sqrt[5]{32}}{\\sqrt[5]{243}}$",
+      "$2^5 = 32$ et $3^5 = 243$",
+      "$= \\dfrac{2}{3}$"
+     ]
     }
    ],
    "page": 1,
@@ -501,23 +587,43 @@
    "items": [
     {
      "q": "$a^{1/2}$",
-     "r": "$\\sqrt{a}$"
+     "r": "$\\sqrt{a}$",
+     "etapes": [
+      "Règle : $a^{1/n} = \\sqrt[n]{a}$",
+      "Indice 2 : $a^{1/2} = \\sqrt{a}$ (on n'écrit pas le 2)."
+     ]
     },
     {
      "q": "$a^{1/3}$",
-     "r": "$\\sqrt[3]{a}$"
+     "r": "$\\sqrt[3]{a}$",
+     "etapes": [
+      "$a^{1/n} = \\sqrt[n]{a}$ avec $n = 3$",
+      "$a^{1/3} = \\sqrt[3]{a}$"
+     ]
     },
     {
      "q": "$a^{1/4}$",
-     "r": "$\\sqrt[4]{a}$"
+     "r": "$\\sqrt[4]{a}$",
+     "etapes": [
+      "$a^{1/n} = \\sqrt[n]{a}$ avec $n = 4$",
+      "$a^{1/4} = \\sqrt[4]{a}$"
+     ]
     },
     {
      "q": "$a^{3/2}$",
-     "r": "$\\sqrt{a^3} = a\\sqrt{a}$"
+     "r": "$\\sqrt{a^3} = a\\sqrt{a}$",
+     "etapes": [
+      "$a^{3/2} = (a^3)^{1/2} = \\sqrt{a^3}$",
+      "$a^3 = a^2 \\cdot a$ → $\\sqrt{a^2} \\cdot \\sqrt{a} = a\\sqrt{a}$"
+     ]
     },
     {
      "q": "$a^{2/3}$",
-     "r": "$\\sqrt[3]{a^2}$"
+     "r": "$\\sqrt[3]{a^2}$",
+     "etapes": [
+      "$a^{2/3} = (a^2)^{1/3}$",
+      "$= \\sqrt[3]{a^2}$"
+     ]
     },
     {
      "q": "$a^{0{,}75}$",
@@ -542,11 +648,19 @@
     },
     {
      "q": "$a^{3/6}$",
-     "r": "$\\sqrt{a}$"
+     "r": "$\\sqrt{a}$",
+     "etapes": [
+      "On simplifie d'abord la fraction : $\\dfrac{3}{6} = \\dfrac{1}{2}$",
+      "$a^{1/2} = \\sqrt{a}$"
+     ]
     },
     {
      "q": "$a^{3/9}$",
-     "r": "$\\sqrt[3]{a}$"
+     "r": "$\\sqrt[3]{a}$",
+     "etapes": [
+      "$\\dfrac{3}{9} = \\dfrac{1}{3}$",
+      "$a^{1/3} = \\sqrt[3]{a}$"
+     ]
     }
    ],
    "page": 1,
@@ -560,7 +674,11 @@
    "items": [
     {
      "q": "$2^{1/3}$",
-     "r": "$\\sqrt[3]{2}$"
+     "r": "$\\sqrt[3]{2}$",
+     "etapes": [
+      "$a^{1/n} = \\sqrt[n]{a}$",
+      "$2^{1/3} = \\sqrt[3]{2}$"
+     ]
     },
     {
      "q": "$-2^{1/3}$",
@@ -578,11 +696,19 @@
     },
     {
      "q": "$2^{-1/3}$",
-     "r": "$\\dfrac{1}{\\sqrt[3]{2}}$"
+     "r": "$\\dfrac{1}{\\sqrt[3]{2}}$",
+     "etapes": [
+      "Exposant négatif → inverse : $a^{-n} = \\dfrac{1}{a^n}$",
+      "$2^{-1/3} = \\dfrac{1}{2^{1/3}} = \\dfrac{1}{\\sqrt[3]{2}}$"
+     ]
     },
     {
      "q": "$3^{1/2}$",
-     "r": "$\\sqrt{3}$"
+     "r": "$\\sqrt{3}$",
+     "etapes": [
+      "Exposant $\\tfrac12$ = racine carrée",
+      "$3^{1/2} = \\sqrt{3}$"
+     ]
     },
     {
      "q": "$(-3)^{1/2}$",
@@ -593,11 +719,19 @@
     },
     {
      "q": "$-3^{1/2}$",
-     "r": "$-\\sqrt{3}$"
+     "r": "$-\\sqrt{3}$",
+     "etapes": [
+      "Sans parenthèses, l'exposant ne porte que sur 3 ; le « − » reste devant.",
+      "$-3^{1/2} = -\\sqrt{3}$"
+     ]
     },
     {
      "q": "$3^{-1/2}$",
-     "r": "$\\dfrac{1}{\\sqrt{3}} = \\dfrac{\\sqrt{3}}{3}$"
+     "r": "$\\dfrac{1}{\\sqrt{3}} = \\dfrac{\\sqrt{3}}{3}$",
+     "etapes": [
+      "$3^{-1/2} = \\dfrac{1}{3^{1/2}} = \\dfrac{1}{\\sqrt{3}}$",
+      "On rend le dénominateur rationnel : $\\dfrac{1 \\cdot \\sqrt{3}}{\\sqrt{3} \\cdot \\sqrt{3}} = \\dfrac{\\sqrt{3}}{3}$"
+     ]
     }
    ],
    "page": 1,
@@ -640,7 +774,11 @@
    "items": [
     {
      "q": "$100^{1/2}$",
-     "r": "$10$"
+     "r": "$10$",
+     "etapes": [
+      "$100^{1/2} = \\sqrt{100}$",
+      "$= 10$"
+     ]
     },
     {
      "q": "$(10^4)^{1/2}$",
@@ -651,7 +789,11 @@
     },
     {
      "q": "$0{,}01^{1/2}$",
-     "r": "$0{,}1$"
+     "r": "$0{,}1$",
+     "etapes": [
+      "$0{,}01^{1/2} = \\sqrt{0{,}01}$",
+      "$0{,}1^2 = 0{,}01$ → $0{,}1$"
+     ]
     },
     {
      "q": "$(10^{-4})^{1/2}$",
@@ -662,11 +804,19 @@
     },
     {
      "q": "$(10^6)^{1/2}$",
-     "r": "$1\\,000$"
+     "r": "$1\\,000$",
+     "etapes": [
+      "$(a^m)^n = a^{m \\cdot n}$ : $(10^6)^{1/2} = 10^{6 \\times \\frac12} = 10^3$",
+      "$= 1\\,000$"
+     ]
     },
     {
      "q": "$(10^{-12})^{1/2}$",
-     "r": "$10^{-6} = 0{,}000\\,001$"
+     "r": "$10^{-6} = 0{,}000\\,001$",
+     "etapes": [
+      "$(10^{-12})^{1/2} = 10^{-12 \\times \\frac12} = 10^{-6}$",
+      "$= 0{,}000\\,001$"
+     ]
     },
     {
      "q": "$100^{-1/2}$",
@@ -766,7 +916,11 @@
     },
     {
      "q": "$\\sqrt{7} \\cdot \\sqrt{\\dfrac{1}{7}}$",
-     "r": "$1$"
+     "r": "$1$",
+     "etapes": [
+      "$\\sqrt{a} \\cdot \\sqrt{b} = \\sqrt{a \\cdot b}$",
+      "$\\sqrt{7 \\cdot \\dfrac{1}{7}} = \\sqrt{1} = 1$"
+     ]
     },
     {
      "q": "$2\\sqrt{18} \\cdot \\sqrt{8}$",
@@ -813,23 +967,44 @@
     },
     {
      "q": "$\\left(\\sqrt{a}\\right)^2 = a$",
-     "r": "**Vrai** (pour $a \\geq 0$)"
+     "r": "**Vrai** (pour $a \\geq 0$)",
+     "etapes": [
+      "$\\sqrt{a}$ n'existe que si $a \\geq 0$.",
+      "Dans ce cas, élever au carré annule la racine : $(\\sqrt{a})^2 = a$ → **Vrai**"
+     ]
     },
     {
      "q": "$\\left(\\sqrt{a}\\right)^2 = \\sqrt{a^2}$",
-     "r": "**Vrai** quand $\\sqrt{a}$ existe ($a \\geq 0$) : les deux valent $a$"
+     "r": "**Vrai** quand $\\sqrt{a}$ existe ($a \\geq 0$) : les deux valent $a$",
+     "etapes": [
+      "À gauche : $(\\sqrt{a})^2 = a$ (avec $a \\geq 0$).",
+      "À droite : $\\sqrt{a^2} = |a| = a$ puisque $a \\geq 0$.",
+      "Les deux valent $a$ → **Vrai** (dès que $\\sqrt{a}$ existe)."
+     ]
     },
     {
      "q": "$\\sqrt[3]{a^3} = a$",
-     "r": "**Vrai**"
+     "r": "**Vrai**",
+     "etapes": [
+      "La racine cubique existe pour tout réel, même négatif.",
+      "$\\sqrt[3]{a^3} = a$ (le signe est conservé) → **Vrai**"
+     ]
     },
     {
      "q": "$\\left(\\sqrt[3]{a}\\right)^3 = a$",
-     "r": "**Vrai**"
+     "r": "**Vrai**",
+     "etapes": [
+      "$\\sqrt[3]{a}$ existe pour tout $a$.",
+      "Au cube, on retrouve $a$ → **Vrai**"
+     ]
     },
     {
      "q": "$\\sqrt[3]{a^3} = \\left(\\sqrt[3]{a}\\right)^3$",
-     "r": "**Vrai**"
+     "r": "**Vrai**",
+     "etapes": [
+      "Les deux membres valent $a$ (voir les deux questions précédentes).",
+      "→ **Vrai**"
+     ]
     },
     {
      "q": "$\\sqrt[3]{a^2} = \\sqrt{a^3}$",
@@ -847,7 +1022,11 @@
     },
     {
      "q": "$\\sqrt[3]{a^3} = 1$",
-     "r": "**Faux** : ça vaut $a$"
+     "r": "**Faux** : ça vaut $a$",
+     "etapes": [
+      "$\\sqrt[3]{a^3} = a$, pas 1.",
+      "Contre-exemple : $a = 2$ → $\\sqrt[3]{8} = 2 \\neq 1$ → **Faux**"
+     ]
     }
    ],
    "page": 2,
@@ -860,7 +1039,11 @@
    "items": [
     {
      "q": "$\\sqrt{a}$",
-     "r": "$a \\geq 0$"
+     "r": "$a \\geq 0$",
+     "etapes": [
+      "Une racine carrée (indice pair) n'existe que pour un nombre positif ou nul.",
+      "→ $a \\geq 0$"
+     ]
     },
     {
      "q": "$\\sqrt[3]{a + 3}$",
@@ -885,11 +1068,20 @@
     },
     {
      "q": "$\\sqrt[3]{ab}$",
-     "r": "Pour tous réels $a$ et $b$"
+     "r": "Pour tous réels $a$ et $b$",
+     "etapes": [
+      "Racine cubique (indice impair) : elle existe pour tout réel, positif ou négatif.",
+      "→ aucune condition sur $a$ et $b$."
+     ]
     },
     {
      "q": "$\\sqrt[4]{\\dfrac{a}{b}}$",
-     "r": "$b \\neq 0$ et $\\dfrac{a}{b} \\geq 0$ ($a$ et $b$ de même signe, ou $a = 0$)"
+     "r": "$b \\neq 0$ et $\\dfrac{a}{b} \\geq 0$ ($a$ et $b$ de même signe, ou $a = 0$)",
+     "etapes": [
+      "Fraction : le dénominateur ne peut pas être nul → $b \\neq 0$.",
+      "Indice pair (4) : ce qui est sous la racine doit être $\\geq 0$ → $\\dfrac{a}{b} \\geq 0$.",
+      "Donc $a$ et $b$ de même signe, ou $a = 0$."
+     ]
     }
    ],
    "page": 2,
@@ -910,11 +1102,20 @@
     },
     {
      "q": "$\\sqrt{a^4x^5}$",
-     "r": "$a^2x^2\\sqrt{x}$"
+     "r": "$a^2x^2\\sqrt{x}$",
+     "etapes": [
+      "On sort les carrés : $a^4 = (a^2)^2$ et $x^5 = (x^2)^2 \\cdot x$",
+      "$\\sqrt{a^4x^5} = \\sqrt{(a^2)^2 \\cdot (x^2)^2 \\cdot x}$",
+      "$= a^2 x^2 \\sqrt{x}$"
+     ]
     },
     {
      "q": "$\\sqrt{8x^4}$",
-     "r": "$2x^2\\sqrt{2}$"
+     "r": "$2x^2\\sqrt{2}$",
+     "etapes": [
+      "$8 = 4 \\times 2$ et $x^4 = (x^2)^2$",
+      "$\\sqrt{4 \\cdot (x^2)^2 \\cdot 2} = 2 x^2 \\sqrt{2}$"
+     ]
     },
     {
      "q": "$\\sqrt{162a^2}$",

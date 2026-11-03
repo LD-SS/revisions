@@ -303,19 +303,35 @@
    "items": [
     {
      "q": "$3(x + 5)$",
-     "r": "$3x + 15$"
+     "r": "$3x + 15$",
+     "etapes": [
+      "On multiplie 3 par chaque terme de la parenthèse.",
+      "$3 \\cdot x + 3 \\cdot 5 = 3x + 15$"
+     ]
     },
     {
      "q": "$4(x - 2)$",
-     "r": "$4x - 8$"
+     "r": "$4x - 8$",
+     "etapes": [
+      "$4 \\cdot x + 4 \\cdot (-2)$",
+      "$= 4x - 8$"
+     ]
     },
     {
      "q": "$5(2x + 3)$",
-     "r": "$10x + 15$"
+     "r": "$10x + 15$",
+     "etapes": [
+      "$5 \\cdot 2x + 5 \\cdot 3$",
+      "$= 10x + 15$"
+     ]
     },
     {
      "q": "$2(4x - 7)$",
-     "r": "$8x - 14$"
+     "r": "$8x - 14$",
+     "etapes": [
+      "$2 \\cdot 4x + 2 \\cdot (-7)$",
+      "$= 8x - 14$"
+     ]
     },
     {
      "q": "$-3(x + 4)$",
@@ -432,7 +448,12 @@
    "items": [
     {
      "q": "$x^2 + 5x$",
-     "r": "$x(x + 5)$"
+     "r": "$x(x + 5)$",
+     "etapes": [
+      "Facteur commun aux deux termes : $x$ ($x^2 = x \\cdot x$ et $5x = 5 \\cdot x$).",
+      "On divise chaque terme par $x$ : $x$ et $5$",
+      "$x(x + 5)$ ; contrôle : $x \\cdot x + x \\cdot 5 = x^2 + 5x$ ✓"
+     ]
     },
     {
      "q": "$2a^2b - 4ab$",
@@ -452,11 +473,20 @@
    "items": [
     {
      "q": "$5x + 15$",
-     "r": "$5(x + 3)$"
+     "r": "$5(x + 3)$",
+     "etapes": [
+      "Facteur commun : 5 ($15 = 5 \\times 3$).",
+      "$5(x + 3)$"
+     ]
     },
     {
      "q": "$7y^2 + 14y$",
-     "r": "$7y(y + 2)$"
+     "r": "$7y(y + 2)$",
+     "etapes": [
+      "Facteur commun : $7$ (dans 7 et 14) et $y$ (dans $y^2$ et $y$) → $7y$",
+      "$7y^2 \\div 7y = y$ ; $14y \\div 7y = 2$",
+      "$7y(y + 2)$"
+     ]
     },
     {
      "q": "$8a^2b + 12ab$",
@@ -498,7 +528,12 @@
     },
     {
      "q": "$x(x + 5) - 7(x + 5)$",
-     "r": "$(x + 5)(x - 7)$"
+     "r": "$(x + 5)(x - 7)$",
+     "etapes": [
+      "Le facteur commun est toute la parenthèse $(x + 5)$.",
+      "Il reste $x$ du premier terme et $-7$ du second.",
+      "$(x + 5)(x - 7)$"
+     ]
     }
    ],
    "page": 4,
@@ -511,7 +546,12 @@
    "items": [
     {
      "q": "$2x^2y + 14xy$",
-     "r": "$2xy(x + 7)$"
+     "r": "$2xy(x + 7)$",
+     "etapes": [
+      "Facteur commun : $2$ (2 et 14), $x$ et $y$ → $2xy$",
+      "$2x^2y \\div 2xy = x$ ; $14xy \\div 2xy = 7$",
+      "$2xy(x + 7)$"
+     ]
     },
     {
      "q": "$3y^2 + 6y + 3$",

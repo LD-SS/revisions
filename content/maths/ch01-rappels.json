@@ -508,15 +508,27 @@
    "items": [
     {
      "q": "$5^2$",
-     "r": "$25$"
+     "r": "$25$",
+     "etapes": [
+      "$5^2 = 5 \\times 5$",
+      "$= 25$"
+     ]
     },
     {
      "q": "$9^2$",
-     "r": "$81$"
+     "r": "$81$",
+     "etapes": [
+      "$9^2 = 9 \\times 9$",
+      "$= 81$"
+     ]
     },
     {
      "q": "$11^2$",
-     "r": "$121$"
+     "r": "$121$",
+     "etapes": [
+      "$11^2 = 11 \\times 11$",
+      "$= 11 \\times 10 + 11 = 110 + 11 = 121$"
+     ]
     },
     {
      "q": "$(-3)^2$",
@@ -616,23 +628,43 @@
    "items": [
     {
      "q": "$7 \\times (-2)$",
-     "r": "$-14$"
+     "r": "$-14$",
+     "etapes": [
+      "Signes différents (+ et −) → résultat négatif.",
+      "$7 \\times 2 = 14$, donc $-14$."
+     ]
     },
     {
      "q": "$(-6) \\times 4$",
-     "r": "$-24$"
+     "r": "$-24$",
+     "etapes": [
+      "Signes différents → résultat négatif.",
+      "$6 \\times 4 = 24$, donc $-24$."
+     ]
     },
     {
      "q": "$(-8) \\times (-5)$",
-     "r": "$40$"
+     "r": "$40$",
+     "etapes": [
+      "Même signe (− et −) → résultat positif.",
+      "$8 \\times 5 = 40$, donc $+40$."
+     ]
     },
     {
      "q": "$(-3) \\times (-10)$",
-     "r": "$30$"
+     "r": "$30$",
+     "etapes": [
+      "Même signe → résultat positif.",
+      "$3 \\times 10 = 30$, donc $+30$."
+     ]
     },
     {
      "q": "$9 \\times (-7)$",
-     "r": "$-63$"
+     "r": "$-63$",
+     "etapes": [
+      "Signes différents → résultat négatif.",
+      "$9 \\times 7 = 63$, donc $-63$."
+     ]
     }
    ],
    "page": 3,
@@ -787,7 +819,12 @@
     },
     {
      "q": "$\\dfrac{3}{5} \\times \\dfrac{2}{7}$",
-     "r": "$\\dfrac{6}{35}$"
+     "r": "$\\dfrac{6}{35}$",
+     "etapes": [
+      "On multiplie les numérateurs entre eux et les dénominateurs entre eux.",
+      "$\\dfrac{3 \\times 2}{5 \\times 7} = \\dfrac{6}{35}$",
+      "Rien ne se simplifie (6 et 35 n'ont pas de diviseur commun)."
+     ]
     },
     {
      "q": "$\\dfrac{4}{3} - 2$",
@@ -1061,19 +1098,35 @@
    "items": [
     {
      "q": "$3x + 7x$",
-     "r": "$10x$"
+     "r": "$10x$",
+     "etapes": [
+      "Termes semblables (même lettre) : on additionne les coefficients.",
+      "$(3 + 7)x = 10x$"
+     ]
     },
     {
      "q": "$12y - 5y$",
-     "r": "$7y$"
+     "r": "$7y$",
+     "etapes": [
+      "$(12 - 5)y$",
+      "$= 7y$"
+     ]
     },
     {
      "q": "$4a + 9a - 2a$",
-     "r": "$11a$"
+     "r": "$11a$",
+     "etapes": [
+      "$(4 + 9 - 2)a$",
+      "$= 11a$"
+     ]
     },
     {
      "q": "$15m - 7m + 3m$",
-     "r": "$11m$"
+     "r": "$11m$",
+     "etapes": [
+      "$(15 - 7 + 3)m$",
+      "$= 11m$"
+     ]
     },
     {
      "q": "$5x + 2y - 3x$",
@@ -1129,7 +1182,12 @@
     },
     {
      "q": "$6y^3 - 2y^2 + 5y^3 - 7y^2$",
-     "r": "$11y^3 - 9y^2$"
+     "r": "$11y^3 - 9y^2$",
+     "etapes": [
+      "On regroupe les termes semblables : les $y^3$ ensemble, les $y^2$ ensemble.",
+      "$(6 + 5)y^3 + (-2 - 7)y^2$",
+      "$= 11y^3 - 9y^2$ (on ne peut pas mélanger $y^3$ et $y^2$)."
+     ]
     },
     {
      "q": "$10x^2 + 4x + 7 - 3x^2 - 2x + 5$",

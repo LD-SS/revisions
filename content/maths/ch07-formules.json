@@ -502,19 +502,35 @@
    "items": [
     {
      "q": "$A = B + 6$ : isoler $B$",
-     "r": "$B = A - 6$"
+     "r": "$B = A - 6$",
+     "etapes": [
+      "$B$ est additionné à 6 : on fait l'opération inverse, on soustrait 6 des deux côtés.",
+      "$A - 6 = B$"
+     ]
     },
     {
      "q": "$C = D - 4$ : isoler $D$",
-     "r": "$D = C + 4$"
+     "r": "$D = C + 4$",
+     "etapes": [
+      "$D$ est diminué de 4 : on ajoute 4 des deux côtés.",
+      "$C + 4 = D$"
+     ]
     },
     {
      "q": "$P = 8x$ : isoler $x$",
-     "r": "$x = \\dfrac{P}{8}$"
+     "r": "$x = \\dfrac{P}{8}$",
+     "etapes": [
+      "$x$ est multiplié par 8 : on divise les deux côtés par 8.",
+      "$\\dfrac{P}{8} = x$"
+     ]
     },
     {
      "q": "$\\dfrac{B}{A} = 5$ : isoler $B$",
-     "r": "$B = 5A$"
+     "r": "$B = 5A$",
+     "etapes": [
+      "$B$ est divisé par $A$ : on multiplie les deux côtés par $A$.",
+      "$B = 5A$"
+     ]
     },
     {
      "q": "$y = 3x + 7$ : isoler $x$",
@@ -551,7 +567,11 @@
     },
     {
      "q": "$A = L \\times l$ : isoler $L$",
-     "r": "$L = \\dfrac{A}{l}$"
+     "r": "$L = \\dfrac{A}{l}$",
+     "etapes": [
+      "$L$ est multiplié par $l$ : on divise par $l$.",
+      "$L = \\dfrac{A}{l}$"
+     ]
     },
     {
      "q": "$A = \\dfrac{b \\times h}{2}$ : isoler $h$",
@@ -562,11 +582,19 @@
     },
     {
      "q": "$v = \\dfrac{d}{t}$ : isoler $d$, puis $t$",
-     "r": "$d = v \\cdot t$ et $t = \\dfrac{d}{v}$"
+     "r": "$d = v \\cdot t$ et $t = \\dfrac{d}{v}$",
+     "etapes": [
+      "Pour $d$ : on multiplie les deux côtés par $t$ → $d = v \\cdot t$",
+      "Pour $t$ : à partir de $d = v \\cdot t$, on divise par $v$ → $t = \\dfrac{d}{v}$"
+     ]
     },
     {
      "q": "$C = 2 \\times \\pi \\times r$ : isoler $r$",
-     "r": "$r = \\dfrac{C}{2\\pi}$"
+     "r": "$r = \\dfrac{C}{2\\pi}$",
+     "etapes": [
+      "$r$ est multiplié par $2\\pi$ : on divise par $2\\pi$.",
+      "$r = \\dfrac{C}{2\\pi}$"
+     ]
     }
    ],
    "page": [
@@ -651,11 +679,19 @@
    "items": [
     {
      "q": "$U = R \\cdot I$ ($R$)",
-     "r": "$R = \\dfrac{U}{I}$"
+     "r": "$R = \\dfrac{U}{I}$",
+     "etapes": [
+      "$R$ est multiplié par $I$ : on divise les deux côtés par $I$.",
+      "$R = \\dfrac{U}{I}$"
+     ]
     },
     {
      "q": "$P = R \\cdot I^2$ ($R$)",
-     "r": "$R = \\dfrac{P}{I^2}$"
+     "r": "$R = \\dfrac{P}{I^2}$",
+     "etapes": [
+      "$R$ est multiplié par $I^2$ : on divise par $I^2$.",
+      "$R = \\dfrac{P}{I^2}$"
+     ]
     },
     {
      "q": "$\\dfrac{1}{R} = \\dfrac{1}{R_1} + \\dfrac{1}{R_2}$ ($R$)",
@@ -674,23 +710,44 @@
     },
     {
      "q": "$\\lambda = \\dfrac{c}{f}$ ($f$)",
-     "r": "$f = \\dfrac{c}{\\lambda}$"
+     "r": "$f = \\dfrac{c}{\\lambda}$",
+     "etapes": [
+      "On multiplie les deux côtés par $f$ : $\\lambda f = c$",
+      "On divise par $\\lambda$ : $f = \\dfrac{c}{\\lambda}$"
+     ]
     },
     {
      "q": "$\\dfrac{1}{C} = \\dfrac{1}{C_1} + \\dfrac{1}{C_2}$ ($C$)",
-     "r": "$C = \\dfrac{C_1 C_2}{C_1 + C_2}$"
+     "r": "$C = \\dfrac{C_1 C_2}{C_1 + C_2}$",
+     "etapes": [
+      "Dénominateur commun à droite : $\\dfrac{1}{C} = \\dfrac{C_2 + C_1}{C_1 C_2}$",
+      "On prend l'inverse des deux côtés.",
+      "$C = \\dfrac{C_1 C_2}{C_1 + C_2}$"
+     ]
     },
     {
      "q": "$V = \\dfrac{1}{3} a^2 h$ ($h$)",
-     "r": "$h = \\dfrac{3V}{a^2}$"
+     "r": "$h = \\dfrac{3V}{a^2}$",
+     "etapes": [
+      "On multiplie les deux côtés par 3 : $3V = a^2 h$",
+      "On divise par $a^2$ : $h = \\dfrac{3V}{a^2}$"
+     ]
     },
     {
      "q": "$V = \\dfrac{B + b}{2}$ ($b$)",
-     "r": "$b = 2V - B$"
+     "r": "$b = 2V - B$",
+     "etapes": [
+      "On multiplie par 2 : $2V = B + b$",
+      "On soustrait $B$ : $b = 2V - B$"
+     ]
     },
     {
      "q": "$R = \\rho \\dfrac{l}{S}$ ($S$)",
-     "r": "$S = \\dfrac{\\rho \\, l}{R}$"
+     "r": "$S = \\dfrac{\\rho \\, l}{R}$",
+     "etapes": [
+      "On multiplie par $S$ : $R \\cdot S = \\rho \\, l$",
+      "On divise par $R$ : $S = \\dfrac{\\rho \\, l}{R}$"
+     ]
     }
    ],
    "page": 2,

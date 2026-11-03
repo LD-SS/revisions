@@ -827,15 +827,28 @@
     },
     {
      "q": "$150^{\\circ}$",
-     "r": "$\\dfrac{5\\pi}{6}$"
+     "r": "$\\dfrac{5\\pi}{6}$",
+     "etapes": [
+      "$x = 150 \\times \\dfrac{\\pi}{180}$",
+      "$\\dfrac{150}{180} = \\dfrac{5}{6}$ (÷ 30)",
+      "$= \\dfrac{5\\pi}{6}$"
+     ]
     },
     {
      "q": "$10^{\\circ}$",
-     "r": "$\\dfrac{\\pi}{18}$"
+     "r": "$\\dfrac{\\pi}{18}$",
+     "etapes": [
+      "$10 \\times \\dfrac{\\pi}{180} = \\dfrac{10\\pi}{180}$",
+      "$= \\dfrac{\\pi}{18}$ (÷ 10)"
+     ]
     },
     {
      "q": "$12^{\\circ}$",
-     "r": "$\\dfrac{\\pi}{15}$"
+     "r": "$\\dfrac{\\pi}{15}$",
+     "etapes": [
+      "$12 \\times \\dfrac{\\pi}{180} = \\dfrac{12\\pi}{180}$",
+      "$= \\dfrac{\\pi}{15}$ (÷ 12)"
+     ]
     },
     {
      "q": "$198^{\\circ}$",
@@ -846,7 +859,11 @@
     },
     {
      "q": "$15^{\\circ}$",
-     "r": "$\\dfrac{\\pi}{12}$"
+     "r": "$\\dfrac{\\pi}{12}$",
+     "etapes": [
+      "$15 \\times \\dfrac{\\pi}{180} = \\dfrac{15\\pi}{180}$",
+      "$= \\dfrac{\\pi}{12}$ (÷ 15)"
+     ]
     }
    ],
    "page": 1,
@@ -861,19 +878,35 @@
    "items": [
     {
      "q": "$-\\pi$",
-     "r": "$\\pi$ ; $3\\pi$ ; $-3\\pi$"
+     "r": "$\\pi$ ; $3\\pi$ ; $-3\\pi$",
+     "etapes": [
+      "Un tour complet = $2\\pi$ : on ajoute ou retire des multiples de $2\\pi$.",
+      "$-\\pi + 2\\pi = \\pi$ ; $-\\pi + 4\\pi = 3\\pi$ ; $-\\pi - 2\\pi = -3\\pi$"
+     ]
     },
     {
      "q": "$\\dfrac{3\\pi}{2}$",
-     "r": "$-\\dfrac{\\pi}{2}$ ; $\\dfrac{7\\pi}{2}$ ; $-\\dfrac{5\\pi}{2}$"
+     "r": "$-\\dfrac{\\pi}{2}$ ; $\\dfrac{7\\pi}{2}$ ; $-\\dfrac{5\\pi}{2}$",
+     "etapes": [
+      "$\\dfrac{3\\pi}{2} - 2\\pi = -\\dfrac{\\pi}{2}$",
+      "$\\dfrac{3\\pi}{2} + 2\\pi = \\dfrac{7\\pi}{2}$ ; $-\\dfrac{\\pi}{2} - 2\\pi = -\\dfrac{5\\pi}{2}$"
+     ]
     },
     {
      "q": "$10\\pi$",
-     "r": "$0$ ; $2\\pi$ ; $-2\\pi$"
+     "r": "$0$ ; $2\\pi$ ; $-2\\pi$",
+     "etapes": [
+      "$10\\pi = 5 \\times 2\\pi$ : 5 tours complets → même point que 0.",
+      "Autres : $0$, $2\\pi$, $-2\\pi$"
+     ]
     },
     {
      "q": "$-\\dfrac{\\pi}{4}$",
-     "r": "$\\dfrac{7\\pi}{4}$ ; $\\dfrac{15\\pi}{4}$ ; $-\\dfrac{9\\pi}{4}$"
+     "r": "$\\dfrac{7\\pi}{4}$ ; $\\dfrac{15\\pi}{4}$ ; $-\\dfrac{9\\pi}{4}$",
+     "etapes": [
+      "$-\\dfrac{\\pi}{4} + 2\\pi = \\dfrac{7\\pi}{4}$",
+      "$+ 4\\pi$ : $\\dfrac{15\\pi}{4}$ ; $- 2\\pi$ : $-\\dfrac{9\\pi}{4}$"
+     ]
     }
    ],
    "page": 1,
@@ -943,27 +976,51 @@
    "items": [
     {
      "q": "$\\dfrac{2\\pi}{3}$",
-     "r": "$120^{\\circ}$, 2ᵉ quadrant"
+     "r": "$120^{\\circ}$, 2ᵉ quadrant",
+     "etapes": [
+      "$\\dfrac{2\\pi}{3} \\times \\dfrac{180}{\\pi} = 120^{\\circ}$",
+      "Entre 90° et 180° → 2ᵉ quadrant."
+     ]
     },
     {
      "q": "$\\dfrac{3\\pi}{4}$",
-     "r": "$135^{\\circ}$, 2ᵉ quadrant"
+     "r": "$135^{\\circ}$, 2ᵉ quadrant",
+     "etapes": [
+      "$\\dfrac{3\\pi}{4} \\times \\dfrac{180}{\\pi} = 135^{\\circ}$",
+      "Entre 90° et 180° → 2ᵉ quadrant."
+     ]
     },
     {
      "q": "$-\\dfrac{\\pi}{6}$",
-     "r": "$-30^{\\circ}$ (= 330°), 4ᵉ quadrant"
+     "r": "$-30^{\\circ}$ (= 330°), 4ᵉ quadrant",
+     "etapes": [
+      "$-\\dfrac{\\pi}{6} = -30^{\\circ}$ (on tourne dans le sens des aiguilles d'une montre).",
+      "$-30 + 360 = 330^{\\circ}$ → 4ᵉ quadrant."
+     ]
     },
     {
      "q": "$\\dfrac{7\\pi}{6}$",
-     "r": "$210^{\\circ}$, 3ᵉ quadrant"
+     "r": "$210^{\\circ}$, 3ᵉ quadrant",
+     "etapes": [
+      "$\\dfrac{7\\pi}{6} \\times \\dfrac{180}{\\pi} = 210^{\\circ}$",
+      "Entre 180° et 270° → 3ᵉ quadrant."
+     ]
     },
     {
      "q": "$-\\dfrac{5\\pi}{4}$",
-     "r": "$-225^{\\circ}$ = $135^{\\circ}$ : **même point** que $\\dfrac{3\\pi}{4}$"
+     "r": "$-225^{\\circ}$ = $135^{\\circ}$ : **même point** que $\\dfrac{3\\pi}{4}$",
+     "etapes": [
+      "$-\\dfrac{5\\pi}{4} = -225^{\\circ}$",
+      "$-225 + 360 = 135^{\\circ}$ → même point que $\\dfrac{3\\pi}{4}$."
+     ]
     },
     {
      "q": "$-\\dfrac{2\\pi}{3}$",
-     "r": "$-120^{\\circ}$ (= 240°), 3ᵉ quadrant"
+     "r": "$-120^{\\circ}$ (= 240°), 3ᵉ quadrant",
+     "etapes": [
+      "$-\\dfrac{2\\pi}{3} = -120^{\\circ}$",
+      "$-120 + 360 = 240^{\\circ}$ → 3ᵉ quadrant."
+     ]
     }
    ],
    "page": 1,
@@ -1002,27 +1059,56 @@
    "items": [
     {
      "q": "$120^{\\circ}$",
-     "r": "II : cos −, sin +, tan −"
+     "r": "II : cos −, sin +, tan −",
+     "etapes": [
+      "Quadrants : I (0–90°) cos + sin + ; II (90–180°) cos − sin + ; III (180–270°) cos − sin − ; IV (270–360°) cos + sin −. tan = sin/cos.",
+      "120° est entre 90° et 180° → quadrant II.",
+      "cos −, sin + ; tan = sin/cos = (+)/(−) → −"
+     ]
     },
     {
      "q": "$210^{\\circ}$",
-     "r": "III : cos −, sin −, tan +"
+     "r": "III : cos −, sin −, tan +",
+     "etapes": [
+      "Quadrants : I (0–90°) cos + sin + ; II (90–180°) cos − sin + ; III (180–270°) cos − sin − ; IV (270–360°) cos + sin −. tan = sin/cos.",
+      "210° est entre 180° et 270° → quadrant III.",
+      "cos −, sin − ; tan = (−)/(−) → +"
+     ]
     },
     {
      "q": "$330^{\\circ}$",
-     "r": "IV : cos +, sin −, tan −"
+     "r": "IV : cos +, sin −, tan −",
+     "etapes": [
+      "Quadrants : I (0–90°) cos + sin + ; II (90–180°) cos − sin + ; III (180–270°) cos − sin − ; IV (270–360°) cos + sin −. tan = sin/cos.",
+      "330° est entre 270° et 360° → quadrant IV.",
+      "cos +, sin − ; tan = (−)/(+) → −"
+     ]
     },
     {
      "q": "$75^{\\circ}$",
-     "r": "I : cos +, sin +, tan +"
+     "r": "I : cos +, sin +, tan +",
+     "etapes": [
+      "Quadrants : I (0–90°) cos + sin + ; II (90–180°) cos − sin + ; III (180–270°) cos − sin − ; IV (270–360°) cos + sin −. tan = sin/cos.",
+      "75° est entre 0° et 90° → quadrant I : tout est positif."
+     ]
     },
     {
      "q": "$225^{\\circ}$",
-     "r": "III : cos −, sin −, tan +"
+     "r": "III : cos −, sin −, tan +",
+     "etapes": [
+      "Quadrants : I (0–90°) cos + sin + ; II (90–180°) cos − sin + ; III (180–270°) cos − sin − ; IV (270–360°) cos + sin −. tan = sin/cos.",
+      "225° est entre 180° et 270° → quadrant III.",
+      "cos −, sin − ; tan → +"
+     ]
     },
     {
      "q": "$240^{\\circ}$",
-     "r": "III : cos −, sin −, tan +"
+     "r": "III : cos −, sin −, tan +",
+     "etapes": [
+      "Quadrants : I (0–90°) cos + sin + ; II (90–180°) cos − sin + ; III (180–270°) cos − sin − ; IV (270–360°) cos + sin −. tan = sin/cos.",
+      "240° est entre 180° et 270° → quadrant III.",
+      "cos −, sin − ; tan → +"
+     ]
     }
    ],
    "page": 4,
@@ -1044,7 +1130,11 @@
     },
     {
      "q": "$\\cos\\theta = -\\dfrac{\\sqrt{3}}{2}$ et $\\sin\\theta = \\dfrac{1}{2}$ : quadrant ?",
-     "r": "2ᵉ quadrant ($\\theta = 150^{\\circ}$)"
+     "r": "2ᵉ quadrant ($\\theta = 150^{\\circ}$)",
+     "etapes": [
+      "cos négatif et sin positif → 2ᵉ quadrant.",
+      "Angle de référence : $\\sin = \\tfrac12$ → 30° ; dans le 2ᵉ quadrant : $180 - 30 = 150^{\\circ}$"
+     ]
     },
     {
      "q": "$\\tan\\theta = -1$ et $\\sin\\theta < 0$ : $\\theta$ ?",
@@ -1055,23 +1145,44 @@
     },
     {
      "q": "$\\cos\\theta = 0$",
-     "r": "$90^{\\circ}$ ou $270^{\\circ}$"
+     "r": "$90^{\\circ}$ ou $270^{\\circ}$",
+     "etapes": [
+      "cos = abscisse du point sur le cercle.",
+      "L'abscisse vaut 0 tout en haut (90°) et tout en bas (270°)."
+     ]
     },
     {
      "q": "$\\sin\\theta = -\\dfrac{\\sqrt{3}}{2}$",
-     "r": "$240^{\\circ}$ ou $300^{\\circ}$"
+     "r": "$240^{\\circ}$ ou $300^{\\circ}$",
+     "etapes": [
+      "sin négatif → quadrants III ou IV.",
+      "Angle de référence : $\\sin 60^{\\circ} = \\dfrac{\\sqrt{3}}{2}$",
+      "III : $180 + 60 = 240^{\\circ}$ ; IV : $360 - 60 = 300^{\\circ}$"
+     ]
     },
     {
      "q": "$\\tan\\theta = 1$",
-     "r": "$45^{\\circ}$ ou $225^{\\circ}$"
+     "r": "$45^{\\circ}$ ou $225^{\\circ}$",
+     "etapes": [
+      "tan positif → quadrants I ou III.",
+      "$\\tan 45^{\\circ} = 1$ ; dans le III : $180 + 45 = 225^{\\circ}$"
+     ]
     },
     {
      "q": "$\\cos\\theta > 0$ et $\\sin\\theta < 0$",
-     "r": "4ᵉ quadrant"
+     "r": "4ᵉ quadrant",
+     "etapes": [
+      "cos > 0 → à droite (I ou IV) ; sin < 0 → en bas (III ou IV).",
+      "Les deux ensemble → 4ᵉ quadrant."
+     ]
     },
     {
      "q": "$\\sin\\theta > 0$ et $\\cos\\theta < 0$",
-     "r": "2ᵉ quadrant"
+     "r": "2ᵉ quadrant",
+     "etapes": [
+      "sin > 0 → en haut (I ou II) ; cos < 0 → à gauche (II ou III).",
+      "Les deux ensemble → 2ᵉ quadrant."
+     ]
     }
    ],
    "page": 4,
