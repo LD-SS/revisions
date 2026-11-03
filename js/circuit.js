@@ -8,7 +8,7 @@
      t : R résistance · G pile · E source de tension (cercle) · J source de courant (flèche vers fl)
          A ampèremètre · V voltmètre · M multimètre (lettre) · L lampe · D diode (vers b)
          C condensateur · B bobine · F branche de fil (pour noter un courant)
-   barres: ['id', …], fils_barres: [[…]]   éléments barrés (comme sur le correctif : on ne les prend pas en compte)
+   barres: ['id', …], fils_barres: [[…]]   portions qui ne comptent pas : l'élève doit les barrer ; barrées en rouge seulement à la correction
    donnees = { id: { i: { d, txt }, u: { d, txt } } }   flèches données par l'énoncé (non notées)
    solution = { id: { I, U } }   I : courant de a vers b (A, signé) ; U = V(a) − V(b) (V, signé)
    Sans solution : schéma affiché seul (pas d'annotation).
@@ -20,9 +20,9 @@
 import { stockage, esc } from './utils.js';
 
 const K = 46;                    // pixels par unité de grille
-const LONG = { R: 1.4, A: 0.84, V: 0.84, M: 0.84, E: 0.84, J: 0.84, L: 0.84, G: 0.5, D: 0.6, C: 0.3, B: 1.3, F: 0 };
+const LONG = { S: 0.8, R: 1.4, A: 0.84, V: 0.84, M: 0.84, E: 0.84, J: 0.84, L: 0.84, G: 0.5, D: 0.6, C: 0.3, B: 1.3, F: 0 };
 const ROND = new Set(['A', 'V', 'M', 'E', 'J', 'L']);
-const NOMS = { R: 'Résistance', A: 'Ampèremètre', V: 'Voltmètre', M: 'Appareil de mesure', G: 'Générateur', E: 'Source de tension', J: 'Source de courant', L: 'Lampe', D: 'Diode', C: 'Condensateur', B: 'Bobine', F: 'Fil' };
+const NOMS = { R: 'Résistance', A: 'Ampèremètre', V: 'Voltmètre', M: 'Appareil de mesure', G: 'Générateur', E: 'Source de tension', J: 'Source de courant', L: 'Lampe', D: 'Diode', C: 'Condensateur', B: 'Bobine', F: 'Fil', S: 'Contact NO' };
 const UNITES = { I: [['A', 1], ['mA', 1e-3], ['µA', 1e-6]], U: [['V', 1], ['mV', 1e-3], ['kV', 1e3]] };
 
 const lire = () => stockage.lire('circuits', {});
@@ -52,13 +52,14 @@ export function monterCircuit(el, ex, opts = {}) {
   const W = S.w * K, H = S.h * K;
   const comps = Object.fromEntries(S.comps.map((c) => [c.id, c]));
   const don = ex.donnees || {};
+  const barres = new Set(S.barres || []);
   const annotable = Object.keys(sol).length > 0 && !opts.apercu;
   const etat = { notes: (annotable && lire()[opts.cle]) || {}, sel: null, verif: null, voirSol: false };
 
   el.innerHTML = `
     <div class="ci">
       <div class="ci-cadre"><svg class="ci-svg" viewBox="-${K * 1.4} -${K * 0.6} ${W + K * 2.8} ${H + K * 1.2}" role="img" aria-label="Schéma électrique"></svg></div>
-      ${annotable ? `<p class="ci-aide muted">👆 Touche un composant pour dessiner le <b>sens du courant</b> et le <b>vecteur tension</b>, et écrire leurs valeurs.${S.barres?.length ? ' Les éléments <b class="ci-leg-bar">barrés</b> ne sont pas pris en compte.' : ''}</p>
+      ${annotable ? `<p class="ci-aide muted">👆 Touche un composant pour dessiner le <b>sens du courant</b> et le <b>vecteur tension</b>, et écrire leurs valeurs. Si une portion du circuit <b>ne compte pas</b> (aucun courant possible, court-circuitée…), touche ses composants et <b>barre-les</b>.</p>
       <div class="ci-panneau" hidden></div>
       <div class="ci-actions">
         <button class="btn primary" type="button" data-ci="verifier">✓ Vérifier mes annotations</button>
@@ -113,6 +114,9 @@ export function monterCircuit(el, ex, opts = {}) {
       let d = `M${P(...p)}`; const st = LONG.B / 4;
       for (let i = 1; i <= 4; i++) { const e = [p[0] + u[0] * st * i, p[1] + u[1] * st * i]; d += ` A${st * K / 2} ${st * K / 2} 0 0 1 ${P(...e)}`; }
       s += `<path class="ci-fil" d="${d}"/>`;
+    } else if (c.t === 'S') {   // contact NO (ouvert au repos) : lame relevée
+      const e = [q[0] + n[0] * 0.38 - u[0] * 0.06, q[1] + n[1] * 0.38 - u[1] * 0.06];
+      s += ligne(p, e, 'ci-fil') + ligne([q[0] + n[0] * 0.12, q[1] + n[1] * 0.12], q, 'ci-fil');
     } else if (c.t === 'F') {
       s = ligne(c.a, c.b, 'ci-fil');
     } else if (c.t === 'G') {   // pile : grand trait = +
@@ -127,7 +131,7 @@ export function monterCircuit(el, ex, opts = {}) {
     const txt = [c.nom, c.val].filter(Boolean).join(' ');
     if (txt) s += `<text class="ci-lab" style="text-anchor:${anc(-n[0])}" x="${e[0] * K}" y="${e[1] * K + 5}">${esc(txt)}</text>`;
     // zone tactile (seulement pour les composants à annoter)
-    if (annotable && sol[c.id]) s += `<rect class="ci-hit" data-comp="${c.id}" x="${-0.9 * K}" y="${-0.55 * K}" width="${1.8 * K}" height="${1.1 * K}" rx="8" transform="translate(${P(...m)}) rotate(${ang})"/>`;
+    if (annotable) s += `<rect class="ci-hit" data-comp="${c.id}" x="${-0.9 * K}" y="${-0.55 * K}" width="${1.8 * K}" height="${1.1 * K}" rx="8" transform="translate(${P(...m)}) rotate(${ang})"/>`;
     return s;
   }
 
@@ -172,21 +176,22 @@ export function monterCircuit(el, ex, opts = {}) {
     const chemin = (f) => { let d = ''; for (let i = 0; i < f.length; i += 2) d += `${i ? 'L' : 'M'}${f[i] * K} ${f[i + 1] * K} `; return d; };
     for (const f of S.fils || []) s += `<path class="ci-fil" d="${chemin(f)}"/>`;
     for (const f of S.pointilles || []) s += `<path class="ci-fil ci-tir" d="${chemin(f)}"/>`;
-    for (const f of S.fils_barres || []) s += `<path class="ci-fil ci-bar" d="${chemin(f)}"/><path class="ci-barre" d="${chemin(f)}"/>`;
+    for (const f of S.fils_barres || []) s += `<path class="ci-fil" d="${chemin(f)}"/>` + (etat.voirSol ? `<path class="ci-barre" d="${chemin(f)}"/>` : '');
     for (const [x, y, r, t] of S.cercles || []) s += `<circle class="ci-m" cx="${x * K}" cy="${y * K}" r="${r * K}"/><text class="ci-ml" x="${x * K}" y="${y * K + 6}">${esc(t || '')}</text>`;
     for (const [x, y] of S.points || []) s += `<circle class="ci-pt" cx="${x * K}" cy="${y * K}" r="4.5"/>`;
     for (const [x, y] of S.masses || []) s += `<path class="ci-fil" d="M${x * K} ${y * K}v8M${x * K - 14} ${y * K + 8}h28M${x * K - 9} ${y * K + 14}h18M${x * K - 4} ${y * K + 20}h8"/>`;
     for (const [x, y, t] of S.bornes || []) s += `<circle class="ci-borne" cx="${x * K}" cy="${y * K}" r="5"/><text class="ci-lab" x="${x * K + 10}" y="${y * K - 10}" text-anchor="start">${esc(t)}</text>`;
     for (const [x, y, t] of S.textes || []) s += `<text class="ci-lab" x="${x * K}" y="${y * K}">${esc(t)}</text>`;
-    const barres = new Set(S.barres || []);
+    const croix = (c, cls) => {   // trait le long du composant + croix
+      const { u, n, m } = geo(c); const h = Math.max(0.6, (LONG[c.t] || 0.8) / 2 + 0.25);
+      return ligne(c.a, c.b, cls) + ligne([m[0] - u[0] * h - n[0] * 0.45, m[1] - u[1] * h - n[1] * 0.45], [m[0] + u[0] * h + n[0] * 0.45, m[1] + u[1] * h + n[1] * 0.45], cls)
+        + ligne([m[0] - u[0] * h + n[0] * 0.45, m[1] - u[1] * h + n[1] * 0.45], [m[0] + u[0] * h - n[0] * 0.45, m[1] + u[1] * h - n[1] * 0.45], cls);
+    };
     for (const c of S.comps) {
-      const v = etat.verif?.[c.id];
-      if (barres.has(c.id)) {   // barré : grisé + trait rouge
-        const { u, n, m } = geo(c); const h = Math.max(0.6, (LONG[c.t] || 0.8) / 2 + 0.25);
-        s += `<g class="ci-c ci-bar">${symbole(c)}</g>` + ligne(c.a, c.b, 'ci-barre') + ligne([m[0] - u[0] * h - n[0] * 0.45, m[1] - u[1] * h - n[1] * 0.45], [m[0] + u[0] * h + n[0] * 0.45, m[1] + u[1] * h + n[1] * 0.45], 'ci-barre') + ligne([m[0] - u[0] * h + n[0] * 0.45, m[1] - u[1] * h + n[1] * 0.45], [m[0] + u[0] * h - n[0] * 0.45, m[1] + u[1] * h - n[1] * 0.45], 'ci-barre');
-        continue;
-      }
-      s += `<g class="ci-c ${etat.sel === c.id ? 'sel' : ''} ${v ? `v-${v}` : ''}">${symbole(c)}</g>`;
+      const v = etat.verif?.[c.id]; const x = etat.notes[c.id]?.x; const solB = etat.voirSol && barres.has(c.id);
+      s += `<g class="ci-c ${etat.sel === c.id ? 'sel' : ''} ${v ? `v-${v}` : ''} ${x || solB ? 'ci-bar' : ''}">${symbole(c)}</g>`;
+      if (x) s += croix(c, 'ci-barre-e');
+      if (solB) s += croix(c, 'ci-barre');
     }
     for (const [x1, y1, x2, y2, t] of S.fleches || []) {
       const L = Math.hypot(x2 - x1, y2 - y1), u = [(x2 - x1) / L, (y2 - y1) / L], n = [-u[1], u[0]];
@@ -196,7 +201,7 @@ export function monterCircuit(el, ex, opts = {}) {
     for (const c of S.comps) if (don[c.id]) s += fleches(c, don[c.id], 'don');
     for (const c of S.comps) {
       const a = etat.notes[c.id];
-      if (a) s += fleches(c, { i: a.i && { ...a.i, txt: texteNote(a.i, 'i') }, u: a.u && { ...a.u, txt: texteNote(a.u, 'u') } }, 'eleve');
+      if (a && !a.x) s += fleches(c, { i: a.i && { ...a.i, txt: texteNote(a.i, 'i') }, u: a.u && { ...a.u, txt: texteNote(a.u, 'u') } }, 'eleve');
       if (etat.voirSol) { const o = solA(c.id); if (o) s += fleches(c, o, 'sol'); }
     }
     svg.innerHTML = s;
@@ -218,10 +223,14 @@ export function monterCircuit(el, ex, opts = {}) {
         </div></div>`;
     };
     pan.hidden = false;
+    const leurre = barres.has(c.id);   // à barrer : on propose quand même I et U (pour ne rien dévoiler)
+    const vI = s.I !== undefined || (leurre && c.t !== 'V'), vU = s.U !== undefined || (leurre && c.t !== 'A' && c.t !== 'F');
     pan.innerHTML = `<div class="ci-t"><b>${esc([c.nom || NOMS[c.t], c.val].filter(Boolean).join(' '))}</b>
         <button class="btn icon" type="button" data-ci="fermer" title="Fermer">✕</button></div>
-      ${s.I !== undefined || !Object.keys(sol).length ? ligneG('i', 'Courant I', 'sens de la flèche sur le fil') : ''}
-      ${s.U !== undefined || !Object.keys(sol).length ? ligneG('u', 'Tension U', 'la pointe du vecteur = côté +') : ''}`;
+      <button class="btn ci-barrer ${a.x ? 'actif' : ''}" type="button" data-ci="barrer">${a.x ? '↩ Ne plus barrer' : '✖ Barrer : cette portion ne compte pas'}</button>
+      ${a.x ? '<p class="muted">Barré : tu indiques que ce composant ne participe pas au circuit (aucun courant possible, court-circuité…).</p>'
+        : `${vI ? ligneG('i', 'Courant I', 'sens de la flèche sur le fil') : ''}${vU ? ligneG('u', 'Tension U', 'la pointe du vecteur = côté +') : ''}
+      ${!vI && !vU ? `<p class="muted">${don[c.id] ? 'Valeur donnée par l\'énoncé (en orange).' : 'Rien à calculer sur ce composant.'}</p>` : ''}`}`;
   }
 
   function maj(g, champ, val) {
@@ -235,7 +244,7 @@ export function monterCircuit(el, ex, opts = {}) {
   function verifier() {
     const v = {}; let ok = 0, tot = 0; const fautes = [];
     for (const [id, s] of Object.entries(sol)) {
-      const c = comps[id]; const a = etat.notes[id] || {}; let bon = true, vide = false;
+      const c = comps[id]; const a = etat.notes[id]?.x ? {} : (etat.notes[id] || {}); let bon = true, vide = false;
       for (const [g, k] of [['i', 'I'], ['u', 'U']]) {
         if (s[k] === undefined) continue; tot++;
         const x = a[g]; const val = x ? nombre(x.v) : null;
@@ -248,10 +257,15 @@ export function monterCircuit(el, ex, opts = {}) {
       }
       v[id] = bon ? 'ok' : vide && !(a.i || a.u) ? 'vide' : 'ko';
     }
+    for (const c of S.comps) {   // portions barrées
+      const x = etat.notes[c.id]?.x;
+      if (barres.has(c.id)) { tot++; if (x) { ok++; v[c.id] = 'ok'; } else { v[c.id] = 'ko'; fautes.push(`${c.nom || c.id} : ne compte pas dans le circuit → il fallait le <b>barrer</b>`); } }
+      else if (x) { tot++; v[c.id] = 'ko'; fautes.push(`${c.nom || c.id} : barré à tort, il <b>participe</b> au circuit`); }
+    }
     etat.verif = v; dessiner();
     const pct = tot ? Math.round(100 * ok / tot) : 0;
     res.hidden = false;
-    res.innerHTML = `<div class="ci-score ${pct === 100 ? 'ok' : pct >= 50 ? 'mid' : 'ko'}"><b>${pct} %</b> · ${ok} / ${tot} valeurs justes (sens + valeur)</div>
+    res.innerHTML = `<div class="ci-score ${pct === 100 ? 'ok' : pct >= 50 ? 'mid' : 'ko'}"><b>${pct} %</b> · ${ok} / ${tot} réponses justes${barres.size ? ' (sens + valeur, portions barrées)' : ' (sens + valeur)'}</div>
       ${fautes.length ? `<ul class="ci-fautes">${fautes.slice(0, 8).map((f) => `<li>${f}</li>`).join('')}</ul>` : ''}
       <p class="muted">Vert : juste · rouge : à revoir · gris : pas encore annoté.</p>`;
     el.querySelector('[data-ci=sol]').hidden = false;
@@ -268,6 +282,11 @@ export function monterCircuit(el, ex, opts = {}) {
   pan.addEventListener('click', (ev) => {
     const b = ev.target.closest('button'); if (!b) return;
     if (b.dataset.ci === 'fermer') { etat.sel = null; dessiner(); panneau(); return; }
+    if (b.dataset.ci === 'barrer') {
+      const a = etat.notes[etat.sel] || (etat.notes[etat.sel] = {});
+      if (a.x) delete a.x; else a.x = true;
+      sauver(opts.cle, etat.notes); etat.verif = null; res.hidden = true; dessiner(); panneau(); return;
+    }
     if (b.dataset.g) {
       const g = b.dataset.g, d = +b.dataset.d;
       maj(g, 'd', d); dessiner(); panneau();

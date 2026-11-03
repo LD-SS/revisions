@@ -22,7 +22,7 @@ import { vueAtelier } from './vues/atelier.js';
 import { vueSchemas } from './vues/schemas.js';
 import { majBoutonProposer, viderAttente } from './proposer.js';
 
-const VERSION = '0.10.1 (branches barrées)';
+const VERSION = '0.10.2 (barrer soi-même, contacts NO)';
 const vue = document.getElementById('vue');
 let nettoyer = null; // fonction fournie par la page affichée, appelée avant d'en changer
 
