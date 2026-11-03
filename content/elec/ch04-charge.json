@@ -509,11 +509,20 @@
     },
     {
      "q": "2 packs en parallèle",
-     "r": "$U = 43{,}2$ V ; $Q = 4$ Ah"
+     "r": "$U = 43{,}2$ V ; $Q = 4$ Ah",
+     "etapes": [
+      "En parallèle, la tension ne change pas : $U = 43{,}2$ V.",
+      "Les capacités s'additionnent : $Q = 2 + 2 = 4$ Ah."
+     ]
     },
     {
      "q": "Deux groupes (1//2) et (3//4) mis en série",
-     "r": "$U = 86{,}4$ V ; $Q = 4$ Ah"
+     "r": "$U = 86{,}4$ V ; $Q = 4$ Ah",
+     "etapes": [
+      "Chaque groupe (2 packs en parallèle) vaut 43,2 V – 4 Ah.",
+      "En série, les tensions s'additionnent : $U = 43{,}2 + 43{,}2 = 86{,}4$ V.",
+      "En série, la capacité reste celle d'un groupe : $Q = 4$ Ah."
+     ]
     }
    ],
    "page": 4,

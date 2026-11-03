@@ -465,7 +465,13 @@
     },
     {
      "q": "Courants dans chaque branche",
-     "r": "$I_{R2} = I_{R3} = 2{,}5$ mA ; $I_{R4} = I_{R5} = 5$ mA"
+     "r": "$I_{R2} = I_{R3} = 2{,}5$ mA ; $I_{R4} = I_{R5} = 5$ mA",
+     "etapes": [
+      "Le bloc parallèle est sous 5 V (voir b).",
+      "$I_{R2} = \\dfrac{5\\ \\text{V}}{2\\ \\text{k}\\Omega} = 2{,}5$ mA ; idem pour $R_3$.",
+      "Branche $R_5 + R_4$ : $\\dfrac{5\\ \\text{V}}{1\\ \\text{k}\\Omega} = 5$ mA (le même courant traverse les deux).",
+      "Contrôle : $2{,}5 + 2{,}5 + 5 = 10$ mA = courant total."
+     ]
     },
     {
      "q": "Puissance dans chaque résistance",
