@@ -716,25 +716,6 @@
    "doc": "exo"
   },
   {
-   "id": "ex-07",
-   "titre": "Circuit consommant 1,5 kWh",
-   "niveau": 2,
-   "items": [
-    {
-     "q": "$U_{AB}$ et courant",
-     "r": "$P = 150$ W ; $I = 0{,}5$ A ; $U = 300$ V",
-     "etapes": [
-      "Même circuit qu'à l'ex. 50 : $R_t = 600\\ \\Omega$",
-      "$P = 1{,}5\\ \\text{kWh} / 10\\ \\text{h} = 150$ W",
-      "$I = \\sqrt{P/R} = \\sqrt{0{,}25}$ ; $U = R I$"
-     ]
-    }
-   ],
-   "page": 6,
-   "consigne": "📄 **Schéma : PDF « Exercices », page 6** (touche le badge en haut à droite de l'exercice pour l'ouvrir). 4 résistances de 1 kΩ ; 1,5 kWh en 600 minutes (W = 5,4 MJ).",
-   "doc": "exo"
-  },
-  {
    "id": "ex-08",
    "titre": "Chauffe-eau 1 760 W",
    "niveau": 1,
@@ -853,83 +834,6 @@
    "page": 7,
    "consigne": "Centrale (η1) → transport (η2) → convecteur (η3). $P_2 = 82$ kW, $P_4 = 75$ kW, $\\eta_1 = 33\\ \\%$, $\\eta_3 = 1$.",
    "doc": "exo"
-  },
-  {
-   "id": "ex-12",
-   "titre": "Circuit à 11 résistances",
-   "niveau": 3,
-   "items": [
-    {
-     "q": "$R_3$, $R_{11}$, $R_{10}$",
-     "r": "$R_3 = 200\\ \\Omega$ ; $R_{11} ≈ 33{,}3\\ \\Omega$ ; $R_{10} ≈ 6{,}36\\ \\Omega$",
-     "etapes": [
-      "$R_3 = 3{,}2\\ \\text{V} / 16$ mA",
-      "$R_{11} = 0{,}8\\ \\text{V} / 24$ mA",
-      "Branche R9+R10 : 0,8 V et 22 mA → $R_9 + R_{10} = 36{,}36\\ \\Omega$ → $R_{10} = 36{,}36 - 30$"
-     ]
-    },
-    {
-     "q": "Tension E",
-     "r": "$E ≈ 30{,}04\\ \\text{V}$",
-     "etapes": [
-      "Courant total : 22 + 24 = 46 mA",
-      "$E = 0{,}046 \\times (220 + 220) + 5 + 4 + 0{,}8$ (R1, R2, bloc R3-R6, R8, R11)"
-     ]
-    },
-    {
-     "q": "Puissance et énergie sur un an (24/7)",
-     "r": "$P ≈ 1{,}38$ W ; $W ≈ 12{,}1$ kWh ≈ 43,6 MJ",
-     "etapes": [
-      "$P = E \\cdot I = 30{,}04 \\times 0{,}046$",
-      "× 8 760 h"
-     ]
-    },
-    {
-     "q": "Durée pour consommer 1 kWh",
-     "r": "≈ 723,7 h ≈ 30 j 3 h 40 min",
-     "etapes": [
-      "$1\\,000 / 1{,}382$"
-     ]
-    }
-   ],
-   "page": 9,
-   "consigne": "📄 **Schéma : PDF « Exercices », page 9** (touche le badge en haut à droite de l'exercice pour l'ouvrir).",
-   "doc": "exo"
-  },
-  {
-   "id": "ex-13",
-   "titre": "Réseau à 13 dipôles",
-   "niveau": 3,
-   "items": [
-    {
-     "q": "$U_g$ (entre A et B)",
-     "r": "$U_g = 25\\ \\text{V}$",
-     "etapes": [
-      "Chemin A → 1 → haut → 2 → nœud du bas : $V_N = V_A - 10$ V",
-      "Puis R5 (5 V) et R6 (10 V) jusqu'à B : $V_B = V_A - 25$ V"
-     ]
-    },
-    {
-     "q": "Courant $I_g$",
-     "r": "$I_g = 1{,}1\\ \\text{A}$",
-     "etapes": [
-      "En A sortent : 0,5 A (vers 13) + 0,5 A (vers 11) + 0,1 A (qui remonte dans 1)",
-      "Contrôle en B : 0,75 A (par 6 et 7) + 0,35 A (par 9) = 1,1 A"
-     ]
-    },
-    {
-     "q": "Durée pour consommer 1 kWh",
-     "r": "$P = 27{,}5$ W → ≈ 36,4 h ≈ 1 j 12 h 22 min",
-     "etapes": [
-      "$1\\,000 / 27{,}5$",
-      "Le corrigé du PDF note « Ig = 100 mA » : avec les valeurs du schéma, la loi des nœuds donne 1,1 A."
-     ]
-    }
-   ],
-   "page": 10,
-   "consigne": "📄 **Schéma : PDF « Exercices », page 10** (touche le badge en haut à droite de l'exercice pour l'ouvrir).",
-   "doc": "exo",
-   "indice": "Fais d'abord le bilan des courants à chaque nœud du haut (le fil entre les nœuds porte aussi un courant)."
   }
  ]
 }

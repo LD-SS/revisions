@@ -1,0 +1,9076 @@
+{
+ "format": 1,
+ "id": "schemas",
+ "matiere": "elec",
+ "titre": "Exercices sur schéma",
+ "maj": "2026-11-03",
+ "intro": "Tous les exercices d'électricité qui se font sur un schéma, rangés selon ce qu'on te demande. Tu annotes directement le schéma (sens et valeur des courants et des tensions) et l'appli vérifie.",
+ "categories": [
+  {
+   "id": "noeuds",
+   "titre": "Loi des nœuds : trouver des courants",
+   "desc": "Courants qui entrent = courants qui sortent. Tu dessines le sens de chaque courant cherché et sa valeur."
+  },
+  {
+   "id": "mailles",
+   "titre": "Vecteurs tension et loi des mailles",
+   "desc": "Dessiner les vecteurs tension (pointe = côté +) et faire le tour des mailles."
+  },
+  {
+   "id": "potentiels",
+   "titre": "Potentiels et masse",
+   "desc": "Tensions par rapport à la masse (0 V) et différences de potentiel entre deux points."
+  },
+  {
+   "id": "mesure",
+   "titre": "Appareils de mesure et courts-circuits",
+   "desc": "Ampèremètre = fil, voltmètre = coupure : ce qu'ils changent dans le circuit et ce qu'ils affichent."
+  },
+  {
+   "id": "req",
+   "titre": "Résistance équivalente",
+   "desc": "Repérer les nœuds, les séries et les parallèles pour réduire le réseau."
+  },
+  {
+   "id": "ohm",
+   "titre": "Circuit complet : loi d'Ohm (I, U, R)",
+   "desc": "Résoudre tout le circuit : résistance totale, courant, tensions et courants de chaque branche."
+  },
+  {
+   "id": "puissance",
+   "titre": "Puissance et énergie sur un schéma",
+   "desc": "Calculer d'abord U et I sur le schéma, puis la puissance, l'énergie ou la durée."
+  }
+ ],
+ "synthese": [
+  {
+   "id": "s1",
+   "titre": "Appareils de mesure parfaits",
+   "blocs": [
+    {
+     "type": "point-cle",
+     "contenu": "Un **ampèremètre parfait** a une résistance nulle : sur le schéma, remplace-le par un **fil**. Il se branche **en série**.",
+     "pages": [
+      1
+     ],
+     "doc": "labo"
+    },
+    {
+     "type": "point-cle",
+     "contenu": "Un **voltmètre parfait** a une résistance infinie : remplace-le par une **coupure** (aucun courant). Il se branche **en parallèle**.",
+     "pages": [
+      1
+     ],
+     "doc": "labo"
+    },
+    {
+     "type": "piege",
+     "contenu": "Un ampèremètre placé **en parallèle** court-circuite tout ce qui est entre ses bornes : ces composants ont 0 V et 0 A.",
+     "pages": [
+      1
+     ],
+     "doc": "labo"
+    }
+   ]
+  },
+  {
+   "id": "s2",
+   "titre": "Méthode",
+   "blocs": [
+    {
+     "type": "liste",
+     "items": [
+      "Repère les **nœuds** : tous les points reliés par un fil (ou un ampèremètre) sont le même nœud.",
+      "Redessine le circuit simplifié : séries, parallèles, éléments court-circuités.",
+      "Calcule $R_t$, puis le courant total, puis remonte vers chaque branche (loi d'Ohm, lois des nœuds et des mailles).",
+      "**Vérifie la cohérence** : somme des tensions d'une maille = 0, somme des courants d'un nœud = 0, puissances fournies = puissances reçues."
+     ],
+     "ordonnee": true,
+     "pages": [
+      1
+     ],
+     "doc": "labo"
+    }
+   ]
+  },
+  {
+   "id": "s3",
+   "titre": "Annoter un schéma",
+   "blocs": [
+    {
+     "type": "definition",
+     "titre": "Sens des flèches",
+     "contenu": "Le **courant** se dessine sur le fil, dans le sens conventionnel (du + vers le − à l'extérieur du générateur). Le **vecteur tension** se dessine à côté du composant, sa **pointe vers le point au potentiel le plus haut** (+).",
+     "pages": [
+      1
+     ],
+     "doc": "labo"
+    },
+    {
+     "type": "point-cle",
+     "contenu": "Dans une **résistance** (récepteur), courant et tension sont dessinés en **sens opposés**. Dans un **générateur**, ils vont dans le **même sens**.",
+     "pages": [
+      1
+     ],
+     "doc": "labo"
+    }
+   ]
+  }
+ ],
+ "source": {
+  "pdfs": [
+   {
+    "id": "exo",
+    "nom": "Elec 2180 – Exercices U, I, Q, R, P, W",
+    "court": "Exercices",
+    "fichier": "2026.10.14 - BacEmElec2180 - Exo U_I_Q_R_P_W - pg01-10 .pdf",
+    "pages": 10
+   }
+  ]
+ },
+ "exercices": [
+  {
+   "id": "ch02-ex-01",
+   "titre": "Deux lampes en parallèle",
+   "niveau": 1,
+   "cat": "noeuds",
+   "origine": {
+    "chap": "ch02-courant",
+    "ex": "ex-01"
+   },
+   "consigne": "Une pile alimente deux lampes en parallèle ; l'ampèremètre indique 8 A et $I_1 = 3\\ \\text{A}$. Touche un composant entouré pour dessiner sur le schéma le **sens du courant** et/ou le **vecteur tension** (pointe = côté +) avec leur valeur, puis vérifie.",
+   "doc": "exo",
+   "page": 1,
+   "schema": {
+    "textes": [],
+    "w": 8,
+    "h": 6,
+    "fils": [
+     [
+      0.8,
+      1.0,
+      2.0,
+      1.0
+     ],
+     [
+      3.2,
+      1.0,
+      7.0,
+      1.0
+     ],
+     [
+      7.0,
+      1.0,
+      7.0,
+      2.4
+     ],
+     [
+      7.0,
+      3.6,
+      7.0,
+      5.0
+     ],
+     [
+      7.0,
+      5.0,
+      0.8,
+      5.0
+     ],
+     [
+      0.8,
+      5.0,
+      0.8,
+      3.5
+     ],
+     [
+      0.8,
+      2.5,
+      0.8,
+      1.0
+     ],
+     [
+      4.5,
+      1.0,
+      4.5,
+      2.4
+     ],
+     [
+      4.5,
+      3.6,
+      4.5,
+      5.0
+     ]
+    ],
+    "points": [
+     [
+      4.5,
+      1.0
+     ],
+     [
+      4.5,
+      5.0
+     ]
+    ],
+    "comps": [
+     {
+      "id": "G",
+      "t": "G",
+      "a": [
+       0.8,
+       2.5
+      ],
+      "b": [
+       0.8,
+       3.5
+      ],
+      "nom": "E",
+      "plus": "a"
+     },
+     {
+      "id": "A",
+      "t": "A",
+      "a": [
+       2,
+       1
+      ],
+      "b": [
+       3.2,
+       1
+      ]
+     },
+     {
+      "id": "L1",
+      "t": "L",
+      "a": [
+       4.5,
+       2.4
+      ],
+      "b": [
+       4.5,
+       3.6
+      ],
+      "nom": "L1"
+     },
+     {
+      "id": "L2",
+      "t": "L",
+      "a": [
+       7,
+       2.4
+      ],
+      "b": [
+       7,
+       3.6
+      ],
+      "nom": "L2"
+     }
+    ]
+   },
+   "items": [
+    {
+     "q": "Calcule le courant $I_2$.",
+     "r": "$I_2 = 5\\ \\text{A}$",
+     "etapes": [
+      "L'ampèremètre mesure le courant total qui sort de la pile : $I = 8\\ \\text{A}$.",
+      "Loi des nœuds : $I = I_1 + I_2$, donc $I_2 = I - I_1 = 8 - 3$."
+     ]
+    }
+   ],
+   "donnees": {
+    "A": {
+     "i": {
+      "d": 1,
+      "txt": "8 A"
+     }
+    },
+    "L1": {
+     "i": {
+      "d": 1,
+      "txt": "3 A"
+     }
+    }
+   },
+   "solution": {
+    "L2": {
+     "I": 5
+    }
+   },
+   "indice": "Le courant qui arrive à un nœud est égal à la somme des courants qui en repartent."
+  },
+  {
+   "id": "ch02-ex-02",
+   "titre": "Courant débité par les générateurs",
+   "niveau": 1,
+   "cat": "noeuds",
+   "origine": {
+    "chap": "ch02-courant",
+    "ex": "ex-02"
+   },
+   "consigne": "Touche un composant entouré pour dessiner sur le schéma le **sens du courant** et/ou le **vecteur tension** (pointe = côté +) avec leur valeur, puis vérifie. Les ampèremètres sont marqués + / − : un courant qui entre par le + donne une indication positive.",
+   "doc": "exo",
+   "page": 1,
+   "schema": {
+    "w": 8,
+    "h": 7,
+    "fils": [
+     [
+      1.0,
+      3.4,
+      1.0,
+      1.0
+     ],
+     [
+      1.0,
+      1.0,
+      3.4,
+      1.0
+     ],
+     [
+      4.6,
+      1.0,
+      7.0,
+      1.0
+     ],
+     [
+      7.0,
+      1.0,
+      7.0,
+      3.4
+     ],
+     [
+      1.0,
+      4.6,
+      1.0,
+      5.4
+     ],
+     [
+      1.0,
+      5.4,
+      3.0,
+      5.4
+     ],
+     [
+      3.0,
+      3.4,
+      3.0,
+      2.5
+     ],
+     [
+      3.0,
+      2.5,
+      4.4,
+      2.5
+     ],
+     [
+      5.6,
+      2.5,
+      7.0,
+      2.5
+     ],
+     [
+      3.0,
+      4.6,
+      3.0,
+      6.4
+     ],
+     [
+      3.0,
+      6.4,
+      4.4,
+      6.4
+     ],
+     [
+      5.6,
+      6.4,
+      7.0,
+      6.4
+     ],
+     [
+      7.0,
+      6.4,
+      7.0,
+      4.6
+     ]
+    ],
+    "points": [
+     [
+      3.0,
+      5.4
+     ],
+     [
+      7.0,
+      2.5
+     ]
+    ],
+    "comps": [
+     {
+      "id": "A1",
+      "t": "A",
+      "a": [
+       1,
+       3.4
+      ],
+      "b": [
+       1,
+       4.6
+      ],
+      "nom": "A1",
+      "pm": "a"
+     },
+     {
+      "id": "A2",
+      "t": "A",
+      "a": [
+       3,
+       3.4
+      ],
+      "b": [
+       3,
+       4.6
+      ],
+      "nom": "A2",
+      "pm": "a"
+     },
+     {
+      "id": "A3",
+      "t": "A",
+      "a": [
+       7,
+       3.4
+      ],
+      "b": [
+       7,
+       4.6
+      ],
+      "nom": "A3",
+      "pm": "a"
+     },
+     {
+      "id": "L1",
+      "t": "L",
+      "a": [
+       3.4,
+       1
+      ],
+      "b": [
+       4.6,
+       1
+      ],
+      "nom": "L1"
+     },
+     {
+      "id": "L2",
+      "t": "L",
+      "a": [
+       4.4,
+       2.5
+      ],
+      "b": [
+       5.6,
+       2.5
+      ],
+      "nom": "L2"
+     },
+     {
+      "id": "G",
+      "t": "G",
+      "a": [
+       4.4,
+       6.4
+      ],
+      "b": [
+       5.6,
+       6.4
+      ],
+      "nom": "piles",
+      "plus": "b"
+     }
+    ]
+   },
+   "items": [
+    {
+     "q": "Calcule le courant total débité par les générateurs.",
+     "r": "$|I_g| = 7\\ \\text{A}$ (le corrigé note $I_g = -7\\ \\text{A}$)",
+     "etapes": [
+      "Chaque lampe a son ampèremètre : 4 A et 3 A.",
+      "Le générateur fournit la somme des deux : $4 + 3 = 7\\ \\text{A}$.",
+      "Son ampèremètre est traversé dans le sens « entre par la borne − » : il affiche donc **−7 A**."
+     ]
+    }
+   ],
+   "donnees": {
+    "A1": {
+     "i": {
+      "d": 1,
+      "txt": "4 A"
+     }
+    },
+    "A2": {
+     "i": {
+      "d": 1,
+      "txt": "3 A"
+     }
+    }
+   },
+   "solution": {
+    "A3": {
+     "I": -7
+    },
+    "L1": {
+     "I": -4
+    },
+    "L2": {
+     "I": -3
+    },
+    "G": {
+     "I": 7
+    }
+   }
+  },
+  {
+   "id": "ch02-ex-03",
+   "titre": "Courant dans l'ampoule",
+   "niveau": 1,
+   "cat": "noeuds",
+   "origine": {
+    "chap": "ch02-courant",
+    "ex": "ex-03"
+   },
+   "consigne": "Touche un composant entouré pour dessiner sur le schéma le **sens du courant** et/ou le **vecteur tension** (pointe = côté +) avec leur valeur, puis vérifie.",
+   "doc": "exo",
+   "page": 1,
+   "schema": {
+    "bornes": [
+     [
+      0,
+      1,
+      ""
+     ],
+     [
+      0,
+      4.5,
+      ""
+     ]
+    ],
+    "fleches": [
+     [
+      0.15,
+      0.35,
+      1.15,
+      0.35,
+      "0,02 A"
+     ]
+    ],
+    "w": 9,
+    "h": 5,
+    "fils": [
+     [
+      0.0,
+      1.0,
+      1.3,
+      1.0
+     ],
+     [
+      2.7,
+      1.0,
+      4.2,
+      1.0
+     ],
+     [
+      5.6,
+      1.0,
+      8.5,
+      1.0
+     ],
+     [
+      8.5,
+      1.0,
+      8.5,
+      2.2
+     ],
+     [
+      8.5,
+      3.2,
+      8.5,
+      4.5
+     ],
+     [
+      8.5,
+      4.5,
+      0.0,
+      4.5
+     ],
+     [
+      3.3,
+      1.0,
+      3.3,
+      2.2
+     ],
+     [
+      3.3,
+      3.4,
+      3.3,
+      4.5
+     ],
+     [
+      6.3,
+      1.0,
+      6.3,
+      2.0
+     ],
+     [
+      6.3,
+      3.4,
+      6.3,
+      4.5
+     ]
+    ],
+    "points": [
+     [
+      3.3,
+      1.0
+     ],
+     [
+      3.3,
+      4.5
+     ],
+     [
+      6.3,
+      1.0
+     ],
+     [
+      6.3,
+      4.5
+     ]
+    ],
+    "comps": [
+     {
+      "id": "R1",
+      "t": "R",
+      "a": [
+       1.3,
+       1
+      ],
+      "b": [
+       2.7,
+       1
+      ],
+      "nom": "R1"
+     },
+     {
+      "id": "R2",
+      "t": "R",
+      "a": [
+       4.2,
+       1
+      ],
+      "b": [
+       5.6,
+       1
+      ],
+      "nom": "R2"
+     },
+     {
+      "id": "L",
+      "t": "L",
+      "a": [
+       3.3,
+       2.2
+      ],
+      "b": [
+       3.3,
+       3.4
+      ],
+      "nom": "lampe"
+     },
+     {
+      "id": "R3",
+      "t": "R",
+      "a": [
+       6.3,
+       2
+      ],
+      "b": [
+       6.3,
+       3.4
+      ],
+      "nom": "R3"
+     },
+     {
+      "id": "D",
+      "t": "D",
+      "a": [
+       8.5,
+       2.2
+      ],
+      "b": [
+       8.5,
+       3.2
+      ],
+      "nom": "diode"
+     }
+    ]
+   },
+   "items": [
+    {
+     "q": "Calcule le courant qui traverse l'ampoule.",
+     "r": "$I_a = 14{,}7\\ \\text{mA} = 0{,}0147\\ \\text{A}$",
+     "etapes": [
+      "Tout en mA : $0{,}02\\ \\text{A} = 20\\ \\text{mA}$ et $300\\ \\mu\\text{A} = 0{,}3\\ \\text{mA}$.",
+      "Les 20 mA se partagent entre l'ampoule, la résistance (5 mA) et la diode (0,3 mA).",
+      "$I_a = 20 - 5 - 0{,}3 = 14{,}7\\ \\text{mA}$"
+     ]
+    }
+   ],
+   "donnees": {
+    "R3": {
+     "i": {
+      "d": 1,
+      "txt": "5 mA"
+     }
+    },
+    "D": {
+     "i": {
+      "d": 1,
+      "txt": "300 µA"
+     }
+    }
+   },
+   "solution": {
+    "L": {
+     "I": 0.0147
+    },
+    "R2": {
+     "I": 0.0053
+    }
+   },
+   "indice": "Convertis tout dans la même unité (mA) avant de calculer."
+  },
+  {
+   "id": "ch02-ex-04",
+   "titre": "Courant total dans un montage fermé",
+   "niveau": 2,
+   "cat": "noeuds",
+   "origine": {
+    "chap": "ch02-courant",
+    "ex": "ex-04"
+   },
+   "consigne": "Touche un composant entouré pour dessiner sur le schéma le **sens du courant** et/ou le **vecteur tension** (pointe = côté +) avec leur valeur, puis vérifie. Le transistor (T) se traite comme un nœud : tout ce qui y entre en ressort.",
+   "doc": "exo",
+   "page": 1,
+   "schema": {
+    "cercles": [
+     [
+      6.2,
+      1.3,
+      0.55,
+      "T"
+     ]
+    ],
+    "bornes": [
+     [
+      0,
+      6.5,
+      ""
+     ],
+     [
+      9.2,
+      0.3,
+      ""
+     ]
+    ],
+    "w": 9.5,
+    "h": 7,
+    "fils": [
+     [
+      0.0,
+      6.5,
+      0.3,
+      6.5
+     ],
+     [
+      1.8,
+      6.5,
+      8.3,
+      6.5
+     ],
+     [
+      1.0,
+      2.6,
+      4.4,
+      2.6
+     ],
+     [
+      1.0,
+      4.8,
+      4.4,
+      4.8
+     ],
+     [
+      1.0,
+      2.6,
+      1.0,
+      3.05
+     ],
+     [
+      1.0,
+      4.35,
+      1.0,
+      4.8
+     ],
+     [
+      2.7,
+      2.6,
+      2.7,
+      3.2
+     ],
+     [
+      2.7,
+      4.2,
+      2.7,
+      4.8
+     ],
+     [
+      4.4,
+      2.6,
+      4.4,
+      3.2
+     ],
+     [
+      4.4,
+      4.2,
+      4.4,
+      4.8
+     ],
+     [
+      3.5,
+      2.6,
+      3.5,
+      1.3
+     ],
+     [
+      3.5,
+      1.3,
+      5.65,
+      1.3
+     ],
+     [
+      6.5,
+      0.85,
+      6.5,
+      0.3
+     ],
+     [
+      6.5,
+      0.3,
+      7.4,
+      0.3
+     ],
+     [
+      8.8,
+      0.3,
+      9.2,
+      0.3
+     ],
+     [
+      6.5,
+      1.75,
+      6.5,
+      3.8
+     ],
+     [
+      6.5,
+      5.6,
+      6.5,
+      6.5
+     ],
+     [
+      6.5,
+      3.0,
+      8.3,
+      3.0
+     ],
+     [
+      8.3,
+      3.0,
+      8.3,
+      4.2
+     ],
+     [
+      8.3,
+      5.2,
+      8.3,
+      6.5
+     ]
+    ],
+    "points": [
+     [
+      2.7,
+      2.6
+     ],
+     [
+      2.7,
+      4.8
+     ],
+     [
+      3.5,
+      2.6
+     ],
+     [
+      3.5,
+      4.8
+     ],
+     [
+      3.5,
+      6.5
+     ],
+     [
+      6.5,
+      3.0
+     ],
+     [
+      6.5,
+      6.5
+     ]
+    ],
+    "comps": [
+     {
+      "id": "Lb",
+      "t": "B",
+      "a": [
+       1,
+       3.05
+      ],
+      "b": [
+       1,
+       4.35
+      ],
+      "nom": "L"
+     },
+     {
+      "id": "C1",
+      "t": "C",
+      "a": [
+       2.7,
+       3.2
+      ],
+      "b": [
+       2.7,
+       4.2
+      ],
+      "nom": "C1"
+     },
+     {
+      "id": "C2",
+      "t": "C",
+      "a": [
+       4.4,
+       3.2
+      ],
+      "b": [
+       4.4,
+       4.2
+      ],
+      "nom": "C2"
+     },
+     {
+      "id": "F6",
+      "t": "F",
+      "a": [
+       3.5,
+       6.5
+      ],
+      "b": [
+       3.5,
+       4.8
+      ]
+     },
+     {
+      "id": "R",
+      "t": "R",
+      "a": [
+       6.5,
+       3.8
+      ],
+      "b": [
+       6.5,
+       5.6
+      ],
+      "nom": "R"
+     },
+     {
+      "id": "C3",
+      "t": "C",
+      "a": [
+       8.3,
+       4.2
+      ],
+      "b": [
+       8.3,
+       5.2
+      ],
+      "nom": "C3"
+     },
+     {
+      "id": "Fin",
+      "t": "F",
+      "a": [
+       0.3,
+       6.5
+      ],
+      "b": [
+       1.8,
+       6.5
+      ],
+      "nom": "I entrant"
+     },
+     {
+      "id": "Fout",
+      "t": "F",
+      "a": [
+       7.4,
+       0.3
+      ],
+      "b": [
+       8.8,
+       0.3
+      ],
+      "nom": "I sortant"
+     }
+    ]
+   },
+   "items": [
+    {
+     "q": "Calcule le courant total $I$ qui traverse le circuit.",
+     "r": "$I = 9\\ \\text{A}$",
+     "etapes": [
+      "Le courant $I$ qui entre par le fil du bas repart vers le haut par trois branches : 6 A, 1 A et 2 A.",
+      "Les courants « internes » (1 A et 4 A dans le circuit bobine/condensateurs) tournent à l'intérieur et ne changent pas le total.",
+      "$I = 6 + 1 + 2 = 9\\ \\text{A}$ ; c'est aussi le courant qui ressort en haut (même courant à l'entrée et à la sortie d'une « boîte »)."
+     ]
+    }
+   ],
+   "donnees": {
+    "Lb": {
+     "i": {
+      "d": -1,
+      "txt": "1 A"
+     }
+    },
+    "C2": {
+     "i": {
+      "d": -1,
+      "txt": "4 A"
+     }
+    },
+    "F6": {
+     "i": {
+      "d": 1,
+      "txt": "6 A"
+     }
+    },
+    "R": {
+     "i": {
+      "d": -1,
+      "txt": "1 A"
+     }
+    },
+    "C3": {
+     "i": {
+      "d": -1,
+      "txt": "2 A"
+     }
+    }
+   },
+   "solution": {
+    "C1": {
+     "I": -1
+    },
+    "Fin": {
+     "I": 9
+    },
+    "Fout": {
+     "I": 9
+    }
+   },
+   "indice": "Entoure la boîte grise : ce qui entre dans la boîte = ce qui en sort."
+  },
+  {
+   "id": "ch02-ex-05",
+   "titre": "Loi des nœuds en cascade",
+   "niveau": 2,
+   "cat": "noeuds",
+   "origine": {
+    "chap": "ch02-courant",
+    "ex": "ex-05"
+   },
+   "consigne": "Calcule $I_1$, $I_4$, $I_5$, $I_8$ et $I_9$ (on donne $I_2 = 7$ A, $I_3 = 3$ A, $I_6 = 4$ A, $I_7 = 5$ A). Touche un composant entouré pour dessiner sur le schéma le **sens du courant** et/ou le **vecteur tension** (pointe = côté +) avec leur valeur, puis vérifie.",
+   "doc": "exo",
+   "page": 1,
+   "schema": {
+    "textes": [
+     [
+      5,
+      0.25,
+      "A"
+     ],
+     [
+      9.45,
+      3.35,
+      "B"
+     ],
+     [
+      5.35,
+      3.3,
+      "C"
+     ],
+     [
+      5.35,
+      7.05,
+      "D"
+     ],
+     [
+      1.25,
+      7.05,
+      "E"
+     ]
+    ],
+    "w": 9.5,
+    "h": 7,
+    "fils": [
+     [
+      0.3,
+      0.6,
+      1.2,
+      0.6
+     ],
+     [
+      4.0,
+      0.6,
+      9.0,
+      0.6
+     ],
+     [
+      9.0,
+      0.6,
+      9.0,
+      1.2
+     ],
+     [
+      9.0,
+      3.0,
+      9.0,
+      6.6
+     ],
+     [
+      9.0,
+      6.6,
+      7.8,
+      6.6
+     ],
+     [
+      6.2,
+      6.6,
+      4.2,
+      6.6
+     ],
+     [
+      2.3,
+      6.6,
+      0.3,
+      6.6
+     ],
+     [
+      0.3,
+      6.6,
+      0.3,
+      6.0
+     ],
+     [
+      0.3,
+      3.4,
+      0.3,
+      2.6
+     ],
+     [
+      0.3,
+      1.6,
+      0.3,
+      0.6
+     ],
+     [
+      5.0,
+      0.6,
+      5.0,
+      1.4
+     ],
+     [
+      5.0,
+      2.8,
+      5.0,
+      4.4
+     ],
+     [
+      5.0,
+      5.8,
+      5.0,
+      6.6
+     ],
+     [
+      1.5,
+      3.6,
+      2.6,
+      3.6
+     ],
+     [
+      4.0,
+      3.6,
+      6.2,
+      3.6
+     ],
+     [
+      7.8,
+      3.6,
+      9.0,
+      3.6
+     ],
+     [
+      1.5,
+      3.6,
+      1.5,
+      6.6
+     ]
+    ],
+    "points": [
+     [
+      1.5,
+      6.6
+     ],
+     [
+      5.0,
+      0.6
+     ],
+     [
+      5.0,
+      3.6
+     ],
+     [
+      5.0,
+      6.6
+     ],
+     [
+      9.0,
+      3.6
+     ]
+    ],
+    "comps": [
+     {
+      "id": "G",
+      "t": "G",
+      "a": [
+       0.3,
+       1.6
+      ],
+      "b": [
+       0.3,
+       2.6
+      ],
+      "nom": "E1",
+      "plus": "a"
+     },
+     {
+      "id": "F1",
+      "t": "F",
+      "a": [
+       1.2,
+       0.6
+      ],
+      "b": [
+       4,
+       0.6
+      ],
+      "nom": "I1"
+     },
+     {
+      "id": "R2",
+      "t": "R",
+      "a": [
+       5,
+       1.4
+      ],
+      "b": [
+       5,
+       2.8
+      ],
+      "nom": "R2"
+     },
+     {
+      "id": "F3",
+      "t": "F",
+      "a": [
+       9,
+       1.2
+      ],
+      "b": [
+       9,
+       3
+      ],
+      "nom": "I3"
+     },
+     {
+      "id": "R4",
+      "t": "R",
+      "a": [
+       6.2,
+       3.6
+      ],
+      "b": [
+       7.8,
+       3.6
+      ],
+      "nom": "R4"
+     },
+     {
+      "id": "R7",
+      "t": "R",
+      "a": [
+       4,
+       3.6
+      ],
+      "b": [
+       2.6,
+       3.6
+      ],
+      "nom": "R7"
+     },
+     {
+      "id": "R6",
+      "t": "R",
+      "a": [
+       5,
+       4.4
+      ],
+      "b": [
+       5,
+       5.8
+      ],
+      "nom": "R6"
+     },
+     {
+      "id": "F8",
+      "t": "F",
+      "a": [
+       4.2,
+       6.6
+      ],
+      "b": [
+       2.3,
+       6.6
+      ],
+      "nom": "I8"
+     },
+     {
+      "id": "R5",
+      "t": "R",
+      "a": [
+       6.2,
+       6.6
+      ],
+      "b": [
+       7.8,
+       6.6
+      ],
+      "nom": "R5"
+     },
+     {
+      "id": "F9",
+      "t": "F",
+      "a": [
+       0.3,
+       6
+      ],
+      "b": [
+       0.3,
+       3.4
+      ],
+      "nom": "I9"
+     }
+    ]
+   },
+   "items": [
+    {
+     "q": "$I_1$",
+     "r": "$I_1 = 10\\ \\text{A}$ (de gauche à droite)",
+     "etapes": [
+      "Nœud A : $I_1 = I_2 + I_3 = 7 + 3$"
+     ]
+    },
+    {
+     "q": "$I_4$",
+     "r": "$I_4 = 2\\ \\text{A}$ (de B vers C, de droite à gauche)",
+     "etapes": [
+      "Nœud C : $I_2 + I_4 = I_7 + I_6$ → $7 + I_4 = 5 + 4$"
+     ]
+    },
+    {
+     "q": "$I_5$",
+     "r": "$I_5 = 1\\ \\text{A}$",
+     "etapes": [
+      "Nœud B : $I_3 = I_4 + I_5$ → $3 = 2 + I_5$"
+     ]
+    },
+    {
+     "q": "$I_8$",
+     "r": "$I_8 = 5\\ \\text{A}$ (de D vers E)",
+     "etapes": [
+      "Nœud D : $I_8 = I_6 + I_5 = 4 + 1$"
+     ]
+    },
+    {
+     "q": "$I_9$",
+     "r": "$I_9 = 10\\ \\text{A}$ (de E vers le générateur, de bas en haut)",
+     "etapes": [
+      "Nœud E : $I_9 = I_7 + I_8 = 5 + 5$ ; on retrouve bien $I_9 = I_1$."
+     ]
+    }
+   ],
+   "donnees": {
+    "R2": {
+     "i": {
+      "d": 1,
+      "txt": "7 A"
+     }
+    },
+    "F3": {
+     "i": {
+      "d": 1,
+      "txt": "3 A"
+     }
+    },
+    "R7": {
+     "i": {
+      "d": 1,
+      "txt": "5 A"
+     }
+    },
+    "R6": {
+     "i": {
+      "d": 1,
+      "txt": "4 A"
+     }
+    }
+   },
+   "solution": {
+    "F1": {
+     "I": 10
+    },
+    "R4": {
+     "I": -2
+    },
+    "R5": {
+     "I": -1
+    },
+    "F8": {
+     "I": 5
+    },
+    "F9": {
+     "I": 10
+    }
+   },
+   "indice": "Commence par un nœud où il ne manque qu'un seul courant (A), puis avance de nœud en nœud."
+  },
+  {
+   "id": "ch03-ex-06",
+   "titre": "Pont de résistances : courants et tensions",
+   "niveau": 2,
+   "cat": "noeuds",
+   "origine": {
+    "chap": "ch03-tension",
+    "ex": "ex-06"
+   },
+   "consigne": "On donne $U_{AC} = 150$ V, $I_1 = 6$ A, $I_2 = 4$ A, $I_5 = 2$ A, $U_{DC} = 30$ V, $U_{BC} = 50$ V. Touche un composant entouré pour dessiner sur le schéma le **sens du courant** et/ou le **vecteur tension** (pointe = côté +) avec leur valeur, puis vérifie.",
+   "doc": "exo",
+   "page": 3,
+   "schema": {
+    "textes": [
+     [
+      3,
+      0.4,
+      "A"
+     ],
+     [
+      2.6,
+      3.95,
+      "B"
+     ],
+     [
+      7.45,
+      3.95,
+      "D"
+     ],
+     [
+      3,
+      7.45,
+      "C"
+     ]
+    ],
+    "w": 8,
+    "h": 7.6,
+    "fils": [
+     [
+      0.5,
+      0.8,
+      7.0,
+      0.8
+     ],
+     [
+      7.0,
+      0.8,
+      7.0,
+      1.6
+     ],
+     [
+      7.0,
+      3.1,
+      7.0,
+      4.5
+     ],
+     [
+      7.0,
+      6.0,
+      7.0,
+      6.8
+     ],
+     [
+      7.0,
+      6.8,
+      0.5,
+      6.8
+     ],
+     [
+      0.5,
+      6.8,
+      0.5,
+      4.6
+     ],
+     [
+      0.5,
+      3.0,
+      0.5,
+      0.8
+     ],
+     [
+      3.0,
+      0.8,
+      3.0,
+      1.6
+     ],
+     [
+      3.0,
+      3.1,
+      3.0,
+      4.5
+     ],
+     [
+      3.0,
+      6.0,
+      3.0,
+      6.8
+     ],
+     [
+      3.0,
+      3.8,
+      4.3,
+      3.8
+     ],
+     [
+      5.7,
+      3.8,
+      7.0,
+      3.8
+     ]
+    ],
+    "points": [
+     [
+      3.0,
+      0.8
+     ],
+     [
+      3.0,
+      3.8
+     ],
+     [
+      3.0,
+      6.8
+     ],
+     [
+      7.0,
+      3.8
+     ]
+    ],
+    "comps": [
+     {
+      "id": "J",
+      "t": "J",
+      "a": [
+       0.5,
+       4.6
+      ],
+      "b": [
+       0.5,
+       3
+      ],
+      "nom": "I",
+      "fl": "b"
+     },
+     {
+      "id": "RAB",
+      "t": "R",
+      "a": [
+       3,
+       1.6
+      ],
+      "b": [
+       3,
+       3.1
+      ],
+      "nom": "R1"
+     },
+     {
+      "id": "RBC",
+      "t": "R",
+      "a": [
+       3,
+       4.5
+      ],
+      "b": [
+       3,
+       6
+      ],
+      "nom": "R3"
+     },
+     {
+      "id": "RAD",
+      "t": "R",
+      "a": [
+       7,
+       1.6
+      ],
+      "b": [
+       7,
+       3.1
+      ],
+      "nom": "R2"
+     },
+     {
+      "id": "RDC",
+      "t": "R",
+      "a": [
+       7,
+       4.5
+      ],
+      "b": [
+       7,
+       6
+      ],
+      "nom": "R4"
+     },
+     {
+      "id": "R5",
+      "t": "R",
+      "a": [
+       4.3,
+       3.8
+      ],
+      "b": [
+       5.7,
+       3.8
+      ],
+      "nom": "R5"
+     }
+    ]
+   },
+   "items": [
+    {
+     "q": "$I$",
+     "r": "$I = 10\\ \\text{A}$",
+     "etapes": [
+      "Nœud A : $I = I_1 + I_2 = 6 + 4$"
+     ]
+    },
+    {
+     "q": "$I_3$ et $I_4$",
+     "r": "$I_3 = 4\\ \\text{A}$ ; $I_4 = 6\\ \\text{A}$",
+     "etapes": [
+      "Nœud B : $I_3 = I_1 - I_5 = 6 - 2$",
+      "Nœud D : $I_4 = I_2 + I_5 = 4 + 2$"
+     ]
+    },
+    {
+     "q": "$U_{AB}$, $U_{AD}$, $U_{DB}$",
+     "r": "$U_{AB} = 100$ V ; $U_{AD} = 120$ V ; $U_{DB} = -20$ V",
+     "etapes": [
+      "$U_{AB} = U_{AC} - U_{BC} = 150 - 50$",
+      "$U_{AD} = U_{AC} - U_{DC} = 150 - 30$",
+      "$U_{DB} = U_{DC} - U_{BC} = 30 - 50$"
+     ]
+    }
+   ],
+   "donnees": {
+    "RAB": {
+     "i": {
+      "d": 1,
+      "txt": "6 A"
+     }
+    },
+    "RAD": {
+     "i": {
+      "d": 1,
+      "txt": "4 A"
+     }
+    },
+    "R5": {
+     "i": {
+      "d": 1,
+      "txt": "2 A"
+     }
+    }
+   },
+   "solution": {
+    "J": {
+     "I": 10,
+     "U": -150
+    },
+    "RBC": {
+     "I": 4,
+     "U": 50
+    },
+    "RDC": {
+     "I": 6,
+     "U": 30
+    },
+    "RAB": {
+     "U": 100
+    },
+    "RAD": {
+     "U": 120
+    },
+    "R5": {
+     "U": 20
+    }
+   }
+  },
+  {
+   "id": "ch02-ex-06",
+   "titre": "Courants manquants (signes)",
+   "niveau": 3,
+   "cat": "noeuds",
+   "origine": {
+    "chap": "ch02-courant",
+    "ex": "ex-06"
+   },
+   "consigne": "Touche un composant entouré pour dessiner sur le schéma le **sens du courant** et/ou le **vecteur tension** (pointe = côté +) avec leur valeur, puis vérifie. Les flèches de $I_x$, $I_y$, $I_z$ (vers le bas) et $I_w$ (vers l'extérieur) fixent le sens de référence : un résultat négatif veut dire que le courant va dans l'autre sens. Sur le schéma, dessine le **vrai** sens.",
+   "doc": "exo",
+   "page": 1,
+   "schema": {
+    "w": 10,
+    "h": 7.6,
+    "fils": [
+     [
+      1.2,
+      1.2,
+      3.7,
+      1.2
+     ],
+     [
+      6.2,
+      1.2,
+      8.7,
+      1.2
+     ],
+     [
+      1.2,
+      6.2,
+      8.7,
+      6.2
+     ],
+     [
+      3.7,
+      3.2,
+      6.2,
+      3.2
+     ]
+    ],
+    "points": [
+     [
+      1.2,
+      1.2
+     ],
+     [
+      3.7,
+      1.2
+     ],
+     [
+      4.95,
+      3.2
+     ],
+     [
+      4.95,
+      6.2
+     ],
+     [
+      6.2,
+      1.2
+     ],
+     [
+      8.7,
+      6.2
+     ]
+    ],
+    "comps": [
+     {
+      "id": "F9",
+      "t": "F",
+      "a": [
+       6.2,
+       1.2
+      ],
+      "b": [
+       3.7,
+       1.2
+      ]
+     },
+     {
+      "id": "FX",
+      "t": "F",
+      "a": [
+       3.7,
+       1.2
+      ],
+      "b": [
+       3.7,
+       3.2
+      ],
+      "nom": "Ix"
+     },
+     {
+      "id": "FY",
+      "t": "F",
+      "a": [
+       6.2,
+       1.2
+      ],
+      "b": [
+       6.2,
+       3.2
+      ],
+      "nom": "Iy"
+     },
+     {
+      "id": "FZ",
+      "t": "F",
+      "a": [
+       4.95,
+       3.2
+      ],
+      "b": [
+       4.95,
+       6.2
+      ],
+      "nom": "Iz"
+     },
+     {
+      "id": "F12",
+      "t": "F",
+      "a": [
+       1.2,
+       1.2
+      ],
+      "b": [
+       1.2,
+       6.2
+      ]
+     },
+     {
+      "id": "F6",
+      "t": "F",
+      "a": [
+       8.7,
+       6.2
+      ],
+      "b": [
+       8.7,
+       1.2
+      ]
+     },
+     {
+      "id": "F2",
+      "t": "F",
+      "a": [
+       1.2,
+       1.2
+      ],
+      "b": [
+       0.2,
+       0.2
+      ]
+     },
+     {
+      "id": "FW",
+      "t": "F",
+      "a": [
+       8.7,
+       6.2
+      ],
+      "b": [
+       9.7,
+       7.2
+      ],
+      "nom": "Iw"
+     }
+    ]
+   },
+   "items": [
+    {
+     "q": "$I_w$",
+     "r": "$I_w = -2\\ \\text{A}$",
+     "etapes": [
+      "Prends tout le montage comme une seule « boîte » : ce qui entre = ce qui sort.",
+      "Il entre 2 A en haut à gauche ; le seul autre fil extérieur est celui de $I_w$.",
+      "Donc 2 A ressortent par ce fil. Comme la flèche $I_w$ est dessinée dans l'autre sens, $I_w = -2$ A."
+     ]
+    },
+    {
+     "q": "$I_x$",
+     "r": "$I_x = -5\\ \\text{A}$",
+     "etapes": [
+      "Écris la loi des nœuds au nœud où arrive $I_x$, avec les flèches telles qu'elles sont dessinées (12 A, 9 A, 6 A…).",
+      "Somme des courants qui entrent = somme des courants qui sortent.",
+      "Le résultat est négatif : le courant réel circule dans le sens contraire de la flèche $I_x$."
+     ]
+    },
+    {
+     "q": "$I_y$",
+     "r": "$I_y = -3\\ \\text{A}$",
+     "etapes": [
+      "Même méthode au nœud de $I_y$ : l'équation du nœud du haut relie $I_x$, $I_y$ et le 9 A.",
+      "Avec $I_x = -5$ A, on obtient $I_y = -3$ A.",
+      "Contrôle : au nœud du bas, $I_z = I_x + I_y = -5 + (-3) = -8$ A."
+     ]
+    },
+    {
+     "q": "$I_z$",
+     "r": "$I_z = -8\\ \\text{A}$",
+     "etapes": [
+      "À chaque nœud : somme des courants qui entrent = somme des courants qui sortent, **en respectant le sens des flèches**.",
+      "Un résultat négatif veut dire que le courant réel circule dans le sens contraire de la flèche dessinée."
+     ]
+    }
+   ],
+   "donnees": {
+    "F9": {
+     "i": {
+      "d": 1,
+      "txt": "9 A"
+     }
+    },
+    "F12": {
+     "i": {
+      "d": 1,
+      "txt": "12 A"
+     }
+    },
+    "F6": {
+     "i": {
+      "d": 1,
+      "txt": "6 A"
+     }
+    },
+    "F2": {
+     "i": {
+      "d": 1,
+      "txt": "2 A"
+     }
+    }
+   },
+   "solution": {
+    "FX": {
+     "I": -5
+    },
+    "FY": {
+     "I": -3
+    },
+    "FZ": {
+     "I": -8
+    },
+    "FW": {
+     "I": -2
+    }
+   },
+   "indice": "Écris une équation par nœud avec les flèches telles qu'elles sont dessinées, puis résous. Les signes « − » sont normaux."
+  },
+  {
+   "id": "ch03-ex-01",
+   "titre": "Tensions dans un circuit à deux mailles",
+   "niveau": 2,
+   "cat": "mailles",
+   "origine": {
+    "chap": "ch03-tension",
+    "ex": "ex-01"
+   },
+   "consigne": "Convention du cours : une flèche de tension dessinée **de B vers A** (pointe sur A) représente $U_{AB} = V_A - V_B$. Touche un composant entouré pour dessiner sur le schéma le **sens du courant** et/ou le **vecteur tension** (pointe = côté +) avec leur valeur, puis vérifie.",
+   "doc": "exo",
+   "page": 2,
+   "schema": {
+    "textes": [
+     [
+      0.6,
+      0.75,
+      "A"
+     ],
+     [
+      5,
+      0.6,
+      "B"
+     ],
+     [
+      9.4,
+      0.75,
+      "C"
+     ],
+     [
+      0.6,
+      6.5,
+      "E"
+     ],
+     [
+      5,
+      6.6,
+      "D"
+     ]
+    ],
+    "w": 10,
+    "h": 7,
+    "fils": [
+     [
+      1.0,
+      1.0,
+      2.3,
+      1.0
+     ],
+     [
+      3.7,
+      1.0,
+      6.3,
+      1.0
+     ],
+     [
+      7.7,
+      1.0,
+      9.0,
+      1.0
+     ],
+     [
+      9.0,
+      1.0,
+      9.0,
+      6.0
+     ],
+     [
+      9.0,
+      6.0,
+      7.7,
+      6.0
+     ],
+     [
+      6.3,
+      6.0,
+      3.7,
+      6.0
+     ],
+     [
+      2.3,
+      6.0,
+      1.0,
+      6.0
+     ],
+     [
+      1.0,
+      6.0,
+      1.0,
+      4.0
+     ],
+     [
+      1.0,
+      3.0,
+      1.0,
+      1.0
+     ],
+     [
+      5.0,
+      1.0,
+      5.0,
+      2.8
+     ],
+     [
+      5.0,
+      4.2,
+      5.0,
+      6.0
+     ]
+    ],
+    "points": [
+     [
+      5.0,
+      1.0
+     ],
+     [
+      5.0,
+      6.0
+     ]
+    ],
+    "comps": [
+     {
+      "id": "G",
+      "t": "G",
+      "a": [
+       1,
+       3
+      ],
+      "b": [
+       1,
+       4
+      ],
+      "nom": "pile",
+      "plus": "a"
+     },
+     {
+      "id": "RAB",
+      "t": "R",
+      "a": [
+       2.3,
+       1
+      ],
+      "b": [
+       3.7,
+       1
+      ]
+     },
+     {
+      "id": "RBC",
+      "t": "R",
+      "a": [
+       6.3,
+       1
+      ],
+      "b": [
+       7.7,
+       1
+      ]
+     },
+     {
+      "id": "RED",
+      "t": "R",
+      "a": [
+       2.3,
+       6
+      ],
+      "b": [
+       3.7,
+       6
+      ]
+     },
+     {
+      "id": "RDC",
+      "t": "R",
+      "a": [
+       6.3,
+       6
+      ],
+      "b": [
+       7.7,
+       6
+      ]
+     },
+     {
+      "id": "RBD",
+      "t": "R",
+      "a": [
+       5,
+       2.8
+      ],
+      "b": [
+       5,
+       4.2
+      ],
+      "nom": "R (B-D)"
+     }
+    ]
+   },
+   "items": [
+    {
+     "q": "$U_{BD}$",
+     "r": "$U_{BD} = 4\\ \\text{V}$",
+     "etapes": [
+      "Lecture des flèches : $U_{AB} = 4$ V, $U_{BC} = 1$ V, $U_{ED} = -4$ V (donc $U_{DE} = 4$ V) et $U_{CD} = 3$ V.",
+      "Maille B-C-D : $U_{BD} = U_{BC} + U_{CD} = 1 + 3$"
+     ]
+    },
+    {
+     "q": "$U_{AE}$",
+     "r": "$U_{AE} = 12\\ \\text{V}$",
+     "etapes": [
+      "$U_{AE} = U_{AB} + U_{BD} + U_{DE} = 4 + 4 + 4$"
+     ]
+    }
+   ],
+   "donnees": {
+    "RAB": {
+     "u": {
+      "d": 1,
+      "txt": "4 V"
+     }
+    },
+    "RBC": {
+     "u": {
+      "d": 1,
+      "txt": "1 V"
+     }
+    },
+    "RED": {
+     "u": {
+      "d": 1,
+      "txt": "−4 V"
+     }
+    },
+    "RDC": {
+     "u": {
+      "d": -1,
+      "txt": "3 V"
+     }
+    }
+   },
+   "solution": {
+    "RBD": {
+     "U": 4
+    },
+    "G": {
+     "U": 12
+    }
+   },
+   "indice": "Une tension entre deux points = somme des tensions rencontrées sur **n'importe quel** chemin qui va de l'un à l'autre."
+  },
+  {
+   "id": "ch03-ex-02",
+   "titre": "Vecteurs tensions avec trois sources",
+   "niveau": 2,
+   "cat": "mailles",
+   "origine": {
+    "chap": "ch03-tension",
+    "ex": "ex-02"
+   },
+   "consigne": "Dessine d'abord tous les vecteurs tensions sur le schéma (ex. 8), puis calcule leur valeur (ex. 9). Touche un composant entouré pour dessiner sur le schéma le **sens du courant** et/ou le **vecteur tension** (pointe = côté +) avec leur valeur, puis vérifie.",
+   "doc": "exo",
+   "page": 2,
+   "schema": {
+    "textes": [
+     [
+      0.6,
+      0.6,
+      "A"
+     ],
+     [
+      9.4,
+      0.6,
+      "B"
+     ],
+     [
+      9.4,
+      7.5,
+      "C"
+     ],
+     [
+      0.6,
+      7.5,
+      "D"
+     ]
+    ],
+    "w": 10,
+    "h": 8,
+    "fils": [
+     [
+      1.0,
+      1.0,
+      4.3,
+      1.0
+     ],
+     [
+      5.7,
+      1.0,
+      9.0,
+      1.0
+     ],
+     [
+      9.0,
+      1.0,
+      9.0,
+      3.0
+     ],
+     [
+      9.0,
+      5.0,
+      9.0,
+      7.0
+     ],
+     [
+      9.0,
+      7.0,
+      1.0,
+      7.0
+     ],
+     [
+      1.0,
+      7.0,
+      1.0,
+      5.0
+     ],
+     [
+      1.0,
+      3.0,
+      1.0,
+      1.0
+     ],
+     [
+      3.0,
+      1.0,
+      3.0,
+      2.2
+     ],
+     [
+      3.0,
+      3.2,
+      3.0,
+      4.5
+     ],
+     [
+      3.0,
+      4.5,
+      7.0,
+      4.5
+     ],
+     [
+      7.0,
+      4.5,
+      7.0,
+      3.2
+     ],
+     [
+      7.0,
+      2.2,
+      7.0,
+      1.0
+     ],
+     [
+      5.0,
+      4.5,
+      5.0,
+      5.3
+     ],
+     [
+      5.0,
+      6.2,
+      5.0,
+      7.0
+     ]
+    ],
+    "points": [
+     [
+      3.0,
+      1.0
+     ],
+     [
+      5.0,
+      4.5
+     ],
+     [
+      5.0,
+      7.0
+     ],
+     [
+      7.0,
+      1.0
+     ]
+    ],
+    "comps": [
+     {
+      "id": "R1",
+      "t": "R",
+      "a": [
+       4.3,
+       1
+      ],
+      "b": [
+       5.7,
+       1
+      ],
+      "nom": "R1",
+      "val": "1 kΩ"
+     },
+     {
+      "id": "R2",
+      "t": "R",
+      "a": [
+       1,
+       3
+      ],
+      "b": [
+       1,
+       5
+      ],
+      "nom": "R2",
+      "val": "1 kΩ"
+     },
+     {
+      "id": "R3",
+      "t": "R",
+      "a": [
+       9,
+       3
+      ],
+      "b": [
+       9,
+       5
+      ],
+      "nom": "R3",
+      "val": "1 kΩ"
+     },
+     {
+      "id": "E1",
+      "t": "G",
+      "a": [
+       3,
+       2.2
+      ],
+      "b": [
+       3,
+       3.2
+      ],
+      "nom": "E1",
+      "val": "15 V",
+      "plus": "a"
+     },
+     {
+      "id": "E2",
+      "t": "G",
+      "a": [
+       7,
+       2.2
+      ],
+      "b": [
+       7,
+       3.2
+      ],
+      "nom": "E2",
+      "val": "10 V",
+      "plus": "a"
+     },
+     {
+      "id": "E3",
+      "t": "G",
+      "a": [
+       5,
+       5.3
+      ],
+      "b": [
+       5,
+       6.2
+      ],
+      "nom": "E3",
+      "val": "5 V",
+      "plus": "a"
+     }
+    ]
+   },
+   "items": [
+    {
+     "q": "$U_{R1} = U_{AB}$",
+     "r": "$U_{AB} = 5\\ \\text{V}$",
+     "etapes": [
+      "Le point commun des 3 piles est M. E1 : $V_A - V_M = 15$ V ; E2 : $V_B - V_M = 10$ V.",
+      "$U_{AB} = 15 - 10$"
+     ]
+    },
+    {
+     "q": "$U_{R2} = U_{AD}$",
+     "r": "$U_{AD} = 20\\ \\text{V}$",
+     "etapes": [
+      "Ici E3 a son + vers M : $V_M - V_D = 5$ V.",
+      "$U_{AD} = 15 + 5$"
+     ]
+    },
+    {
+     "q": "$U_{R3} = U_{BC}$",
+     "r": "$U_{BC} = 15\\ \\text{V}$",
+     "etapes": [
+      "D et C sont reliés par un fil : $V_C = V_D$.",
+      "$U_{BC} = 10 + 5$"
+     ]
+    }
+   ],
+   "solution": {
+    "R1": {
+     "U": 5.0
+    },
+    "R2": {
+     "U": 20.0
+    },
+    "R3": {
+     "U": 15.0
+    }
+   },
+   "indice": "Repère le côté + de chaque pile (trait long). Passe par le point commun des trois piles."
+  },
+  {
+   "id": "ch03-ex-05",
+   "titre": "Tensions et loi des mailles (U1, U2)",
+   "niveau": 2,
+   "cat": "mailles",
+   "origine": {
+    "chap": "ch03-tension",
+    "ex": "ex-05"
+   },
+   "consigne": "On donne $U = 25$ V, $U_3 = 7$ V, $U_4 = 8$ V. Touche un composant entouré pour dessiner sur le schéma le **sens du courant** et/ou le **vecteur tension** (pointe = côté +) avec leur valeur, puis vérifie.",
+   "doc": "exo",
+   "page": 3,
+   "schema": {
+    "textes": [
+     [
+      2,
+      0.6,
+      "A"
+     ],
+     [
+      5,
+      0.6,
+      "E"
+     ],
+     [
+      2,
+      5.6,
+      "B"
+     ],
+     [
+      5.75,
+      5.6,
+      "C"
+     ],
+     [
+      8,
+      5.6,
+      "D"
+     ]
+    ],
+    "w": 10,
+    "h": 6,
+    "fils": [
+     [
+      0.5,
+      1.0,
+      2.8,
+      1.0
+     ],
+     [
+      4.2,
+      1.0,
+      9.0,
+      1.0
+     ],
+     [
+      9.0,
+      1.0,
+      9.0,
+      2.3
+     ],
+     [
+      9.0,
+      3.7,
+      9.0,
+      5.0
+     ],
+     [
+      9.0,
+      5.0,
+      7.7,
+      5.0
+     ],
+     [
+      6.3,
+      5.0,
+      0.5,
+      5.0
+     ],
+     [
+      0.5,
+      5.0,
+      0.5,
+      3.4
+     ],
+     [
+      0.5,
+      2.4,
+      0.5,
+      1.0
+     ],
+     [
+      5.0,
+      1.0,
+      5.0,
+      2.3
+     ],
+     [
+      5.0,
+      3.7,
+      5.0,
+      5.0
+     ]
+    ],
+    "points": [
+     [
+      5.0,
+      1.0
+     ],
+     [
+      5.0,
+      5.0
+     ],
+     [
+      2,
+      1
+     ],
+     [
+      2,
+      5
+     ],
+     [
+      5.75,
+      5
+     ],
+     [
+      8,
+      5
+     ]
+    ],
+    "comps": [
+     {
+      "id": "G",
+      "t": "G",
+      "a": [
+       0.5,
+       2.4
+      ],
+      "b": [
+       0.5,
+       3.4
+      ],
+      "nom": "U",
+      "plus": "a"
+     },
+     {
+      "id": "R1",
+      "t": "R",
+      "a": [
+       2.8,
+       1
+      ],
+      "b": [
+       4.2,
+       1
+      ],
+      "nom": "R1",
+      "val": "10 Ω"
+     },
+     {
+      "id": "R2",
+      "t": "R",
+      "a": [
+       5,
+       2.3
+      ],
+      "b": [
+       5,
+       3.7
+      ],
+      "nom": "R2"
+     },
+     {
+      "id": "R4",
+      "t": "R",
+      "a": [
+       9,
+       2.3
+      ],
+      "b": [
+       9,
+       3.7
+      ],
+      "nom": "R4"
+     },
+     {
+      "id": "R3",
+      "t": "R",
+      "a": [
+       6.3,
+       5
+      ],
+      "b": [
+       7.7,
+       5
+      ],
+      "nom": "R3"
+     }
+    ]
+   },
+   "items": [
+    {
+     "q": "$U_2$ (tension sur la résistance du milieu)",
+     "r": "$U_2 = 15\\ \\text{V}$ (flèche de bas en haut)",
+     "etapes": [
+      "Maille E-C-D : $U_2 = U_3 + U_4 = 7 + 8$"
+     ]
+    },
+    {
+     "q": "$U_1$",
+     "r": "$U_1 = 10\\ \\text{V}$ (flèche de droite à gauche)",
+     "etapes": [
+      "Grande maille : $U = U_1 + U_2$ → $U_1 = 25 - 15$"
+     ]
+    },
+    {
+     "q": "$I_1$ si $R_1 = 10\\ \\Omega$",
+     "r": "$I_1 = 1\\ \\text{A}$ (de gauche à droite)",
+     "etapes": [
+      "$I_1 = \\dfrac{U_1}{R_1} = \\dfrac{10}{10}$",
+      "Dans une résistance, le courant va du + vers le − : il est dessiné en sens **inverse** du vecteur tension."
+     ]
+    }
+   ],
+   "donnees": {
+    "G": {
+     "u": {
+      "d": 1,
+      "txt": "25 V"
+     }
+    },
+    "R4": {
+     "u": {
+      "d": 1,
+      "txt": "8 V"
+     }
+    },
+    "R3": {
+     "u": {
+      "d": -1,
+      "txt": "7 V"
+     }
+    }
+   },
+   "solution": {
+    "R1": {
+     "U": 10,
+     "I": 1
+    },
+    "R2": {
+     "U": 15
+    },
+    "G": {
+     "I": -1
+    }
+   }
+  },
+  {
+   "id": "ch03-ex-09",
+   "titre": "Deux sources et loi des nœuds",
+   "niveau": 2,
+   "cat": "mailles",
+   "origine": {
+    "chap": "ch03-tension",
+    "ex": "ex-09"
+   },
+   "consigne": "On donne $U_1 = 120$ V, $U_2 = 100$ V, $U_{BD} = 80$ V, $I_1 = 8$ A, $I_3 = 11$ A. Touche un composant entouré pour dessiner sur le schéma le **sens du courant** et/ou le **vecteur tension** (pointe = côté +) avec leur valeur, puis vérifie.",
+   "doc": "exo",
+   "page": 3,
+   "schema": {
+    "textes": [
+     [
+      0.6,
+      0.6,
+      "A"
+     ],
+     [
+      5,
+      0.55,
+      "B"
+     ],
+     [
+      8.4,
+      0.6,
+      "C"
+     ],
+     [
+      5,
+      6.6,
+      "D"
+     ],
+     [
+      8.45,
+      3.75,
+      "E"
+     ]
+    ],
+    "w": 9,
+    "h": 7,
+    "fils": [
+     [
+      1.0,
+      1.0,
+      2.3,
+      1.0
+     ],
+     [
+      3.7,
+      1.0,
+      5.7,
+      1.0
+     ],
+     [
+      7.4,
+      1.0,
+      8.0,
+      1.0
+     ],
+     [
+      8.0,
+      1.0,
+      8.0,
+      1.8
+     ],
+     [
+      8.0,
+      3.2,
+      8.0,
+      4.0
+     ],
+     [
+      8.0,
+      5.4,
+      8.0,
+      6.0
+     ],
+     [
+      8.0,
+      6.0,
+      1.0,
+      6.0
+     ],
+     [
+      1.0,
+      6.0,
+      1.0,
+      4.2
+     ],
+     [
+      1.0,
+      2.6,
+      1.0,
+      1.0
+     ],
+     [
+      5.0,
+      1.0,
+      5.0,
+      2.5
+     ],
+     [
+      5.0,
+      4.3,
+      5.0,
+      6.0
+     ]
+    ],
+    "points": [
+     [
+      5.0,
+      1.0
+     ],
+     [
+      5.0,
+      6.0
+     ],
+     [
+      8,
+      3.6
+     ]
+    ],
+    "comps": [
+     {
+      "id": "U1",
+      "t": "E",
+      "a": [
+       1,
+       2.6
+      ],
+      "b": [
+       1,
+       4.2
+      ],
+      "nom": "U1",
+      "val": "120 V",
+      "plus": "a"
+     },
+     {
+      "id": "RAB",
+      "t": "R",
+      "a": [
+       2.3,
+       1
+      ],
+      "b": [
+       3.7,
+       1
+      ]
+     },
+     {
+      "id": "F2",
+      "t": "F",
+      "a": [
+       7.4,
+       1
+      ],
+      "b": [
+       5.7,
+       1
+      ],
+      "nom": "I2"
+     },
+     {
+      "id": "RBD",
+      "t": "R",
+      "a": [
+       5,
+       2.5
+      ],
+      "b": [
+       5,
+       4.3
+      ]
+     },
+     {
+      "id": "RCE",
+      "t": "R",
+      "a": [
+       8,
+       1.8
+      ],
+      "b": [
+       8,
+       3.2
+      ]
+     },
+     {
+      "id": "U2",
+      "t": "E",
+      "a": [
+       8,
+       4
+      ],
+      "b": [
+       8,
+       5.4
+      ],
+      "nom": "U2",
+      "val": "100 V",
+      "plus": "a"
+     }
+    ]
+   },
+   "items": [
+    {
+     "q": "$I_2$",
+     "r": "$I_2 = 3\\ \\text{A}$",
+     "etapes": [
+      "Nœud B : $I_1 + I_2 = I_3$ → $I_2 = 11 - 8$"
+     ]
+    },
+    {
+     "q": "$U_{BA}$ (résistance A-B)",
+     "r": "$U_{BA} = -40\\ \\text{V}$",
+     "etapes": [
+      "$V_A - V_D = 120$ V et $V_B - V_D = 80$ V → $U_{BA} = 80 - 120$"
+     ]
+    },
+    {
+     "q": "Tension sur la résistance C-E",
+     "r": "$U_{EC} = +20\\ \\text{V}$ (le corrigé note −20 V : c'est $U_{CE}$)",
+     "etapes": [
+      "C est relié à B par un fil : $V_C = 80$ V ; $V_E = 100$ V",
+      "$U_{EC} = 100 - 80 = 20$ V : le courant $I_2$ monte bien de E vers C."
+     ]
+    }
+   ],
+   "donnees": {
+    "RAB": {
+     "i": {
+      "d": 1,
+      "txt": "8 A"
+     }
+    },
+    "RBD": {
+     "i": {
+      "d": 1,
+      "txt": "11 A"
+     },
+     "u": {
+      "d": 1,
+      "txt": "80 V"
+     }
+    }
+   },
+   "solution": {
+    "F2": {
+     "I": 3
+    },
+    "RAB": {
+     "U": 40
+    },
+    "RCE": {
+     "U": -20,
+     "I": -3
+    },
+    "U1": {
+     "I": -8
+    },
+    "U2": {
+     "I": -3
+    }
+   }
+  },
+  {
+   "id": "ch03-ex-07",
+   "titre": "Tensions avec des valeurs négatives",
+   "niveau": 3,
+   "cat": "mailles",
+   "origine": {
+    "chap": "ch03-tension",
+    "ex": "ex-07"
+   },
+   "consigne": "Calcule la tension aux bornes de chaque dipôle et les courants $i_1$, $i_2$, $i_3$. Touche un composant entouré pour dessiner sur le schéma le **sens du courant** et/ou le **vecteur tension** (pointe = côté +) avec leur valeur, puis vérifie. Sur la feuille : $i_1$ est la flèche vers le haut sur la pile 2, $i_3$ vers le haut sur la pile 3, $i_2$ vers la droite après R2, $u_1$ sur la pile 3, $u_2$ sur R4 et $u_3$ sur R1.",
+   "doc": "exo",
+   "page": 3,
+   "schema": {
+    "w": 13.8,
+    "h": 6.9,
+    "fils": [
+     [
+      0.6,
+      0.92,
+      1.68,
+      0.92
+     ],
+     [
+      3.72,
+      0.92,
+      5.88,
+      0.92
+     ],
+     [
+      7.92,
+      0.92,
+      9.96,
+      0.92
+     ],
+     [
+      12.12,
+      0.92,
+      13.2,
+      0.92
+     ],
+     [
+      13.2,
+      0.92,
+      13.2,
+      2.3
+     ],
+     [
+      13.2,
+      4.37,
+      13.2,
+      5.75
+     ],
+     [
+      13.2,
+      5.75,
+      12.72,
+      5.75
+     ],
+     [
+      10.08,
+      5.75,
+      7.8,
+      5.75
+     ],
+     [
+      6.0,
+      5.75,
+      3.72,
+      5.75
+     ],
+     [
+      1.68,
+      5.75,
+      0.6,
+      5.75
+     ],
+     [
+      0.6,
+      5.75,
+      0.6,
+      3.91
+     ],
+     [
+      0.6,
+      2.76,
+      0.6,
+      0.92
+     ],
+     [
+      4.8,
+      0.92,
+      4.8,
+      2.76
+     ],
+     [
+      4.8,
+      3.91,
+      4.8,
+      5.75
+     ],
+     [
+      9.0,
+      0.92,
+      9.0,
+      2.76
+     ],
+     [
+      9.0,
+      3.91,
+      9.0,
+      5.75
+     ]
+    ],
+    "points": [
+     [
+      4.8,
+      0.92
+     ],
+     [
+      4.8,
+      5.75
+     ],
+     [
+      9.0,
+      0.92
+     ],
+     [
+      9.0,
+      5.75
+     ]
+    ],
+    "comps": [
+     {
+      "id": "G",
+      "t": "G",
+      "a": [
+       0.6,
+       2.76
+      ],
+      "b": [
+       0.6,
+       3.91
+      ],
+      "plus": "a"
+     },
+     {
+      "id": "Fa",
+      "t": "F",
+      "a": [
+       1.68,
+       0.92
+      ],
+      "b": [
+       3.72,
+       0.92
+      ]
+     },
+     {
+      "id": "Fb",
+      "t": "F",
+      "a": [
+       5.88,
+       0.92
+      ],
+      "b": [
+       7.92,
+       0.92
+      ]
+     },
+     {
+      "id": "R4",
+      "t": "R",
+      "a": [
+       9.96,
+       0.92
+      ],
+      "b": [
+       12.12,
+       0.92
+      ],
+      "nom": "R4"
+     },
+     {
+      "id": "R3",
+      "t": "R",
+      "a": [
+       13.2,
+       2.3
+      ],
+      "b": [
+       13.2,
+       4.37
+      ],
+      "nom": "R3"
+     },
+     {
+      "id": "Fc",
+      "t": "F",
+      "a": [
+       12.72,
+       5.75
+      ],
+      "b": [
+       10.08,
+       5.75
+      ]
+     },
+     {
+      "id": "R2",
+      "t": "R",
+      "a": [
+       6.0,
+       5.75
+      ],
+      "b": [
+       7.8,
+       5.75
+      ],
+      "nom": "R2"
+     },
+     {
+      "id": "R1",
+      "t": "R",
+      "a": [
+       1.68,
+       5.75
+      ],
+      "b": [
+       3.72,
+       5.75
+      ],
+      "nom": "R1"
+     },
+     {
+      "id": "Gm",
+      "t": "G",
+      "a": [
+       4.8,
+       2.76
+      ],
+      "b": [
+       4.8,
+       3.91
+      ],
+      "nom": "pile 2",
+      "plus": "a"
+     },
+     {
+      "id": "Gr",
+      "t": "G",
+      "a": [
+       9.0,
+       2.76
+      ],
+      "b": [
+       9.0,
+       3.91
+      ],
+      "nom": "pile 3",
+      "plus": "a"
+     }
+    ]
+   },
+   "items": [
+    {
+     "q": "$i_1$, $i_2$, $i_3$",
+     "r": "$i_1 = -2$ A ; $i_2 = +1$ A ; $i_3 = +2$ A",
+     "etapes": [
+      "Nœud du haut (milieu) : $1 + i_1 = -1$ → $i_1 = -2$ A",
+      "R4 et R3 sont parcourues par 1 A. Nœud du haut (droite) : $-1 + i_3 = 1$ → $i_3 = 2$ A",
+      "Nœud du bas (droite) : $1 + i_2 = i_3$ → $i_2 = 1$ A"
+     ]
+    },
+    {
+     "q": "$u_3$ (sur R1)",
+     "r": "$u_3 = +3\\ \\text{V}$",
+     "etapes": [
+      "Maille de gauche : $6 = 3 + u_3$ (la pile du milieu vaut 3 V entre son haut et son bas)."
+     ]
+    },
+    {
+     "q": "$u_1$ (pile de droite)",
+     "r": "$u_1 = +4\\ \\text{V}$",
+     "etapes": [
+      "Maille du milieu : $u_1 = 3 + 1$ (pile du milieu + tension de R2)."
+     ]
+    },
+    {
+     "q": "$u_2$ (sur R4)",
+     "r": "$u_2 = -3\\ \\text{V}$",
+     "etapes": [
+      "Maille de droite : $u_2 = 1 - u_1 = 1 - 4$ (R3 a 1 V)."
+     ]
+    }
+   ],
+   "donnees": {
+    "G": {
+     "u": {
+      "d": 1,
+      "txt": "6 V"
+     }
+    },
+    "Fa": {
+     "i": {
+      "d": 1,
+      "txt": "1 A"
+     }
+    },
+    "Fb": {
+     "i": {
+      "d": 1,
+      "txt": "−1 A"
+     }
+    },
+    "R3": {
+     "u": {
+      "d": 1,
+      "txt": "1 V"
+     }
+    },
+    "Fc": {
+     "i": {
+      "d": 1,
+      "txt": "1 A"
+     }
+    },
+    "R2": {
+     "u": {
+      "d": 1,
+      "txt": "1 V"
+     }
+    },
+    "Gm": {
+     "u": {
+      "d": -1,
+      "txt": "−3 V"
+     }
+    }
+   },
+   "solution": {
+    "R4": {
+     "U": 3,
+     "I": 1
+    },
+    "R3": {
+     "I": 1
+    },
+    "R2": {
+     "I": 1
+    },
+    "R1": {
+     "U": -3,
+     "I": -1
+    },
+    "Gm": {
+     "I": 2
+    },
+    "Gr": {
+     "U": 4,
+     "I": -2
+    },
+    "G": {
+     "I": -1
+    }
+   },
+   "indice": "Une flèche « −3 V » vers le bas = 3 V vers le haut. Travaille maille par maille, de gauche à droite."
+  },
+  {
+   "id": "ch03-ex-08",
+   "titre": "Trois branches en parallèle sur E",
+   "niveau": 3,
+   "cat": "mailles",
+   "origine": {
+    "chap": "ch03-tension",
+    "ex": "ex-08"
+   },
+   "consigne": "$E = 10$ V ; $E_1 = -3$ V ; $E_2 = +5$ V ; $E_3 = +7$ V ; $R_1 = 1{,}3$ kΩ ; $R_2 = 0{,}75$ kΩ ; $R_3 = 1{,}7$ kΩ. Touche un composant entouré pour dessiner sur le schéma le **sens du courant** et/ou le **vecteur tension** (pointe = côté +) avec leur valeur, puis vérifie. Sur la feuille, les flèches des résistances sont dessinées : R1 tension vers le bas et courant vers le bas, R2 tension vers le haut et courant vers le haut, R3 tension vers le bas et courant vers le haut. Ici, dessine le **vrai** sens.",
+   "doc": "exo",
+   "page": 3,
+   "schema": {
+    "w": 13.78,
+    "h": 8,
+    "fils": [
+     [
+      1.45,
+      0.8,
+      12.325,
+      0.8
+     ],
+     [
+      12.325,
+      0.8,
+      12.325,
+      1.6
+     ],
+     [
+      12.325,
+      3.6,
+      12.325,
+      5.3
+     ],
+     [
+      12.325,
+      6.1,
+      12.325,
+      7.0
+     ],
+     [
+      12.325,
+      7.0,
+      1.45,
+      7.0
+     ],
+     [
+      1.45,
+      7.0,
+      1.45,
+      4.4
+     ],
+     [
+      1.45,
+      3.4,
+      1.45,
+      0.8
+     ],
+     [
+      5.075,
+      0.8,
+      5.075,
+      1.5
+     ],
+     [
+      5.075,
+      2.3,
+      5.075,
+      3.4
+     ],
+     [
+      5.075,
+      5.4,
+      5.075,
+      7.0
+     ],
+     [
+      8.7,
+      0.8,
+      8.7,
+      1.5
+     ],
+     [
+      8.7,
+      2.3,
+      8.7,
+      3.4
+     ],
+     [
+      8.7,
+      5.4,
+      8.7,
+      7.0
+     ]
+    ],
+    "points": [
+     [
+      5.075,
+      0.8
+     ],
+     [
+      5.075,
+      7.0
+     ],
+     [
+      8.7,
+      0.8
+     ],
+     [
+      8.7,
+      7.0
+     ]
+    ],
+    "comps": [
+     {
+      "id": "E",
+      "t": "G",
+      "a": [
+       1.45,
+       3.4
+      ],
+      "b": [
+       1.45,
+       4.4
+      ],
+      "nom": "E",
+      "plus": "a"
+     },
+     {
+      "id": "E1",
+      "t": "G",
+      "a": [
+       5.075,
+       1.5
+      ],
+      "b": [
+       5.075,
+       2.3
+      ],
+      "nom": "E1",
+      "plus": "b"
+     },
+     {
+      "id": "R1",
+      "t": "R",
+      "a": [
+       5.075,
+       3.4
+      ],
+      "b": [
+       5.075,
+       5.4
+      ],
+      "nom": "R1",
+      "val": "1,3 kΩ"
+     },
+     {
+      "id": "E2",
+      "t": "G",
+      "a": [
+       8.7,
+       1.5
+      ],
+      "b": [
+       8.7,
+       2.3
+      ],
+      "nom": "E2",
+      "plus": "b"
+     },
+     {
+      "id": "R2",
+      "t": "R",
+      "a": [
+       8.7,
+       3.4
+      ],
+      "b": [
+       8.7,
+       5.4
+      ],
+      "nom": "R2",
+      "val": "0,75 kΩ"
+     },
+     {
+      "id": "R3",
+      "t": "R",
+      "a": [
+       12.325,
+       1.6
+      ],
+      "b": [
+       12.325,
+       3.6
+      ],
+      "nom": "R3",
+      "val": "1,7 kΩ"
+     },
+     {
+      "id": "E3",
+      "t": "G",
+      "a": [
+       12.325,
+       5.3
+      ],
+      "b": [
+       12.325,
+       6.1
+      ],
+      "nom": "E3",
+      "plus": "b"
+     }
+    ]
+   },
+   "items": [
+    {
+     "q": "$U_{R1}$ (tel que dessiné)",
+     "r": "$U_{R1} = -13\\ \\text{V}$",
+     "etapes": [
+      "Branche 1 : $E = U_{E1} + U_{R1,\\text{réel}}$ → $10 = -3 + 13$ : R1 a 13 V, + en haut ; dessinée vers le bas, elle vaut −13 V."
+     ]
+    },
+    {
+     "q": "$U_{R2}$",
+     "r": "$U_{R2} = +15\\ \\text{V}$",
+     "etapes": [
+      "Branche 2 : la pile E2 ajoute 5 V : $10 + 5 = 15$ V sur R2."
+     ]
+    },
+    {
+     "q": "$U_{R3}$",
+     "r": "$U_{R3} = -17\\ \\text{V}$",
+     "etapes": [
+      "Branche 3 : $10 + 7 = 17$ V sur R3, dessinée dans l'autre sens."
+     ]
+    },
+    {
+     "q": "$I_{R1}$, $I_{R2}$, $I_{R3}$",
+     "r": "$I_{R1} = +10$ mA ; $I_{R2} = -20$ mA ; $I_{R3} = -10$ mA",
+     "etapes": [
+      "$13/1{,}3\\ \\text{k}\\Omega = 10$ mA ; $15/0{,}75\\ \\text{k}\\Omega = 20$ mA ; $17/1{,}7\\ \\text{k}\\Omega = 10$ mA",
+      "Le signe dépend du sens de la flèche de courant dessinée."
+     ]
+    }
+   ],
+   "donnees": {
+    "E": {
+     "u": {
+      "d": 1,
+      "txt": "10 V"
+     }
+    },
+    "E1": {
+     "u": {
+      "d": 1,
+      "txt": "−3 V"
+     }
+    },
+    "E2": {
+     "u": {
+      "d": -1,
+      "txt": "5 V"
+     }
+    },
+    "E3": {
+     "u": {
+      "d": -1,
+      "txt": "7 V"
+     }
+    }
+   },
+   "solution": {
+    "R1": {
+     "U": 13.0,
+     "I": 0.01
+    },
+    "R2": {
+     "U": 15.0,
+     "I": 0.02
+    },
+    "R3": {
+     "U": 17.0,
+     "I": 0.01
+    }
+   },
+   "indice": "Chaque branche est soumise à la même tension E : la résistance prend « ce qui reste » une fois la petite pile comptée."
+  },
+  {
+   "id": "ch03-ex-03",
+   "titre": "Potentiels par rapport à la masse",
+   "niveau": 1,
+   "cat": "potentiels",
+   "origine": {
+    "chap": "ch03-tension",
+    "ex": "ex-03"
+   },
+   "consigne": "On donne $U_{am} = 12$ V, $U_{bm} = 8$ V, $U_{cm} = 6$ V, $U_{dm} = 4$ V. Touche un composant entouré pour dessiner sur le schéma le **sens du courant** et/ou le **vecteur tension** (pointe = côté +) avec leur valeur, puis vérifie.",
+   "doc": "exo",
+   "page": 2,
+   "schema": {
+    "bornes": [
+     [
+      0.5,
+      1,
+      "a"
+     ],
+     [
+      9.5,
+      1,
+      "d"
+     ]
+    ],
+    "masses": [
+     [
+      3.5,
+      4.2
+     ]
+    ],
+    "textes": [
+     [
+      3.5,
+      0.6,
+      "b"
+     ],
+     [
+      6.5,
+      0.6,
+      "c"
+     ],
+     [
+      4.1,
+      5.1,
+      "m"
+     ]
+    ],
+    "w": 10,
+    "h": 5.2,
+    "fils": [
+     [
+      0.5,
+      1.0,
+      1.3,
+      1.0
+     ],
+     [
+      2.7,
+      1.0,
+      4.3,
+      1.0
+     ],
+     [
+      5.7,
+      1.0,
+      7.3,
+      1.0
+     ],
+     [
+      8.7,
+      1.0,
+      9.5,
+      1.0
+     ],
+     [
+      3.5,
+      1.0,
+      3.5,
+      2.0
+     ],
+     [
+      3.5,
+      3.4,
+      3.5,
+      4.2
+     ],
+     [
+      6.5,
+      1.0,
+      6.5,
+      2.0
+     ],
+     [
+      6.5,
+      3.4,
+      6.5,
+      4.2
+     ],
+     [
+      0.5,
+      4.2,
+      9.5,
+      4.2
+     ]
+    ],
+    "points": [
+     [
+      3.5,
+      1.0
+     ],
+     [
+      3.5,
+      4.2
+     ],
+     [
+      6.5,
+      1.0
+     ],
+     [
+      6.5,
+      4.2
+     ]
+    ],
+    "comps": [
+     {
+      "id": "Rab",
+      "t": "R",
+      "a": [
+       1.3,
+       1
+      ],
+      "b": [
+       2.7,
+       1
+      ]
+     },
+     {
+      "id": "Rbc",
+      "t": "R",
+      "a": [
+       4.3,
+       1
+      ],
+      "b": [
+       5.7,
+       1
+      ]
+     },
+     {
+      "id": "Rcd",
+      "t": "R",
+      "a": [
+       7.3,
+       1
+      ],
+      "b": [
+       8.7,
+       1
+      ]
+     },
+     {
+      "id": "Rbm",
+      "t": "R",
+      "a": [
+       3.5,
+       2
+      ],
+      "b": [
+       3.5,
+       3.4
+      ]
+     },
+     {
+      "id": "Rcm",
+      "t": "R",
+      "a": [
+       6.5,
+       2
+      ],
+      "b": [
+       6.5,
+       3.4
+      ]
+     }
+    ]
+   },
+   "items": [
+    {
+     "q": "$V_a$, $V_b$, $V_c$, $V_d$",
+     "r": "$V_a = 12$ V ; $V_b = 8$ V ; $V_c = 6$ V ; $V_d = 4$ V",
+     "etapes": [
+      "Le potentiel d'un point = sa tension par rapport à la masse m : $V_a = U_{am}$, etc."
+     ]
+    },
+    {
+     "q": "$U_{ab}$",
+     "r": "$U_{ab} = 4\\ \\text{V}$ (soit $U_{ba} = -4$ V)",
+     "etapes": [
+      "$U_{ab} = V_a - V_b = 12 - 8$"
+     ]
+    },
+    {
+     "q": "$U_{bc}$",
+     "r": "$U_{bc} = 2\\ \\text{V}$",
+     "etapes": [
+      "$8 - 6$"
+     ]
+    },
+    {
+     "q": "$U_{dc}$",
+     "r": "$U_{dc} = -2\\ \\text{V}$",
+     "etapes": [
+      "$V_d - V_c = 4 - 6$"
+     ]
+    }
+   ],
+   "solution": {
+    "Rab": {
+     "U": 4
+    },
+    "Rbc": {
+     "U": 2
+    },
+    "Rcd": {
+     "U": 2
+    },
+    "Rbm": {
+     "U": 8
+    },
+    "Rcm": {
+     "U": 6
+    }
+   }
+  },
+  {
+   "id": "labo-ex-05",
+   "titre": "Potentiels et masse : trouver Ug",
+   "niveau": 2,
+   "consigne": "Annote le schéma : pour chaque composant, le **sens du courant** et le **vecteur tension** avec leurs valeurs, puis vérifie. Générateurs et appareils de mesure parfaits (ampèremètre = fil, voltmètre = coupure).",
+   "schema": {
+    "w": 10,
+    "h": 7,
+    "fils": [
+     [
+      1,
+      1,
+      3,
+      1
+     ],
+     [
+      5,
+      1,
+      8.5,
+      1
+     ]
+    ],
+    "points": [
+     [
+      6.5,
+      1
+     ]
+    ],
+    "masses": [
+     [
+      1,
+      5
+     ],
+     [
+      6.5,
+      5
+     ]
+    ],
+    "bornes": [
+     [
+      8.5,
+      1,
+      "−12 V"
+     ]
+    ],
+    "textes": [
+     [
+      2.4,
+      2.6,
+      "I = 4 mA ↓"
+     ]
+    ],
+    "comps": [
+     {
+      "id": "G",
+      "t": "G",
+      "a": [
+       3,
+       1
+      ],
+      "b": [
+       5,
+       1
+      ],
+      "nom": "Ug",
+      "val": "?",
+      "plus": "a"
+     },
+     {
+      "id": "R2k",
+      "t": "R",
+      "a": [
+       1,
+       1
+      ],
+      "b": [
+       1,
+       5
+      ],
+      "nom": "R1",
+      "val": "2 kΩ"
+     },
+     {
+      "id": "R3k",
+      "t": "R",
+      "a": [
+       6.5,
+       1
+      ],
+      "b": [
+       6.5,
+       5
+      ],
+      "nom": "R2",
+      "val": "3 kΩ"
+     }
+    ]
+   },
+   "solution": {
+    "G": {
+     "I": -0.004,
+     "U": 20
+    },
+    "R2k": {
+     "I": 0.004,
+     "U": 8
+    },
+    "R3k": {
+     "I": -0.004,
+     "U": -12
+    }
+   },
+   "items": [
+    {
+     "q": "Y a-t-il des appareils de mesure ?",
+     "r": "Non : la borne « −12 V » fixe simplement le **potentiel** du nœud de droite (par rapport à la masse = 0 V).",
+     "etapes": [
+      "Les deux masses sont reliées entre elles : le circuit forme une seule boucle masse → 2 kΩ → pile → 3 kΩ → masse."
+     ]
+    },
+    {
+     "q": "Potentiel du point en haut à gauche",
+     "r": "$+8\\ \\text{V}$",
+     "etapes": [
+      "4 mA descendent dans 2 kΩ vers la masse (0 V) : $U = 2\\ \\text{k}\\Omega \\times 4\\ \\text{mA} = 8$ V",
+      "Le courant va du + vers le − : le haut est à +8 V."
+     ]
+    },
+    {
+     "q": "Courant dans 3 kΩ",
+     "r": "$4\\ \\text{mA}$ (de la masse vers le haut)",
+     "etapes": [
+      "$12\\ \\text{V} / 3\\ \\text{k}\\Omega = 4$ mA",
+      "Le point du haut est à −12 V, plus bas que la masse : le courant monte. C'est le même courant qu'à gauche (une seule boucle)."
+     ]
+    },
+    {
+     "q": "$U_g$",
+     "r": "$U_g = 20\\ \\text{V}$",
+     "etapes": [
+      "$U_g = V_{\\text{gauche}} - V_{\\text{droite}} = 8 - (-12)$"
+     ]
+    },
+    {
+     "q": "Puissances",
+     "r": "$P_g = 80$ mW ; $P_{2k} = 32$ mW ; $P_{3k} = 48$ mW",
+     "etapes": [
+      "$20 \\times 4$ mW ; $8 \\times 4$ ; $12 \\times 4$",
+      "Contrôle : $32 + 48 = 80$ ✓"
+     ]
+    }
+   ],
+   "cat": "potentiels",
+   "origine": {
+    "chap": "ch09-labo",
+    "ex": "ex-05",
+    "labo": true
+   }
+  },
+  {
+   "id": "ch03-ex-04",
+   "titre": "Vecteurs tensions et potentiels",
+   "niveau": 3,
+   "cat": "potentiels",
+   "origine": {
+    "chap": "ch03-tension",
+    "ex": "ex-04"
+   },
+   "consigne": "On donne $U_{ab} = 8$ V, $U_{bd} = 10$ V, $U_{ed} = -6$ V, $U_{bc} = 6$ V, $U_{df} = 2$ V. Touche un composant entouré pour dessiner sur le schéma le **sens du courant** et/ou le **vecteur tension** (pointe = côté +) avec leur valeur, puis vérifie. Les vecteurs orange sont les tensions données. Sur la feuille, les 4 vecteurs à calculer sont dessinés sur R(d‑j), R(f‑g), R(e‑f) et R(j‑h).",
+   "doc": "exo",
+   "page": 2,
+   "schema": {
+    "textes": [
+     [
+      0.6,
+      0.6,
+      "a"
+     ],
+     [
+      5,
+      0.55,
+      "b"
+     ],
+     [
+      9.4,
+      0.6,
+      "c"
+     ],
+     [
+      0.55,
+      4.35,
+      "e"
+     ],
+     [
+      5.35,
+      4.2,
+      "d"
+     ],
+     [
+      9.45,
+      4.35,
+      "j"
+     ],
+     [
+      0.6,
+      8.55,
+      "f"
+     ],
+     [
+      5,
+      8.6,
+      "g"
+     ],
+     [
+      9.4,
+      8.55,
+      "h"
+     ]
+    ],
+    "w": 10,
+    "h": 9,
+    "fils": [
+     [
+      1.0,
+      1.0,
+      2.3,
+      1.0
+     ],
+     [
+      3.7,
+      1.0,
+      6.3,
+      1.0
+     ],
+     [
+      7.7,
+      1.0,
+      9.0,
+      1.0
+     ],
+     [
+      9.0,
+      1.0,
+      9.0,
+      5.5
+     ],
+     [
+      9.0,
+      7.0,
+      9.0,
+      8.0
+     ],
+     [
+      9.0,
+      8.0,
+      3.7,
+      8.0
+     ],
+     [
+      2.3,
+      8.0,
+      1.0,
+      8.0
+     ],
+     [
+      1.0,
+      8.0,
+      1.0,
+      7.0
+     ],
+     [
+      1.0,
+      5.5,
+      1.0,
+      3.3
+     ],
+     [
+      1.0,
+      2.2,
+      1.0,
+      1.0
+     ],
+     [
+      5.0,
+      1.0,
+      5.0,
+      2.0
+     ],
+     [
+      5.0,
+      3.5,
+      5.0,
+      8.0
+     ],
+     [
+      1.0,
+      4.5,
+      2.3,
+      4.5
+     ],
+     [
+      3.7,
+      4.5,
+      6.3,
+      4.5
+     ],
+     [
+      7.7,
+      4.5,
+      9.0,
+      4.5
+     ]
+    ],
+    "points": [
+     [
+      1.0,
+      4.5
+     ],
+     [
+      5.0,
+      1.0
+     ],
+     [
+      5.0,
+      4.5
+     ],
+     [
+      5.0,
+      8.0
+     ],
+     [
+      9.0,
+      4.5
+     ]
+    ],
+    "comps": [
+     {
+      "id": "G",
+      "t": "G",
+      "a": [
+       1,
+       2.2
+      ],
+      "b": [
+       1,
+       3.3
+      ],
+      "nom": "pile",
+      "plus": "a"
+     },
+     {
+      "id": "Rab",
+      "t": "R",
+      "a": [
+       2.3,
+       1
+      ],
+      "b": [
+       3.7,
+       1
+      ]
+     },
+     {
+      "id": "Rbc",
+      "t": "R",
+      "a": [
+       6.3,
+       1
+      ],
+      "b": [
+       7.7,
+       1
+      ]
+     },
+     {
+      "id": "Rbd",
+      "t": "R",
+      "a": [
+       5,
+       2
+      ],
+      "b": [
+       5,
+       3.5
+      ]
+     },
+     {
+      "id": "Red",
+      "t": "R",
+      "a": [
+       2.3,
+       4.5
+      ],
+      "b": [
+       3.7,
+       4.5
+      ]
+     },
+     {
+      "id": "Rdj",
+      "t": "R",
+      "a": [
+       6.3,
+       4.5
+      ],
+      "b": [
+       7.7,
+       4.5
+      ]
+     },
+     {
+      "id": "Ref",
+      "t": "R",
+      "a": [
+       1,
+       5.5
+      ],
+      "b": [
+       1,
+       7
+      ]
+     },
+     {
+      "id": "Rfg",
+      "t": "R",
+      "a": [
+       2.3,
+       8
+      ],
+      "b": [
+       3.7,
+       8
+      ]
+     },
+     {
+      "id": "Rjh",
+      "t": "R",
+      "a": [
+       9,
+       5.5
+      ],
+      "b": [
+       9,
+       7
+      ]
+     }
+    ]
+   },
+   "items": [
+    {
+     "q": "Valeur des 4 vecteurs tensions dessinés",
+     "r": "$U_{jd} = 4$ V ; $U_{gf} = 2$ V ; $U_{ef} = -4$ V ; $U_{jh} = 4$ V",
+     "etapes": [
+      "j est relié à c par un fil, g et h sont reliés à d : $V_j = V_c$ et $V_g = V_h = V_d$.",
+      "$U_{cd} = U_{bd} - U_{bc} = 10 - 6 = 4$ V, donc $U_{jd} = U_{jh} = 4$ V.",
+      "$U_{gf} = U_{df} = 2$ V ; $U_{ef} = U_{ed} + U_{df} = -6 + 2 = -4$ V."
+     ]
+    },
+    {
+     "q": "Tension de la pile $U_{ae}$",
+     "r": "$U_{ae} = 24\\ \\text{V}$",
+     "etapes": [
+      "$U_{ae} = U_{ab} + U_{bd} + U_{de} = 8 + 10 + 6$"
+     ]
+    },
+    {
+     "q": "Potentiels avec $V_e = 0$ V",
+     "r": "$V_a = 24$ ; $V_b = 16$ ; $V_c = V_j = 10$ ; $V_d = V_g = V_h = 6$ ; $V_f = 4$ (en V)",
+     "etapes": [
+      "$U_{ed} = -6$ V → $V_d = V_e + 6 = 6$ V",
+      "$V_b = V_d + U_{bd} = 16$ V ; $V_a = V_b + 8 = 24$ V ; $V_c = V_b - 6 = 10$ V ; $V_f = V_d - 2 = 4$ V"
+     ]
+    }
+   ],
+   "donnees": {
+    "Rab": {
+     "u": {
+      "d": 1,
+      "txt": "8 V"
+     }
+    },
+    "Rbd": {
+     "u": {
+      "d": 1,
+      "txt": "10 V"
+     }
+    },
+    "Red": {
+     "u": {
+      "d": 1,
+      "txt": "−6 V"
+     }
+    },
+    "Rbc": {
+     "u": {
+      "d": 1,
+      "txt": "6 V"
+     }
+    }
+   },
+   "solution": {
+    "G": {
+     "U": 24
+    },
+    "Rdj": {
+     "U": -4
+    },
+    "Ref": {
+     "U": -4
+    },
+    "Rfg": {
+     "U": -2
+    },
+    "Rjh": {
+     "U": 4
+    }
+   },
+   "indice": "Repère d'abord les points reliés par un simple fil : ils ont le même potentiel."
+  },
+  {
+   "id": "labo-ex-01",
+   "titre": "Étoile de résistances de 6 Ω",
+   "niveau": 2,
+   "consigne": "Annote le schéma : pour chaque composant, le **sens du courant** et le **vecteur tension** avec leurs valeurs, puis vérifie. Générateurs et appareils de mesure parfaits (ampèremètre = fil, voltmètre = coupure).",
+   "schema": {
+    "w": 11,
+    "h": 8,
+    "fils": [
+     [
+      7.5,
+      1,
+      10,
+      1,
+      10,
+      7,
+      8,
+      7
+     ],
+     [
+      9,
+      4,
+      10,
+      4
+     ],
+     [
+      4,
+      4,
+      4,
+      2.5
+     ]
+    ],
+    "points": [
+     [
+      1,
+      1
+     ],
+     [
+      1,
+      7
+     ],
+     [
+      4,
+      4
+     ],
+     [
+      10,
+      4
+     ],
+     [
+      10,
+      2.5
+     ]
+    ],
+    "comps": [
+     {
+      "id": "A3",
+      "t": "A",
+      "a": [
+       1,
+       1
+      ],
+      "b": [
+       1,
+       7
+      ],
+      "nom": "A3"
+     },
+     {
+      "id": "R1",
+      "t": "R",
+      "a": [
+       1,
+       1
+      ],
+      "b": [
+       4.5,
+       1
+      ],
+      "nom": "R1",
+      "val": "6 Ω"
+     },
+     {
+      "id": "V1",
+      "t": "V",
+      "a": [
+       4.5,
+       1
+      ],
+      "b": [
+       7.5,
+       1
+      ],
+      "nom": "V1"
+     },
+     {
+      "id": "R2",
+      "t": "R",
+      "a": [
+       1,
+       1
+      ],
+      "b": [
+       4,
+       4
+      ],
+      "nom": "R2",
+      "val": "6 Ω"
+     },
+     {
+      "id": "R3",
+      "t": "R",
+      "a": [
+       1,
+       7
+      ],
+      "b": [
+       4,
+       4
+      ],
+      "nom": "R3",
+      "val": "6 Ω"
+     },
+     {
+      "id": "A1",
+      "t": "A",
+      "a": [
+       4,
+       4
+      ],
+      "b": [
+       6,
+       4
+      ],
+      "nom": "A1"
+     },
+     {
+      "id": "G",
+      "t": "G",
+      "a": [
+       6,
+       4
+      ],
+      "b": [
+       9,
+       4
+      ],
+      "nom": "G",
+      "val": "18 V",
+      "plus": "b"
+     },
+     {
+      "id": "V2",
+      "t": "V",
+      "a": [
+       4,
+       2.5
+      ],
+      "b": [
+       10,
+       2.5
+      ],
+      "nom": "V2"
+     },
+     {
+      "id": "R4",
+      "t": "R",
+      "a": [
+       1,
+       7
+      ],
+      "b": [
+       5,
+       7
+      ],
+      "nom": "R4",
+      "val": "6 Ω"
+     },
+     {
+      "id": "A2",
+      "t": "A",
+      "a": [
+       5,
+       7
+      ],
+      "b": [
+       8,
+       7
+      ],
+      "nom": "A2"
+     }
+    ]
+   },
+   "solution": {
+    "A3": {
+     "I": -1
+    },
+    "R1": {
+     "I": 0,
+     "U": 0
+    },
+    "V1": {
+     "U": -12
+    },
+    "R2": {
+     "I": 1,
+     "U": 6
+    },
+    "R3": {
+     "I": 1,
+     "U": 6
+    },
+    "A1": {
+     "I": 2
+    },
+    "G": {
+     "I": 2,
+     "U": -18
+    },
+    "V2": {
+     "U": -18
+    },
+    "R4": {
+     "I": -2,
+     "U": -12
+    },
+    "A2": {
+     "I": -2
+    }
+   },
+   "items": [
+    {
+     "q": "Où sont branchés les appareils de mesure et qu'est-ce que ça change ?",
+     "r": "V1 est **en série** dans la branche du haut → cette branche est **coupée** (0 A dans R1).",
+     "etapes": [
+      "**V1** (en série avec R1, branche du haut) : résistance infinie → **aucun courant** dans R1, donc 0 V sur R1. La branche du haut ne participe pas au circuit ; V1 mesure simplement la tension entre le coin haut‑gauche et la borne + de la pile.",
+      "**V2** (entre le centre et la borne +) : **en parallèle** sur l'ensemble A1 + pile → bien branché, il mesure la tension de la pile.",
+      "**A1** : **en série** avec la pile → courant total.",
+      "**A2** : **en série** avec la résistance du bas (R4) → courant de R4.",
+      "**A3** (entre les deux coins de gauche) : c'est un **fil** → les deux coins deviennent le même nœud, ce qui met **R2 et R3 en parallèle**. Il mesure le courant qui passe du coin du bas vers celui du haut (celui qui alimente R2)."
+     ]
+    },
+    {
+     "q": "Résistance totale vue par la pile",
+     "r": "$R_t = 9\\ \\Omega$",
+     "etapes": [
+      "A3 est un ampèremètre parfait (un fil) : les deux coins de gauche sont le **même nœud** L.",
+      "V1 est un voltmètre (une coupure) : aucun courant dans R1, la branche du haut ne compte pas.",
+      "R2 et R3 vont toutes les deux de L au centre : en parallèle → $6 /\\!/ 6 = 3\\ \\Omega$.",
+      "En série avec R4 (bas) : $R_t = 6 + 3 = 9\\ \\Omega$."
+     ]
+    },
+    {
+     "q": "A1 et A2",
+     "r": "$I = 2\\ \\text{A}$ (A1 = A2 = 2 A)",
+     "etapes": [
+      "$I = \\dfrac{18}{9} = 2$ A : c'est le même courant dans toute la boucle pile → R4 → L → R2//R3 → A1."
+     ]
+    },
+    {
+     "q": "A3",
+     "r": "$1\\ \\text{A}$",
+     "etapes": [
+      "Les 2 A arrivent en bas à gauche et se partagent en deux (R2 = R3) : 1 A descend directement dans R3, l'autre ampère remonte par A3 vers R2."
+     ]
+    },
+    {
+     "q": "V1 et V2",
+     "r": "$V_1 = 12$ V ; $V_2 = 18$ V",
+     "etapes": [
+      "V2 est branché aux bornes de la pile (A1 ne crée pas de chute) : 18 V.",
+      "V1 voit la tension entre L et la borne + (R1 sans courant → 0 V) : c'est la tension de R4 = $6 \\times 2 = 12$ V.",
+      "Contrôle : R2//R3 ont $6 \\times 1 = 6$ V et $12 + 6 = 18$ V ✓"
+     ]
+    }
+   ],
+   "cat": "mesure",
+   "origine": {
+    "chap": "ch09-labo",
+    "ex": "ex-01",
+    "labo": true
+   }
+  },
+  {
+   "id": "labo-ex-02",
+   "titre": "Trois résistances et un ampèremètre qui court-circuite",
+   "niveau": 2,
+   "consigne": "Annote le schéma : pour chaque composant, le **sens du courant** et le **vecteur tension** avec leurs valeurs, puis vérifie. Générateurs et appareils de mesure parfaits (ampèremètre = fil, voltmètre = coupure).",
+   "schema": {
+    "w": 12,
+    "h": 8,
+    "fils": [
+     [
+      1,
+      1,
+      1,
+      7,
+      5,
+      7
+     ],
+     [
+      7,
+      7,
+      11,
+      7,
+      11,
+      1
+     ],
+     [
+      6,
+      1,
+      6,
+      5
+     ]
+    ],
+    "points": [
+     [
+      1,
+      3
+     ],
+     [
+      1,
+      5
+     ],
+     [
+      6,
+      1
+     ],
+     [
+      6,
+      3
+     ],
+     [
+      6,
+      5
+     ],
+     [
+      11,
+      3
+     ],
+     [
+      11,
+      5
+     ]
+    ],
+    "comps": [
+     {
+      "id": "A1",
+      "t": "A",
+      "a": [
+       1,
+       1
+      ],
+      "b": [
+       6,
+       1
+      ],
+      "nom": "A1"
+     },
+     {
+      "id": "R10",
+      "t": "R",
+      "a": [
+       6,
+       1
+      ],
+      "b": [
+       11,
+       1
+      ],
+      "nom": "R1",
+      "val": "10 Ω"
+     },
+     {
+      "id": "A2",
+      "t": "A",
+      "a": [
+       1,
+       3
+      ],
+      "b": [
+       3.4,
+       3
+      ],
+      "nom": "A2"
+     },
+     {
+      "id": "R20",
+      "t": "R",
+      "a": [
+       3.4,
+       3
+      ],
+      "b": [
+       6,
+       3
+      ],
+      "nom": "R2",
+      "val": "20 Ω"
+     },
+     {
+      "id": "V2",
+      "t": "V",
+      "a": [
+       6,
+       3
+      ],
+      "b": [
+       11,
+       3
+      ],
+      "nom": "V2"
+     },
+     {
+      "id": "V1",
+      "t": "V",
+      "a": [
+       1,
+       5
+      ],
+      "b": [
+       6,
+       5
+      ],
+      "nom": "V1"
+     },
+     {
+      "id": "R30",
+      "t": "R",
+      "a": [
+       6,
+       5
+      ],
+      "b": [
+       11,
+       5
+      ],
+      "nom": "R3",
+      "val": "30 Ω"
+     },
+     {
+      "id": "G",
+      "t": "G",
+      "a": [
+       5,
+       7
+      ],
+      "b": [
+       7,
+       7
+      ],
+      "nom": "G",
+      "val": "36 V",
+      "plus": "a"
+     }
+    ]
+   },
+   "solution": {
+    "A1": {
+     "I": 4.8
+    },
+    "R10": {
+     "I": 3.6,
+     "U": 36
+    },
+    "A2": {
+     "I": 0
+    },
+    "R20": {
+     "I": 0,
+     "U": 0
+    },
+    "V2": {
+     "U": 36
+    },
+    "V1": {
+     "U": 0
+    },
+    "R30": {
+     "I": 1.2,
+     "U": 36
+    },
+    "G": {
+     "I": -4.8,
+     "U": 36
+    }
+   },
+   "items": [
+    {
+     "q": "Où sont branchés les appareils de mesure et qu'est-ce que ça change ?",
+     "r": "A1 mesure le courant total mais **court-circuite** la branche A2 + 20 Ω et V1.",
+     "etapes": [
+      "**A1** (fil du haut, entre le côté gauche = + de la pile et le fil vertical du milieu) : tout le courant qui va vers 10 Ω et 30 Ω passe par lui → il est **en série avec le groupe 10 Ω // 30 Ω** et mesure le courant total.",
+      "Mais comme c'est un fil, il relie aussi la gauche au milieu : la branche **A2 + 20 Ω** et **V1** sont branchés entre ces deux mêmes points → **court-circuités** (0 V, 0 A).",
+      "**A2** : bien en série avec 20 Ω, mais cette branche ne reçoit rien → 0 A.",
+      "**V1** : entre la gauche et le milieu (même potentiel) → 0 V.",
+      "**V2** : entre le milieu et la droite → **en parallèle** sur 10 Ω et 30 Ω → tension de la pile."
+     ]
+    },
+    {
+     "q": "Que fait A1 ?",
+     "r": "Il **court-circuite** la gauche et le fil du milieu : ces deux fils sont le même nœud.",
+     "etapes": [
+      "Un ampèremètre parfait a une résistance nulle : c'est un fil."
+     ]
+    },
+    {
+     "q": "A2 et V1",
+     "r": "A2 = 0 A ; V1 = 0 V",
+     "etapes": [
+      "R2 (20 Ω) et V1 sont branchés entre deux points reliés par A1 : aucune tension → aucun courant."
+     ]
+    },
+    {
+     "q": "Courants dans R1 et R3, et V2",
+     "r": "$I_{10} = 3{,}6$ A ; $I_{30} = 1{,}2$ A ; V2 = 36 V",
+     "etapes": [
+      "R1 et R3 sont directement en parallèle sur la pile (36 V).",
+      "$36/10 = 3{,}6$ A ; $36/30 = 1{,}2$ A"
+     ]
+    },
+    {
+     "q": "A1 (courant total)",
+     "r": "$I = 4{,}8\\ \\text{A}$",
+     "etapes": [
+      "Tout le courant repasse par A1 : $3{,}6 + 1{,}2$",
+      "Contrôle : $R_{eq} = 10 /\\!/ 30 = 7{,}5\\ \\Omega$ et $36/7{,}5 = 4{,}8$ A ✓"
+     ]
+    }
+   ],
+   "cat": "mesure",
+   "origine": {
+    "chap": "ch09-labo",
+    "ex": "ex-02",
+    "labo": true
+   }
+  },
+  {
+   "id": "labo-ex-04",
+   "titre": "Le piège de l'ampèremètre",
+   "niveau": 2,
+   "consigne": "Annote le schéma : pour chaque composant, le **sens du courant** et le **vecteur tension** avec leurs valeurs, puis vérifie. Générateurs et appareils de mesure parfaits (ampèremètre = fil, voltmètre = coupure).",
+   "schema": {
+    "w": 12,
+    "h": 7,
+    "fils": [
+     [
+      5,
+      1,
+      1,
+      1,
+      1,
+      6
+     ],
+     [
+      7,
+      1,
+      11,
+      1,
+      11,
+      6
+     ],
+     [
+      1,
+      4,
+      4,
+      4
+     ],
+     [
+      8,
+      4,
+      11,
+      4
+     ],
+     [
+      3,
+      4,
+      3,
+      2.5
+     ],
+     [
+      9,
+      2.5,
+      9,
+      4
+     ],
+     [
+      4,
+      4,
+      4,
+      6
+     ],
+     [
+      8,
+      4,
+      8,
+      6
+     ]
+    ],
+    "points": [
+     [
+      1,
+      4
+     ],
+     [
+      3,
+      4
+     ],
+     [
+      4,
+      4
+     ],
+     [
+      8,
+      4
+     ],
+     [
+      9,
+      4
+     ],
+     [
+      11,
+      4
+     ],
+     [
+      4,
+      6
+     ],
+     [
+      8,
+      6
+     ]
+    ],
+    "textes": [
+     [
+      3,
+      0.55,
+      "I = 5 A ←"
+     ]
+    ],
+    "comps": [
+     {
+      "id": "G",
+      "t": "G",
+      "a": [
+       5,
+       1
+      ],
+      "b": [
+       7,
+       1
+      ],
+      "nom": "Ug",
+      "plus": "a"
+     },
+     {
+      "id": "R50h",
+      "t": "R",
+      "a": [
+       3,
+       2.5
+      ],
+      "b": [
+       9,
+       2.5
+      ],
+      "nom": "R1",
+      "val": "50 kΩ"
+     },
+     {
+      "id": "R50m",
+      "t": "R",
+      "a": [
+       4,
+       4
+      ],
+      "b": [
+       8,
+       4
+      ],
+      "nom": "R2",
+      "val": "50 kΩ"
+     },
+     {
+      "id": "R25",
+      "t": "R",
+      "a": [
+       1,
+       6
+      ],
+      "b": [
+       4,
+       6
+      ],
+      "nom": "R3",
+      "val": "25 kΩ"
+     },
+     {
+      "id": "A",
+      "t": "A",
+      "a": [
+       4,
+       6
+      ],
+      "b": [
+       8,
+       6
+      ],
+      "nom": "A"
+     },
+     {
+      "id": "R35",
+      "t": "R",
+      "a": [
+       8,
+       6
+      ],
+      "b": [
+       11,
+       6
+      ],
+      "nom": "R4",
+      "val": "35 kΩ"
+     }
+    ]
+   },
+   "solution": {
+    "G": {
+     "I": -5,
+     "U": 0
+    },
+    "R50h": {
+     "I": 0,
+     "U": 0
+    },
+    "R50m": {
+     "I": 0,
+     "U": 0
+    },
+    "R25": {
+     "I": 0,
+     "U": 0
+    },
+    "A": {
+     "I": 5
+    },
+    "R35": {
+     "I": 0,
+     "U": 0
+    }
+   },
+   "items": [
+    {
+     "q": "Où sont branchés les appareils de mesure et qu'est-ce que ça change ?",
+     "r": "L'ampèremètre est **en parallèle** sur tout le montage → court-circuit.",
+     "etapes": [
+      "**A** relie le nœud de gauche (où arrive le fil de gauche de la pile) au nœud de droite : il est **en parallèle** sur les deux 50 kΩ et sur la pile.",
+      "C'est un fil : tout ce qui est entre ces deux nœuds a 0 V à ses bornes. Les 25 kΩ et 35 kΩ sont en plus court-circuités chacun par un fil (leurs deux bornes sont sur le même nœud).",
+      "Les 5 A sont imposés par l'énoncé : le générateur se comporte ici comme une **source de courant** (une source de tension parfaite en court-circuit débiterait un courant infini)."
+     ]
+    },
+    {
+     "q": "Repère les nœuds",
+     "r": "Il n'y a que **2 nœuds** : gauche et droite… et l'ampèremètre les relie !",
+     "etapes": [
+      "Les deux 50 kΩ vont du nœud de gauche au nœud de droite.",
+      "Le 25 kΩ a ses deux bornes sur le nœud de gauche, le 35 kΩ sur celui de droite (court-circuités).",
+      "L'ampèremètre (un fil) relie la gauche à la droite."
+     ]
+    },
+    {
+     "q": "Indication de A",
+     "r": "$5\\ \\text{A}$",
+     "etapes": [
+      "Tout le courant prend le chemin sans résistance : l'ampèremètre."
+     ]
+    },
+    {
+     "q": "Courants et tensions des résistances",
+     "r": "Tous nuls : 0 A et 0 V",
+     "etapes": [
+      "Elles sont toutes court-circuitées par A."
+     ]
+    },
+    {
+     "q": "$U_g$",
+     "r": "$U_g = 0\\ \\text{V}$",
+     "etapes": [
+      "Le générateur débite dans un court-circuit : la tension entre ses bornes est nulle.",
+      "À retenir : **un ampèremètre se branche toujours en série**, jamais en parallèle."
+     ]
+    }
+   ],
+   "cat": "mesure",
+   "origine": {
+    "chap": "ch09-labo",
+    "ex": "ex-04",
+    "labo": true
+   }
+  },
+  {
+   "id": "labo-ex-03",
+   "titre": "Réseau à 5 résistances, V et A3",
+   "niveau": 3,
+   "consigne": "Annote le schéma : pour chaque composant, le **sens du courant** et le **vecteur tension** avec leurs valeurs, puis vérifie. Générateurs et appareils de mesure parfaits (ampèremètre = fil, voltmètre = coupure).",
+   "schema": {
+    "w": 10,
+    "h": 10,
+    "fils": [
+     [
+      1,
+      1,
+      9,
+      1
+     ],
+     [
+      4,
+      9,
+      9,
+      9
+     ]
+    ],
+    "points": [
+     [
+      5,
+      1
+     ],
+     [
+      7,
+      1
+     ],
+     [
+      1,
+      4.5
+     ],
+     [
+      5,
+      4.5
+     ],
+     [
+      5,
+      9
+     ],
+     [
+      7,
+      9
+     ]
+    ],
+    "comps": [
+     {
+      "id": "R1",
+      "t": "R",
+      "a": [
+       1,
+       1
+      ],
+      "b": [
+       1,
+       4.5
+      ],
+      "nom": "R1",
+      "val": "10 Ω"
+     },
+     {
+      "id": "R2",
+      "t": "R",
+      "a": [
+       1,
+       4.5
+      ],
+      "b": [
+       1,
+       9
+      ],
+      "nom": "R2",
+      "val": "3 Ω"
+     },
+     {
+      "id": "R3",
+      "t": "R",
+      "a": [
+       1,
+       4.5
+      ],
+      "b": [
+       5,
+       4.5
+      ],
+      "nom": "R3",
+      "val": "8 Ω"
+     },
+     {
+      "id": "A1",
+      "t": "A",
+      "a": [
+       5,
+       1
+      ],
+      "b": [
+       5,
+       2.6
+      ],
+      "nom": "A1"
+     },
+     {
+      "id": "R4",
+      "t": "R",
+      "a": [
+       5,
+       2.6
+      ],
+      "b": [
+       5,
+       4.5
+      ],
+      "nom": "R4",
+      "val": "3 Ω"
+     },
+     {
+      "id": "A2",
+      "t": "A",
+      "a": [
+       5,
+       4.5
+      ],
+      "b": [
+       5,
+       6.3
+      ],
+      "nom": "A2"
+     },
+     {
+      "id": "R5",
+      "t": "R",
+      "a": [
+       5,
+       6.3
+      ],
+      "b": [
+       5,
+       9
+      ],
+      "nom": "R5",
+      "val": "6 Ω"
+     },
+     {
+      "id": "G",
+      "t": "G",
+      "a": [
+       1,
+       9
+      ],
+      "b": [
+       4,
+       9
+      ],
+      "nom": "G",
+      "val": "18 V",
+      "plus": "a"
+     },
+     {
+      "id": "V",
+      "t": "V",
+      "a": [
+       7,
+       1
+      ],
+      "b": [
+       7,
+       9
+      ],
+      "nom": "V"
+     },
+     {
+      "id": "A3",
+      "t": "A",
+      "a": [
+       9,
+       1
+      ],
+      "b": [
+       9,
+       9
+      ],
+      "nom": "A3"
+     }
+    ]
+   },
+   "solution": {
+    "R1": {
+     "I": -1.125,
+     "U": -11.25
+    },
+    "R2": {
+     "I": -2.25,
+     "U": -6.75
+    },
+    "R3": {
+     "I": 1.125,
+     "U": 9
+    },
+    "A1": {
+     "I": -0.75
+    },
+    "R4": {
+     "I": -0.75,
+     "U": -2.25
+    },
+    "A2": {
+     "I": 0.375
+    },
+    "R5": {
+     "I": 0.375,
+     "U": 2.25
+    },
+    "G": {
+     "I": -2.25,
+     "U": 18
+    },
+    "V": {
+     "U": 0
+    },
+    "A3": {
+     "I": 1.875
+    }
+   },
+   "items": [
+    {
+     "q": "Où sont branchés les appareils de mesure et qu'est-ce que ça change ?",
+     "r": "A3 est branché **en parallèle** : il relie le fil du haut et le fil du bas → V lit 0 V.",
+     "etapes": [
+      "**A1** : en série avec R4 (3 Ω, branche du milieu en haut) → courant de R4.",
+      "**A2** : en série avec R5 (6 Ω) → courant de R5.",
+      "**A3** (entre le fil du haut et le fil du bas) : c'est un **fil** → le haut et le bas deviennent le **même nœud** (relié au − de la pile). Conséquence : R4 et R5 se retrouvent **en parallèle** entre le point du milieu et le − de la pile. (Sans A3, le fil du haut ne relierait que R1 et R4, qui seraient en série.)",
+      "**V** : branché entre les mêmes points que A3 → il mesure la tension d'un fil : **0 V**."
+     ]
+    },
+    {
+     "q": "Que mesure V ?",
+     "r": "$0\\ \\text{V}$",
+     "etapes": [
+      "A3 relie directement le fil du haut et le fil du bas : V est branché entre deux points au même potentiel."
+     ]
+    },
+    {
+     "q": "Résistance totale vue par la pile",
+     "r": "$R_t = 8\\ \\Omega$",
+     "etapes": [
+      "Haut et bas = même nœud (A3). R4 (3 Ω, via A1) et R5 (6 Ω, via A2) vont du point du milieu Y à ce nœud : $3 /\\!/ 6 = 2\\ \\Omega$.",
+      "R3 en série : $8 + 2 = 10\\ \\Omega$ ; en parallèle avec R1 (10 Ω) : $5\\ \\Omega$.",
+      "En série avec R2 : $3 + 5 = 8\\ \\Omega$."
+     ]
+    },
+    {
+     "q": "Courant débité par la pile",
+     "r": "$I = 2{,}25\\ \\text{A}$",
+     "etapes": [
+      "$18 / 8$"
+     ]
+    },
+    {
+     "q": "Tensions",
+     "r": "$U_{R2} = 6{,}75$ V ; $U_{R1} = 11{,}25$ V ; $U_{R3} = 9$ V ; $U_{R4} = U_{R5} = 2{,}25$ V",
+     "etapes": [
+      "$U_{R2} = 3 \\times 2{,}25$ ; le bloc de 5 Ω : $5 \\times 2{,}25 = 11{,}25$ V",
+      "R1 et la branche R3 + 2 Ω ont 11,25 V chacune : 1,125 A dans chaque.",
+      "$U_{R3} = 8 \\times 1{,}125 = 9$ V ; reste $2{,}25$ V pour R4 et R5."
+     ]
+    },
+    {
+     "q": "A1, A2, A3",
+     "r": "A1 = 0,75 A ; A2 = 0,375 A ; A3 = 1,875 A",
+     "etapes": [
+      "A1 : $2{,}25 / 3$ ; A2 : $2{,}25 / 6$",
+      "A3 ramène vers le − de la pile tout ce qui arrive au fil du haut : $1{,}125$ (R1) $+ 0{,}75$ (A1) $= 1{,}875$ A",
+      "Contrôle : $1{,}875 + 0{,}375 = 2{,}25$ A ✓"
+     ]
+    }
+   ],
+   "cat": "mesure",
+   "origine": {
+    "chap": "ch09-labo",
+    "ex": "ex-03",
+    "labo": true
+   }
+  },
+  {
+   "id": "ch06-ex-06",
+   "titre": "Pont équilibré à 12 résistances",
+   "niveau": 3,
+   "cat": "mesure",
+   "origine": {
+    "chap": "ch06-associations",
+    "ex": "ex-06"
+   },
+   "consigne": "12 résistances de 2 kΩ ; $U_g = 30$ V. Touche un composant entouré pour dessiner sur le schéma le **sens du courant** et/ou le **vecteur tension** (pointe = côté +) avec leur valeur, puis vérifie. Les 12 résistances valent 2 kΩ. M1 est utilisé en **voltmètre**, M2 en **ampèremètre**.",
+   "doc": "exo",
+   "page": 5,
+   "schema": {
+    "w": 11.85,
+    "h": 10.78,
+    "fils": [
+     [
+      1.725,
+      4.73,
+      0.23,
+      4.73
+     ],
+     [
+      0.23,
+      4.73,
+      0.23,
+      10.12
+     ],
+     [
+      0.23,
+      10.12,
+      3.91,
+      10.12
+     ],
+     [
+      5.29,
+      10.12,
+      6.785,
+      10.12
+     ],
+     [
+      8.165,
+      10.12,
+      11.27,
+      10.12
+     ],
+     [
+      11.27,
+      10.12,
+      11.27,
+      4.73
+     ],
+     [
+      11.27,
+      4.73,
+      9.775,
+      4.73
+     ]
+    ],
+    "points": [
+     [
+      1.725,
+      4.73
+     ],
+     [
+      5.75,
+      0.88
+     ],
+     [
+      5.75,
+      8.58
+     ],
+     [
+      9.775,
+      4.73
+     ]
+    ],
+    "comps": [
+     {
+      "id": "R1",
+      "t": "R",
+      "a": [
+       1.725,
+       0.88
+      ],
+      "b": [
+       5.75,
+       0.88
+      ]
+     },
+     {
+      "id": "R2",
+      "t": "R",
+      "a": [
+       5.75,
+       0.88
+      ],
+      "b": [
+       9.775,
+       0.88
+      ]
+     },
+     {
+      "id": "R3",
+      "t": "R",
+      "a": [
+       1.725,
+       0.88
+      ],
+      "b": [
+       1.725,
+       4.73
+      ]
+     },
+     {
+      "id": "R4",
+      "t": "R",
+      "a": [
+       1.725,
+       4.73
+      ],
+      "b": [
+       1.725,
+       8.58
+      ]
+     },
+     {
+      "id": "R5",
+      "t": "R",
+      "a": [
+       9.775,
+       0.88
+      ],
+      "b": [
+       9.775,
+       4.73
+      ]
+     },
+     {
+      "id": "R6",
+      "t": "R",
+      "a": [
+       9.775,
+       4.73
+      ],
+      "b": [
+       9.775,
+       8.58
+      ]
+     },
+     {
+      "id": "R7",
+      "t": "R",
+      "a": [
+       1.725,
+       8.58
+      ],
+      "b": [
+       5.75,
+       8.58
+      ]
+     },
+     {
+      "id": "R8",
+      "t": "R",
+      "a": [
+       5.75,
+       8.58
+      ],
+      "b": [
+       9.775,
+       8.58
+      ]
+     },
+     {
+      "id": "R9",
+      "t": "R",
+      "a": [
+       1.725,
+       4.73
+      ],
+      "b": [
+       5.75,
+       0.88
+      ]
+     },
+     {
+      "id": "R10",
+      "t": "R",
+      "a": [
+       5.75,
+       0.88
+      ],
+      "b": [
+       9.775,
+       4.73
+      ]
+     },
+     {
+      "id": "R11",
+      "t": "R",
+      "a": [
+       1.725,
+       4.73
+      ],
+      "b": [
+       5.75,
+       8.58
+      ]
+     },
+     {
+      "id": "R12",
+      "t": "R",
+      "a": [
+       5.75,
+       8.58
+      ],
+      "b": [
+       9.775,
+       4.73
+      ]
+     },
+     {
+      "id": "M1",
+      "t": "V",
+      "a": [
+       5.75,
+       0.88
+      ],
+      "b": [
+       5.75,
+       8.58
+      ],
+      "nom": "M1",
+      "lettre": "M1"
+     },
+     {
+      "id": "Ug",
+      "t": "G",
+      "a": [
+       3.91,
+       10.12
+      ],
+      "b": [
+       5.29,
+       10.12
+      ],
+      "nom": "Ug",
+      "val": "30 V",
+      "plus": "a"
+     },
+     {
+      "id": "M2",
+      "t": "A",
+      "a": [
+       6.785,
+       10.12
+      ],
+      "b": [
+       8.165,
+       10.12
+      ],
+      "nom": "M2",
+      "lettre": "M2"
+     }
+    ]
+   },
+   "items": [
+    {
+     "q": "Indication de M1",
+     "r": "$U_{M1} = 0\\ \\text{V}$",
+     "etapes": [
+      "Le montage est parfaitement symétrique : les deux bornes de M1 sont au même potentiel."
+     ]
+    },
+    {
+     "q": "Indication de M2 (courant débité)",
+     "r": "$R_t ≈ 1\\,333\\ \\Omega$ ; $I_g = 22{,}5\\ \\text{mA}$",
+     "etapes": [
+      "Comme M1 ne voit aucune tension, on peut l'enlever et réduire le réseau.",
+      "$I_g = 30 / 1\\,333$"
+     ]
+    }
+   ],
+   "solution": {
+    "M1": {
+     "U": 0.0
+    },
+    "M2": {
+     "I": -0.0225
+    },
+    "Ug": {
+     "I": -0.0225
+    }
+   }
+  },
+  {
+   "id": "ch06-ex-02",
+   "titre": "Réq avec des fils de court-circuit",
+   "niveau": 2,
+   "cat": "req",
+   "origine": {
+    "chap": "ch06-associations",
+    "ex": "ex-02"
+   },
+   "consigne": "",
+   "doc": "exo",
+   "page": 5,
+   "schema": {
+    "bornes": [
+     [
+      0.5,
+      1.8,
+      ""
+     ],
+     [
+      9.5,
+      1.8,
+      ""
+     ]
+    ],
+    "textes": [
+     [
+      0.05,
+      1.9,
+      "A"
+     ],
+     [
+      3.5,
+      1.4,
+      "B"
+     ],
+     [
+      6.5,
+      2.4,
+      "C"
+     ],
+     [
+      9.95,
+      1.9,
+      "D"
+     ]
+    ],
+    "w": 10,
+    "h": 3.6,
+    "fils": [
+     [
+      0.5,
+      1.8,
+      1.3,
+      1.8
+     ],
+     [
+      2.7,
+      1.8,
+      4.3,
+      1.8
+     ],
+     [
+      5.7,
+      1.8,
+      7.3,
+      1.8
+     ],
+     [
+      8.7,
+      1.8,
+      9.5,
+      1.8
+     ],
+     [
+      0.5,
+      1.8,
+      0.5,
+      0.6
+     ],
+     [
+      0.5,
+      0.6,
+      6.5,
+      0.6
+     ],
+     [
+      6.5,
+      0.6,
+      6.5,
+      1.8
+     ],
+     [
+      3.5,
+      1.8,
+      3.5,
+      3.0
+     ],
+     [
+      3.5,
+      3.0,
+      9.5,
+      3.0
+     ],
+     [
+      9.5,
+      3.0,
+      9.5,
+      1.8
+     ]
+    ],
+    "points": [
+     [
+      3.5,
+      1.8
+     ],
+     [
+      6.5,
+      1.8
+     ]
+    ],
+    "comps": [
+     {
+      "id": "R1",
+      "t": "R",
+      "a": [
+       1.3,
+       1.8
+      ],
+      "b": [
+       2.7,
+       1.8
+      ],
+      "val": "R"
+     },
+     {
+      "id": "R2",
+      "t": "R",
+      "a": [
+       4.3,
+       1.8
+      ],
+      "b": [
+       5.7,
+       1.8
+      ],
+      "val": "R"
+     },
+     {
+      "id": "R3",
+      "t": "R",
+      "a": [
+       7.3,
+       1.8
+      ],
+      "b": [
+       8.7,
+       1.8
+      ],
+      "val": "R"
+     }
+    ]
+   },
+   "items": [
+    {
+     "q": "$R_{eq}$ entre A et B ($R = 100\\ \\Omega$)",
+     "r": "$R_{eq} = 33{,}33\\ \\Omega$",
+     "etapes": [
+      "Les fils relient A à C et B à D : il ne reste que 2 nœuds.",
+      "Les 3 résistances sont toutes entre ces 2 nœuds : $100/3$"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ch06-ex-04",
+   "titre": "Réseau en échelle (R/2, 2R)",
+   "niveau": 3,
+   "cat": "req",
+   "origine": {
+    "chap": "ch06-associations",
+    "ex": "ex-04"
+   },
+   "consigne": "",
+   "doc": "exo",
+   "page": 5,
+   "schema": {
+    "bornes": [
+     [
+      0.5,
+      1,
+      ""
+     ],
+     [
+      0.5,
+      4.5,
+      ""
+     ],
+     [
+      9.5,
+      1,
+      ""
+     ],
+     [
+      9.5,
+      4.5,
+      ""
+     ]
+    ],
+    "textes": [
+     [
+      0.1,
+      0.6,
+      "A1"
+     ],
+     [
+      0.1,
+      5.2,
+      "A2"
+     ],
+     [
+      9.9,
+      0.6,
+      "X1"
+     ],
+     [
+      9.9,
+      5.2,
+      "X2"
+     ]
+    ],
+    "w": 10,
+    "h": 5.5,
+    "fils": [
+     [
+      0.5,
+      1.0,
+      1.3,
+      1.0
+     ],
+     [
+      2.7,
+      1.0,
+      4.9,
+      1.0
+     ],
+     [
+      6.3,
+      1.0,
+      9.5,
+      1.0
+     ],
+     [
+      0.5,
+      4.5,
+      1.3,
+      4.5
+     ],
+     [
+      2.7,
+      4.5,
+      4.9,
+      4.5
+     ],
+     [
+      6.3,
+      4.5,
+      9.5,
+      4.5
+     ],
+     [
+      3.8,
+      1.0,
+      3.8,
+      2.0
+     ],
+     [
+      3.8,
+      3.5,
+      3.8,
+      4.5
+     ],
+     [
+      7.5,
+      1.0,
+      7.5,
+      2.0
+     ],
+     [
+      7.5,
+      3.5,
+      7.5,
+      4.5
+     ],
+     [
+      9.5,
+      1.0,
+      9.5,
+      2.0
+     ],
+     [
+      9.5,
+      3.5,
+      9.5,
+      4.5
+     ]
+    ],
+    "points": [
+     [
+      3.8,
+      1.0
+     ],
+     [
+      3.8,
+      4.5
+     ],
+     [
+      7.5,
+      1.0
+     ],
+     [
+      7.5,
+      4.5
+     ]
+    ],
+    "comps": [
+     {
+      "id": "Ra",
+      "t": "R",
+      "a": [
+       1.3,
+       1
+      ],
+      "b": [
+       2.7,
+       1
+      ],
+      "val": "R/2"
+     },
+     {
+      "id": "Rb",
+      "t": "R",
+      "a": [
+       4.9,
+       1
+      ],
+      "b": [
+       6.3,
+       1
+      ],
+      "val": "R/2"
+     },
+     {
+      "id": "Rc",
+      "t": "R",
+      "a": [
+       1.3,
+       4.5
+      ],
+      "b": [
+       2.7,
+       4.5
+      ],
+      "val": "R/2"
+     },
+     {
+      "id": "Rd",
+      "t": "R",
+      "a": [
+       4.9,
+       4.5
+      ],
+      "b": [
+       6.3,
+       4.5
+      ],
+      "val": "R/2"
+     },
+     {
+      "id": "V1",
+      "t": "R",
+      "a": [
+       3.8,
+       2
+      ],
+      "b": [
+       3.8,
+       3.5
+      ],
+      "val": "2R"
+     },
+     {
+      "id": "V2",
+      "t": "R",
+      "a": [
+       7.5,
+       2
+      ],
+      "b": [
+       7.5,
+       3.5
+      ],
+      "val": "2R"
+     },
+     {
+      "id": "V3",
+      "t": "R",
+      "a": [
+       9.5,
+       2
+      ],
+      "b": [
+       9.5,
+       3.5
+      ],
+      "val": "2R"
+     }
+    ]
+   },
+   "items": [
+    {
+     "q": "$R_{eq}$ entre A1 et A2",
+     "r": "$R_{eq} = 2R$",
+     "etapes": [
+      "En partant de la droite : 2R // 2R = R",
+      "+ R/2 + R/2 = 2R ; // 2R = R",
+      "+ R/2 + R/2 = 2R"
+     ]
+    }
+   ],
+   "indice": "Pour une échelle, on réduit toujours depuis le bout opposé aux bornes."
+  },
+  {
+   "id": "ch06-ex-05",
+   "titre": "Grande échelle",
+   "niveau": 3,
+   "cat": "req",
+   "origine": {
+    "chap": "ch06-associations",
+    "ex": "ex-05"
+   },
+   "consigne": "",
+   "doc": "exo",
+   "page": 5,
+   "schema": {
+    "bornes": [
+     [
+      0.3,
+      1,
+      ""
+     ],
+     [
+      0.3,
+      4.5,
+      ""
+     ]
+    ],
+    "textes": [
+     [
+      -0.15,
+      1.1,
+      "A"
+     ],
+     [
+      -0.15,
+      4.6,
+      "B"
+     ],
+     [
+      2.4,
+      0.55,
+      "C"
+     ],
+     [
+      2.4,
+      5.25,
+      "D"
+     ],
+     [
+      4.8,
+      0.55,
+      "E"
+     ],
+     [
+      4.8,
+      5.25,
+      "F"
+     ]
+    ],
+    "w": 12.4,
+    "h": 5.6,
+    "fils": [
+     [
+      0.3,
+      1.0,
+      0.65,
+      1.0
+     ],
+     [
+      2.05,
+      1.0,
+      2.9,
+      1.0
+     ],
+     [
+      4.3,
+      1.0,
+      5.3,
+      1.0
+     ],
+     [
+      6.7,
+      1.0,
+      7.7,
+      1.0
+     ],
+     [
+      9.1,
+      1.0,
+      10.1,
+      1.0
+     ],
+     [
+      11.5,
+      1.0,
+      12.0,
+      1.0
+     ],
+     [
+      0.3,
+      4.5,
+      0.65,
+      4.5
+     ],
+     [
+      2.05,
+      4.5,
+      2.9,
+      4.5
+     ],
+     [
+      4.3,
+      4.5,
+      5.3,
+      4.5
+     ],
+     [
+      6.7,
+      4.5,
+      7.7,
+      4.5
+     ],
+     [
+      9.1,
+      4.5,
+      10.1,
+      4.5
+     ],
+     [
+      11.5,
+      4.5,
+      12.0,
+      4.5
+     ],
+     [
+      2.4,
+      1.0,
+      2.4,
+      2.0
+     ],
+     [
+      2.4,
+      3.5,
+      2.4,
+      4.5
+     ],
+     [
+      4.8,
+      1.0,
+      4.8,
+      2.0
+     ],
+     [
+      4.8,
+      3.5,
+      4.8,
+      4.5
+     ],
+     [
+      7.2,
+      1.0,
+      7.2,
+      2.0
+     ],
+     [
+      7.2,
+      3.5,
+      7.2,
+      4.5
+     ],
+     [
+      9.6,
+      1.0,
+      9.6,
+      2.0
+     ],
+     [
+      9.6,
+      3.5,
+      9.6,
+      4.5
+     ]
+    ],
+    "points": [
+     [
+      0.6499999999999999,
+      1
+     ],
+     [
+      0.6499999999999999,
+      4.5
+     ],
+     [
+      0.65,
+      1.0
+     ],
+     [
+      0.65,
+      4.5
+     ],
+     [
+      2.4,
+      1.0
+     ],
+     [
+      2.4,
+      4.5
+     ],
+     [
+      2.8999999999999995,
+      1
+     ],
+     [
+      2.8999999999999995,
+      4.5
+     ],
+     [
+      2.9,
+      1.0
+     ],
+     [
+      2.9,
+      4.5
+     ],
+     [
+      4.8,
+      1.0
+     ],
+     [
+      4.8,
+      4.5
+     ],
+     [
+      7.2,
+      1.0
+     ],
+     [
+      7.2,
+      4.5
+     ],
+     [
+      9.6,
+      1.0
+     ],
+     [
+      9.6,
+      4.5
+     ],
+     [
+      10.1,
+      1.0
+     ],
+     [
+      10.1,
+      4.5
+     ],
+     [
+      10.100000000000001,
+      1
+     ],
+     [
+      10.100000000000001,
+      4.5
+     ]
+    ],
+    "comps": [
+     {
+      "id": "H0",
+      "t": "R",
+      "a": [
+       0.6499999999999999,
+       1
+      ],
+      "b": [
+       2.05,
+       1
+      ],
+      "val": "R"
+     },
+     {
+      "id": "B0",
+      "t": "R",
+      "a": [
+       0.6499999999999999,
+       4.5
+      ],
+      "b": [
+       2.05,
+       4.5
+      ],
+      "val": "R"
+     },
+     {
+      "id": "H1",
+      "t": "R",
+      "a": [
+       2.8999999999999995,
+       1
+      ],
+      "b": [
+       4.3,
+       1
+      ],
+      "val": "1,5R"
+     },
+     {
+      "id": "B1",
+      "t": "R",
+      "a": [
+       2.8999999999999995,
+       4.5
+      ],
+      "b": [
+       4.3,
+       4.5
+      ],
+      "val": "3R"
+     },
+     {
+      "id": "H2",
+      "t": "R",
+      "a": [
+       5.3,
+       1
+      ],
+      "b": [
+       6.7,
+       1
+      ],
+      "val": "2R"
+     },
+     {
+      "id": "B2",
+      "t": "R",
+      "a": [
+       5.3,
+       4.5
+      ],
+      "b": [
+       6.7,
+       4.5
+      ],
+      "val": "2R"
+     },
+     {
+      "id": "H3",
+      "t": "R",
+      "a": [
+       7.7,
+       1
+      ],
+      "b": [
+       9.1,
+       1
+      ],
+      "val": "2R"
+     },
+     {
+      "id": "B3",
+      "t": "R",
+      "a": [
+       7.7,
+       4.5
+      ],
+      "b": [
+       9.1,
+       4.5
+      ],
+      "val": "2R"
+     },
+     {
+      "id": "H4",
+      "t": "R",
+      "a": [
+       10.100000000000001,
+       1
+      ],
+      "b": [
+       11.5,
+       1
+      ],
+      "val": "R"
+     },
+     {
+      "id": "B4",
+      "t": "R",
+      "a": [
+       10.100000000000001,
+       4.5
+      ],
+      "b": [
+       11.5,
+       4.5
+      ],
+      "val": "R"
+     },
+     {
+      "id": "V0",
+      "t": "R",
+      "a": [
+       2.4,
+       2
+      ],
+      "b": [
+       2.4,
+       3.5
+      ],
+      "val": "4R"
+     },
+     {
+      "id": "V1",
+      "t": "R",
+      "a": [
+       4.8,
+       2
+      ],
+      "b": [
+       4.8,
+       3.5
+      ],
+      "val": "7R"
+     },
+     {
+      "id": "V2",
+      "t": "R",
+      "a": [
+       7.2,
+       2
+      ],
+      "b": [
+       7.2,
+       3.5
+      ],
+      "val": "6R"
+     },
+     {
+      "id": "V3",
+      "t": "R",
+      "a": [
+       9.6,
+       2
+      ],
+      "b": [
+       9.6,
+       3.5
+      ],
+      "val": "2R"
+     }
+    ]
+   },
+   "items": [
+    {
+     "q": "$R_{eq}$ entre A et B",
+     "r": "$R_{eq} ≈ 4{,}67\\,R$",
+     "etapes": [
+      "Les deux R tout à droite ne mènent nulle part (circuit ouvert) : on les ignore.",
+      "2R ; + 2R + 2R = 6R ; // 6R = 3R",
+      "+ 2R + 2R = 7R ; // 7R = 3,5R",
+      "+ 1,5R + 3R = 8R ; // 4R = 2,67R",
+      "+ R + R = 4,67R"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ch05-ex-01",
+   "titre": "Loi d'Ohm avec trois sources",
+   "niveau": 2,
+   "cat": "ohm",
+   "origine": {
+    "chap": "ch05-ohm",
+    "ex": "ex-01"
+   },
+   "consigne": "(dernier schéma de la page : attention, E3 est retournée par rapport à l'exercice 8). Touche un composant entouré pour dessiner sur le schéma le **sens du courant** et/ou le **vecteur tension** (pointe = côté +) avec leur valeur, puis vérifie. Même schéma que l'exercice des vecteurs tensions, mais **E3 est retournée** (son + est en bas).",
+   "doc": "exo",
+   "page": 2,
+   "schema": {
+    "textes": [
+     [
+      0.6,
+      0.6,
+      "A"
+     ],
+     [
+      9.4,
+      0.6,
+      "B"
+     ],
+     [
+      9.4,
+      7.5,
+      "C"
+     ],
+     [
+      0.6,
+      7.5,
+      "D"
+     ]
+    ],
+    "w": 10,
+    "h": 8,
+    "fils": [
+     [
+      1.0,
+      1.0,
+      4.3,
+      1.0
+     ],
+     [
+      5.7,
+      1.0,
+      9.0,
+      1.0
+     ],
+     [
+      9.0,
+      1.0,
+      9.0,
+      3.0
+     ],
+     [
+      9.0,
+      5.0,
+      9.0,
+      7.0
+     ],
+     [
+      9.0,
+      7.0,
+      1.0,
+      7.0
+     ],
+     [
+      1.0,
+      7.0,
+      1.0,
+      5.0
+     ],
+     [
+      1.0,
+      3.0,
+      1.0,
+      1.0
+     ],
+     [
+      3.0,
+      1.0,
+      3.0,
+      2.2
+     ],
+     [
+      3.0,
+      3.2,
+      3.0,
+      4.5
+     ],
+     [
+      3.0,
+      4.5,
+      7.0,
+      4.5
+     ],
+     [
+      7.0,
+      4.5,
+      7.0,
+      3.2
+     ],
+     [
+      7.0,
+      2.2,
+      7.0,
+      1.0
+     ],
+     [
+      5.0,
+      4.5,
+      5.0,
+      5.3
+     ],
+     [
+      5.0,
+      6.2,
+      5.0,
+      7.0
+     ]
+    ],
+    "points": [
+     [
+      3.0,
+      1.0
+     ],
+     [
+      5.0,
+      4.5
+     ],
+     [
+      5.0,
+      7.0
+     ],
+     [
+      7.0,
+      1.0
+     ]
+    ],
+    "comps": [
+     {
+      "id": "R1",
+      "t": "R",
+      "a": [
+       4.3,
+       1
+      ],
+      "b": [
+       5.7,
+       1
+      ],
+      "nom": "R1",
+      "val": "1 kΩ"
+     },
+     {
+      "id": "R2",
+      "t": "R",
+      "a": [
+       1,
+       3
+      ],
+      "b": [
+       1,
+       5
+      ],
+      "nom": "R2",
+      "val": "1 kΩ"
+     },
+     {
+      "id": "R3",
+      "t": "R",
+      "a": [
+       9,
+       3
+      ],
+      "b": [
+       9,
+       5
+      ],
+      "nom": "R3",
+      "val": "1 kΩ"
+     },
+     {
+      "id": "E1",
+      "t": "G",
+      "a": [
+       3,
+       2.2
+      ],
+      "b": [
+       3,
+       3.2
+      ],
+      "nom": "E1",
+      "val": "15 V",
+      "plus": "a"
+     },
+     {
+      "id": "E2",
+      "t": "G",
+      "a": [
+       7,
+       2.2
+      ],
+      "b": [
+       7,
+       3.2
+      ],
+      "nom": "E2",
+      "val": "10 V",
+      "plus": "a"
+     },
+     {
+      "id": "E3",
+      "t": "G",
+      "a": [
+       5,
+       5.3
+      ],
+      "b": [
+       5,
+       6.2
+      ],
+      "nom": "E3",
+      "val": "5 V",
+      "plus": "b"
+     }
+    ]
+   },
+   "items": [
+    {
+     "q": "Tensions aux bornes des 3 résistances",
+     "r": "$U_{AD} = 10$ V ; $U_{BC} = 5$ V ; $U_{AB} = 5$ V",
+     "etapes": [
+      "Ici E3 a son − vers les piles : $V_M - V_D = -5$ V.",
+      "$U_{AD} = 15 - 5$ ; $U_{BC} = 10 - 5$ ; $U_{AB} = 15 - 10$"
+     ]
+    },
+    {
+     "q": "Courants dans les 3 résistances (1 kΩ)",
+     "r": "$I_2 = 10$ mA ; $I_3 = 5$ mA ; $I_1 = 5$ mA",
+     "etapes": [
+      "$I = U/R$ : $10\\ \\text{V}/1\\ \\text{k}\\Omega = 10$ mA, etc."
+     ]
+    }
+   ],
+   "solution": {
+    "R1": {
+     "U": 5.0,
+     "I": 0.005
+    },
+    "R2": {
+     "U": 10.0,
+     "I": 0.01
+    },
+    "R3": {
+     "U": 5.0,
+     "I": 0.005
+    }
+   }
+  },
+  {
+   "id": "ch05-ex-02",
+   "titre": "Circuit série-parallèle complet",
+   "niveau": 2,
+   "cat": "ohm",
+   "origine": {
+    "chap": "ch05-ohm",
+    "ex": "ex-02"
+   },
+   "consigne": "$E = 15$ V ; $R_1 = 1$ k ; $R_2 = R_3 = 2$ k ; $R_4 = 0{,}75$ k ; $R_5 = 0{,}25$ k. Touche un composant entouré pour dessiner sur le schéma le **sens du courant** et/ou le **vecteur tension** (pointe = côté +) avec leur valeur, puis vérifie.",
+   "doc": "exo",
+   "page": 5,
+   "schema": {
+    "w": 15.95,
+    "h": 7.43,
+    "fils": [
+     [
+      1.45,
+      1.35,
+      2.61,
+      1.35
+     ],
+     [
+      4.93,
+      1.35,
+      10.73,
+      1.35
+     ],
+     [
+      13.05,
+      1.35,
+      14.5,
+      1.35
+     ],
+     [
+      14.5,
+      1.35,
+      14.5,
+      2.7
+     ],
+     [
+      14.5,
+      4.725,
+      14.5,
+      6.075
+     ],
+     [
+      14.5,
+      6.075,
+      1.45,
+      6.075
+     ],
+     [
+      1.45,
+      6.075,
+      1.45,
+      4.455
+     ],
+     [
+      1.45,
+      2.97,
+      1.45,
+      1.35
+     ],
+     [
+      5.8,
+      1.35,
+      5.8,
+      2.7
+     ],
+     [
+      5.8,
+      4.725,
+      5.8,
+      6.075
+     ],
+     [
+      9.425,
+      1.35,
+      9.425,
+      2.7
+     ],
+     [
+      9.425,
+      4.725,
+      9.425,
+      6.075
+     ]
+    ],
+    "points": [
+     [
+      5.8,
+      1.35
+     ],
+     [
+      5.8,
+      6.075
+     ],
+     [
+      9.425,
+      1.35
+     ],
+     [
+      9.425,
+      6.075
+     ]
+    ],
+    "comps": [
+     {
+      "id": "G",
+      "t": "G",
+      "a": [
+       1.45,
+       2.97
+      ],
+      "b": [
+       1.45,
+       4.455
+      ],
+      "nom": "E",
+      "val": "15 V",
+      "plus": "a"
+     },
+     {
+      "id": "R1",
+      "t": "R",
+      "a": [
+       2.61,
+       1.35
+      ],
+      "b": [
+       4.93,
+       1.35
+      ],
+      "nom": "R1",
+      "val": "1 kΩ"
+     },
+     {
+      "id": "R2",
+      "t": "R",
+      "a": [
+       5.8,
+       2.7
+      ],
+      "b": [
+       5.8,
+       4.725
+      ],
+      "nom": "R2",
+      "val": "2 kΩ"
+     },
+     {
+      "id": "R3",
+      "t": "R",
+      "a": [
+       9.425,
+       2.7
+      ],
+      "b": [
+       9.425,
+       4.725
+      ],
+      "nom": "R3",
+      "val": "2 kΩ"
+     },
+     {
+      "id": "R5",
+      "t": "R",
+      "a": [
+       10.73,
+       1.35
+      ],
+      "b": [
+       13.05,
+       1.35
+      ],
+      "nom": "R5",
+      "val": "0,25 kΩ"
+     },
+     {
+      "id": "R4",
+      "t": "R",
+      "a": [
+       14.5,
+       2.7
+      ],
+      "b": [
+       14.5,
+       4.725
+      ],
+      "nom": "R4",
+      "val": "0,75 kΩ"
+     }
+    ]
+   },
+   "items": [
+    {
+     "q": "$R_T$ vue par E",
+     "r": "$R_T = 1{,}5\\ \\text{k}\\Omega$",
+     "etapes": [
+      "$R_4 + R_5 = 1$ kΩ",
+      "$R_2 /\\!/ R_3 /\\!/ 1\\ \\text{k}\\Omega$ : 2 k // 2 k = 1 k, puis 1 k // 1 k = 0,5 k",
+      "$R_T = R_1 + 0{,}5 = 1{,}5$ kΩ"
+     ]
+    },
+    {
+     "q": "Courant $I$ fourni par E",
+     "r": "$I = 10\\ \\text{mA}$",
+     "etapes": [
+      "$15\\ \\text{V} / 1{,}5\\ \\text{k}\\Omega$"
+     ]
+    },
+    {
+     "q": "$U_3$, $U_4$, $U_5$",
+     "r": "$U_3 = 5$ V ; $U_4 = 3{,}75$ V ; $U_5 = 1{,}25$ V",
+     "etapes": [
+      "$U_{R1} = 1\\ \\text{k}\\Omega \\times 10\\ \\text{mA} = 10$ V → il reste 5 V sur le bloc parallèle",
+      "Branche R5+R4 : 5 mA → $U_4 = 0{,}75 \\times 5$ ; $U_5 = 0{,}25 \\times 5$"
+     ]
+    },
+    {
+     "q": "Courants dans chaque branche",
+     "r": "$I_{R2} = I_{R3} = 2{,}5$ mA ; $I_{R4} = I_{R5} = 5$ mA",
+     "etapes": [
+      "Le bloc parallèle est sous 5 V (voir b).",
+      "$I_{R2} = \\dfrac{5\\ \\text{V}}{2\\ \\text{k}\\Omega} = 2{,}5$ mA ; idem pour $R_3$.",
+      "Branche $R_5 + R_4$ : $\\dfrac{5\\ \\text{V}}{1\\ \\text{k}\\Omega} = 5$ mA (le même courant traverse les deux).",
+      "Contrôle : $2{,}5 + 2{,}5 + 5 = 10$ mA = courant total."
+     ]
+    },
+    {
+     "q": "Puissance dans chaque résistance",
+     "r": "$P_{R1} = 100$ ; $P_{R2} = P_{R3} = 12{,}5$ ; $P_{R4} = 18{,}75$ ; $P_{R5} = 6{,}25$ (mW) ; total 150 mW",
+     "etapes": [
+      "$P = U \\cdot I$ ou $P = R I^2$",
+      "Contrôle : $P_g = E \\cdot I = 15 \\times 10 = 150$ mW"
+     ]
+    }
+   ],
+   "solution": {
+    "G": {
+     "I": -0.01
+    },
+    "R1": {
+     "U": 10.0,
+     "I": 0.01
+    },
+    "R2": {
+     "U": 5.0,
+     "I": 0.0025
+    },
+    "R3": {
+     "U": 5.0,
+     "I": 0.0025
+    },
+    "R4": {
+     "U": 3.75,
+     "I": 0.005
+    },
+    "R5": {
+     "U": 1.25,
+     "I": 0.005
+    }
+   }
+  },
+  {
+   "id": "ch06-ex-01",
+   "titre": "Trois résistances « cachées » en parallèle",
+   "niveau": 2,
+   "cat": "ohm",
+   "origine": {
+    "chap": "ch06-associations",
+    "ex": "ex-01"
+   },
+   "consigne": "3 résistances de 100 Ω (losange). Touche un composant entouré pour dessiner sur le schéma le **sens du courant** et/ou le **vecteur tension** (pointe = côté +) avec leur valeur, puis vérifie. La source de 30 V (en pointillés) est branchée entre A et B.",
+   "doc": "exo",
+   "page": 5,
+   "schema": {
+    "textes": [
+     [
+      0.24,
+      4.34,
+      "A"
+     ],
+     [
+      9.68,
+      4.34,
+      "B"
+     ]
+    ],
+    "w": 10.24,
+    "h": 10.08,
+    "fils": [
+     [
+      0.96,
+      4.2,
+      4.96,
+      1.12
+     ],
+     [
+      4.96,
+      7.28,
+      8.96,
+      4.2
+     ]
+    ],
+    "pointilles": [
+     [
+      0.96,
+      4.2,
+      0.96,
+      9.24
+     ],
+     [
+      0.96,
+      9.24,
+      3.84,
+      9.24
+     ],
+     [
+      6.08,
+      9.24,
+      8.96,
+      9.24
+     ],
+     [
+      8.96,
+      9.24,
+      8.96,
+      4.2
+     ]
+    ],
+    "points": [
+     [
+      0.96,
+      4.2
+     ],
+     [
+      4.96,
+      1.12
+     ],
+     [
+      4.96,
+      7.28
+     ],
+     [
+      8.96,
+      4.2
+     ]
+    ],
+    "comps": [
+     {
+      "id": "RTB",
+      "t": "R",
+      "a": [
+       4.96,
+       1.12
+      ],
+      "b": [
+       8.96,
+       4.2
+      ],
+      "nom": "R",
+      "val": "100 Ω"
+     },
+     {
+      "id": "RAB",
+      "t": "R",
+      "a": [
+       0.96,
+       4.2
+      ],
+      "b": [
+       4.96,
+       7.28
+      ],
+      "nom": "R",
+      "val": "100 Ω"
+     },
+     {
+      "id": "RV",
+      "t": "R",
+      "a": [
+       4.96,
+       1.12
+      ],
+      "b": [
+       4.96,
+       7.28
+      ],
+      "nom": "R",
+      "val": "100 Ω"
+     },
+     {
+      "id": "U",
+      "t": "E",
+      "a": [
+       3.84,
+       9.24
+      ],
+      "b": [
+       6.08,
+       9.24
+      ],
+      "nom": "U",
+      "val": "30 V",
+      "plus": "a"
+     }
+    ]
+   },
+   "items": [
+    {
+     "q": "Courant débité sous 30 V",
+     "r": "$R_t = 33{,}3\\ \\Omega$ ; $I = 0{,}9\\ \\text{A}$",
+     "etapes": [
+      "Les fils relient A au sommet et B au bas du losange : les 3 résistances vont toutes de A à B → parallèle.",
+      "$R_t = 100/3$ ; $I = 30 / 33{,}3$"
+     ]
+    }
+   ],
+   "solution": {
+    "RTB": {
+     "U": 30.0,
+     "I": 0.3
+    },
+    "RAB": {
+     "U": 30.0,
+     "I": 0.3
+    },
+    "RV": {
+     "U": 30.0,
+     "I": 0.3
+    },
+    "U": {
+     "I": -0.9
+    }
+   },
+   "indice": "Suis les fils : deux points reliés par un fil sont le même nœud."
+  },
+  {
+   "id": "labo-ex-06",
+   "titre": "Deux piles et un voltmètre",
+   "niveau": 3,
+   "consigne": "Annote le schéma : pour chaque composant, le **sens du courant** et le **vecteur tension** avec leurs valeurs, puis vérifie. Générateurs et appareils de mesure parfaits (ampèremètre = fil, voltmètre = coupure). ⚠️ Avec seulement $U_a$ et le voltmètre, **il manque une donnée** pour trouver $U_b$ et $R_3$ (par ex. l'indication de A3). Ici on prend l'hypothèse de **deux piles identiques : $U_b = 24$ V**.",
+   "schema": {
+    "w": 11,
+    "h": 8,
+    "fils": [
+     [
+      1,
+      1,
+      10,
+      1
+     ],
+     [
+      1,
+      7,
+      10,
+      7
+     ]
+    ],
+    "points": [
+     [
+      4,
+      1
+     ],
+     [
+      7,
+      1
+     ],
+     [
+      4,
+      7
+     ],
+     [
+      7,
+      7
+     ]
+    ],
+    "comps": [
+     {
+      "id": "Ga",
+      "t": "G",
+      "a": [
+       1,
+       1
+      ],
+      "b": [
+       1,
+       3
+      ],
+      "nom": "Ua",
+      "val": "24 V",
+      "plus": "a"
+     },
+     {
+      "id": "R2",
+      "t": "R",
+      "a": [
+       1,
+       3
+      ],
+      "b": [
+       1,
+       7
+      ],
+      "nom": "R1",
+      "val": "2 Ω"
+     },
+     {
+      "id": "V",
+      "t": "V",
+      "a": [
+       4,
+       1
+      ],
+      "b": [
+       4,
+       7
+      ],
+      "nom": "V",
+      "val": "20 V"
+     },
+     {
+      "id": "A3",
+      "t": "A",
+      "a": [
+       7,
+       1
+      ],
+      "b": [
+       7,
+       3.2
+      ],
+      "nom": "A3"
+     },
+     {
+      "id": "R3",
+      "t": "R",
+      "a": [
+       7,
+       3.2
+      ],
+      "b": [
+       7,
+       7
+      ],
+      "nom": "R3",
+      "val": "?"
+     },
+     {
+      "id": "Gb",
+      "t": "G",
+      "a": [
+       10,
+       1
+      ],
+      "b": [
+       10,
+       3
+      ],
+      "nom": "Ub",
+      "val": "?",
+      "plus": "a"
+     },
+     {
+      "id": "R5",
+      "t": "R",
+      "a": [
+       10,
+       3
+      ],
+      "b": [
+       10,
+       7
+      ],
+      "nom": "R2",
+      "val": "5 Ω"
+     }
+    ]
+   },
+   "solution": {
+    "Ga": {
+     "I": -2,
+     "U": 24
+    },
+    "R2": {
+     "I": -2,
+     "U": -4
+    },
+    "V": {
+     "U": 20
+    },
+    "A3": {
+     "I": 2.8
+    },
+    "R3": {
+     "I": 2.8,
+     "U": 20
+    },
+    "Gb": {
+     "I": -0.8,
+     "U": 24
+    },
+    "R5": {
+     "I": -0.8,
+     "U": -4
+    }
+   },
+   "items": [
+    {
+     "q": "Où sont branchés les appareils de mesure et qu'est-ce que ça change ?",
+     "r": "V est **en parallèle** sur toutes les branches, A3 **en série** avec R3 : branchements corrects.",
+     "etapes": [
+      "**V (20 V)** : entre le fil du haut et le fil du bas → **en parallèle** sur les 4 branches : toutes ont **20 V** à leurs bornes. Résistance infinie : aucun courant ne passe par lui.",
+      "**A3** : **en série** avec R3 → il mesure le courant de R3.",
+      "Le cercle « 20 V » est lu comme un voltmètre qui affiche 20 V (s'il s'agissait d'une source, elle pourrait débiter du courant et les résultats changeraient)."
+     ]
+    },
+    {
+     "q": "Courant de la pile $U_a$",
+     "r": "$I_a = 2\\ \\text{A}$",
+     "etapes": [
+      "La branche de gauche a 20 V à ses bornes (voltmètre) : la résistance de 2 Ω « mange » $24 - 20 = 4$ V.",
+      "$I_a = 4/2 = 2$ A"
+     ]
+    },
+    {
+     "q": "Courant de la pile $U_b$ (hypothèse $U_b = 24$ V)",
+     "r": "$I_b = 0{,}8\\ \\text{A}$",
+     "etapes": [
+      "$24 - 20 = 4$ V sur 5 Ω",
+      "$4/5 = 0{,}8$ A"
+     ]
+    },
+    {
+     "q": "A3 et $R_3$",
+     "r": "A3 = 2,8 A ; $R_3 ≈ 7{,}14\\ \\Omega$",
+     "etapes": [
+      "Nœud du haut : $I_3 = 2 + 0{,}8$",
+      "$R_3 = 20 / 2{,}8$"
+     ]
+    }
+   ],
+   "cat": "ohm",
+   "origine": {
+    "chap": "ch09-labo",
+    "ex": "ex-06",
+    "labo": true
+   }
+  },
+  {
+   "id": "ch06-ex-03",
+   "titre": "Tension pour 1 kW",
+   "niveau": 2,
+   "cat": "puissance",
+   "origine": {
+    "chap": "ch06-associations",
+    "ex": "ex-03"
+   },
+   "consigne": "4 résistances de 1 kΩ. Touche un composant entouré pour dessiner sur le schéma le **sens du courant** et/ou le **vecteur tension** (pointe = côté +) avec leur valeur, puis vérifie. Sur le schéma, la source (en pointillés) est réglée sur la tension trouvée : $U ≈ 774{,}6$ V.",
+   "doc": "exo",
+   "page": 5,
+   "schema": {
+    "textes": [
+     [
+      -0.15,
+      2.3,
+      "A"
+     ],
+     [
+      9.45,
+      2.3,
+      "B"
+     ]
+    ],
+    "w": 9.5,
+    "h": 5.6,
+    "fils": [
+     [
+      0.3,
+      2.2,
+      2.9,
+      2.2
+     ],
+     [
+      4.3,
+      2.2,
+      5.8,
+      2.2
+     ],
+     [
+      7.2,
+      2.2,
+      9.0,
+      2.2
+     ],
+     [
+      1.5,
+      2.2,
+      1.5,
+      0.8
+     ],
+     [
+      1.5,
+      0.8,
+      2.5,
+      0.8
+     ],
+     [
+      4.0,
+      0.8,
+      5.0,
+      0.8
+     ],
+     [
+      5.0,
+      0.8,
+      5.0,
+      2.2
+     ],
+     [
+      2.0,
+      2.2,
+      2.0,
+      3.6
+     ],
+     [
+      2.0,
+      3.6,
+      4.3,
+      3.6
+     ],
+     [
+      5.7,
+      3.6,
+      8.0,
+      3.6
+     ],
+     [
+      8.0,
+      3.6,
+      8.0,
+      2.2
+     ]
+    ],
+    "pointilles": [
+     [
+      0.3,
+      2.2,
+      0.3,
+      5.0
+     ],
+     [
+      0.3,
+      5.0,
+      3.8,
+      5.0
+     ],
+     [
+      5.2,
+      5.0,
+      9.0,
+      5.0
+     ],
+     [
+      9.0,
+      5.0,
+      9.0,
+      2.2
+     ]
+    ],
+    "points": [
+     [
+      1.5,
+      2.2
+     ],
+     [
+      2.0,
+      2.2
+     ],
+     [
+      5.0,
+      2.2
+     ],
+     [
+      8.0,
+      2.2
+     ]
+    ],
+    "comps": [
+     {
+      "id": "Ra",
+      "t": "R",
+      "a": [
+       2.5,
+       0.8
+      ],
+      "b": [
+       4,
+       0.8
+      ],
+      "val": "1 kΩ"
+     },
+     {
+      "id": "Rb",
+      "t": "R",
+      "a": [
+       2.9,
+       2.2
+      ],
+      "b": [
+       4.3,
+       2.2
+      ],
+      "val": "1 kΩ"
+     },
+     {
+      "id": "Rc",
+      "t": "R",
+      "a": [
+       5.8,
+       2.2
+      ],
+      "b": [
+       7.2,
+       2.2
+      ],
+      "val": "1 kΩ"
+     },
+     {
+      "id": "Rd",
+      "t": "R",
+      "a": [
+       4.3,
+       3.6
+      ],
+      "b": [
+       5.7,
+       3.6
+      ],
+      "val": "1 kΩ"
+     },
+     {
+      "id": "U",
+      "t": "E",
+      "a": [
+       3.8,
+       5
+      ],
+      "b": [
+       5.2,
+       5
+      ],
+      "nom": "U",
+      "val": "774,6 V",
+      "plus": "a"
+     }
+    ]
+   },
+   "items": [
+    {
+     "q": "$R_t$",
+     "r": "$R_t = 600\\ \\Omega$",
+     "etapes": [
+      "2 R en parallèle : 500 Ω ; + 1 R en série : 1 500 Ω ; // la 4e R : $\\dfrac{1\\,500 \\times 1\\,000}{2\\,500}$"
+     ]
+    },
+    {
+     "q": "$I$ et $U$ pour $P = 1$ kW",
+     "r": "$I ≈ 1{,}29$ A ; $U ≈ 774{,}6$ V",
+     "etapes": [
+      "$P = R I^2$ → $I = \\sqrt{1\\,000 / 600}$",
+      "$U = \\sqrt{P \\cdot R} = \\sqrt{600\\,000}$"
+     ]
+    }
+   ],
+   "solution": {
+    "Ra": {
+     "U": 258.19889,
+     "I": 0.25819889
+    },
+    "Rb": {
+     "U": 258.19889,
+     "I": 0.25819889
+    },
+    "Rc": {
+     "U": 516.397779,
+     "I": 0.516397779
+    },
+    "Rd": {
+     "U": 774.596669,
+     "I": 0.774596669
+    },
+    "U": {
+     "I": -1.290994449
+    }
+   }
+  },
+  {
+   "id": "ch07-ex-07",
+   "titre": "Circuit consommant 1,5 kWh",
+   "niveau": 2,
+   "cat": "puissance",
+   "origine": {
+    "chap": "ch07-puissance",
+    "ex": "ex-07"
+   },
+   "consigne": "4 résistances de 1 kΩ ; 1,5 kWh en 600 minutes (W = 5,4 MJ). Touche un composant entouré pour dessiner sur le schéma le **sens du courant** et/ou le **vecteur tension** (pointe = côté +) avec leur valeur, puis vérifie. Sur le schéma, la source (en pointillés) est réglée sur la tension trouvée : $U = 300$ V.",
+   "doc": "exo",
+   "page": 6,
+   "schema": {
+    "textes": [
+     [
+      -0.15,
+      2.3,
+      "A"
+     ],
+     [
+      9.45,
+      2.3,
+      "B"
+     ]
+    ],
+    "w": 9.5,
+    "h": 5.6,
+    "fils": [
+     [
+      0.3,
+      2.2,
+      2.9,
+      2.2
+     ],
+     [
+      4.3,
+      2.2,
+      5.8,
+      2.2
+     ],
+     [
+      7.2,
+      2.2,
+      9.0,
+      2.2
+     ],
+     [
+      1.5,
+      2.2,
+      1.5,
+      0.8
+     ],
+     [
+      1.5,
+      0.8,
+      2.5,
+      0.8
+     ],
+     [
+      4.0,
+      0.8,
+      5.0,
+      0.8
+     ],
+     [
+      5.0,
+      0.8,
+      5.0,
+      2.2
+     ],
+     [
+      2.0,
+      2.2,
+      2.0,
+      3.6
+     ],
+     [
+      2.0,
+      3.6,
+      4.3,
+      3.6
+     ],
+     [
+      5.7,
+      3.6,
+      8.0,
+      3.6
+     ],
+     [
+      8.0,
+      3.6,
+      8.0,
+      2.2
+     ]
+    ],
+    "pointilles": [
+     [
+      0.3,
+      2.2,
+      0.3,
+      5.0
+     ],
+     [
+      0.3,
+      5.0,
+      3.8,
+      5.0
+     ],
+     [
+      5.2,
+      5.0,
+      9.0,
+      5.0
+     ],
+     [
+      9.0,
+      5.0,
+      9.0,
+      2.2
+     ]
+    ],
+    "points": [
+     [
+      1.5,
+      2.2
+     ],
+     [
+      2.0,
+      2.2
+     ],
+     [
+      5.0,
+      2.2
+     ],
+     [
+      8.0,
+      2.2
+     ]
+    ],
+    "comps": [
+     {
+      "id": "Ra",
+      "t": "R",
+      "a": [
+       2.5,
+       0.8
+      ],
+      "b": [
+       4,
+       0.8
+      ],
+      "val": "1 kΩ"
+     },
+     {
+      "id": "Rb",
+      "t": "R",
+      "a": [
+       2.9,
+       2.2
+      ],
+      "b": [
+       4.3,
+       2.2
+      ],
+      "val": "1 kΩ"
+     },
+     {
+      "id": "Rc",
+      "t": "R",
+      "a": [
+       5.8,
+       2.2
+      ],
+      "b": [
+       7.2,
+       2.2
+      ],
+      "val": "1 kΩ"
+     },
+     {
+      "id": "Rd",
+      "t": "R",
+      "a": [
+       4.3,
+       3.6
+      ],
+      "b": [
+       5.7,
+       3.6
+      ],
+      "val": "1 kΩ"
+     },
+     {
+      "id": "U",
+      "t": "E",
+      "a": [
+       3.8,
+       5
+      ],
+      "b": [
+       5.2,
+       5
+      ],
+      "nom": "U",
+      "val": "300 V",
+      "plus": "a"
+     }
+    ]
+   },
+   "items": [
+    {
+     "q": "$U_{AB}$ et courant",
+     "r": "$P = 150$ W ; $I = 0{,}5$ A ; $U = 300$ V",
+     "etapes": [
+      "Même circuit qu'à l'ex. 50 : $R_t = 600\\ \\Omega$",
+      "$P = 1{,}5\\ \\text{kWh} / 10\\ \\text{h} = 150$ W",
+      "$I = \\sqrt{P/R} = \\sqrt{0{,}25}$ ; $U = R I$"
+     ]
+    }
+   ],
+   "solution": {
+    "Ra": {
+     "U": 100.0,
+     "I": 0.1
+    },
+    "Rb": {
+     "U": 100.0,
+     "I": 0.1
+    },
+    "Rc": {
+     "U": 200.0,
+     "I": 0.2
+    },
+    "Rd": {
+     "U": 300.0,
+     "I": 0.3
+    },
+    "U": {
+     "I": -0.5
+    }
+   }
+  },
+  {
+   "id": "ch07-ex-12",
+   "titre": "Circuit à 11 résistances",
+   "niveau": 3,
+   "cat": "puissance",
+   "origine": {
+    "chap": "ch07-puissance",
+    "ex": "ex-12"
+   },
+   "consigne": "Touche un composant entouré pour dessiner sur le schéma le **sens du courant** et/ou le **vecteur tension** (pointe = côté +) avec leur valeur, puis vérifie. ⚠️ Sur la feuille, R7 = 66,7 Ω ne colle pas avec 6 mA (il faudrait 4 V / 6 mA = **666,7 Ω**) et R4 = 1,8 V / 16 mA = 112,5 Ω (≈ 113 Ω). Le schéma utilise ces valeurs cohérentes.",
+   "doc": "exo",
+   "page": 9,
+   "schema": {
+    "w": 13.44,
+    "h": 8.8,
+    "fils": [
+     [
+      0.96,
+      0.88,
+      2.16,
+      0.88
+     ],
+     [
+      3.84,
+      0.88,
+      5.52,
+      0.88
+     ],
+     [
+      7.2,
+      0.88,
+      9.12,
+      0.88
+     ],
+     [
+      10.8,
+      0.88,
+      12.72,
+      0.88
+     ],
+     [
+      12.72,
+      0.88,
+      12.72,
+      4.84
+     ],
+     [
+      12.72,
+      6.6,
+      12.72,
+      8.14
+     ],
+     [
+      12.72,
+      8.14,
+      7.08,
+      8.14
+     ],
+     [
+      5.4,
+      8.14,
+      0.96,
+      8.14
+     ],
+     [
+      0.96,
+      8.14,
+      0.96,
+      7.04
+     ],
+     [
+      0.96,
+      5.72,
+      0.96,
+      3.96
+     ],
+     [
+      0.96,
+      2.2,
+      0.96,
+      0.88
+     ],
+     [
+      4.8,
+      0.88,
+      4.8,
+      2.64
+     ],
+     [
+      4.8,
+      2.64,
+      5.76,
+      2.64
+     ],
+     [
+      5.76,
+      2.64,
+      6.72,
+      2.64
+     ],
+     [
+      8.4,
+      2.64,
+      12.72,
+      2.64
+     ],
+     [
+      5.76,
+      2.64,
+      5.76,
+      4.51
+     ],
+     [
+      5.76,
+      4.51,
+      6.72,
+      4.51
+     ],
+     [
+      8.4,
+      4.51,
+      9.36,
+      4.51
+     ],
+     [
+      9.36,
+      4.51,
+      9.36,
+      2.64
+     ],
+     [
+      11.04,
+      2.64,
+      11.04,
+      3.96
+     ],
+     [
+      11.04,
+      5.72,
+      11.04,
+      8.14
+     ],
+     [
+      3.36,
+      8.14,
+      3.36,
+      6.6
+     ],
+     [
+      3.36,
+      6.6,
+      4.32,
+      6.6
+     ],
+     [
+      6.0,
+      6.6,
+      6.96,
+      6.6
+     ],
+     [
+      8.64,
+      6.6,
+      9.36,
+      6.6
+     ],
+     [
+      9.36,
+      6.6,
+      9.36,
+      8.14
+     ]
+    ],
+    "points": [
+     [
+      3.36,
+      8.14
+     ],
+     [
+      4.8,
+      0.88
+     ],
+     [
+      5.76,
+      2.64
+     ],
+     [
+      9.36,
+      2.64
+     ],
+     [
+      9.36,
+      8.14
+     ],
+     [
+      11.04,
+      2.64
+     ],
+     [
+      11.04,
+      8.14
+     ],
+     [
+      12.72,
+      2.64
+     ]
+    ],
+    "comps": [
+     {
+      "id": "E",
+      "t": "E",
+      "a": [
+       0.96,
+       5.72
+      ],
+      "b": [
+       0.96,
+       7.04
+      ],
+      "nom": "E",
+      "plus": "a"
+     },
+     {
+      "id": "R1",
+      "t": "R",
+      "a": [
+       0.96,
+       2.2
+      ],
+      "b": [
+       0.96,
+       3.96
+      ],
+      "nom": "R1",
+      "val": "220 Ω"
+     },
+     {
+      "id": "R2",
+      "t": "R",
+      "a": [
+       2.16,
+       0.88
+      ],
+      "b": [
+       3.84,
+       0.88
+      ],
+      "nom": "R2",
+      "val": "220 Ω"
+     },
+     {
+      "id": "R3",
+      "t": "R",
+      "a": [
+       5.52,
+       0.88
+      ],
+      "b": [
+       7.2,
+       0.88
+      ],
+      "nom": "R3",
+      "val": "?"
+     },
+     {
+      "id": "R4",
+      "t": "R",
+      "a": [
+       9.12,
+       0.88
+      ],
+      "b": [
+       10.8,
+       0.88
+      ],
+      "nom": "R4",
+      "val": "113 Ω"
+     },
+     {
+      "id": "R5",
+      "t": "R",
+      "a": [
+       6.72,
+       2.64
+      ],
+      "b": [
+       8.4,
+       2.64
+      ],
+      "nom": "R5",
+      "val": "250 Ω"
+     },
+     {
+      "id": "R6",
+      "t": "R",
+      "a": [
+       6.72,
+       4.51
+      ],
+      "b": [
+       8.4,
+       4.51
+      ],
+      "nom": "R6",
+      "val": "500 Ω"
+     },
+     {
+      "id": "R7",
+      "t": "R",
+      "a": [
+       11.04,
+       3.96
+      ],
+      "b": [
+       11.04,
+       5.72
+      ],
+      "nom": "R7",
+      "val": "666,7 Ω"
+     },
+     {
+      "id": "R8",
+      "t": "R",
+      "a": [
+       12.72,
+       4.84
+      ],
+      "b": [
+       12.72,
+       6.6
+      ],
+      "nom": "R8",
+      "val": "100 Ω"
+     },
+     {
+      "id": "R9",
+      "t": "R",
+      "a": [
+       4.32,
+       6.6
+      ],
+      "b": [
+       6.0,
+       6.6
+      ],
+      "nom": "R9",
+      "val": "30 Ω"
+     },
+     {
+      "id": "R10",
+      "t": "R",
+      "a": [
+       6.96,
+       6.6
+      ],
+      "b": [
+       8.64,
+       6.6
+      ],
+      "nom": "R10",
+      "val": "?"
+     },
+     {
+      "id": "R11",
+      "t": "R",
+      "a": [
+       5.4,
+       8.14
+      ],
+      "b": [
+       7.08,
+       8.14
+      ],
+      "nom": "R11",
+      "val": "?"
+     }
+    ]
+   },
+   "items": [
+    {
+     "q": "$R_3$, $R_{11}$, $R_{10}$",
+     "r": "$R_3 = 200\\ \\Omega$ ; $R_{11} ≈ 33{,}3\\ \\Omega$ ; $R_{10} ≈ 6{,}36\\ \\Omega$",
+     "etapes": [
+      "$R_3 = 3{,}2\\ \\text{V} / 16$ mA",
+      "$R_{11} = 0{,}8\\ \\text{V} / 24$ mA",
+      "Branche R9+R10 : 0,8 V et 22 mA → $R_9 + R_{10} = 36{,}36\\ \\Omega$ → $R_{10} = 36{,}36 - 30$"
+     ]
+    },
+    {
+     "q": "Tension E",
+     "r": "$E ≈ 30{,}04\\ \\text{V}$",
+     "etapes": [
+      "Courant total : 22 + 24 = 46 mA",
+      "$E = 0{,}046 \\times (220 + 220) + 5 + 4 + 0{,}8$ (R1, R2, bloc R3-R6, R8, R11)"
+     ]
+    },
+    {
+     "q": "Puissance et énergie sur un an (24/7)",
+     "r": "$P ≈ 1{,}38$ W ; $W ≈ 12{,}1$ kWh ≈ 43,6 MJ",
+     "etapes": [
+      "$P = E \\cdot I = 30{,}04 \\times 0{,}046$",
+      "× 8 760 h"
+     ]
+    },
+    {
+     "q": "Durée pour consommer 1 kWh",
+     "r": "≈ 723,7 h ≈ 30 j 3 h 40 min",
+     "etapes": [
+      "$1\\,000 / 1{,}382$"
+     ]
+    }
+   ],
+   "donnees": {
+    "R3": {
+     "u": {
+      "d": 1,
+      "txt": "3,2 V"
+     },
+     "i": {
+      "d": 1,
+      "txt": "16 mA"
+     }
+    },
+    "R4": {
+     "u": {
+      "d": 1,
+      "txt": "1,8 V"
+     }
+    },
+    "R7": {
+     "i": {
+      "d": 1,
+      "txt": "6 mA"
+     }
+    },
+    "R8": {
+     "u": {
+      "d": 1,
+      "txt": "4 V"
+     }
+    },
+    "R9": {
+     "i": {
+      "d": -1,
+      "txt": "22 mA"
+     }
+    },
+    "R11": {
+     "i": {
+      "d": -1,
+      "txt": "24 mA"
+     },
+     "u": {
+      "d": -1,
+      "txt": "800 mV"
+     }
+    }
+   },
+   "solution": {
+    "E": {
+     "U": 30.04,
+     "I": -0.046
+    },
+    "R1": {
+     "U": -10.12,
+     "I": -0.046
+    },
+    "R2": {
+     "U": 10.12,
+     "I": 0.046
+    },
+    "R5": {
+     "U": 5.0,
+     "I": 0.02
+    },
+    "R6": {
+     "U": 5.0,
+     "I": 0.01
+    },
+    "R10": {
+     "U": -0.14
+    }
+   }
+  },
+  {
+   "id": "ch07-ex-13",
+   "titre": "Réseau à 13 dipôles",
+   "niveau": 3,
+   "cat": "puissance",
+   "origine": {
+    "chap": "ch07-puissance",
+    "ex": "ex-13"
+   },
+   "consigne": "Touche un composant entouré pour dessiner sur le schéma le **sens du courant** et/ou le **vecteur tension** (pointe = côté +) avec leur valeur, puis vérifie. Les flèches orange sont les données de la feuille. À toi de trouver la tension et le courant de la source $U_g$ (branchée en pointillés entre A et B).",
+   "doc": "exo",
+   "page": 10,
+   "schema": {
+    "textes": [
+     [
+      2.817,
+      4.812,
+      "A"
+     ],
+     [
+      12.707,
+      4.812,
+      "B"
+     ]
+    ],
+    "fleches": [
+     [
+      2.53,
+      4.125,
+      1.265,
+      4.125,
+      "500 mA"
+     ]
+    ],
+    "w": 14.37,
+    "h": 6.5,
+    "fils": [
+     [
+      0.46,
+      0.75,
+      1.265,
+      0.75
+     ],
+     [
+      2.415,
+      0.75,
+      8.51,
+      0.75
+     ],
+     [
+      9.89,
+      0.75,
+      13.915,
+      0.75
+     ],
+     [
+      13.915,
+      0.75,
+      13.915,
+      1.75
+     ],
+     [
+      13.915,
+      3.125,
+      13.915,
+      4.125
+     ],
+     [
+      13.915,
+      4.125,
+      11.5,
+      4.125
+     ],
+     [
+      10.235,
+      4.125,
+      8.855,
+      4.125
+     ],
+     [
+      7.59,
+      4.125,
+      5.29,
+      4.125
+     ],
+     [
+      4.025,
+      4.125,
+      0.46,
+      4.125
+     ],
+     [
+      0.46,
+      4.125,
+      0.46,
+      3.125
+     ],
+     [
+      0.46,
+      1.75,
+      0.46,
+      0.75
+     ],
+     [
+      3.105,
+      0.75,
+      3.105,
+      1.75
+     ],
+     [
+      3.105,
+      3.125,
+      3.105,
+      4.125
+     ],
+     [
+      6.21,
+      0.75,
+      6.21,
+      1.75
+     ],
+     [
+      6.21,
+      3.125,
+      6.21,
+      4.125
+     ],
+     [
+      12.305,
+      0.75,
+      12.305,
+      1.75
+     ],
+     [
+      12.305,
+      3.125,
+      12.305,
+      4.125
+     ]
+    ],
+    "pointilles": [
+     [
+      3.105,
+      4.125,
+      3.105,
+      5.75
+     ],
+     [
+      3.105,
+      5.75,
+      7.072,
+      5.75
+     ],
+     [
+      8.452,
+      5.75,
+      12.305,
+      5.75
+     ],
+     [
+      12.305,
+      5.75,
+      12.305,
+      4.125
+     ]
+    ],
+    "points": [
+     [
+      3.105,
+      0.75
+     ],
+     [
+      3.105,
+      4.125
+     ],
+     [
+      6.21,
+      0.75
+     ],
+     [
+      6.21,
+      4.125
+     ],
+     [
+      12.305,
+      0.75
+     ],
+     [
+      12.305,
+      4.125
+     ]
+    ],
+    "comps": [
+     {
+      "id": "D12",
+      "t": "R",
+      "a": [
+       1.265,
+       0.75
+      ],
+      "b": [
+       2.415,
+       0.75
+      ],
+      "nom": "12"
+     },
+     {
+      "id": "D13",
+      "t": "R",
+      "a": [
+       0.46,
+       1.75
+      ],
+      "b": [
+       0.46,
+       3.125
+      ],
+      "nom": "13"
+     },
+     {
+      "id": "D1",
+      "t": "R",
+      "a": [
+       3.105,
+       1.75
+      ],
+      "b": [
+       3.105,
+       3.125
+      ],
+      "nom": "1"
+     },
+     {
+      "id": "D2",
+      "t": "R",
+      "a": [
+       6.21,
+       1.75
+      ],
+      "b": [
+       6.21,
+       3.125
+      ],
+      "nom": "2"
+     },
+     {
+      "id": "D3",
+      "t": "R",
+      "a": [
+       8.51,
+       0.75
+      ],
+      "b": [
+       9.89,
+       0.75
+      ],
+      "nom": "3"
+     },
+     {
+      "id": "D5",
+      "t": "R",
+      "a": [
+       6.21,
+       4.125
+      ],
+      "b": [
+       12.305,
+       0.75
+      ],
+      "nom": "5"
+     },
+     {
+      "id": "D6",
+      "t": "R",
+      "a": [
+       12.305,
+       1.75
+      ],
+      "b": [
+       12.305,
+       3.125
+      ],
+      "nom": "6"
+     },
+     {
+      "id": "D7",
+      "t": "R",
+      "a": [
+       13.915,
+       1.75
+      ],
+      "b": [
+       13.915,
+       3.125
+      ],
+      "nom": "7"
+     },
+     {
+      "id": "D11",
+      "t": "R",
+      "a": [
+       4.025,
+       4.125
+      ],
+      "b": [
+       5.29,
+       4.125
+      ],
+      "nom": "11"
+     },
+     {
+      "id": "D8",
+      "t": "R",
+      "a": [
+       7.59,
+       4.125
+      ],
+      "b": [
+       8.855,
+       4.125
+      ],
+      "nom": "8"
+     },
+     {
+      "id": "D9",
+      "t": "R",
+      "a": [
+       10.235,
+       4.125
+      ],
+      "b": [
+       11.5,
+       4.125
+      ],
+      "nom": "9"
+     },
+     {
+      "id": "Ug",
+      "t": "E",
+      "a": [
+       7.072,
+       5.75
+      ],
+      "b": [
+       8.452,
+       5.75
+      ],
+      "nom": "Ug",
+      "plus": "a"
+     }
+    ]
+   },
+   "items": [
+    {
+     "q": "$U_g$ (entre A et B)",
+     "r": "$U_g = 25\\ \\text{V}$",
+     "etapes": [
+      "Chemin A → 1 → haut → 2 → nœud du bas : $V_N = V_A - 10$ V",
+      "Puis R5 (5 V) et R6 (10 V) jusqu'à B : $V_B = V_A - 25$ V"
+     ]
+    },
+    {
+     "q": "Courant $I_g$",
+     "r": "$I_g = 1{,}1\\ \\text{A}$",
+     "etapes": [
+      "En A sortent : 0,5 A (vers 13) + 0,5 A (vers 11) + 0,1 A (qui remonte dans 1)",
+      "Contrôle en B : 0,75 A (par 6 et 7) + 0,35 A (par 9) = 1,1 A"
+     ]
+    },
+    {
+     "q": "Durée pour consommer 1 kWh",
+     "r": "$P = 27{,}5$ W → ≈ 36,4 h ≈ 1 j 12 h 22 min",
+     "etapes": [
+      "$1\\,000 / 27{,}5$",
+      "Le corrigé du PDF note « Ig = 100 mA » : avec les valeurs du schéma, la loi des nœuds donne 1,1 A."
+     ]
+    }
+   ],
+   "donnees": {
+    "D12": {
+     "u": {
+      "d": 1,
+      "txt": "5 V"
+     }
+    },
+    "D1": {
+     "u": {
+      "d": 1,
+      "txt": "−9 V"
+     }
+    },
+    "D2": {
+     "u": {
+      "d": 1,
+      "txt": "1 V"
+     },
+     "i": {
+      "d": -1,
+      "txt": "−100 mA"
+     }
+    },
+    "D3": {
+     "i": {
+      "d": 1,
+      "txt": "500 mA"
+     }
+    },
+    "D5": {
+     "u": {
+      "d": -1,
+      "txt": "−5 V"
+     }
+    },
+    "D6": {
+     "u": {
+      "d": 1,
+      "txt": "10 V"
+     }
+    },
+    "D8": {
+     "i": {
+      "d": -1,
+      "txt": "−350 mA"
+     }
+    },
+    "D9": {
+     "u": {
+      "d": -1,
+      "txt": "−8 V"
+     }
+    },
+    "D11": {
+     "i": {
+      "d": 1,
+      "txt": "500 mA"
+     }
+    }
+   },
+   "solution": {
+    "Ug": {
+     "U": 25,
+     "I": -1.1
+    }
+   },
+   "indice": "Fais d'abord le bilan des courants à chaque nœud du haut (le fil entre les nœuds porte aussi un courant)."
+  }
+ ]
+}
