@@ -297,6 +297,18 @@
       "flashcards": 14,
       "exercices": 7
      }
+    },
+    {
+     "id": "ch09-labo",
+     "titre": "Labo : circuits à annoter",
+     "ordre": 9,
+     "fichier": "elec/ch09-labo.json",
+     "maj": "2026-11-03",
+     "nb": {
+      "sections": 3,
+      "flashcards": 4,
+      "exercices": 6
+     }
     }
    ]
   }
