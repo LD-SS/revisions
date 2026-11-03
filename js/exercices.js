@@ -19,6 +19,7 @@ import { monterPiece3D } from './piece3d.js';
 import { definirExerciceCourant, ouvrirProposition, estAuteur, boiteActive } from './proposer.js';
 import { svgSur } from './rendu.js';
 import { construire, CONSIGNES } from './geometrie.js';
+import { monterCircuit } from './circuit.js';
 
 const NOTES = { ok: { lib: 'Juste', val: 1 }, mid: { lib: 'Presque', val: 0.5 }, ko: { lib: 'Faux', val: 0 } };
 const LETTRES = 'abcdefghijklmnopqrstuvwxyz';
@@ -145,6 +146,7 @@ export function lecteurExercices(conteneur, tous, options = {}) {
           ${badgeSource(e, e._docs || options.docs)}
         </div>
         ${e.consigne ? `<div class="ex-consigne">${texte(e.consigne)}</div>` : ''}
+        ${e.schema ? '<div class="ex-circuit" data-circuit></div>' : ''}
         <ol class="ex-items ${e.items.length > 1 ? '' : 'seul'}">${items}</ol>
         ${!etat.rep ? `<p class="ex-papier">${icone('crayon')} Résous sur ta feuille, puis vérifie avec la correction.</p>` : ''}
         ${e.indice ? (etat.indice ? `<div class="ex-indice">${icone('ampoule')}<div>${texte(e.indice)}</div></div>`
@@ -231,6 +233,8 @@ export function lecteurExercices(conteneur, tous, options = {}) {
     return etat.dessin;
   }
   function monter() {
+    const zc = conteneur.querySelector('[data-circuit]');
+    if (zc) { const ec = etat.liste[etat.pos]; monterCircuit(zc, ec, { cle: cle(ec), solutionVisible: etat.rep }); }
     const zone = conteneur.querySelector('[data-planche]');
     if (!zone) return;
     const e = etat.liste[etat.pos];

@@ -21,7 +21,7 @@ import { vueParametres } from './vues/parametres.js';
 import { vueAtelier } from './vues/atelier.js';
 import { majBoutonProposer, viderAttente } from './proposer.js';
 
-const VERSION = '0.8.2 (trous en 3D corrigés)';
+const VERSION = '0.9.0 (circuits à annoter)';
 const vue = document.getElementById('vue');
 let nettoyer = null; // fonction fournie par la page affichée, appelée avant d'en changer
 
