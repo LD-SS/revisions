@@ -137,10 +137,8 @@
     "h": 8,
     "fils": [
      [
-      7.5,
-      1,
       10,
-      1,
+      2.5,
       10,
       7,
       8,
@@ -158,6 +156,20 @@
       4,
       2.5
      ]
+    ],
+    "fils_barres": [
+     [
+      7.5,
+      1,
+      10,
+      1,
+      10,
+      2.5
+     ]
+    ],
+    "barres": [
+     "R1",
+     "V1"
     ],
     "points": [
      [
@@ -324,13 +336,6 @@
     "A3": {
      "I": -1
     },
-    "R1": {
-     "I": 0,
-     "U": 0
-    },
-    "V1": {
-     "U": -12
-    },
     "R2": {
      "I": 1,
      "U": 6
@@ -360,9 +365,9 @@
    "items": [
     {
      "q": "Où sont branchés les appareils de mesure et qu'est-ce que ça change ?",
-     "r": "V1 est **en série** dans la branche du haut → cette branche est **coupée** (0 A dans R1).",
+     "r": "V1 est **en série** dans la branche du haut → cette branche est **barrée** : on ne la prend pas en compte.",
      "etapes": [
-      "**V1** (en série avec R1, branche du haut) : résistance infinie → **aucun courant** dans R1, donc 0 V sur R1. La branche du haut ne participe pas au circuit ; V1 mesure simplement la tension entre le coin haut‑gauche et la borne + de la pile.",
+      "**V1** (en série avec R1, branche du haut) : un voltmètre a une résistance **infinie** → aucun courant ne peut circuler dans cette branche. Elle **n'existe plus** pour le circuit : on la **barre** (R1 et V1) et on ne la prend pas en compte dans les calculs.",
       "**V2** (entre le centre et la borne +) : **en parallèle** sur l'ensemble A1 + pile → bien branché, il mesure la tension de la pile.",
       "**A1** : **en série** avec la pile → courant total.",
       "**A2** : **en série** avec la résistance du bas (R4) → courant de R4.",
@@ -374,7 +379,7 @@
      "r": "$R_t = 9\\ \\Omega$",
      "etapes": [
       "A3 est un ampèremètre parfait (un fil) : les deux coins de gauche sont le **même nœud** L.",
-      "V1 est un voltmètre (une coupure) : aucun courant dans R1, la branche du haut ne compte pas.",
+      "La branche du haut (R1 + V1) est barrée : V1 en série = résistance infinie, aucun courant.",
       "R2 et R3 vont toutes les deux de L au centre : en parallèle → $6 /\\!/ 6 = 3\\ \\Omega$.",
       "En série avec R4 (bas) : $R_t = 6 + 3 = 9\\ \\Omega$."
      ]
@@ -394,12 +399,11 @@
      ]
     },
     {
-     "q": "V1 et V2",
-     "r": "$V_1 = 12$ V ; $V_2 = 18$ V",
+     "q": "V2",
+     "r": "$V_2 = 18$ V",
      "etapes": [
-      "V2 est branché aux bornes de la pile (A1 ne crée pas de chute) : 18 V.",
-      "V1 voit la tension entre L et la borne + (R1 sans courant → 0 V) : c'est la tension de R4 = $6 \\times 2 = 12$ V.",
-      "Contrôle : R2//R3 ont $6 \\times 1 = 6$ V et $12 + 6 = 18$ V ✓"
+      "V2 est branché aux bornes de l'ensemble A1 + pile (A1 ne crée pas de chute) : il lit la tension de la pile, 18 V.",
+      "Contrôle par la maille pile → R4 → R2//R3 : $6 \\times 2 + 6 \\times 1 = 12 + 6 = 18$ V ✓"
      ]
     }
    ]
@@ -578,6 +582,11 @@
       "val": "36 V",
       "plus": "a"
      }
+    ],
+    "barres": [
+     "A2",
+     "R20",
+     "V1"
     ]
    },
    "solution": {
@@ -588,18 +597,8 @@
      "I": 3.6,
      "U": 36
     },
-    "A2": {
-     "I": 0
-    },
-    "R20": {
-     "I": 0,
-     "U": 0
-    },
     "V2": {
      "U": 36
-    },
-    "V1": {
-     "U": 0
     },
     "R30": {
      "I": 1.2,
@@ -616,9 +615,7 @@
      "r": "A1 mesure le courant total mais **court-circuite** la branche A2 + 20 Ω et V1.",
      "etapes": [
       "**A1** (fil du haut, entre le côté gauche = + de la pile et le fil vertical du milieu) : tout le courant qui va vers 10 Ω et 30 Ω passe par lui → il est **en série avec le groupe 10 Ω // 30 Ω** et mesure le courant total.",
-      "Mais comme c'est un fil, il relie aussi la gauche au milieu : la branche **A2 + 20 Ω** et **V1** sont branchés entre ces deux mêmes points → **court-circuités** (0 V, 0 A).",
-      "**A2** : bien en série avec 20 Ω, mais cette branche ne reçoit rien → 0 A.",
-      "**V1** : entre la gauche et le milieu (même potentiel) → 0 V.",
+      "Mais comme c'est un fil, il **ponte** la branche **A2 + 20 Ω** et **V1** : ils sont branchés entre deux points reliés par A1 → on les **barre** et on ne les prend pas en compte.",
       "**V2** : entre le milieu et la droite → **en parallèle** sur 10 Ω et 30 Ω → tension de la pile."
      ]
     },
@@ -630,10 +627,10 @@
      ]
     },
     {
-     "q": "A2 et V1",
-     "r": "A2 = 0 A ; V1 = 0 V",
+     "q": "A2, R2 (20 Ω) et V1",
+     "r": "Barrés : pontés par A1, on ne les prend pas en compte.",
      "etapes": [
-      "R2 (20 Ω) et V1 sont branchés entre deux points reliés par A1 : aucune tension → aucun courant."
+      "Ils sont entre la gauche et le fil du milieu, que A1 relie directement : ils ne participent plus au circuit."
      ]
     },
     {
@@ -951,18 +948,6 @@
       4
      ],
      [
-      3,
-      4,
-      3,
-      2.5
-     ],
-     [
-      9,
-      2.5,
-      9,
-      4
-     ],
-     [
       4,
       4,
       4,
@@ -974,6 +959,24 @@
       8,
       6
      ]
+    ],
+    "fils_barres": [
+     [
+      3,
+      4,
+      3,
+      2.5
+     ],
+     [
+      9,
+      2.5,
+      9,
+      4
+     ]
+    ],
+    "barres": [
+     "R50h",
+     "R50m"
     ],
     "points": [
      [
@@ -1107,14 +1110,6 @@
      "I": -5,
      "U": 0
     },
-    "R50h": {
-     "I": 0,
-     "U": 0
-    },
-    "R50m": {
-     "I": 0,
-     "U": 0
-    },
     "R25": {
      "I": 0,
      "U": 0
@@ -1133,7 +1128,7 @@
      "r": "L'ampèremètre est **en parallèle** sur tout le montage → court-circuit.",
      "etapes": [
       "**A** relie le nœud de gauche (où arrive le fil de gauche de la pile) au nœud de droite : il est **en parallèle** sur les deux 50 kΩ et sur la pile.",
-      "C'est un fil : tout ce qui est entre ces deux nœuds a 0 V à ses bornes. Les 25 kΩ et 35 kΩ sont en plus court-circuités chacun par un fil (leurs deux bornes sont sur le même nœud).",
+      "C'est un fil : les deux 50 kΩ, **en parallèle sur l'ampèremètre**, disparaissent → on les **barre** et on ne les prend pas en compte. Les 25 kΩ et 35 kΩ sont en plus court-circuités chacun par un fil (leurs deux bornes sont sur le même nœud).",
       "Les 5 A sont imposés par l'énoncé : le générateur se comporte ici comme une **source de courant** (une source de tension parfaite en court-circuit débiterait un courant infini)."
      ]
     },
@@ -1141,7 +1136,7 @@
      "q": "Repère les nœuds",
      "r": "Il n'y a que **2 nœuds** : gauche et droite… et l'ampèremètre les relie !",
      "etapes": [
-      "Les deux 50 kΩ vont du nœud de gauche au nœud de droite.",
+      "Les deux 50 kΩ vont du nœud de gauche au nœud de droite : en parallèle sur l'ampèremètre → barrés.",
       "Le 25 kΩ a ses deux bornes sur le nœud de gauche, le 35 kΩ sur celui de droite (court-circuités).",
       "L'ampèremètre (un fil) relie la gauche à la droite."
      ]
