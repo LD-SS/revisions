@@ -1936,34 +1936,34 @@
      "r": "$I_w = -2\\ \\text{A}$",
      "etapes": [
       "Prends tout le montage comme une seule « boîte » : ce qui entre = ce qui sort.",
-      "Il entre 2 A en haut à gauche ; le seul autre fil extérieur est celui de $I_w$.",
-      "Donc 2 A ressortent par ce fil. Comme la flèche $I_w$ est dessinée dans l'autre sens, $I_w = -2$ A."
+      "En haut à gauche, la flèche de 2 A **sort** de la boîte. Le seul autre fil extérieur est celui de $I_w$ : par lui, 2 A doivent donc **entrer**.",
+      "La flèche $I_w$ est dessinée vers l'extérieur (sortante) : $I_w = -2$ A (le vrai courant entre)."
      ]
     },
     {
      "q": "$I_x$",
      "r": "$I_x = -5\\ \\text{A}$",
      "etapes": [
-      "Écris la loi des nœuds au nœud où arrive $I_x$, avec les flèches telles qu'elles sont dessinées (12 A, 9 A, 6 A…).",
-      "Somme des courants qui entrent = somme des courants qui sortent.",
-      "Le résultat est négatif : le courant réel circule dans le sens contraire de la flèche $I_x$."
+      "Coin en haut à gauche : il en sort 12 A (vers le bas) et 2 A (vers l'extérieur) → il doit y arriver $12 + 2 = 14$ A par le fil du haut, venant du nœud de $I_x$.",
+      "Nœud de $I_x$ : il y entre 9 A (flèche du haut) ; il en sort 14 A (vers le coin) et $I_x$ (vers le bas) : $9 = 14 + I_x$",
+      "$I_x = 9 - 14 = -5$ A : le vrai courant **monte** (5 A)."
      ]
     },
     {
      "q": "$I_y$",
      "r": "$I_y = -3\\ \\text{A}$",
      "etapes": [
-      "Même méthode au nœud de $I_y$ : l'équation du nœud du haut relie $I_x$, $I_y$ et le 9 A.",
-      "Avec $I_x = -5$ A, on obtient $I_y = -3$ A.",
-      "Contrôle : au nœud du bas, $I_z = I_x + I_y = -5 + (-3) = -8$ A."
+      "Nœud de $I_y$ : il y arrive 6 A (montés par la droite) ; il en sort 9 A (vers la gauche) et $I_y$ (vers le bas) : $6 = 9 + I_y$",
+      "$I_y = 6 - 9 = -3$ A : le vrai courant **monte** (3 A)."
      ]
     },
     {
      "q": "$I_z$",
      "r": "$I_z = -8\\ \\text{A}$",
      "etapes": [
-      "À chaque nœud : somme des courants qui entrent = somme des courants qui sortent, **en respectant le sens des flèches**.",
-      "Un résultat négatif veut dire que le courant réel circule dans le sens contraire de la flèche dessinée."
+      "Nœud du milieu : $I_x$ et $I_y$ y arrivent, $I_z$ en repart : $I_z = I_x + I_y = -5 + (-3)$",
+      "$I_z = -8$ A : le vrai courant **monte** (8 A).",
+      "Contrôle au fil du bas : il y arrive 12 A (gauche) + $I_z$ = $12 - 8 = 4$ A ; il en part 6 A (vers le haut, à droite) + $I_w$ = $6 - 2 = 4$ A ✓"
      ]
     }
    ],
@@ -8518,9 +8518,11 @@
     },
     {
      "q": "Durée pour consommer 1 kWh",
-     "r": "≈ 723,7 h ≈ 30 j 3 h 40 min",
+     "r": "≈ 723,7 h ≈ 30 j 3 h 41 min",
      "etapes": [
-      "$1\\,000 / 1{,}382$"
+      "$t = \\dfrac{W}{P} = \\dfrac{1\\,000\\ \\text{Wh}}{1{,}382\\ \\text{W}} ≈ 723{,}7$ h",
+      "$723{,}7 = 30 \\times 24 + 3{,}7$ → 30 jours et 3,7 h ; $0{,}7 \\times 60 ≈ 41$ min",
+      "Le corrigé de la feuille note 30 j 3 h 49 min (petite différence d'arrondi sur P)."
      ]
     }
    ],
