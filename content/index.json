@@ -223,7 +223,8 @@
      "nb": {
       "sections": 5,
       "flashcards": 14,
-      "exercices": 6
+      "exercices": 0,
+      "schemas": 6
      }
     },
     {
@@ -235,7 +236,8 @@
      "nb": {
       "sections": 7,
       "flashcards": 15,
-      "exercices": 9
+      "exercices": 0,
+      "schemas": 9
      }
     },
     {
@@ -259,7 +261,8 @@
      "nb": {
       "sections": 6,
       "flashcards": 13,
-      "exercices": 2
+      "exercices": 0,
+      "schemas": 2
      }
     },
     {
@@ -271,7 +274,8 @@
      "nb": {
       "sections": 7,
       "flashcards": 16,
-      "exercices": 6
+      "exercices": 0,
+      "schemas": 6
      }
     },
     {
@@ -283,7 +287,8 @@
      "nb": {
       "sections": 6,
       "flashcards": 17,
-      "exercices": 13
+      "exercices": 10,
+      "schemas": 3
      }
     },
     {
@@ -297,20 +302,12 @@
       "flashcards": 14,
       "exercices": 7
      }
-    },
-    {
-     "id": "ch09-labo",
-     "titre": "Labo : circuits à annoter",
-     "ordre": 9,
-     "fichier": "elec/ch09-labo.json",
-     "maj": "2026-11-03",
-     "nb": {
-      "sections": 3,
-      "flashcards": 4,
-      "exercices": 6
-     }
     }
-   ]
+   ],
+   "schemas": {
+    "fichier": "elec/schemas.json",
+    "nb": 32
+   }
   }
  ]
 }
