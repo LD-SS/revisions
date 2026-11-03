@@ -5264,23 +5264,23 @@
   },
   {
    "id": "labo-ex-03",
-   "titre": "Réseau à 5 résistances, V et A3",
+   "titre": "Réseau à 5 résistances, V, A1 et A2",
    "niveau": 3,
    "consigne": "Annote le schéma : pour chaque composant, le **sens du courant** et le **vecteur tension** avec leurs valeurs, puis vérifie. Générateurs et appareils de mesure parfaits (ampèremètre = fil, voltmètre = coupure).",
    "schema": {
-    "w": 10,
+    "w": 8,
     "h": 10,
     "fils": [
      [
       1,
       1,
-      9,
+      7,
       1
      ],
      [
       4,
       9,
-      9,
+      7,
       9
      ]
     ],
@@ -5290,24 +5290,12 @@
       1
      ],
      [
-      7,
-      1
-     ],
-     [
       1,
       4.5
      ],
      [
       5,
       4.5
-     ],
-     [
-      5,
-      9
-     ],
-     [
-      7,
-      9
      ]
     ],
     "comps": [
@@ -5434,110 +5422,97 @@
        9
       ],
       "nom": "V"
-     },
-     {
-      "id": "A3",
-      "t": "A",
-      "a": [
-       9,
-       1
-      ],
-      "b": [
-       9,
-       9
-      ],
-      "nom": "A3"
      }
     ]
    },
    "solution": {
     "R1": {
-     "I": -1.125,
-     "U": -11.25
+     "I": -0.49146757679180886,
+     "U": -4.914675767918089
     },
     "R2": {
-     "I": -2.25,
-     "U": -6.75
+     "I": -1.2901023890784984,
+     "U": -3.8703071672354947
     },
     "R3": {
-     "I": 1.125,
-     "U": 9
+     "I": 0.7986348122866894,
+     "U": 6.389078498293515
     },
     "A1": {
-     "I": -0.75
+     "I": 0.49146757679180886
     },
     "R4": {
-     "I": -0.75,
-     "U": -2.25
+     "I": 0.49146757679180886,
+     "U": 1.4744027303754266
     },
     "A2": {
-     "I": 0.375
+     "I": 1.2901023890784984
     },
     "R5": {
-     "I": 0.375,
-     "U": 2.25
+     "I": 1.2901023890784984,
+     "U": 7.7406143344709895
     },
     "G": {
-     "I": -2.25,
+     "I": -1.2901023890784984,
      "U": 18
     },
     "V": {
-     "U": 0
-    },
-    "A3": {
-     "I": 1.875
+     "U": 9.215017064846416
     }
    },
    "items": [
     {
-     "q": "Où sont branchés les appareils de mesure et qu'est-ce que ça change ?",
-     "r": "A3 est branché **en parallèle** : il relie le fil du haut et le fil du bas → V lit 0 V.",
+     "q": "Rôle des appareils de mesure",
+     "r": "A1 et A2 sont **en série** (courants de R4 et de R5) ; V est **en parallèle** entre le fil du haut et le fil du bas.",
      "etapes": [
-      "**A1** : en série avec R4 (3 Ω, branche du milieu en haut) → courant de R4.",
-      "**A2** : en série avec R5 (6 Ω) → courant de R5.",
-      "**A3** (entre le fil du haut et le fil du bas) : c'est un **fil** → le haut et le bas deviennent le **même nœud** (relié au − de la pile). Conséquence : R4 et R5 se retrouvent **en parallèle** entre le point du milieu et le − de la pile. (Sans A3, le fil du haut ne relierait que R1 et R4, qui seraient en série.)",
-      "**V** : branché entre les mêmes points que A3 → il mesure la tension d'un fil : **0 V**."
-     ]
-    },
-    {
-     "q": "Que mesure V ?",
-     "r": "$0\\ \\text{V}$",
-     "etapes": [
-      "A3 relie directement le fil du haut et le fil du bas : V est branché entre deux points au même potentiel."
+      "Dans la bonne version du schéma, **il n'y a pas de A3** : rien ne relie le fil du haut au fil du bas, à part le voltmètre (une coupure).",
+      "**A1** : en série avec R4 → courant de R4 (c'est aussi celui de R1, car le fil du haut ne relie que R1, A1 et V).",
+      "**A2** : en série avec R5 → courant total qui revient vers la pile.",
+      "**V** : entre le fil du haut et le fil du bas (le − de la pile) → il mesure la tension du fil du haut par rapport au − de la pile."
      ]
     },
     {
      "q": "Résistance totale vue par la pile",
-     "r": "$R_t = 8\\ \\Omega$",
+     "r": "$R_t ≈ 13{,}95\\ \\Omega$",
      "etapes": [
-      "Haut et bas = même nœud (A3). R4 (3 Ω, via A1) et R5 (6 Ω, via A2) vont du point du milieu Y à ce nœud : $3 /\\!/ 6 = 2\\ \\Omega$.",
-      "R3 en série : $8 + 2 = 10\\ \\Omega$ ; en parallèle avec R1 (10 Ω) : $5\\ \\Omega$.",
-      "En série avec R2 : $3 + 5 = 8\\ \\Omega$."
+      "Le fil du haut ne relie que R1 et R4 (V est une coupure) : **R1 et R4 sont en série** → $10 + 3 = 13\\ \\Omega$, entre le point X (gauche) et le point Y (milieu).",
+      "R3 (8 Ω) va aussi de X à Y : $13 /\\!/ 8 = \\dfrac{13 \\times 8}{21} ≈ 4{,}95\\ \\Omega$",
+      "En série avec R2 (3 Ω) et R5 (6 Ω) : $R_t = 3 + 4{,}95 + 6 ≈ 13{,}95\\ \\Omega$"
      ]
     },
     {
-     "q": "Courant débité par la pile",
-     "r": "$I = 2{,}25\\ \\text{A}$",
+     "q": "Courant de la pile (= A2)",
+     "r": "$I ≈ 1{,}29\\ \\text{A}$",
      "etapes": [
-      "$18 / 8$"
+      "$I = 18 / 13{,}95 ≈ 1{,}29$ A",
+      "A2 est sur le seul chemin de retour vers la pile : il mesure ce courant."
      ]
     },
     {
      "q": "Tensions",
-     "r": "$U_{R2} = 6{,}75$ V ; $U_{R1} = 11{,}25$ V ; $U_{R3} = 9$ V ; $U_{R4} = U_{R5} = 2{,}25$ V",
+     "r": "$U_{R2} ≈ 3{,}87$ V ; $U_{XY} ≈ 6{,}39$ V ; $U_{R5} ≈ 7{,}74$ V",
      "etapes": [
-      "$U_{R2} = 3 \\times 2{,}25$ ; le bloc de 5 Ω : $5 \\times 2{,}25 = 11{,}25$ V",
-      "R1 et la branche R3 + 2 Ω ont 11,25 V chacune : 1,125 A dans chaque.",
-      "$U_{R3} = 8 \\times 1{,}125 = 9$ V ; reste $2{,}25$ V pour R4 et R5."
+      "$U_{R2} = 3 \\times 1{,}29 ≈ 3{,}87$ V ; $U_{R5} = 6 \\times 1{,}29 ≈ 7{,}74$ V",
+      "Bloc X‑Y : $4{,}95 \\times 1{,}29 ≈ 6{,}39$ V",
+      "Contrôle : $3{,}87 + 6{,}39 + 7{,}74 = 18$ V ✓"
      ]
     },
     {
-     "q": "A1, A2, A3",
-     "r": "A1 = 0,75 A ; A2 = 0,375 A ; A3 = 1,875 A",
+     "q": "A1 et courant dans R3",
+     "r": "A1 ≈ 0,49 A ; $I_{R3} ≈ 0{,}80$ A",
      "etapes": [
-      "A1 : $2{,}25 / 3$ ; A2 : $2{,}25 / 6$",
-      "A3 ramène vers le − de la pile tout ce qui arrive au fil du haut : $1{,}125$ (R1) $+ 0{,}75$ (A1) $= 1{,}875$ A",
-      "Contrôle : $1{,}875 + 0{,}375 = 2{,}25$ A ✓"
+      "Branche R1 + R4 : $6{,}39 / 13 ≈ 0{,}49$ A (c'est A1)",
+      "R3 : $6{,}39 / 8 ≈ 0{,}80$ A",
+      "Contrôle : $0{,}49 + 0{,}80 ≈ 1{,}29$ A ✓"
+     ]
+    },
+    {
+     "q": "Indication de V",
+     "r": "$V ≈ 9{,}22\\ \\text{V}$",
+     "etapes": [
+      "$U_{R1} = 10 \\times 0{,}49 ≈ 4{,}91$ V ; $U_{R4} = 3 \\times 0{,}49 ≈ 1{,}47$ V",
+      "Chemin fil du haut → A1 → R4 → A2 → R5 → − de la pile : $V = 1{,}47 + 7{,}74 ≈ 9{,}22$ V",
+      "Contrôle par la gauche : $18 - 3{,}87 - 4{,}91 ≈ 9{,}22$ V ✓"
      ]
     }
    ],
@@ -7444,7 +7419,7 @@
    "id": "labo-ex-06",
    "titre": "Deux piles et un voltmètre",
    "niveau": 3,
-   "consigne": "Annote le schéma : pour chaque composant, le **sens du courant** et le **vecteur tension** avec leurs valeurs, puis vérifie. Générateurs et appareils de mesure parfaits (ampèremètre = fil, voltmètre = coupure). ⚠️ Avec seulement $U_a$ et le voltmètre, **il manque une donnée** pour trouver $U_b$ et $R_3$ (par ex. l'indication de A3). Ici on prend l'hypothèse de **deux piles identiques : $U_b = 24$ V**.",
+   "consigne": "Annote le schéma : pour chaque composant, le **sens du courant** et le **vecteur tension** avec leurs valeurs, puis vérifie. Générateurs et appareils de mesure parfaits (ampèremètre = fil, voltmètre = coupure). D'après le correctif du professeur : **$U_b = 30$ V**.",
    "schema": {
     "w": 11,
     "h": 8,
@@ -7563,7 +7538,7 @@
        3
       ],
       "nom": "Ub",
-      "val": "?",
+      "val": "30 V",
       "plus": "a"
      },
      {
@@ -7595,19 +7570,19 @@
      "U": 20
     },
     "A3": {
-     "I": 2.8
+     "I": 4
     },
     "R3": {
-     "I": 2.8,
+     "I": 4,
      "U": 20
     },
     "Gb": {
-     "I": -0.8,
-     "U": 24
+     "I": -2,
+     "U": 30
     },
     "R5": {
-     "I": -0.8,
-     "U": -4
+     "I": -2,
+     "U": -10
     }
    },
    "items": [
@@ -7629,19 +7604,19 @@
      ]
     },
     {
-     "q": "Courant de la pile $U_b$ (hypothèse $U_b = 24$ V)",
-     "r": "$I_b = 0{,}8\\ \\text{A}$",
+     "q": "Courant de la pile $U_b$ ($U_b = 30$ V)",
+     "r": "$I_b = 2\\ \\text{A}$",
      "etapes": [
-      "$24 - 20 = 4$ V sur 5 Ω",
-      "$4/5 = 0{,}8$ A"
+      "La branche de droite a aussi 20 V à ses bornes : la 5 Ω « mange » $30 - 20 = 10$ V.",
+      "$I_b = 10/5 = 2$ A"
      ]
     },
     {
      "q": "A3 et $R_3$",
-     "r": "A3 = 2,8 A ; $R_3 ≈ 7{,}14\\ \\Omega$",
+     "r": "A3 = 4 A ; $R_3 = 5\\ \\Omega$",
      "etapes": [
-      "Nœud du haut : $I_3 = 2 + 0{,}8$",
-      "$R_3 = 20 / 2{,}8$"
+      "Nœud du haut : ce qui arrive des deux piles part dans R3 : $I_3 = 2 + 2 = 4$ A (le voltmètre ne prend rien).",
+      "$R_3 = 20 / 4 = 5\\ \\Omega$"
      ]
     }
    ],
