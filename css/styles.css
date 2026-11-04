@@ -786,4 +786,4 @@ body.pl-plein-ouvert{overflow:hidden}
 .ci-af-l{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:4px}
 .ci-af-l>span{color:var(--muted);margin-right:2px}
 .ci-af{font:inherit;font-size:13px;padding:2px 10px;border-radius:999px;border:1px dashed var(--accent);background:transparent;color:var(--accent);cursor:pointer}
-.ci-af.fait{border-style:solid;border-color:var(--ok);color:var(--ok);background:color-mix(in srgb,var(--ok) 10%,transparent)}
+.ci-af.fait{border-style:solid;color:inherit;background:color-mix(in srgb,var(--accent) 12%,transparent)}
