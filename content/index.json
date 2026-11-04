@@ -307,7 +307,8 @@
    "schemas": {
     "fichier": "elec/schemas.json",
     "nb": 32
-   }
+   },
+   "mini": "Élec"
   }
  ]
 }
