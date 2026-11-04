@@ -129,7 +129,7 @@
    "id": "ex-01",
    "titre": "Étoile de résistances de 6 Ω",
    "niveau": 2,
-   "consigne": "Annote le schéma : pour chaque composant, le **sens du courant** et le **vecteur tension** avec leurs valeurs, puis vérifie. Générateurs et appareils de mesure parfaits (ampèremètre = fil, voltmètre = coupure).",
+   "consigne": "Générateurs et appareils de mesure parfaits. Trouve le sens et la valeur des courants et des tensions, et barre les portions qui ne comptent pas.",
    "doc": "labo",
    "page": 1,
    "schema": {
@@ -412,7 +412,7 @@
    "id": "ex-02",
    "titre": "Trois résistances et un ampèremètre qui court-circuite",
    "niveau": 2,
-   "consigne": "Annote le schéma : pour chaque composant, le **sens du courant** et le **vecteur tension** avec leurs valeurs, puis vérifie. Générateurs et appareils de mesure parfaits (ampèremètre = fil, voltmètre = coupure).",
+   "consigne": "Générateurs et appareils de mesure parfaits. Trouve le sens et la valeur des courants et des tensions, et barre les portions qui ne comptent pas.",
    "doc": "labo",
    "page": 1,
    "schema": {
@@ -655,7 +655,7 @@
    "id": "ex-03",
    "titre": "Réseau à 5 résistances, V, A1 et A2",
    "niveau": 3,
-   "consigne": "Annote le schéma : pour chaque composant, le **sens du courant** et le **vecteur tension** avec leurs valeurs, puis vérifie. Générateurs et appareils de mesure parfaits (ampèremètre = fil, voltmètre = coupure).",
+   "consigne": "Générateurs et appareils de mesure parfaits. Trouve le sens et la valeur des courants et des tensions, et barre les portions qui ne comptent pas.",
    "doc": "labo",
    "page": 1,
    "schema": {
@@ -912,7 +912,7 @@
    "id": "ex-04",
    "titre": "Contacts NO et ampèremètre",
    "niveau": 2,
-   "consigne": "Annote le schéma : pour chaque composant, le **sens du courant** et le **vecteur tension** avec leurs valeurs, puis vérifie. Générateurs et appareils de mesure parfaits (ampèremètre = fil, voltmètre = coupure).",
+   "consigne": "Générateurs et appareils de mesure parfaits. Trouve le sens et la valeur des courants et des tensions, et barre les portions qui ne comptent pas.",
    "doc": "labo",
    "page": 1,
    "schema": {
@@ -1204,7 +1204,7 @@
    "id": "ex-05",
    "titre": "Potentiels et masse : trouver Ug",
    "niveau": 2,
-   "consigne": "Annote le schéma : pour chaque composant, le **sens du courant** et le **vecteur tension** avec leurs valeurs, puis vérifie. Générateurs et appareils de mesure parfaits (ampèremètre = fil, voltmètre = coupure).",
+   "consigne": "Générateurs et appareils de mesure parfaits. Trouve le sens et la valeur des courants et des tensions, et barre les portions qui ne comptent pas.",
    "doc": "labo",
    "page": 1,
    "schema": {
@@ -1359,7 +1359,7 @@
    "id": "ex-06",
    "titre": "Deux piles et un voltmètre",
    "niveau": 3,
-   "consigne": "Annote le schéma : pour chaque composant, le **sens du courant** et le **vecteur tension** avec leurs valeurs, puis vérifie. Générateurs et appareils de mesure parfaits (ampèremètre = fil, voltmètre = coupure). D'après le correctif du professeur : **$U_b = 30$ V**.",
+   "consigne": "Générateurs et appareils de mesure parfaits. Trouve le sens et la valeur des courants et des tensions, et barre les portions qui ne comptent pas. D'après le correctif du professeur : **$U_b = 30$ V**.",
    "doc": "labo",
    "page": 1,
    "schema": {

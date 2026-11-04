@@ -138,7 +138,7 @@
     "chap": "ch02-courant",
     "ex": "ex-01"
    },
-   "consigne": "Une pile alimente deux lampes en parallèle ; l'ampèremètre indique 8 A et $I_1 = 3\\ \\text{A}$. Touche un composant entouré pour dessiner sur le schéma le **sens du courant** et/ou le **vecteur tension** (pointe = côté +) avec leur valeur, puis vérifie.",
+   "consigne": "Une pile alimente deux lampes en parallèle ; l'ampèremètre indique 8 A et $I_1 = 3\\ \\text{A}$.",
    "doc": "exo",
    "page": 1,
    "schema": {
@@ -306,7 +306,7 @@
     "chap": "ch02-courant",
     "ex": "ex-02"
    },
-   "consigne": "Touche un composant entouré pour dessiner sur le schéma le **sens du courant** et/ou le **vecteur tension** (pointe = côté +) avec leur valeur, puis vérifie. Les ampèremètres sont marqués + / − : un courant qui entre par le + donne une indication positive.",
+   "consigne": "Les ampèremètres sont marqués + / − : un courant qui entre par le + donne une indication positive.",
    "doc": "exo",
    "page": 1,
    "schema": {
@@ -536,7 +536,7 @@
     "chap": "ch02-courant",
     "ex": "ex-03"
    },
-   "consigne": "Touche un composant entouré pour dessiner sur le schéma le **sens du courant** et/ou le **vecteur tension** (pointe = côté +) avec leur valeur, puis vérifie.",
+   "consigne": "",
    "doc": "exo",
    "page": 1,
    "schema": {
@@ -755,7 +755,7 @@
     "chap": "ch02-courant",
     "ex": "ex-04"
    },
-   "consigne": "Touche un composant entouré pour dessiner sur le schéma le **sens du courant** et/ou le **vecteur tension** (pointe = côté +) avec leur valeur, puis vérifie. Le transistor (T) se traite comme un nœud : tout ce qui y entre en ressort.",
+   "consigne": "Le transistor (T) se traite comme un nœud : tout ce qui y entre en ressort.",
    "doc": "exo",
    "page": 1,
    "schema": {
@@ -1104,7 +1104,7 @@
     "chap": "ch02-courant",
     "ex": "ex-05"
    },
-   "consigne": "Calcule $I_1$, $I_4$, $I_5$, $I_8$ et $I_9$ (on donne $I_2 = 7$ A, $I_3 = 3$ A, $I_6 = 4$ A, $I_7 = 5$ A). Touche un composant entouré pour dessiner sur le schéma le **sens du courant** et/ou le **vecteur tension** (pointe = côté +) avec leur valeur, puis vérifie.",
+   "consigne": "Calcule $I_1$, $I_4$, $I_5$, $I_8$ et $I_9$ (on donne $I_2 = 7$ A, $I_3 = 3$ A, $I_6 = 4$ A, $I_7 = 5$ A).",
    "doc": "exo",
    "page": 1,
    "schema": {
@@ -1488,7 +1488,7 @@
     "chap": "ch03-tension",
     "ex": "ex-06"
    },
-   "consigne": "On donne $U_{AC} = 150$ V, $I_1 = 6$ A, $I_2 = 4$ A, $I_5 = 2$ A, $U_{DC} = 30$ V, $U_{BC} = 50$ V. Touche un composant entouré pour dessiner sur le schéma le **sens du courant** et/ou le **vecteur tension** (pointe = côté +) avec leur valeur, puis vérifie.",
+   "consigne": "On donne $U_{AC} = 150$ V, $I_1 = 6$ A, $I_2 = 4$ A, $I_5 = 2$ A, $U_{DC} = 30$ V, $U_{BC} = 50$ V.",
    "doc": "exo",
    "page": 3,
    "schema": {
@@ -1769,7 +1769,7 @@
     "chap": "ch02-courant",
     "ex": "ex-06"
    },
-   "consigne": "Touche un composant entouré pour dessiner sur le schéma le **sens du courant** et/ou le **vecteur tension** (pointe = côté +) avec leur valeur, puis vérifie. Les flèches de $I_x$, $I_y$, $I_z$ (vers le bas) et $I_w$ (vers l'extérieur) fixent le sens de référence : un résultat négatif veut dire que le courant va dans l'autre sens. Sur le schéma, dessine le **vrai** sens.",
+   "consigne": "Les flèches de $I_x$, $I_y$, $I_z$ (vers le bas) et $I_w$ (vers l'extérieur) fixent le sens de référence : un résultat négatif veut dire que le courant va dans l'autre sens. Sur le schéma, dessine le **vrai** sens.",
    "doc": "exo",
    "page": 1,
    "schema": {
@@ -2018,7 +2018,7 @@
     "chap": "ch03-tension",
     "ex": "ex-01"
    },
-   "consigne": "Convention du cours : une flèche de tension dessinée **de B vers A** (pointe sur A) représente $U_{AB} = V_A - V_B$. Touche un composant entouré pour dessiner sur le schéma le **sens du courant** et/ou le **vecteur tension** (pointe = côté +) avec leur valeur, puis vérifie.",
+   "consigne": "Convention du cours : une flèche de tension dessinée **de B vers A** (pointe sur A) représente $U_{AB} = V_A - V_B$.",
    "doc": "exo",
    "page": 2,
    "schema": {
@@ -2269,7 +2269,7 @@
     "chap": "ch03-tension",
     "ex": "ex-02"
    },
-   "consigne": "Dessine d'abord tous les vecteurs tensions sur le schéma (ex. 8), puis calcule leur valeur (ex. 9). Touche un composant entouré pour dessiner sur le schéma le **sens du courant** et/ou le **vecteur tension** (pointe = côté +) avec leur valeur, puis vérifie.",
+   "consigne": "Dessine d'abord tous les vecteurs tensions sur le schéma (ex. 8), puis calcule leur valeur (ex. 9).",
    "doc": "exo",
    "page": 2,
    "schema": {
@@ -2539,7 +2539,7 @@
     "chap": "ch03-tension",
     "ex": "ex-05"
    },
-   "consigne": "On donne $U = 25$ V, $U_3 = 7$ V, $U_4 = 8$ V. Touche un composant entouré pour dessiner sur le schéma le **sens du courant** et/ou le **vecteur tension** (pointe = côté +) avec leur valeur, puis vérifie.",
+   "consigne": "On donne $U = 25$ V, $U_3 = 7$ V, $U_4 = 8$ V.",
    "doc": "exo",
    "page": 3,
    "schema": {
@@ -2796,7 +2796,7 @@
     "chap": "ch03-tension",
     "ex": "ex-09"
    },
-   "consigne": "On donne $U_1 = 120$ V, $U_2 = 100$ V, $U_{BD} = 80$ V, $I_1 = 8$ A, $I_3 = 11$ A. Touche un composant entouré pour dessiner sur le schéma le **sens du courant** et/ou le **vecteur tension** (pointe = côté +) avec leur valeur, puis vérifie.",
+   "consigne": "On donne $U_1 = 120$ V, $U_2 = 100$ V, $U_{BD} = 80$ V, $I_1 = 8$ A, $I_3 = 11$ A.",
    "doc": "exo",
    "page": 3,
    "schema": {
@@ -3063,7 +3063,7 @@
     "chap": "ch03-tension",
     "ex": "ex-07"
    },
-   "consigne": "Calcule la tension aux bornes de chaque dipôle et les courants $i_1$, $i_2$, $i_3$. Touche un composant entouré pour dessiner sur le schéma le **sens du courant** et/ou le **vecteur tension** (pointe = côté +) avec leur valeur, puis vérifie. Sur la feuille : $i_1$ est la flèche vers le haut sur la pile 2, $i_3$ vers le haut sur la pile 3, $i_2$ vers la droite après R2, $u_1$ sur la pile 3, $u_2$ sur R4 et $u_3$ sur R1.",
+   "consigne": "Calcule la tension aux bornes de chaque dipôle et les courants $i_1$, $i_2$, $i_3$. Sur la feuille : $i_1$ est la flèche vers le haut sur la pile 2, $i_3$ vers le haut sur la pile 3, $i_2$ vers la droite après R2, $u_1$ sur la pile 3, $u_2$ sur R4 et $u_3$ sur R1.",
    "doc": "exo",
    "page": 3,
    "schema": {
@@ -3430,7 +3430,7 @@
     "chap": "ch03-tension",
     "ex": "ex-08"
    },
-   "consigne": "$E = 10$ V ; $E_1 = -3$ V ; $E_2 = +5$ V ; $E_3 = +7$ V ; $R_1 = 1{,}3$ kΩ ; $R_2 = 0{,}75$ kΩ ; $R_3 = 1{,}7$ kΩ. Touche un composant entouré pour dessiner sur le schéma le **sens du courant** et/ou le **vecteur tension** (pointe = côté +) avec leur valeur, puis vérifie. Sur la feuille, les flèches des résistances sont dessinées : R1 tension vers le bas et courant vers le bas, R2 tension vers le haut et courant vers le haut, R3 tension vers le bas et courant vers le haut. Ici, dessine le **vrai** sens.",
+   "consigne": "$E = 10$ V ; $E_1 = -3$ V ; $E_2 = +5$ V ; $E_3 = +7$ V ; $R_1 = 1{,}3$ kΩ ; $R_2 = 0{,}75$ kΩ ; $R_3 = 1{,}7$ kΩ. Sur la feuille, les flèches des résistances sont dessinées : R1 tension vers le bas et courant vers le bas, R2 tension vers le haut et courant vers le haut, R3 tension vers le bas et courant vers le haut. Ici, dessine le **vrai** sens.",
    "doc": "exo",
    "page": 3,
    "schema": {
@@ -3717,7 +3717,7 @@
     "chap": "ch03-tension",
     "ex": "ex-03"
    },
-   "consigne": "On donne $U_{am} = 12$ V, $U_{bm} = 8$ V, $U_{cm} = 6$ V, $U_{dm} = 4$ V. Touche un composant entouré pour dessiner sur le schéma le **sens du courant** et/ou le **vecteur tension** (pointe = côté +) avec leur valeur, puis vérifie.",
+   "consigne": "On donne $U_{am} = 12$ V, $U_{bm} = 8$ V, $U_{cm} = 6$ V, $U_{dm} = 4$ V.",
    "doc": "exo",
    "page": 2,
    "schema": {
@@ -3947,7 +3947,7 @@
    "id": "labo-ex-05",
    "titre": "Potentiels et masse : trouver Ug",
    "niveau": 2,
-   "consigne": "Annote le schéma : pour chaque composant, le **sens du courant** et le **vecteur tension** avec leurs valeurs, puis vérifie. Générateurs et appareils de mesure parfaits (ampèremètre = fil, voltmètre = coupure).",
+   "consigne": "Générateurs et appareils de mesure parfaits. Trouve le sens et la valeur des courants et des tensions, et barre les portions qui ne comptent pas.",
    "schema": {
     "w": 10,
     "h": 7,
@@ -4111,7 +4111,7 @@
     "chap": "ch03-tension",
     "ex": "ex-04"
    },
-   "consigne": "On donne $U_{ab} = 8$ V, $U_{bd} = 10$ V, $U_{ed} = -6$ V, $U_{bc} = 6$ V, $U_{df} = 2$ V. Touche un composant entouré pour dessiner sur le schéma le **sens du courant** et/ou le **vecteur tension** (pointe = côté +) avec leur valeur, puis vérifie. Les vecteurs orange sont les tensions données. Sur la feuille, les 4 vecteurs à calculer sont dessinés sur R(d‑j), R(f‑g), R(e‑f) et R(j‑h).",
+   "consigne": "On donne $U_{ab} = 8$ V, $U_{bd} = 10$ V, $U_{ed} = -6$ V, $U_{bc} = 6$ V, $U_{df} = 2$ V. Les vecteurs orange sont les tensions données. Sur la feuille, les 4 vecteurs à calculer sont dessinés sur R(d‑j), R(f‑g), R(e‑f) et R(j‑h).",
    "doc": "exo",
    "page": 2,
    "schema": {
@@ -4466,7 +4466,7 @@
    "id": "labo-ex-01",
    "titre": "Étoile de résistances de 6 Ω",
    "niveau": 2,
-   "consigne": "Annote le schéma : pour chaque composant, le **sens du courant** et le **vecteur tension** avec leurs valeurs, puis vérifie. Générateurs et appareils de mesure parfaits (ampèremètre = fil, voltmètre = coupure).",
+   "consigne": "Générateurs et appareils de mesure parfaits. Trouve le sens et la valeur des courants et des tensions, et barre les portions qui ne comptent pas.",
    "schema": {
     "w": 11,
     "h": 8,
@@ -4753,7 +4753,7 @@
    "id": "labo-ex-02",
    "titre": "Trois résistances et un ampèremètre qui court-circuite",
    "niveau": 2,
-   "consigne": "Annote le schéma : pour chaque composant, le **sens du courant** et le **vecteur tension** avec leurs valeurs, puis vérifie. Générateurs et appareils de mesure parfaits (ampèremètre = fil, voltmètre = coupure).",
+   "consigne": "Générateurs et appareils de mesure parfaits. Trouve le sens et la valeur des courants et des tensions, et barre les portions qui ne comptent pas.",
    "schema": {
     "w": 12,
     "h": 8,
@@ -5000,7 +5000,7 @@
    "id": "labo-ex-04",
    "titre": "Contacts NO et ampèremètre",
    "niveau": 2,
-   "consigne": "Annote le schéma : pour chaque composant, le **sens du courant** et le **vecteur tension** avec leurs valeurs, puis vérifie. Générateurs et appareils de mesure parfaits (ampèremètre = fil, voltmètre = coupure).",
+   "consigne": "Générateurs et appareils de mesure parfaits. Trouve le sens et la valeur des courants et des tensions, et barre les portions qui ne comptent pas.",
    "schema": {
     "w": 12,
     "h": 7,
@@ -5296,7 +5296,7 @@
    "id": "labo-ex-03",
    "titre": "Réseau à 5 résistances, V, A1 et A2",
    "niveau": 3,
-   "consigne": "Annote le schéma : pour chaque composant, le **sens du courant** et le **vecteur tension** avec leurs valeurs, puis vérifie. Générateurs et appareils de mesure parfaits (ampèremètre = fil, voltmètre = coupure).",
+   "consigne": "Générateurs et appareils de mesure parfaits. Trouve le sens et la valeur des courants et des tensions, et barre les portions qui ne comptent pas.",
    "schema": {
     "w": 8,
     "h": 10,
@@ -5562,7 +5562,7 @@
     "chap": "ch06-associations",
     "ex": "ex-06"
    },
-   "consigne": "12 résistances de 2 kΩ ; $U_g = 30$ V. Touche un composant entouré pour dessiner sur le schéma le **sens du courant** et/ou le **vecteur tension** (pointe = côté +) avec leur valeur, puis vérifie. Les 12 résistances valent 2 kΩ. M1 est utilisé en **voltmètre**, M2 en **ampèremètre**.",
+   "consigne": "12 résistances de 2 kΩ ; $U_g = 30$ V. Les 12 résistances valent 2 kΩ. M1 est utilisé en **voltmètre**, M2 en **ampèremètre**.",
    "doc": "exo",
    "page": 5,
    "schema": {
@@ -6752,7 +6752,7 @@
     "chap": "ch05-ohm",
     "ex": "ex-01"
    },
-   "consigne": "(dernier schéma de la page : attention, E3 est retournée par rapport à l'exercice 8). Touche un composant entouré pour dessiner sur le schéma le **sens du courant** et/ou le **vecteur tension** (pointe = côté +) avec leur valeur, puis vérifie. Même schéma que l'exercice des vecteurs tensions, mais **E3 est retournée** (son + est en bas).",
+   "consigne": "(dernier schéma de la page : attention, E3 est retournée par rapport à l'exercice 8). Même schéma que l'exercice des vecteurs tensions, mais **E3 est retournée** (son + est en bas).",
    "doc": "exo",
    "page": 2,
    "schema": {
@@ -7015,7 +7015,7 @@
     "chap": "ch05-ohm",
     "ex": "ex-02"
    },
-   "consigne": "$E = 15$ V ; $R_1 = 1$ k ; $R_2 = R_3 = 2$ k ; $R_4 = 0{,}75$ k ; $R_5 = 0{,}25$ k. Touche un composant entouré pour dessiner sur le schéma le **sens du courant** et/ou le **vecteur tension** (pointe = côté +) avec leur valeur, puis vérifie.",
+   "consigne": "$E = 15$ V ; $R_1 = 1$ k ; $R_2 = R_3 = 2$ k ; $R_4 = 0{,}75$ k ; $R_5 = 0{,}25$ k.",
    "doc": "exo",
    "page": 5,
    "schema": {
@@ -7280,7 +7280,7 @@
     "chap": "ch06-associations",
     "ex": "ex-01"
    },
-   "consigne": "3 résistances de 100 Ω (losange). Touche un composant entouré pour dessiner sur le schéma le **sens du courant** et/ou le **vecteur tension** (pointe = côté +) avec leur valeur, puis vérifie. La source de 30 V (en pointillés) est branchée entre A et B.",
+   "consigne": "3 résistances de 100 Ω (losange). La source de 30 V (en pointillés) est branchée entre A et B.",
    "doc": "exo",
    "page": 5,
    "schema": {
@@ -7449,7 +7449,7 @@
    "id": "labo-ex-06",
    "titre": "Deux piles et un voltmètre",
    "niveau": 3,
-   "consigne": "Annote le schéma : pour chaque composant, le **sens du courant** et le **vecteur tension** avec leurs valeurs, puis vérifie. Générateurs et appareils de mesure parfaits (ampèremètre = fil, voltmètre = coupure). D'après le correctif du professeur : **$U_b = 30$ V**.",
+   "consigne": "Générateurs et appareils de mesure parfaits. Trouve le sens et la valeur des courants et des tensions, et barre les portions qui ne comptent pas. D'après le correctif du professeur : **$U_b = 30$ V**.",
    "schema": {
     "w": 11,
     "h": 8,
@@ -7666,7 +7666,7 @@
     "chap": "ch06-associations",
     "ex": "ex-03"
    },
-   "consigne": "4 résistances de 1 kΩ. Touche un composant entouré pour dessiner sur le schéma le **sens du courant** et/ou le **vecteur tension** (pointe = côté +) avec leur valeur, puis vérifie. Sur le schéma, la source (en pointillés) est réglée sur la tension trouvée : $U ≈ 774{,}6$ V.",
+   "consigne": "4 résistances de 1 kΩ. Sur le schéma, la source (en pointillés) est réglée sur la tension trouvée : $U ≈ 774{,}6$ V.",
    "doc": "exo",
    "page": 5,
    "schema": {
@@ -7914,7 +7914,7 @@
     "chap": "ch07-puissance",
     "ex": "ex-07"
    },
-   "consigne": "4 résistances de 1 kΩ ; 1,5 kWh en 600 minutes (W = 5,4 MJ). Touche un composant entouré pour dessiner sur le schéma le **sens du courant** et/ou le **vecteur tension** (pointe = côté +) avec leur valeur, puis vérifie. Sur le schéma, la source (en pointillés) est réglée sur la tension trouvée : $U = 300$ V.",
+   "consigne": "4 résistances de 1 kΩ ; 1,5 kWh en 600 minutes (W = 5,4 MJ). Sur le schéma, la source (en pointillés) est réglée sur la tension trouvée : $U = 300$ V.",
    "doc": "exo",
    "page": 6,
    "schema": {
@@ -8156,7 +8156,7 @@
     "chap": "ch07-puissance",
     "ex": "ex-12"
    },
-   "consigne": "Touche un composant entouré pour dessiner sur le schéma le **sens du courant** et/ou le **vecteur tension** (pointe = côté +) avec leur valeur, puis vérifie. ⚠️ Sur la feuille, R7 = 66,7 Ω ne colle pas avec 6 mA (il faudrait 4 V / 6 mA = **666,7 Ω**) et R4 = 1,8 V / 16 mA = 112,5 Ω (≈ 113 Ω). Le schéma utilise ces valeurs cohérentes.",
+   "consigne": "⚠️ Sur la feuille, R7 = 66,7 Ω ne colle pas avec 6 mA (il faudrait 4 V / 6 mA = **666,7 Ω**) et R4 = 1,8 V / 16 mA = 112,5 Ω (≈ 113 Ω). Le schéma utilise ces valeurs cohérentes.",
    "doc": "exo",
    "page": 9,
    "schema": {
@@ -8642,7 +8642,7 @@
     "chap": "ch07-puissance",
     "ex": "ex-13"
    },
-   "consigne": "Touche un composant entouré pour dessiner sur le schéma le **sens du courant** et/ou le **vecteur tension** (pointe = côté +) avec leur valeur, puis vérifie. Les flèches orange sont les données de la feuille. À toi de trouver la tension et le courant de la source $U_g$ (branchée en pointillés entre A et B).",
+   "consigne": "Les flèches orange sont les données de la feuille. À toi de trouver la tension et le courant de la source $U_g$ (branchée en pointillés entre A et B).",
    "doc": "exo",
    "page": 10,
    "schema": {
