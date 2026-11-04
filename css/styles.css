@@ -780,3 +780,10 @@ body.pl-plein-ouvert{overflow:hidden}
     max-height:52vh;overflow-y:auto;box-shadow:0 -8px 24px rgba(0,0,0,.18);padding:10px 12px 12px}
   .ci-ouvert{padding-bottom:52vh}
 }
+
+/* Schémas : liste de ce qui est corrigé (v0.11.2) */
+.ci-afaire{margin:8px 2px 4px;font-size:14px;line-height:1.5}
+.ci-af-l{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:4px}
+.ci-af-l>span{color:var(--muted);margin-right:2px}
+.ci-af{font:inherit;font-size:13px;padding:2px 10px;border-radius:999px;border:1px dashed var(--accent);background:transparent;color:var(--accent);cursor:pointer}
+.ci-af.fait{border-style:solid;border-color:var(--ok);color:var(--ok);background:color-mix(in srgb,var(--ok) 10%,transparent)}
