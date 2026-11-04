@@ -26,7 +26,7 @@ import { vuePlus, vueRecherche } from './vues/outils.js';
 import { vueExamen } from './vues/examen.js';
 import { majBoutonProposer, viderAttente } from './proposer.js';
 
-const VERSION = '0.11.0 (ergonomie : barre du bas, à revoir, recherche, examen blanc)';
+const VERSION = '0.11.1 (réécrire les données des schémas)';
 const vue = document.getElementById('vue');
 let nettoyer = null; // fonction fournie par la page affichée, appelée avant d'en changer
 

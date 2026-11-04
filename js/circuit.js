@@ -53,6 +53,19 @@ export function monterCircuit(el, ex, opts = {}) {
   const comps = Object.fromEntries(S.comps.map((c) => [c.id, c]));
   const don = ex.donnees || {};
   const barres = new Set(S.barres || []);
+  // valeurs données (orange) que l'élève peut réécrire autrement (ex. −4 V → 4 V, flèche retournée) : vérifiées, non notées
+  const PREF = { 'µ': 1e-6, m: 1e-3, k: 1e3 };
+  const valDon = (x) => {
+    const r = String(x?.txt || '').replace('−', '-').match(/^\s*(-?[\d.,]+)\s*(µ|m|k)?(A|V)\b/);
+    return r && x.d ? (x.d || 1) * parseFloat(r[1].replace(',', '.')) * (PREF[r[2]] || 1) : null;
+  };
+  const donV = {};
+  for (const [id, x] of Object.entries(don)) {
+    if (barres.has(id)) continue;
+    for (const [g, k] of [['i', 'I'], ['u', 'U']]) {
+      const v = valDon(x[g]); if (v !== null && sol[id]?.[k] === undefined) (donV[id] || (donV[id] = {}))[k] = v;
+    }
+  }
   const annotable = Object.keys(sol).length > 0 && !opts.apercu;
   const etat = { notes: (annotable && lire()[opts.cle]) || {}, sel: null, verif: null, voirSol: false };
 
@@ -62,7 +75,7 @@ export function monterCircuit(el, ex, opts = {}) {
       ${annotable ? `<details class="ci-aide" ${stockage.lire('ci.aideVue') ? '' : 'open'}><summary>👆 Comment annoter ?</summary>
         <p class="muted">Touche un composant : choisis le <b>sens</b> de la flèche de courant et du vecteur tension (pointe = côté +) et tape la <b>valeur</b>.
         Si une portion du circuit <b>ne compte pas</b> (aucun courant possible, court-circuitée…), touche ses composants et <b>barre-les</b>.
-        Les flèches orange sont les données de l'énoncé. Puis « Vérifier ».</p></details>
+        Les flèches orange sont les données de l'énoncé : touche le composant pour les réécrire à ta façon (ex. −4 V → 4 V avec la flèche retournée). Puis « Vérifier ».</p></details>
       <div class="ci-panneau" hidden></div>
       <div class="ci-actions">
         <button class="btn primary" type="button" data-ci="verifier">✓ Vérifier mes annotations</button>
@@ -203,7 +216,11 @@ export function monterCircuit(el, ex, opts = {}) {
       s += ligne([x1, y1], [x2, y2], 'ci-fu don') + `<polygon class="ci-fut don" points="${P(x2, y2)} ${P(x2 - u[0] * 0.24 + n[0] * 0.12, y2 - u[1] * 0.24 + n[1] * 0.12)} ${P(x2 - u[0] * 0.24 - n[0] * 0.12, y2 - u[1] * 0.24 - n[1] * 0.12)}"/>`;
       if (t) s += `<text class="ci-vi don" x="${((x1 + x2) / 2 + n[0] * 0.32) * K}" y="${((y1 + y2) / 2 + n[1] * 0.32) * K + 5}">${esc(t)}</text>`;
     }
-    for (const c of S.comps) if (don[c.id]) s += fleches(c, don[c.id], 'don');
+    for (const c of S.comps) if (don[c.id]) {   // flèche donnée masquée si l'élève l'a réécrite (rappelée dans le panneau)
+      const a = etat.notes[c.id] || {}; const re = (g) => a[g] && a[g].d && !a.x;
+      const d = don[c.id];
+      s += fleches(c, { i: re('i') ? null : d.i, u: re('u') ? null : d.u }, 'don');
+    }
     for (const c of S.comps) {
       const a = etat.notes[c.id];
       if (a && !a.x) s += fleches(c, { i: a.i && { ...a.i, txt: texteNote(a.i, 'i') }, u: a.u && { ...a.u, txt: texteNote(a.u, 'u') } }, 'eleve');
@@ -229,7 +246,9 @@ export function monterCircuit(el, ex, opts = {}) {
     };
     pan.hidden = false;
     const leurre = barres.has(c.id);   // à barrer : on propose quand même I et U (pour ne rien dévoiler)
-    const vI = s.I !== undefined || (leurre && c.t !== 'V'), vU = s.U !== undefined || (leurre && c.t !== 'A' && c.t !== 'F');
+    const dv = donV[c.id] || {};
+    const vI = s.I !== undefined || dv.I !== undefined || (leurre && c.t !== 'V'), vU = s.U !== undefined || dv.U !== undefined || (leurre && c.t !== 'A' && c.t !== 'F');
+    const dTxt = [dv.I !== undefined && don[c.id].i.txt, dv.U !== undefined && don[c.id].u.txt].filter(Boolean).join(' et ');
     pan.innerHTML = `<div class="ci-t">
         <button class="btn icon" type="button" data-ci="prec" title="Composant précédent">‹</button>
         <b>${esc([c.nom || NOMS[c.t], c.val].filter(Boolean).join(' '))}</b>
@@ -238,7 +257,7 @@ export function monterCircuit(el, ex, opts = {}) {
         <button class="btn icon" type="button" data-ci="fermer" title="Fermer">✕</button></div>
       <button class="btn ci-barrer ${a.x ? 'actif' : ''}" type="button" data-ci="barrer">${a.x ? '↩ Ne plus barrer' : '✖ Barrer : cette portion ne compte pas'}</button>
       ${a.x ? '<p class="muted">Barré : tu indiques que ce composant ne participe pas au circuit (aucun courant possible, court-circuité…).</p>'
-        : `${vI ? ligneG('i', 'Courant I', 'sens de la flèche sur le fil') : ''}${vU ? ligneG('u', 'Tension U', 'la pointe du vecteur = côté +') : ''}
+        : `${dTxt ? `<p class="notice info ci-donnee">Donnée de l'énoncé : <b>${esc(dTxt)}</b> (en orange). Tu peux la réécrire à ta façon, par ex. une valeur positive avec la flèche dans l'autre sens. Ce n'est pas noté, mais « Vérifier » contrôle que c'est équivalent.</p>` : ''}${vI ? ligneG('i', 'Courant I', 'sens de la flèche sur le fil') : ''}${vU ? ligneG('u', 'Tension U', 'la pointe du vecteur = côté +') : ''}
       ${!vI && !vU ? `<p class="muted">${don[c.id] ? 'Valeur donnée par l\'énoncé (en orange).' : 'Rien à calculer sur ce composant.'}</p>` : ''}`}`;
   }
 
@@ -265,6 +284,17 @@ export function monterCircuit(el, ex, opts = {}) {
         else { bon = false; fautes.push(`${c.nom || c.id} : ${k === 'I' ? 'courant' : 'tension'} ${Math.abs(Math.abs(lu) - Math.abs(s[k])) <= Math.max(0.02 * Math.abs(s[k]), 1e-9) ? '— bonne valeur mais <b>mauvais sens</b>' : 'faux'}`); }
       }
       v[id] = bon ? 'ok' : vide && !(a.i || a.u) ? 'vide' : 'ko';
+    }
+    for (const [id, dv] of Object.entries(donV)) {   // réécritures des données : contrôlées, pas comptées
+      const a = etat.notes[id]; if (!a || a.x) continue; let bon = null;
+      for (const [g, k] of [['i', 'I'], ['u', 'U']]) {
+        const x = a[g]; const val = x ? nombre(x.v) : null; if (dv[k] === undefined || val === null) continue;
+        const f = (UNITES[k].find(([n]) => n === x.unite) || [0, 1])[1];
+        const lu = x.d * val * f; const juste = proche(lu, dv[k]);
+        bon = (bon ?? true) && juste;
+        if (!juste) fautes.push(`${comps[id].nom || id} : ta réécriture de la donnée (${esc(don[id][g].txt)}) n'est pas équivalente${proche(-lu, dv[k]) ? ' — <b>retourne la flèche</b>' : ''}`);
+      }
+      if (bon !== null && v[id] === undefined) v[id] = bon ? 'ok' : 'ko';
     }
     for (const c of S.comps) {   // portions barrées
       const x = etat.notes[c.id]?.x;
