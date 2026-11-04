@@ -59,7 +59,10 @@ export function monterCircuit(el, ex, opts = {}) {
   el.innerHTML = `
     <div class="ci">
       <div class="ci-cadre"><svg class="ci-svg" viewBox="-${K * 1.4} -${K * 0.6} ${W + K * 2.8} ${H + K * 1.2}" role="img" aria-label="Schéma électrique"></svg></div>
-      ${annotable ? `<p class="ci-aide muted">👆 Touche un composant pour dessiner le <b>sens du courant</b> et le <b>vecteur tension</b>, et écrire leurs valeurs. Si une portion du circuit <b>ne compte pas</b> (aucun courant possible, court-circuitée…), touche ses composants et <b>barre-les</b>.</p>
+      ${annotable ? `<details class="ci-aide" ${stockage.lire('ci.aideVue') ? '' : 'open'}><summary>👆 Comment annoter ?</summary>
+        <p class="muted">Touche un composant : choisis le <b>sens</b> de la flèche de courant et du vecteur tension (pointe = côté +) et tape la <b>valeur</b>.
+        Si une portion du circuit <b>ne compte pas</b> (aucun courant possible, court-circuitée…), touche ses composants et <b>barre-les</b>.
+        Les flèches orange sont les données de l'énoncé. Puis « Vérifier ».</p></details>
       <div class="ci-panneau" hidden></div>
       <div class="ci-actions">
         <button class="btn primary" type="button" data-ci="verifier">✓ Vérifier mes annotations</button>
@@ -71,6 +74,8 @@ export function monterCircuit(el, ex, opts = {}) {
   const svg = el.querySelector('svg');
   if (!opts.apercu) svg.style.minWidth = `${Math.round((S.w + 2.8) * K * 0.68)}px`;   // lisible au téléphone (on fait défiler)
   const pan = el.querySelector('.ci-panneau'); const res = el.querySelector('.ci-res');
+  el.querySelector('.ci-aide')?.addEventListener('toggle', (ev) => { if (!ev.target.open) stockage.ecrire('ci.aideVue', true); });
+  const ordre = S.comps.map((c) => c.id);   // pour « composant suivant / précédent »
 
   const geo = (c) => {
     const [x1, y1] = c.a, [x2, y2] = c.b; const L = Math.hypot(x2 - x1, y2 - y1);
@@ -225,7 +230,11 @@ export function monterCircuit(el, ex, opts = {}) {
     pan.hidden = false;
     const leurre = barres.has(c.id);   // à barrer : on propose quand même I et U (pour ne rien dévoiler)
     const vI = s.I !== undefined || (leurre && c.t !== 'V'), vU = s.U !== undefined || (leurre && c.t !== 'A' && c.t !== 'F');
-    pan.innerHTML = `<div class="ci-t"><b>${esc([c.nom || NOMS[c.t], c.val].filter(Boolean).join(' '))}</b>
+    pan.innerHTML = `<div class="ci-t">
+        <button class="btn icon" type="button" data-ci="prec" title="Composant précédent">‹</button>
+        <b>${esc([c.nom || NOMS[c.t], c.val].filter(Boolean).join(' '))}</b>
+        <button class="btn icon" type="button" data-ci="suiv" title="Composant suivant">›</button>
+        <span class="grow"></span>
         <button class="btn icon" type="button" data-ci="fermer" title="Fermer">✕</button></div>
       <button class="btn ci-barrer ${a.x ? 'actif' : ''}" type="button" data-ci="barrer">${a.x ? '↩ Ne plus barrer' : '✖ Barrer : cette portion ne compte pas'}</button>
       ${a.x ? '<p class="muted">Barré : tu indiques que ce composant ne participe pas au circuit (aucun courant possible, court-circuité…).</p>'
@@ -274,14 +283,27 @@ export function monterCircuit(el, ex, opts = {}) {
 
   dessiner();
   if (!annotable) return { verifier() {} };
+  const mobile = () => window.matchMedia('(max-width:640px)').matches;
+  function choisir(id) {
+    etat.sel = id; dessiner(); panneau();
+    el.classList.toggle('ci-ouvert', !!id);
+    if (!id) return;
+    if (mobile()) {   // volet en bas : on garde le composant visible au-dessus
+      const h = svg.querySelector(`[data-comp="${id}"]`); const r = h?.getBoundingClientRect();
+      if (r) { const cible = window.innerHeight * 0.28; if (r.top < 60 || r.bottom > window.innerHeight * 0.45) window.scrollBy({ top: r.top - cible, behavior: 'smooth' }); }
+    } else pan.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }
   svg.addEventListener('click', (ev) => {
     const h = ev.target.closest('[data-comp]'); if (!h) return;
-    etat.sel = etat.sel === h.dataset.comp ? null : h.dataset.comp; dessiner(); panneau();
-    if (etat.sel) pan.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    choisir(etat.sel === h.dataset.comp ? null : h.dataset.comp);
   });
   pan.addEventListener('click', (ev) => {
     const b = ev.target.closest('button'); if (!b) return;
-    if (b.dataset.ci === 'fermer') { etat.sel = null; dessiner(); panneau(); return; }
+    if (b.dataset.ci === 'fermer') { choisir(null); return; }
+    if (b.dataset.ci === 'prec' || b.dataset.ci === 'suiv') {
+      const i = ordre.indexOf(etat.sel); const n = ordre.length;
+      choisir(ordre[(i + (b.dataset.ci === 'suiv' ? 1 : -1) + n) % n]); return;
+    }
     if (b.dataset.ci === 'barrer') {
       const a = etat.notes[etat.sel] || (etat.notes[etat.sel] = {});
       if (a.x) delete a.x; else a.x = true;
@@ -297,7 +319,7 @@ export function monterCircuit(el, ex, opts = {}) {
   pan.addEventListener('change', (ev) => { const t = ev.target; if (t.dataset.gu) { maj(t.dataset.gu, 'unite', t.value); dessiner(); } });
   el.querySelector('.ci-actions').addEventListener('click', (ev) => {
     const b = ev.target.closest('[data-ci]'); if (!b) return;
-    if (b.dataset.ci === 'verifier') verifier();
+    if (b.dataset.ci === 'verifier') { choisir(null); verifier(); }
     if (b.dataset.ci === 'sol') { etat.voirSol = !etat.voirSol; b.textContent = etat.voirSol ? 'Masquer la solution' : 'Voir la solution sur le schéma'; dessiner(); }
     if (b.dataset.ci === 'effacer') { etat.notes = {}; etat.verif = null; sauver(opts.cle, {}); res.hidden = true; etat.sel = null; dessiner(); panneau(); }
   });

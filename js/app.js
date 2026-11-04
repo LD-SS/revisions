@@ -5,7 +5,9 @@
      #/                              accueil (tuiles des matières)
      #/m/<matière>                   chapitres d'une matière
      #/m/<matière>/<chapitre>[/<onglet>]   synthese | flashcards | exercices
-     #/progression  #/planning       étape 4
+     #/m/<matière>/schemas[/<ex>]   exercices sur schéma
+     #/dessin…                       atelier de dessin
+     #/plus  #/recherche  #/examen   menu « Plus », recherche, examen blanc
      #/parametres                    paramètres
    Pour ajouter une page : une entrée dans ROUTES + un module dans js/vues/.
    ===================================================================== */
@@ -20,9 +22,11 @@ import { vueChapitre } from './vues/chapitre.js';
 import { vueParametres } from './vues/parametres.js';
 import { vueAtelier } from './vues/atelier.js';
 import { vueSchemas } from './vues/schemas.js';
+import { vuePlus, vueRecherche } from './vues/outils.js';
+import { vueExamen } from './vues/examen.js';
 import { majBoutonProposer, viderAttente } from './proposer.js';
 
-const VERSION = '0.10.2 (barrer soi-même, contacts NO)';
+const VERSION = '0.11.0 (ergonomie : barre du bas, à revoir, recherche, examen blanc)';
 const vue = document.getElementById('vue');
 let nettoyer = null; // fonction fournie par la page affichée, appelée avant d'en changer
 
@@ -52,38 +56,40 @@ document.getElementById('btn-theme').addEventListener('click', () => {
   if (location.hash.startsWith('#/parametres')) router();
 });
 
-/* ---------- Barre d'onglets ---------- */
+/* ---------- Barre d'onglets (haut, ordinateur) et barre du bas (téléphone) ---------- */
 function rendreOnglets(route) {
   const actif = (cond) => (cond ? 'active' : '');
+  const dessin = matieres().find((m) => m.id === 'dessin');
+  const enPlus = ['plus', 'dessin', 'recherche', 'examen', 'parametres'].includes(route[0]);
   const tabs = [
     `<a class="tab ${actif(route[0] === '')}" href="#/">${icone('accueil')}<span class="txt">Accueil</span></a>`,
     ...matieres().map((m) => `<a class="tab mc ${actif(route[0] === 'm' && route[1] === m.id)}" ${styleMatiere(m)} href="#/m/${esc(m.id)}" title="${esc(m.nom)}">
       ${icone(m.icone)}<span class="txt">${esc(nomCourt(m))}</span></a>`),
-    ...(matieres().some((m) => m.id === 'dessin') ? [`<a class="tab mc ${actif(route[0] === 'dessin')}" ${styleMatiere(matieres().find((m) => m.id === 'dessin'))} href="#/dessin" title="Atelier de dessin : exercices à dessiner dans l'appli">
+    ...(dessin ? [`<a class="tab mc ${actif(route[0] === 'dessin')}" ${styleMatiere(dessin)} href="#/dessin" title="Atelier de dessin : exercices à dessiner dans l'appli">
       ${icone('crayon')}<span class="txt">Atelier dessin</span></a>`] : []),
-    `<a class="tab future ${actif(route[0] === 'progression')}" href="#/progression">${icone('progression')}<span class="txt">Progression</span></a>`,
-    `<a class="tab future ${actif(route[0] === 'planning')}" href="#/planning">${icone('calendrier')}<span class="txt">Planning</span></a>`,
+    `<a class="tab ${actif(route[0] === 'examen')}" href="#/examen">${icone('examen')}<span class="txt">Examen blanc</span></a>`,
     `<a class="tab ${actif(route[0] === 'parametres')}" href="#/parametres">${icone('reglages')}<span class="txt">Paramètres</span></a>`,
   ];
   document.getElementById('tabs').innerHTML = tabs.join('');
-}
-
-/* ---------- Pages pas encore construites ---------- */
-function vueBientot(el, titre, ic, texte) {
-  el.innerHTML = `<div class="panel empty"><div class="m-ic" style="--mw:var(--accent-weak);--mt:var(--accent)">${icone(ic)}</div>
-    <h3>${titre}</h3><p class="muted">${texte}</p></div>`;
+  const bas = [
+    `<a class="${actif(route[0] === '')}" href="#/">${icone('accueil')}<span>Accueil</span></a>`,
+    ...matieres().map((m) => `<a class="mc ${actif(route[0] === 'm' && route[1] === m.id)}" ${styleMatiere(m)} href="#/m/${esc(m.id)}">${icone(m.icone)}<span>${esc(m.mini || nomCourt(m).split(' ')[0])}</span></a>`),
+    `<a class="${actif(enPlus)}" href="#/plus">${icone('plus')}<span>Plus</span></a>`,
+  ];
+  document.getElementById('botnav').innerHTML = bas.join('');
 }
 
 /* ---------- Routeur ---------- */
 const ROUTES = {
   '': (el) => vueAccueil(el),
-  m: (el, [mid, cid, onglet]) => (cid === 'schemas' ? vueSchemas(el, mid, onglet) : cid ? vueChapitre(el, mid, cid, onglet) : vueMatiere(el, mid)),
+  m: (el, [mid, cid, onglet, extra]) => (cid === 'schemas' ? vueSchemas(el, mid, onglet) : cid ? vueChapitre(el, mid, cid, onglet, extra) : vueMatiere(el, mid)),
   parametres: (el) => vueParametres(el, { version: VERSION, theme, changerTheme }),
   dessin: (el, params) => vueAtelier(el, params),
-  progression: (el) => vueBientot(el, 'Progression : arrive à l\'étape 4', 'progression',
-    'Scores par matière et par chapitre, points faibles, historique et examens blancs.'),
-  planning: (el) => vueBientot(el, 'Planning : arrive à l\'étape 4', 'calendrier',
-    'Saisis tes dates d\'examen : l\'appli te proposera un programme de révision jour par jour.'),
+  plus: (el) => vuePlus(el),
+  recherche: (el, [q]) => vueRecherche(el, q),
+  examen: (el) => vueExamen(el),
+  progression: () => { location.replace('#/'); },
+  planning: () => { location.replace('#/'); },
 };
 
 async function router() {
@@ -128,6 +134,7 @@ document.addEventListener('keydown', detailSource, true);
 /* ---------- Démarrage ---------- */
 async function demarrer() {
   document.getElementById('brand-logo').innerHTML = icone('logo');
+  document.getElementById('btn-chercher').innerHTML = icone('loupe');
   majBoutonProposer();
   setTimeout(viderAttente, 3000);
   majBoutonTheme();

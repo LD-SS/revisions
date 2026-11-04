@@ -6,19 +6,20 @@
                  fin() retire les raccourcis clavier quand on quitte la page.
    Commandes : clic / Espace = retourner ; ← → = carte précédente / suivante ;
                1 = « À revoir », 2 = « Je savais » ; glisser sur tablette.
-   Étape 4 : les réponses « Je savais / À revoir » alimenteront les boîtes de
-   Leitner (révision espacée) via le module leitner.js. Pour l'instant, le
-   score de la séance reste en mémoire.
+   Les réponses sont gardées (suivi.js, clé « <prefixe>/<carte> ») : les cartes
+   « À revoir » apparaissent sur l'accueil et peuvent être reprises seules
+   (options.revoir = true ou bouton « À revoir »).
    ===================================================================== */
 
 import { esc, melanger, pluriel } from './utils.js';
 import { icone } from './icones.js';
 import { texte } from './rendu.js';
 import { badgeSource } from './synthese.js';
+import { noterCarte, cartesARevoir } from './suivi.js';
 
 export function lecteurFlashcards(conteneur, toutesLesCartes, options = {}) {
   const etat = {
-    filtre: '',            // étiquette choisie ('' = toutes)
+    filtre: options.revoir ? '#revoir' : '',   // étiquette choisie ('' = toutes, '#revoir' = cartes ratées)
     paquet: [],            // cartes de la séance, dans l'ordre de passage
     pos: 0,                // index de la carte affichée
     verso: false,          // carte retournée ?
@@ -36,7 +37,11 @@ export function lecteurFlashcards(conteneur, toutesLesCartes, options = {}) {
     etat.termine = false;
     afficher();
   }
-  const cartesFiltrees = () => toutesLesCartes.filter((c) => !etat.filtre || (c.tags || []).includes(etat.filtre));
+  const aRevoir = () => (options.prefixe ? new Set(cartesARevoir(options.prefixe)) : new Set());
+  const cartesFiltrees = () => {
+    if (etat.filtre === '#revoir') { const r = aRevoir(); const l = toutesLesCartes.filter((c) => r.has(c.id)); return l.length ? l : toutesLesCartes; }
+    return toutesLesCartes.filter((c) => !etat.filtre || (c.tags || []).includes(etat.filtre));
+  };
 
   /* ---------- affichage ---------- */
   function afficher() {
@@ -50,8 +55,9 @@ export function lecteurFlashcards(conteneur, toutesLesCartes, options = {}) {
       <div class="fc-bar">
         <strong>${etat.termine ? 'Séance terminée' : `Carte ${etat.pos + 1} / ${n}`}</strong>
         <span class="grow"></span>
-        ${etiquettes.length ? `<select class="field" data-action="filtre" aria-label="Filtrer par thème">
-          <option value="">Tous les thèmes (${toutesLesCartes.length})</option>
+        ${etiquettes.length || aRevoir().size ? `<select class="field" data-action="filtre" aria-label="Filtrer par thème">
+          <option value="">Toutes les cartes (${toutesLesCartes.length})</option>
+          ${aRevoir().size ? `<option value="#revoir" ${etat.filtre === '#revoir' ? 'selected' : ''}>À revoir (${aRevoir().size})</option>` : ''}
           ${etiquettes.map((t) => `<option value="${esc(t)}" ${t === etat.filtre ? 'selected' : ''}>${esc(t)} (${toutesLesCartes.filter((c) => (c.tags || []).includes(t)).length})</option>`).join('')}
         </select>` : ''}
         <button class="btn" data-action="melanger" title="Mélanger les cartes">${icone('melanger')}<span>Mélanger</span></button>
@@ -123,7 +129,8 @@ export function lecteurFlashcards(conteneur, toutesLesCartes, options = {}) {
   function repondre(resultat) {
     if (etat.termine || !etat.verso) return;
     etat.reponses.set(etat.paquet[etat.pos].id, resultat);
-    options.onReponse?.(etat.paquet[etat.pos], resultat); // branché à l'étape 4 (Leitner)
+    if (options.prefixe) noterCarte(`${options.prefixe}/${etat.paquet[etat.pos].id}`, resultat);
+    options.onReponse?.(etat.paquet[etat.pos], resultat);
     // Carte suivante sans réponse, sinon fin de séance.
     const restante = etat.paquet.findIndex((c, i) => i > etat.pos && !etat.reponses.has(c.id));
     const avant = etat.paquet.findIndex((c) => !etat.reponses.has(c.id));

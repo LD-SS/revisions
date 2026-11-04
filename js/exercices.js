@@ -56,10 +56,11 @@ export function lecteurExercices(conteneur, tous, options = {}) {
   for (const e of tous) preparerDessin(e);
   const etat = { filtre: 'tous', liste: [], pos: 0, vus: 0, indice: false };
 
+  const avecCplt = tous.some((e) => e.complement);
   const FILTRES = [
-    ['tous', 'Tous'], ['afaire', 'Pas encore faits'], ['refaire', 'À refaire (faux / presque)'],
-    ['cours', 'Du cours'], ['complement', 'Compléments'],
-    ['n1', 'Niveau ★'], ['n2', 'Niveau ★★'], ['n3', 'Niveau ★★★'],
+    ['tous', 'Tous'], ['afaire', 'À faire'], ['refaire', 'À refaire'],
+    ...(avecCplt ? [['cours', 'Du cours'], ['complement', 'Compléments']] : []),
+    ['n1', '★'], ['n2', '★★'], ['n3', '★★★'],
   ];
   function filtrer() {
     const t = lireNotes();
@@ -92,10 +93,10 @@ export function lecteurExercices(conteneur, tous, options = {}) {
         <strong>${n ? `Exercice ${etat.pos + 1} / ${n}` : 'Aucun exercice'}</strong>
         <span class="badge ${sc ? 'ok' : ''}" title="Juste = 1, Presque = ½, Faux = 0">${sc ? `Score ${sc.pct} % · ${sc.faits}/${tous.length} faits` : `${pluriel(tous.length, 'exercice')}`}</span>
         <span class="grow"></span>
-        <select class="field" data-action="filtre" aria-label="Filtrer les exercices">
-          ${FILTRES.map(([v, l]) => `<option value="${v}" ${v === etat.filtre ? 'selected' : ''}>${l}</option>`).join('')}
-        </select>
         <button class="btn" data-action="melanger" title="Mélanger">${icone('melanger')}<span>Mélanger</span></button>
+      </div>
+      <div class="ex-filtres" role="radiogroup" aria-label="Filtrer les exercices">
+        ${FILTRES.map(([v, l]) => `<label class="chip"><input type="radio" name="exf" data-action="filtre" value="${v}" ${v === etat.filtre ? 'checked' : ''}><span>${l}</span></label>`).join('')}
       </div>
       <div class="ex-points" role="list" aria-label="Exercices">
         ${etat.liste.map((e, i) => {
@@ -311,7 +312,7 @@ export function lecteurExercices(conteneur, tous, options = {}) {
     indice: () => { etat.indice = true; afficher(); },
     noter: (b) => {
       const ec = etat.liste[etat.pos];
-      noter(cle(ec), b.dataset.r, ec.type === 'dessin' ? { aide: niveauAide(), pct: etat.dessin?.pct } : null);
+      noter(cle(ec), b.dataset.r, { t: ec.titre, ...(ec.type === 'dessin' ? { aide: niveauAide(), pct: etat.dessin?.pct } : {}) });
       options.onNote?.(etat.liste[etat.pos], b.dataset.r);
       if (etat.pos < etat.liste.length - 1) aller(etat.pos + 1); else afficher();
     },
@@ -324,7 +325,7 @@ export function lecteurExercices(conteneur, tous, options = {}) {
   conteneur.addEventListener('click', (e) => {
     if (e.target.closest('.pg')) return;
     const b = e.target.closest('[data-action]');
-    if (!b || b.tagName === 'SELECT' || b.disabled) return;
+    if (!b || b.tagName === 'SELECT' || b.tagName === 'INPUT' || b.disabled) return;
     actions[b.dataset.action]?.(b);
   });
   conteneur.addEventListener('change', (e) => {
