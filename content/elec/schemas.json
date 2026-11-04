@@ -536,7 +536,7 @@
     "chap": "ch02-courant",
     "ex": "ex-03"
    },
-   "consigne": "",
+   "consigne": "Les courants donnés sont en orange sur le schéma.",
    "doc": "exo",
    "page": 1,
    "schema": {
@@ -5562,7 +5562,7 @@
     "chap": "ch06-associations",
     "ex": "ex-06"
    },
-   "consigne": "12 résistances de 2 kΩ ; $U_g = 30$ V. Les 12 résistances valent 2 kΩ. M1 est utilisé en **voltmètre**, M2 en **ampèremètre**.",
+   "consigne": "Les 12 résistances valent 2 kΩ ; $U_g = 30$ V. M1 est utilisé en **voltmètre**, M2 en **ampèremètre**.",
    "doc": "exo",
    "page": 5,
    "schema": {
@@ -6752,7 +6752,7 @@
     "chap": "ch05-ohm",
     "ex": "ex-01"
    },
-   "consigne": "(dernier schéma de la page : attention, E3 est retournée par rapport à l'exercice 8). Même schéma que l'exercice des vecteurs tensions, mais **E3 est retournée** (son + est en bas).",
+   "consigne": "Même schéma que l'exercice « Vecteurs tensions avec trois sources », mais **E3 est retournée** (son + est en bas).",
    "doc": "exo",
    "page": 2,
    "schema": {
