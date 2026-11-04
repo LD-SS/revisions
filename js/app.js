@@ -26,7 +26,7 @@ import { vuePlus, vueRecherche } from './vues/outils.js';
 import { vueExamen } from './vues/examen.js';
 import { majBoutonProposer, viderAttente } from './proposer.js';
 
-const VERSION = '0.11.3 (schémas : pas de vert avant « Vérifier »)';
+const VERSION = '0.11.4 (schémas : vecteurs sur les sources, annotations libres)';
 const vue = document.getElementById('vue');
 let nettoyer = null; // fonction fournie par la page affichée, appelée avant d'en changer
 
