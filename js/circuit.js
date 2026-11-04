@@ -67,10 +67,18 @@ export function monterCircuit(el, ex, opts = {}) {
     }
   }
   const annotable = Object.keys(sol).length > 0 && !opts.apercu;
+  const nbNom = {}; for (const c of S.comps) if (c.nom) nbNom[c.nom] = (nbNom[c.nom] || 0) + 1;
+  const lbl = (c) => {   // nom lisible et unique : « L1 », « piles », « R a-b »
+    if (c.nom && nbNom[c.nom] === 1) return c.nom;
+    const m = /^R([a-zA-Z])([a-zA-Z])$/.exec(c.id);
+    return m ? `R ${m[1]}-${m[2]}` : c.id;
+  };
+  const barrable = barres.size > 0 || !!ex.origine?.labo;
   const etat = { notes: (annotable && lire()[opts.cle]) || {}, sel: null, verif: null, voirSol: false };
 
   el.innerHTML = `
     <div class="ci">
+      ${annotable ? '<div class="ci-afaire"></div>' : ''}
       <div class="ci-cadre"><svg class="ci-svg" viewBox="-${K * 1.4} -${K * 0.6} ${W + K * 2.8} ${H + K * 1.2}" role="img" aria-label="Schéma électrique"></svg></div>
       ${annotable ? `<details class="ci-aide" ${stockage.lire('ci.aideVue') ? '' : 'open'}><summary>👆 Comment annoter ?</summary>
         <p class="muted">Touche un composant : choisis le <b>sens</b> de la flèche de courant et du vecteur tension (pointe = côté +) et tape la <b>valeur</b>.
@@ -86,7 +94,20 @@ export function monterCircuit(el, ex, opts = {}) {
     </div>`;
   const svg = el.querySelector('svg');
   if (!opts.apercu) svg.style.minWidth = `${Math.round((S.w + 2.8) * K * 0.68)}px`;   // lisible au téléphone (on fait défiler)
-  const pan = el.querySelector('.ci-panneau'); const res = el.querySelector('.ci-res');
+  const pan = el.querySelector('.ci-panneau'); const res = el.querySelector('.ci-res'); const afaire = el.querySelector('.ci-afaire');
+  /** Liste de ce qui est corrigé sur le schéma (pour que l'énoncé soit complet), cochée au fur et à mesure. */
+  function listeAFaire() {
+    if (!afaire) return;
+    const rempli = (id, g) => { const x = etat.notes[id]; return !!(x && (x.x || (x[g] && x[g].d && nombre(x[g].v) !== null))); };
+    const puce = (id, g) => `<button type="button" class="ci-af ${rempli(id, g) ? 'fait' : ''}" data-af="${esc(id)}">${rempli(id, g) ? '✓ ' : ''}${esc(lbl(comps[id]))}</button>`;
+    // les composants à barrer figurent aussi dans la liste (sinon la liste trahirait la réponse)
+    const lI = ordre.filter((id) => sol[id]?.I !== undefined || (barres.has(id) && comps[id].t !== 'V'));
+    const lU = ordre.filter((id) => sol[id]?.U !== undefined || (barres.has(id) && !'AF'.includes(comps[id].t)));
+    afaire.innerHTML = `<b>À indiquer sur le schéma</b> <span class="muted">(sens + valeur, c'est ce qui est corrigé)</span>
+      ${lI.length ? `<div class="ci-af-l"><span>Courant dans :</span> ${lI.map((id) => puce(id, 'i')).join('')}</div>` : ''}
+      ${lU.length ? `<div class="ci-af-l"><span>Tension aux bornes de :</span> ${lU.map((id) => puce(id, 'u')).join('')}</div>` : ''}
+      ${barrable ? '<div class="ci-af-l muted">Si une portion ne compte pas, barre ses composants : un composant barré n\'a ni courant ni tension à indiquer.</div>' : ''}`;
+  }
   el.querySelector('.ci-aide')?.addEventListener('toggle', (ev) => { if (!ev.target.open) stockage.ecrire('ci.aideVue', true); });
   const ordre = S.comps.map((c) => c.id);   // pour « composant suivant / précédent »
 
@@ -226,7 +247,7 @@ export function monterCircuit(el, ex, opts = {}) {
       if (a && !a.x) s += fleches(c, { i: a.i && { ...a.i, txt: texteNote(a.i, 'i') }, u: a.u && { ...a.u, txt: texteNote(a.u, 'u') } }, 'eleve');
       if (etat.voirSol) { const o = solA(c.id); if (o) s += fleches(c, o, 'sol'); }
     }
-    svg.innerHTML = s;
+    svg.innerHTML = s; listeAFaire();
   }
 
   function panneau() {
@@ -251,7 +272,7 @@ export function monterCircuit(el, ex, opts = {}) {
     const dTxt = [dv.I !== undefined && don[c.id].i.txt, dv.U !== undefined && don[c.id].u.txt].filter(Boolean).join(' et ');
     pan.innerHTML = `<div class="ci-t">
         <button class="btn icon" type="button" data-ci="prec" title="Composant précédent">‹</button>
-        <b>${esc([c.nom || NOMS[c.t], c.val].filter(Boolean).join(' '))}</b>
+        <b>${esc([c.nom ? lbl(c) : NOMS[c.t], c.val].filter(Boolean).join(' '))}</b>
         <button class="btn icon" type="button" data-ci="suiv" title="Composant suivant">›</button>
         <span class="grow"></span>
         <button class="btn icon" type="button" data-ci="fermer" title="Fermer">✕</button></div>
@@ -270,18 +291,18 @@ export function monterCircuit(el, ex, opts = {}) {
   }
 
   function verifier() {
-    const v = {}; let ok = 0, tot = 0; const fautes = [];
+    const v = {}; let ok = 0, tot = 0; const fautes = [], manques = [];
     for (const [id, s] of Object.entries(sol)) {
       const c = comps[id]; const a = etat.notes[id]?.x ? {} : (etat.notes[id] || {}); let bon = true, vide = false;
       for (const [g, k] of [['i', 'I'], ['u', 'U']]) {
         if (s[k] === undefined) continue; tot++;
         const x = a[g]; const val = x ? nombre(x.v) : null;
-        if (val === null) { vide = true; bon = false; continue; }
+        if (val === null || !x.d) { vide = true; bon = false; manques.push(`${esc(lbl(c))} : ${k === 'I' ? 'courant pas encore indiqué' : 'tension pas encore indiquée'}`); continue; }
         const f = (UNITES[k].find(([n]) => n === x.unite) || [0, 1])[1];
         const signe = x.d;            // I : d = 1 ⇒ de a vers b ; U : d = 1 ⇒ pointe vers a ⇒ U_ab > 0
         const lu = Math.abs(s[k]) < 1e-12 ? val * f : signe * val * f;
         if (proche(lu, s[k]) || (Math.abs(s[k]) < 1e-12 && Math.abs(val) < 1e-12)) ok++;
-        else { bon = false; fautes.push(`${c.nom || c.id} : ${k === 'I' ? 'courant' : 'tension'} ${Math.abs(Math.abs(lu) - Math.abs(s[k])) <= Math.max(0.02 * Math.abs(s[k]), 1e-9) ? '— bonne valeur mais <b>mauvais sens</b>' : 'faux'}`); }
+        else { bon = false; fautes.push(`${esc(lbl(c))} : ${k === 'I' ? 'courant' : 'tension'} ${Math.abs(Math.abs(lu) - Math.abs(s[k])) <= Math.max(0.02 * Math.abs(s[k]), 1e-9) ? '— bonne valeur mais <b>mauvais sens</b>' : 'faux'}`); }
       }
       v[id] = bon ? 'ok' : vide && !(a.i || a.u) ? 'vide' : 'ko';
     }
@@ -292,15 +313,16 @@ export function monterCircuit(el, ex, opts = {}) {
         const f = (UNITES[k].find(([n]) => n === x.unite) || [0, 1])[1];
         const lu = x.d * val * f; const juste = proche(lu, dv[k]);
         bon = (bon ?? true) && juste;
-        if (!juste) fautes.push(`${comps[id].nom || id} : ta réécriture de la donnée (${esc(don[id][g].txt)}) n'est pas équivalente${proche(-lu, dv[k]) ? ' — <b>retourne la flèche</b>' : ''}`);
+        if (!juste) fautes.push(`${esc(lbl(comps[id]))} : ta réécriture de la donnée (${esc(don[id][g].txt)}) n'est pas équivalente${proche(-lu, dv[k]) ? ' — <b>retourne la flèche</b>' : ''}`);
       }
       if (bon !== null && v[id] === undefined) v[id] = bon ? 'ok' : 'ko';
     }
     for (const c of S.comps) {   // portions barrées
       const x = etat.notes[c.id]?.x;
-      if (barres.has(c.id)) { tot++; if (x) { ok++; v[c.id] = 'ok'; } else { v[c.id] = 'ko'; fautes.push(`${c.nom || c.id} : ne compte pas dans le circuit → il fallait le <b>barrer</b>`); } }
-      else if (x) { tot++; v[c.id] = 'ko'; fautes.push(`${c.nom || c.id} : barré à tort, il <b>participe</b> au circuit`); }
+      if (barres.has(c.id)) { tot++; if (x) { ok++; v[c.id] = 'ok'; } else { v[c.id] = 'ko'; fautes.push(`${esc(lbl(c))} : ne compte pas dans le circuit → il fallait le <b>barrer</b>`); } }
+      else if (x) { tot++; v[c.id] = 'ko'; fautes.push(`${esc(lbl(c))} : barré à tort, il <b>participe</b> au circuit`); }
     }
+    fautes.push(...manques);
     etat.verif = v; dessiner();
     const pct = tot ? Math.round(100 * ok / tot) : 0;
     res.hidden = false;
@@ -323,6 +345,7 @@ export function monterCircuit(el, ex, opts = {}) {
       if (r) { const cible = window.innerHeight * 0.28; if (r.top < 60 || r.bottom > window.innerHeight * 0.45) window.scrollBy({ top: r.top - cible, behavior: 'smooth' }); }
     } else pan.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
   }
+  afaire?.addEventListener('click', (ev) => { const b = ev.target.closest('[data-af]'); if (b) choisir(b.dataset.af); });
   svg.addEventListener('click', (ev) => {
     const h = ev.target.closest('[data-comp]'); if (!h) return;
     choisir(etat.sel === h.dataset.comp ? null : h.dataset.comp);
