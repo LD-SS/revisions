@@ -632,6 +632,7 @@ body.pl-plein-ouvert{overflow:hidden}
 .ci-svg .ci-fi.don,.ci-svg .ci-fut.don{fill:#b45309}
 .ci-svg .ci-fu.don{stroke:#b45309;stroke-width:2}
 .ci-svg .ci-vi.don,.ci-svg .ci-vu.don{fill:#b45309}
+.ci-donnee{font-size:.85rem;margin:.4rem 0}
 .ci-svg .ci-vi,.ci-svg .ci-vu{font-size:15px;font-weight:700;text-anchor:middle;paint-order:stroke;stroke:var(--bg);stroke-width:4px}
 .ci-aide{font-size:13.5px;margin:6px 2px}
 .ci-panneau{border:1px solid var(--accent);border-radius:12px;padding:10px 12px;margin:8px 0;background:var(--panel)}
