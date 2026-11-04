@@ -7,6 +7,7 @@ import { icone } from '../icones.js';
 import { styleMatiere, profilDe } from '../matieres.js';
 import { matiere, totaux } from '../store.js';
 import { ongletsMatiere } from './schemas.js';
+import { bilan } from '../suivi.js';
 
 export function vueMatiere(el, mid) {
   const m = matiere(mid);
@@ -18,14 +19,13 @@ export function vueMatiere(el, mid) {
       <span class="chap-num">${i + 1}</span>
       <div class="chap-body">
         <h3>${esc(c.titre)}</h3>
-        <div class="chap-meta">
-          <span class="badge">${pluriel(c.nb?.sections || 0, 'section')} de synthèse</span>
-          <span class="badge">${pluriel(c.nb?.flashcards || 0, 'flashcard')}</span>
-          ${c.nb?.exercices || !c.nb?.schemas ? `<span class="badge">${pluriel(c.nb?.exercices || 0, 'exercice')}</span>` : ''}
-          ${c.nb?.schemas ? `<span class="badge">${pluriel(c.nb.schemas, 'exercice')} sur schéma</span>` : ''}
-          ${c.exemple ? '<span class="badge warn">Exemple</span>' : ''}
-          ${c.maj ? `<span class="badge">Mis à jour le ${esc(formatDate(c.maj))}</span>` : ''}
-        </div>
+        ${(() => {
+          const b = bilan(`${m.id}/${c.id}`); const n = c.nb || {}; const nbEx = n.exercices || 0;
+          const pct = nbEx ? Math.round(100 * Math.min(b.reussis, nbEx) / nbEx) : 0;
+          return `<p class="chap-meta-t muted">${pluriel(n.sections || 0, 'section')} · ${pluriel(n.flashcards || 0, 'flashcard')}${nbEx ? ` · ${pluriel(nbEx, 'exercice')}` : ''}${n.schemas ? ` · ${n.schemas} sur schéma` : ''}${c.exemple ? ' · <span class="badge warn">Exemple</span>' : ''}</p>
+            ${nbEx ? `<div class="prog"><div style="width:${pct}%"></div></div>` : ''}
+            ${b.faits || b.cartesKo ? `<p class="prog-t">${nbEx ? `${Math.min(b.reussis, nbEx)} / ${nbEx} réussis` : ''}${b.aRefaire ? ` · <b>${b.aRefaire} à refaire</b>` : ''}${b.cartesKo ? ` · <b>${pluriel(b.cartesKo, 'carte')} à revoir</b>` : ''}</p>` : ''}`;
+        })()}
       </div>
       <span class="chev">${icone('fleche-d')}</span>
     </a>`).join('');

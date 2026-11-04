@@ -13,6 +13,7 @@ import { matiere, chargerSchemas } from '../store.js';
 import { sourcesDe, rendreBloc } from '../synthese.js';
 import { lecteurExercices, noteExo } from '../exercices.js';
 import { monterCircuit } from '../circuit.js';
+import { memoriserVisite } from '../suivi.js';
 
 const NOTES = { ok: ['Réussi', 'ok'], mid: ['Presque', 'mid'], ko: ['À refaire', 'ko'] };
 
@@ -40,6 +41,7 @@ export async function vueSchemas(el, mid, eid) {
     if (!e) { location.hash = `#/m/${mid}/schemas`; return null; }
     const cat = cats.find((c) => c.id === e.cat);
     const liste = exos.filter((x) => x.cat === e.cat);
+    memoriserVisite(`#/m/${mid}/schemas/${eid}`, e.titre, `${m.court || m.nom} · Exercices sur schéma`);
     el.innerHTML = `
       <div class="mc" ${styleMatiere(m)}>
         ${tete(`<a href="#/m/${esc(m.id)}/schemas">Exercices sur schéma</a><span class="crumb-sep">›</span><span>${esc(cat?.titre || '')}</span>`)}
@@ -71,15 +73,18 @@ export async function vueSchemas(el, mid, eid) {
         <span class="muted">${esc(origine(e))}${e.solution ? ' · à annoter' : ''}</span>
       </div></a>`;
   };
+  const ouverts = new Set(stockage.lire('schemas.ouverts', []));
   const sections = cats.map((c) => {
     const l = exos.filter((e) => e.cat === c.id && garde(e));
     if (!l.length) return '';
     const fc = exos.filter((e) => e.cat === c.id);
     const ok = fc.filter((e) => notes[e.id]?.r === 'ok').length;
-    return `<section class="sch-cat" id="cat-${esc(c.id)}">
-      <div class="sch-cat-t"><h3>${esc(c.titre)}</h3><span class="muted">${ok} / ${fc.length} réussis</span></div>
+    const ko = fc.filter((e) => notes[e.id] && notes[e.id].r !== 'ok').length;
+    return `<details class="panel sch-cat" data-cat="${esc(c.id)}" ${ouverts.has(c.id) || filtre !== 'tous' ? 'open' : ''}>
+      <summary><span class="sch-cat-t"><b>${esc(c.titre)}</b><span class="muted">${ok} / ${fc.length} réussis${ko ? ` · ${ko} à refaire` : ''}</span></span>
+        <span class="prog"><span style="width:${Math.round(100 * ok / fc.length)}%"></span></span></summary>
       <p class="muted">${esc(c.desc || '')}</p>
-      <div class="at-grille">${l.map(carte).join('')}</div></section>`;
+      <div class="at-grille">${l.map(carte).join('')}</div></details>`;
   }).join('');
   const prochaine = exos.find((e) => !notes[e.id]) || exos.find((e) => notes[e.id]?.r !== 'ok');
 
@@ -97,7 +102,6 @@ export async function vueSchemas(el, mid, eid) {
         <div class="panel"><div class="big">${faits.length}</div>faits</div>
         <div class="panel"><div class="big ok">${reussis}</div>réussis</div>
       </div>
-      <nav class="sch-sommaire">${cats.map((c) => `<a class="chip" href="#cat-${esc(c.id)}" data-cat="${esc(c.id)}"><span>${esc(c.titre)} · ${exos.filter((e) => e.cat === c.id).length}</span></a>`).join('')}</nav>
       ${d.synthese?.length ? `<details class="panel sch-methode"><summary><b>${icone('ampoule')} Méthode et conventions</b> <span class="muted">(appareils de mesure, sens des flèches)</span></summary>
         ${d.synthese.map((s) => `<h4>${esc(s.titre)}</h4>${(s.blocs || []).map((b) => rendreBloc({ ...b, pages: null, doc: null })).join('')}`).join('')}</details>` : ''}
       <div class="at-barre"><div class="at-filtres" role="radiogroup" aria-label="Filtrer">
@@ -107,16 +111,20 @@ export async function vueSchemas(el, mid, eid) {
       ${sections || '<p class="muted">Aucun exercice pour ce filtre.</p>'}
     </div>`;
 
-  for (const z of el.querySelectorAll('[data-mini]')) {
-    const e = exos.find((x) => x.id === z.dataset.mini);
-    try { monterCircuit(z, e, { apercu: true }); } catch (err) { console.warn(err); }
-  }
+  const miniatures = (racine) => {
+    for (const z of racine.querySelectorAll('[data-mini]:not([data-fait])')) {
+      const e = exos.find((x) => x.id === z.dataset.mini); z.dataset.fait = '1';
+      try { monterCircuit(z, e, { apercu: true }); } catch (err) { console.warn(err); }
+    }
+  };
+  el.querySelectorAll('.sch-cat[open]').forEach(miniatures);
+  el.querySelectorAll('.sch-cat').forEach((d) => d.addEventListener('toggle', () => {
+    if (d.open) miniatures(d);
+    const o = new Set(stockage.lire('schemas.ouverts', [])); d.open ? o.add(d.dataset.cat) : o.delete(d.dataset.cat);
+    stockage.ecrire('schemas.ouverts', [...o]);
+  }));
   el.querySelector('.at-filtres').addEventListener('change', (ev) => {
     stockage.ecrire('schemas.filtre', ev.target.value); vueSchemas(el, mid);
-  });
-  el.querySelector('.sch-sommaire').addEventListener('click', (ev) => {
-    const a = ev.target.closest('[data-cat]'); if (!a) return;
-    ev.preventDefault(); el.querySelector(`#cat-${a.dataset.cat}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
   return null;
 }

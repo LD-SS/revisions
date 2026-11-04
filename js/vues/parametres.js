@@ -2,7 +2,7 @@
    VUE PARAMÈTRES — thème, mode, données, à propos
    ===================================================================== */
 
-import { esc, toast, formatDate } from '../utils.js';
+import { esc, toast, formatDate, stockage } from '../utils.js';
 import { icone } from '../icones.js';
 import { dateContenu, matieres, chargerChapitre } from '../store.js';
 import { listerPdfs, supprimerPdf, enregistrerPdf, cleFichier, cleSource } from '../pdfs.js';
@@ -30,13 +30,6 @@ export function vueParametres(el, app) {
         <p class="muted set-row">« Automatique » suit le réglage clair / sombre de Windows.</p>
       </div>
 
-      <div class="panel">
-        <h3>Mode créateur</h3>
-        <p class="set-row"><span class="badge info">${icone('cadenas')} Arrive à l'étape 2</span></p>
-        <p class="muted">En saisissant ta clé API Anthropic ici, tu pourras glisser un PDF de cours dans un chapitre
-        et générer la synthèse, les flashcards et les exercices. La clé restera uniquement dans ce navigateur.</p>
-        <p class="muted">Sans clé, l'appli reste en mode étudiant : consultation seulement.</p>
-      </div>
 
       <div class="panel" id="mes-pdf">
         <h3>Mes PDF de cours</h3>
@@ -61,11 +54,12 @@ export function vueParametres(el, app) {
       </div>
       <div class="panel">
         <h3>Mes données</h3>
-        <p class="muted">Ta progression (flashcards, scores, planning) est enregistrée dans ce navigateur.
-        L'export / import d'une sauvegarde arrive à l'étape 4.</p>
+        <p class="muted">Ta progression (exercices notés, flashcards à revoir, annotations des schémas) est enregistrée
+        dans ce navigateur, sur cet appareil.</p>
         <div class="set-row"><button class="btn" data-action="maj">${icone('recommencer')} Forcer la mise à jour de l'appli</button></div>
         <p class="muted">À utiliser si une nouvelle version n'apparaît pas : vide la copie hors ligne et recharge la page.
         Ta progression n'est pas effacée.</p>
+        <div class="set-row"><button class="btn bad" data-action="raz">${icone('croix')} Effacer ma progression</button></div>
       </div>
 
       <div class="panel">
@@ -84,6 +78,11 @@ export function vueParametres(el, app) {
   });
   el.querySelector('[data-action="proposer"]').addEventListener('click', () => ouvrirProposition('amelioration'));
   activerPdfs(el.querySelector('#mes-pdf'));
+  el.querySelector('[data-action="raz"]').addEventListener('click', () => {
+    if (!confirm('Effacer toutes tes notes d\'exercices, flashcards à revoir et annotations sur cet appareil ?')) return;
+    for (const k of ['exos', 'fc', 'circuits', 'dernier', 'planches']) stockage.supprimer(k);
+    toast('Progression effacée');
+  });
   el.querySelector('[data-action="maj"]').addEventListener('click', async () => {
     try {
       if ('caches' in window) for (const k of await caches.keys()) await caches.delete(k);
