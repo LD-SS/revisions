@@ -59,12 +59,18 @@ export function monterCircuit(el, ex, opts = {}) {
     const r = String(x?.txt || '').replace('−', '-').match(/^\s*(-?[\d.,]+)\s*(µ|m|k)?(A|V)\b/);
     return r && x.d ? (x.d || 1) * parseFloat(r[1].replace(',', '.')) * (PREF[r[2]] || 1) : null;
   };
-  const donV = {};
+  const donV = {}, dtx = {};
   for (const [id, x] of Object.entries(don)) {
     if (barres.has(id)) continue;
     for (const [g, k] of [['i', 'I'], ['u', 'U']]) {
-      const v = valDon(x[g]); if (v !== null && sol[id]?.[k] === undefined) (donV[id] || (donV[id] = {}))[k] = v;
+      const v = valDon(x[g]); if (v !== null && sol[id]?.[k] === undefined) { (donV[id] || (donV[id] = {}))[k] = v; (dtx[id] || (dtx[id] = {}))[g] = x[g].txt; }
     }
+  }
+  // tension des sources dont la valeur et le + sont sur le schéma : le vecteur peut être dessiné (contrôlé, pas compté)
+  for (const c of S.comps) {
+    if (!'GE'.includes(c.t) || !c.plus || barres.has(c.id) || sol[c.id]?.U !== undefined || donV[c.id]?.U !== undefined || don[c.id]?.u) continue;
+    const v = valDon({ d: c.plus === 'a' ? 1 : -1, txt: String(c.val || '') });
+    if (v !== null) { (donV[c.id] || (donV[c.id] = {})).U = v; (dtx[c.id] || (dtx[c.id] = {})).u = `${c.val} (le + est marqué sur le schéma)`; }
   }
   const annotable = Object.keys(sol).length > 0 && !opts.apercu;
   const nbNom = {}; for (const c of S.comps) if (c.nom) nbNom[c.nom] = (nbNom[c.nom] || 0) + 1;
@@ -268,8 +274,11 @@ export function monterCircuit(el, ex, opts = {}) {
     pan.hidden = false;
     const leurre = barres.has(c.id);   // à barrer : on propose quand même I et U (pour ne rien dévoiler)
     const dv = donV[c.id] || {};
-    const vI = s.I !== undefined || dv.I !== undefined || (leurre && c.t !== 'V'), vU = s.U !== undefined || dv.U !== undefined || (leurre && c.t !== 'A' && c.t !== 'F');
-    const dTxt = [dv.I !== undefined && don[c.id].i.txt, dv.U !== undefined && don[c.id].u.txt].filter(Boolean).join(' et ');
+    // tout composant peut être annoté (I sauf voltmètre, U sauf ampèremètre / fil) ; ce qui n'est pas corrigé est signalé « facultatif »
+    const vI = c.t !== 'V', vU = c.t !== 'A' && c.t !== 'F';
+    const note = (k) => s[k] !== undefined || leurre ? '' : dv[k] !== undefined ? ' · donnée, contrôlée mais pas notée' : ' · facultatif, pas corrigé';
+    const dTxt = [dv.I !== undefined && dtx[c.id]?.i, dv.U !== undefined && dtx[c.id]?.u].filter(Boolean).join(' et ');
+    const estSource = dv.U !== undefined && !don[c.id]?.u;
     pan.innerHTML = `<div class="ci-t">
         <button class="btn icon" type="button" data-ci="prec" title="Composant précédent">‹</button>
         <b>${esc([c.nom ? lbl(c) : NOMS[c.t], c.val].filter(Boolean).join(' '))}</b>
@@ -278,8 +287,7 @@ export function monterCircuit(el, ex, opts = {}) {
         <button class="btn icon" type="button" data-ci="fermer" title="Fermer">✕</button></div>
       <button class="btn ci-barrer ${a.x ? 'actif' : ''}" type="button" data-ci="barrer">${a.x ? '↩ Ne plus barrer' : '✖ Barrer : cette portion ne compte pas'}</button>
       ${a.x ? '<p class="muted">Barré : tu indiques que ce composant ne participe pas au circuit (aucun courant possible, court-circuité…).</p>'
-        : `${dTxt ? `<p class="notice info ci-donnee">Donnée de l'énoncé : <b>${esc(dTxt)}</b> (en orange). Tu peux la réécrire à ta façon, par ex. une valeur positive avec la flèche dans l'autre sens. Ce n'est pas noté, mais « Vérifier » contrôle que c'est équivalent.</p>` : ''}${vI ? ligneG('i', 'Courant I', 'sens de la flèche sur le fil') : ''}${vU ? ligneG('u', 'Tension U', 'la pointe du vecteur = côté +') : ''}
-      ${!vI && !vU ? `<p class="muted">${don[c.id] ? 'Valeur donnée par l\'énoncé (en orange).' : 'Rien à calculer sur ce composant.'}</p>` : ''}`}`;
+        : `${dTxt ? `<p class="notice info ci-donnee"><span>${estSource ? 'Tension de la source' : 'Donnée de l\'énoncé'} : <b>${esc(dTxt)}</b>${estSource ? '' : ' (en orange)'}. ${estSource ? 'Tu peux dessiner son vecteur tension.' : 'Tu peux la réécrire à ta façon, par ex. une valeur positive avec la flèche dans l\'autre sens.'} Ce n'est pas noté, mais « Vérifier » contrôle le sens et la valeur.</span></p>` : ''}${vI ? ligneG('i', 'Courant I', 'sens de la flèche sur le fil' + note('I')) : ''}${vU ? ligneG('u', 'Tension U', 'la pointe du vecteur = côté +' + note('U')) : ''}`}`;
   }
 
   function maj(g, champ, val) {
@@ -313,7 +321,7 @@ export function monterCircuit(el, ex, opts = {}) {
         const f = (UNITES[k].find(([n]) => n === x.unite) || [0, 1])[1];
         const lu = x.d * val * f; const juste = proche(lu, dv[k]);
         bon = (bon ?? true) && juste;
-        if (!juste) fautes.push(`${esc(lbl(comps[id]))} : ta réécriture de la donnée (${esc(don[id][g].txt)}) n'est pas équivalente${proche(-lu, dv[k]) ? ' — <b>retourne la flèche</b>' : ''}`);
+        if (!juste) fautes.push(`${esc(lbl(comps[id]))} : ${esc(dtx[id]?.[g] && !don[id]?.[g] ? 'ton vecteur tension de la source' : `ta réécriture de la donnée (${dtx[id]?.[g] || ''})`)} n'est pas ${dtx[id]?.[g] && !don[id]?.[g] ? 'correct' : 'équivalente'}${proche(-lu, dv[k]) ? ' — <b>retourne la flèche</b>' : ''}`);
       }
       if (bon !== null && v[id] === undefined) v[id] = bon ? 'ok' : 'ko';
     }
