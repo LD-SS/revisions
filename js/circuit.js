@@ -99,11 +99,11 @@ export function monterCircuit(el, ex, opts = {}) {
   function listeAFaire() {
     if (!afaire) return;
     const rempli = (id, g) => { const x = etat.notes[id]; return !!(x && (x.x || (x[g] && x[g].d && nombre(x[g].v) !== null))); };
-    const puce = (id, g) => `<button type="button" class="ci-af ${rempli(id, g) ? 'fait' : ''}" data-af="${esc(id)}">${rempli(id, g) ? '✓ ' : ''}${esc(lbl(comps[id]))}</button>`;
+    const puce = (id, g) => `<button type="button" class="ci-af ${rempli(id, g) ? 'fait' : ''}" data-af="${esc(id)}" title="${rempli(id, g) ? 'Rempli (pas encore vérifié)' : 'À remplir'}">${esc(lbl(comps[id]))}</button>`;
     // les composants à barrer figurent aussi dans la liste (sinon la liste trahirait la réponse)
     const lI = ordre.filter((id) => sol[id]?.I !== undefined || (barres.has(id) && comps[id].t !== 'V'));
     const lU = ordre.filter((id) => sol[id]?.U !== undefined || (barres.has(id) && !'AF'.includes(comps[id].t)));
-    afaire.innerHTML = `<b>À indiquer sur le schéma</b> <span class="muted">(sens + valeur, c'est ce qui est corrigé)</span>
+    afaire.innerHTML = `<b>À indiquer sur le schéma</b> <span class="muted">(sens + valeur, c'est ce qui est corrigé quand tu cliques sur « Vérifier »)</span>
       ${lI.length ? `<div class="ci-af-l"><span>Courant dans :</span> ${lI.map((id) => puce(id, 'i')).join('')}</div>` : ''}
       ${lU.length ? `<div class="ci-af-l"><span>Tension aux bornes de :</span> ${lU.map((id) => puce(id, 'u')).join('')}</div>` : ''}
       ${barrable ? '<div class="ci-af-l muted">Si une portion ne compte pas, barre ses composants : un composant barré n\'a ni courant ni tension à indiquer.</div>' : ''}`;
