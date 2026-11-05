@@ -25,8 +25,10 @@ import { vueSchemas } from './vues/schemas.js';
 import { vuePlus, vueRecherche } from './vues/outils.js';
 import { vueExamen } from './vues/examen.js';
 import { majBoutonProposer, viderAttente } from './proposer.js';
+import { demarrerSynchro, adopterCompte } from './synchro.js';
+import { exigerAcces, ecranPerte } from './vues/acces.js';
 
-const VERSION = '0.11.4 (schémas : vecteurs sur les sources, annotations libres)';
+const VERSION = '1.0.0 (comptes, accès réservé, synchro)';
 const vue = document.getElementById('vue');
 let nettoyer = null; // fonction fournie par la page affichée, appelée avant d'en changer
 
@@ -88,6 +90,7 @@ const ROUTES = {
   plus: (el) => vuePlus(el),
   recherche: (el, [q]) => vueRecherche(el, q),
   examen: (el) => vueExamen(el),
+  membres: async (el) => (await import('./vues/membres.js')).vueMembres(el),
   progression: () => { location.replace('#/'); },
   planning: () => { location.replace('#/'); },
 };
@@ -138,6 +141,21 @@ async function demarrer() {
   majBoutonProposer();
   setTimeout(viderAttente, 3000);
   majBoutonTheme();
+  // Accès réservé : connexion, compte accepté, appareil autorisé (voir js/compte.js).
+  document.body.classList.add('verrou');
+  let compte;
+  try {
+    compte = await import('./compte.js');
+    await exigerAcces(vue);
+  } catch (err) {
+    vue.innerHTML = `<div class="error-box"><b>Connexion impossible.</b><br>${esc(err.message)}</div>
+      <p class="muted">La première connexion demande Internet.</p><p><button class="btn" onclick="location.reload()">Réessayer</button></p>`;
+    return;
+  }
+  document.body.classList.remove('verrou');
+  window.__admin = compte.estAdmin();
+  adopterCompte(compte.utilisateur().uid);
+  vue.innerHTML = '<div class="loading">Chargement…</div>';
   try {
     await chargerIndex();
   } catch (err) {
@@ -147,6 +165,20 @@ async function demarrer() {
   }
   window.addEventListener('hashchange', router);
   router();
+  // Progression reçue d'un autre appareil : on réaffiche les pages de vue d'ensemble
+  // (jamais en plein exercice, pour ne rien perdre de ce que tu tapes).
+  window.addEventListener('revisions:synchro', () => {
+    const h = location.hash;
+    const sur = h === '' || h === '#/' || /^#\/m\/[^/]+(\/schemas)?$/.test(h) || /^#\/parametres$/.test(h);
+    if (sur && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName || '')) router();
+  });
+  demarrerSynchro();
+  compte.surveiller((raison) => {
+    compte.arreterSurveillance();
+    if (typeof nettoyer === 'function') nettoyer();
+    window.removeEventListener('hashchange', router);
+    ecranPerte(vue, raison);
+  });
 }
 
 /* Copie hors ligne (service worker) : seulement si la page est servie par un site web. */
