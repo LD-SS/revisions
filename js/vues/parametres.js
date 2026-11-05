@@ -9,6 +9,8 @@ import { listerPdfs, supprimerPdf, enregistrerPdf, cleFichier, cleSource } from 
 import { sourcesDe } from '../synthese.js';
 import { estAuteur, devenirAuteur, boiteActive, ouvrirProposition } from '../proposer.js';
 import { CONFIG } from '../config.js';
+import { synchroniser, infosSynchro } from '../synchro.js';
+import { utilisateur, monMembre, nomComplet, deconnecter, idAppareil, estAdmin } from '../compte.js';
 
 /**
  * @param {HTMLElement} el
@@ -52,10 +54,12 @@ export function vueParametres(el, app) {
           C'est moi l'auteur de l'appli (${esc(CONFIG.auteur)}) : masquer les boutons « Proposer » sur cet appareil</label>
         ${estAuteur() ? '<p class="muted">Les propositions arrivent dans ta boîte e-mail et sur <a href="https://formspree.io/forms" target="_blank" rel="noopener">formspree.io</a>.</p>' : ''}
       </div>
+      <div class="panel" id="synchro"></div>
+
       <div class="panel">
         <h3>Mes données</h3>
         <p class="muted">Ta progression (exercices notés, flashcards à revoir, annotations des schémas) est enregistrée
-        dans ce navigateur, sur cet appareil.</p>
+        dans ton compte : tu la retrouves sur chacun de tes appareils.</p>
         <div class="set-row"><button class="btn" data-action="maj">${icone('recommencer')} Forcer la mise à jour de l'appli</button></div>
         <p class="muted">À utiliser si une nouvelle version n'apparaît pas : vide la copie hors ligne et recharge la page.
         Ta progression n'est pas effacée.</p>
@@ -78,8 +82,9 @@ export function vueParametres(el, app) {
   });
   el.querySelector('[data-action="proposer"]').addEventListener('click', () => ouvrirProposition('amelioration'));
   activerPdfs(el.querySelector('#mes-pdf'));
+  panneauSynchro(el.querySelector('#synchro'));
   el.querySelector('[data-action="raz"]').addEventListener('click', () => {
-    if (!confirm('Effacer toutes tes notes d\'exercices, flashcards à revoir et annotations sur cet appareil ?')) return;
+    if (!confirm(`Effacer toutes tes notes d'exercices, flashcards à revoir et annotations' sur TOUS tes appareils' ?`)) return;
     for (const k of ['exos', 'fc', 'circuits', 'dernier', 'planches']) stockage.supprimer(k);
     toast('Progression effacée');
   });
@@ -165,5 +170,35 @@ export function activerPdfs(el) {
     await supprimerPdf(b.dataset.cle);
     toast('PDF retiré de cet appareil');
     afficherPdfs(el);
+  });
+}
+
+/* ---------- Mon compte (identité, appareils, synchro) ---------- */
+function panneauSynchro(box) {
+  const quand = (t) => (t ? new Date(t).toLocaleString('fr-BE', { dateStyle: 'short', timeStyle: 'short' }) : 'jamais');
+  const dessiner = async () => {
+    const u = utilisateur(); const m = await monMembre(); const s = infosSynchro(); const ici = idAppareil();
+    const apps = Object.entries(m?.appareils || {});
+    box.innerHTML = `<h3>Mon compte</h3>
+      <p><b>${esc(nomComplet(m) || u?.email || '')}</b><br><span class="muted">${esc(u?.email || '')}</span>
+      ${estAdmin() ? ' · <a href="#/membres">gérer les membres</a>' : ''}</p>
+      <p class="muted">Appareils autorisés : ${apps.length} / ${m?.maxApp || 2} · une seule session à la fois.</p>
+      <ul class="mb-apps">${apps.map(([id, a]) => `<li><span>${esc(a.nom || 'Appareil')}${id === ici ? ' <span class="badge">cet appareil</span>' : ''}<br>
+        <span class="muted">vu le ${esc(quand(a.dernier))}</span></span></li>`).join('')}</ul>
+      <p class="muted">Progression synchronisée${s.derniere ? ` (dernière fois : ${esc(quand(s.derniere))})` : ''}.${s.erreur ? ` <b>Problème :</b> ${esc(s.erreur)}` : ''}</p>
+      <div class="set-row"><button class="btn" data-s="maintenant">${icone('recommencer')} Synchroniser maintenant</button>
+        <button class="btn" data-s="sortir">Se déconnecter</button></div>
+      <p class="muted">Pour changer d'appareil (nouveau téléphone…), demande à ${esc(CONFIG.auteur)} de retirer l'ancien.</p>`;
+  };
+  dessiner();
+  box.addEventListener('click', async (e) => {
+    const b = e.target.closest('[data-s]'); if (!b) return;
+    if (b.dataset.s === 'maintenant') {
+      b.disabled = true; await synchroniser(); await dessiner();
+      toast(infosSynchro().erreur ? 'Synchro impossible' : 'Progression synchronisée');
+    }
+    if (b.dataset.s === 'sortir' && confirm('Se déconnecter de cet appareil ? Ta progression reste dans ton compte.')) {
+      await synchroniser(); await deconnecter(); location.reload();
+    }
   });
 }
