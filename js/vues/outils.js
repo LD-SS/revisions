@@ -22,7 +22,8 @@ export function vuePlus(el) {
       ${lien('#/examen', 'examen', 'Examen blanc', 'Questions au hasard, chronométrées, comme à l\'examen')}
       ${dessin ? lien('#/dessin', 'crayon', 'Atelier de dessin', 'Dessiner les vues et les coupes dans l\'appli', dessin) : ''}
       ${elec ? lien(`#/m/${esc(elec.id)}/schemas`, 'eclair', 'Exercices sur schéma', 'Annoter les courants et tensions sur le schéma', elec) : ''}
-      ${lien('#/parametres', 'reglages', 'Paramètres', 'Thème, PDF de cours, boîte à idées, mise à jour')}
+      ${window.__admin ? lien('#/membres', 'cadenas', 'Membres', 'Inscriptions, appareils, accès (administrateur)') : ''}
+      ${lien('#/parametres', 'reglages', 'Paramètres', 'Mon compte, thème, PDF de cours, mise à jour')}
     </div>`;
 }
 
