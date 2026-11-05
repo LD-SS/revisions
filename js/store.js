@@ -85,6 +85,11 @@ export async function chargerSchemas(mid) {
 function parOrdre(a, b) { return (a.ordre ?? 999) - (b.ordre ?? 999); }
 
 async function lireJson(chemin) {
+  // Contenu protégé : servi par Firestore aux comptes acceptés (voir compte.js).
+  if (chemin.startsWith('content/')) {
+    const { lireContenu } = await import('./compte.js');
+    return lireContenu(chemin);
+  }
   let rep;
   try {
     rep = await fetch(chemin, { cache: 'no-cache' });
