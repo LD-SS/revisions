@@ -13,6 +13,10 @@ export const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
 /* ---------- Stockage local (préfixe « revisions. », valeurs en JSON) ----------
    Toujours dans un try/catch : le stockage peut être bloqué (navigation privée…). */
 const PREFIXE = 'revisions.';
+const ecouteurs = [];
+/** fn(cle, ancien, nouveau) appelée à chaque écriture / suppression (utilisé par la synchro). */
+export function surEcriture(fn) { ecouteurs.push(fn); }
+const prevenir = (cle, ancien, nouveau) => { for (const fn of ecouteurs) { try { fn(cle, ancien, nouveau); } catch (e) { console.warn(e); } } };
 export const stockage = {
   lire(cle, defaut = null) {
     try {
@@ -21,11 +25,15 @@ export const stockage = {
     } catch { return defaut; }
   },
   ecrire(cle, valeur) {
-    try { localStorage.setItem(PREFIXE + cle, JSON.stringify(valeur)); return true; }
+    const ancien = ecouteurs.length ? this.lire(cle, null) : null;
+    try { localStorage.setItem(PREFIXE + cle, JSON.stringify(valeur)); }
     catch { return false; }
+    prevenir(cle, ancien, valeur); return true;
   },
   supprimer(cle) {
+    const ancien = ecouteurs.length ? this.lire(cle, null) : null;
     try { localStorage.removeItem(PREFIXE + cle); } catch { /* rien */ }
+    prevenir(cle, ancien, null);
   },
 };
 
