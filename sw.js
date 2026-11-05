@@ -3,11 +3,11 @@
    ---------------------------------------------------------------------
    Stratégie « réseau d'abord » : en ligne, on prend toujours la dernière
    version (et on met la copie à jour) ; hors ligne, on sert la copie.
-   À l'installation, tout l'appli + tout le contenu de content/ est copié.
+   À l'installation, toute l'appli est copiée (le contenu vient de Firestore).
    Quand on ajoute un fichier JS / CSS : l'ajouter dans FICHIERS_APP.
    ===================================================================== */
 
-const CACHE = 'revisions-v23';
+const CACHE = 'revisions-v25';
 
 const FICHIERS_APP = [
   './',
@@ -34,6 +34,10 @@ const FICHIERS_APP = [
   'js/circuit.js',
   'js/vues/schemas.js',
   'js/vues/outils.js',
+  'js/synchro.js',
+  'js/compte.js',
+  'js/vues/acces.js',
+  'js/vues/membres.js',
   'js/vues/examen.js',
   'js/suivi.js',
   'js/proposer.js',
@@ -60,16 +64,8 @@ self.addEventListener('install', (event) => {
   event.waitUntil((async () => {
     const cache = await caches.open(CACHE);
     await cache.addAll(FICHIERS_APP);
-    // Contenu : l'index puis chaque chapitre qu'il référence.
-    try {
-      const rep = await fetch('content/index.json', { cache: 'no-cache' });
-      if (rep.ok) {
-        await cache.put('content/index.json', rep.clone());
-        const index = await rep.json();
-        const fichiers = (index.matieres || []).flatMap((m) => (m.chapitres || []).map((c) => `content/${c.fichier}`));
-        await Promise.allSettled(fichiers.map((f) => cache.add(f)));
-      }
-    } catch (e) { /* hors ligne pendant l'installation : le contenu sera copié au fil des visites */ }
+    // Le contenu (synthèses, exercices) n'est plus dans le site : il vient de Firestore,
+    // qui garde sa propre copie hors ligne pour les comptes acceptés.
     await self.skipWaiting();
   })());
 });
@@ -84,7 +80,12 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const req = event.request;
   const url = new URL(req.url);
-  // On ne gère que les lectures de notre propre site (jamais l'API Claude, par exemple).
+  // Bibliothèque Firebase (adresse versionnée, ne change jamais) : copie d'abord, pour le hors ligne.
+  if (req.method === 'GET' && url.origin === 'https://www.gstatic.com' && url.pathname.startsWith('/firebasejs/')) {
+    event.respondWith(caches.open(CACHE).then(async (cache) => (await cache.match(req)) || fetch(req).then((rep) => { if (rep.ok) cache.put(req, rep.clone()); return rep; })));
+    return;
+  }
+  // Sinon, on ne gère que les lectures de notre propre site (jamais Firestore ni l'API Claude).
   if (req.method !== 'GET' || url.origin !== self.location.origin) return;
   event.respondWith((async () => {
     const cache = await caches.open(CACHE);
