@@ -28,7 +28,7 @@ import { majBoutonProposer, viderAttente } from './proposer.js';
 import { demarrerSynchro, adopterCompte } from './synchro.js';
 import { exigerAcces, ecranPerte } from './vues/acces.js';
 
-const VERSION = '1.0.0 (comptes, accès réservé, synchro)';
+const VERSION = '1.0.1 (onglet Membres)';
 const vue = document.getElementById('vue');
 let nettoyer = null; // fonction fournie par la page affichée, appelée avant d'en changer
 
@@ -70,6 +70,7 @@ function rendreOnglets(route) {
     ...(dessin ? [`<a class="tab mc ${actif(route[0] === 'dessin')}" ${styleMatiere(dessin)} href="#/dessin" title="Atelier de dessin : exercices à dessiner dans l'appli">
       ${icone('crayon')}<span class="txt">Atelier dessin</span></a>`] : []),
     `<a class="tab ${actif(route[0] === 'examen')}" href="#/examen">${icone('examen')}<span class="txt">Examen blanc</span></a>`,
+    ...(window.__admin ? [`<a class="tab ${actif(route[0] === 'membres')}" href="#/membres">${icone('cadenas')}<span class="txt">Membres</span></a>`] : []),
     `<a class="tab ${actif(route[0] === 'parametres')}" href="#/parametres">${icone('reglages')}<span class="txt">Paramètres</span></a>`,
   ];
   document.getElementById('tabs').innerHTML = tabs.join('');
