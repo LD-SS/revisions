@@ -18,7 +18,7 @@
 // Bibliothèque Firebase (version figée ; copiée hors ligne par le service worker).
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import {
-  getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut,
+  initializeAuth, indexedDBLocalPersistence, browserLocalPersistence, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut,
   sendEmailVerification, sendPasswordResetEmail, updateProfile,
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import {
@@ -30,7 +30,9 @@ import { stockage } from './utils.js';
 import { CGU_VERSION } from './conditions.js';
 
 const app = initializeApp(CONFIG.firebase);
-const auth = getAuth(app);
+// Connexion mémorisée sur l'appareil (IndexedDB, sinon localStorage) : on reste connecté
+// d'une utilisation à l'autre, jusqu'à « Se déconnecter ».
+const auth = initializeAuth(app, { persistence: [indexedDBLocalPersistence, browserLocalPersistence] });
 auth.languageCode = 'fr';
 let db;
 try { db = initializeFirestore(app, { localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }) }); }
@@ -79,6 +81,7 @@ export async function inscrire({ prenom, nom, email, mdp, cgu }) {
   if (!domaineOk(email)) throw new Error('Utilise ton adresse de l\'école (…@student.meuse-cadets.be ou …@meuse-cadets.be).');
   if (!prenom?.trim() || !nom?.trim()) throw new Error('Indique ton prénom et ton nom.');
   const { user } = await createUserWithEmailAndPassword(auth, email, mdp);
+  stockage.ecrire('compte.email', email);
   await updateProfile(user, { displayName: `${prenom.trim()}|${nom.trim()}` });
   await sendEmailVerification(user, lienRetour()).catch(() => {});
   return user;
@@ -86,7 +89,9 @@ export async function inscrire({ prenom, nom, email, mdp, cgu }) {
 export async function connecter(email, mdp) {
   email = String(email || '').trim().toLowerCase();
   if (!domaineOk(email)) throw new Error('Utilise ton adresse de l\'école.');
-  return (await signInWithEmailAndPassword(auth, email, mdp)).user;
+  const u = (await signInWithEmailAndPassword(auth, email, mdp)).user;
+  stockage.ecrire('compte.email', email);
+  return u;
 }
 export const renvoyerVerification = () => sendEmailVerification(auth.currentUser, lienRetour());
 export const motDePasseOublie = (email) => sendPasswordResetEmail(auth, String(email || '').trim().toLowerCase(), lienRetour());
