@@ -7,7 +7,7 @@
    Quand on ajoute un fichier JS / CSS : l'ajouter dans FICHIERS_APP.
    ===================================================================== */
 
-const CACHE = 'revisions-v26';
+const CACHE = 'revisions-v27';
 
 const FICHIERS_APP = [
   './',
@@ -36,6 +36,7 @@ const FICHIERS_APP = [
   'js/vues/outils.js',
   'js/synchro.js',
   'js/compte.js',
+  'js/conditions.js',
   'js/vues/acces.js',
   'js/vues/membres.js',
   'js/vues/examen.js',
