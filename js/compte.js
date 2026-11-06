@@ -27,6 +27,7 @@ import {
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 import { CONFIG } from './config.js';
 import { stockage } from './utils.js';
+import { CGU_VERSION } from './conditions.js';
 
 const app = initializeApp(CONFIG.firebase);
 const auth = getAuth(app);
@@ -72,7 +73,8 @@ export async function notifier(sujet, message) {
 /* ---------- connexion / inscription ---------- */
 const lienRetour = () => ({ url: `${location.origin}${location.pathname}`, handleCodeInApp: false });
 
-export async function inscrire({ prenom, nom, email, mdp }) {
+export async function inscrire({ prenom, nom, email, mdp, cgu }) {
+  if (!cgu) throw new Error('Tu dois accepter les conditions d\'utilisation.');
   email = String(email || '').trim().toLowerCase();
   if (!domaineOk(email)) throw new Error('Utilise ton adresse de l\'école (…@student.meuse-cadets.be ou …@meuse-cadets.be).');
   if (!prenom?.trim() || !nom?.trim()) throw new Error('Indique ton prénom et ton nom.');
@@ -141,6 +143,7 @@ export async function ouvrirSession() {
     m = {
       email: u.email.toLowerCase(), prenom, nom, statut: admin ? 'accepte' : 'attente', maxApp: admin ? 3 : 2,
       cree: Date.now(), appareils: { [dev]: desc }, demandes: {}, session: dev, vu: Date.now(),
+      cgu: { v: CGU_VERSION, t: Date.now() },
     };
     await setDoc(refMembre(u.uid), m);
     if (!admin) notifier(`Révisions : nouvelle inscription — ${nomComplet(m)}`, `${nomComplet(m)} (${m.email}) demande l'accès à l'appli Révisions. Accepte ou refuse dans la page Membres.`);
@@ -158,6 +161,7 @@ export async function ouvrirSession() {
     return { etat: 'appareil', membre: m };
   }
   if (m.statut === 'bloque') return { etat: 'bloque', membre: m };
+  if (m.cgu?.v !== CGU_VERSION) return { etat: 'cgu', membre: m };
   if (m.statut !== 'accepte') return { etat: 'attente', membre: m };
   return { etat: 'ok', membre: m };
 }
@@ -179,6 +183,11 @@ export function surveiller(onPerte) {
   }, () => {});
 }
 export function arreterSurveillance() { if (stopSurv) { stopSurv(); stopSurv = null; } }
+/** Acceptation (ou nouvelle acceptation) des conditions d'utilisation. */
+export async function accepterConditions() {
+  const u = auth.currentUser; if (!u) return;
+  await updateDoc(refMembre(u.uid), { cgu: { v: CGU_VERSION, t: Date.now() } });
+}
 /** Reprendre la session sur cet appareil (déconnecte l'autre). */
 export async function reprendreSession() {
   const u = auth.currentUser; if (!u) return;
