@@ -148,6 +148,7 @@ export function lecteurExercices(conteneur, tous, options = {}) {
         </div>
         ${e.consigne ? `<div class="ex-consigne">${texte(e.consigne)}</div>` : ''}
         ${e.schema ? '<div class="ex-circuit" data-circuit></div>' : ''}
+        ${typeof e.image === 'string' && /^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(e.image) ? `<figure class="fig ex-img"><img src="${e.image}" alt="Schéma de l'exercice"></figure>` : ''}
         <ol class="ex-items ${e.items.length > 1 ? '' : 'seul'}">${items}</ol>
         ${!etat.rep ? `<p class="ex-papier">${icone('crayon')} Résous sur ta feuille, puis vérifie avec la correction.</p>` : ''}
         ${e.indice ? (etat.indice ? `<div class="ex-indice">${icone('ampoule')}<div>${texte(e.indice)}</div></div>`
