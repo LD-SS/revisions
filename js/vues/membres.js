@@ -42,7 +42,7 @@ export async function vueMembres(el) {
     const dem = Object.entries(m.demandes || {});
     const al = alertes(m); const max = m.maxApp || 2;
     return `<div class="panel mb-carte" data-uid="${esc(m.uid)}">
-      <div class="mb-tete"><div><b>${esc(nomComplet(m))}</b>${m.uid === moi ? ' <span class="badge">toi</span>' : ''}<br><span class="muted">${esc(m.email)} · inscrit le ${date(m.cree)}</span></div>
+      <div class="mb-tete"><div><b>${esc(nomComplet(m))}</b>${m.uid === moi ? ' <span class="badge">toi</span>' : ''}<br><span class="muted">${esc(m.email)} · inscrit le ${date(m.cree)} · ${m.cgu ? `conditions acceptées le ${date(m.cgu.t)}` : 'conditions pas encore acceptées'}</span></div>
         <span class="badge ex-${cl}">${st}</span></div>
       ${al.length && m.uid !== moi ? `<p class="mb-alerte">${icone('ampoule')} ${al.map(esc).join(' · ')}</p>` : ''}
       <div class="mb-l"><b>Appareils ${apps.length} / ${max}</b>
