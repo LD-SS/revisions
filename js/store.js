@@ -81,6 +81,18 @@ export async function chargerSchemas(mid) {
   return d;
 }
 
+/** Évaluations types d'une matière (fichier indiqué par « evaluations » dans index.json). */
+export async function chargerEvaluations(mid) {
+  const m = matiere(mid);
+  if (!m?.evaluations) return [];
+  const cle = `${mid}/evaluations`;
+  if (!chapitresEnMemoire.has(cle)) {
+    const d = await lireJson(`content/${m.evaluations.fichier}`);
+    chapitresEnMemoire.set(cle, Array.isArray(d.evaluations) ? d.evaluations : []);
+  }
+  return chapitresEnMemoire.get(cle);
+}
+
 /* ---------- interne ---------- */
 function parOrdre(a, b) { return (a.ordre ?? 999) - (b.ordre ?? 999); }
 
