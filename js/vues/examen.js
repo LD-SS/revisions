@@ -9,7 +9,7 @@
 import { esc, stockage, melanger, pluriel } from '../utils.js';
 import { icone } from '../icones.js';
 import { styleMatiere } from '../matieres.js';
-import { matieres, matiere, chargerChapitre, chargerSchemas } from '../store.js';
+import { matieres, matiere, chargerChapitre, chargerSchemas, chargerEvaluations } from '../store.js';
 import { sourcesDe } from '../synthese.js';
 import { lecteurExercices } from '../exercices.js';
 
@@ -50,7 +50,14 @@ export function vueExamen(el) {
           <label>Durée <select class="field" data-k="min">${[10, 20, 30, 45, 60].map((v) => `<option value="${v}" ${+pref.min === v ? 'selected' : ''}>${v} min</option>`).join('')}</select></label>
           <button class="btn primary" data-action="go">${icone('chrono')} Commencer</button>
         </div>
+        <div class="exam-evals" data-evals></div>
       </div>`;
+    chargerEvaluations(pref.mid).then((evs) => {
+      const z = el.querySelector('[data-evals]'); if (!z || !evs.length) return;
+      z.innerHTML = `<h2 class="exam-h">Évaluations types</h2><p class="muted">Une évaluation complète, dans l'ordre, en temps limité, avec le corrigé détaillé de chaque question.</p>
+        ${evs.map((ev) => `<div class="panel exam-eval"><div><b>${esc(ev.titre)}</b><br><span class="muted">${esc(ev.desc || '')} · ${ev.duree || 100} min</span></div>
+          <button class="btn primary" data-action="eval" data-eval="${esc(ev.id)}">${icone('chrono')} Commencer</button></div>`).join('')}`;
+    }).catch(() => {});
   };
   formulaire();
 
@@ -68,14 +75,18 @@ export function vueExamen(el) {
       if (!tous.length) { b.disabled = false; b.textContent = 'Aucun exercice'; return; }
       lancer(melanger(tous).slice(0, +pref.n));
     }
+    if (b.dataset.action === 'eval') {
+      const ev = (await chargerEvaluations(pref.mid)).find((x) => x.id === b.dataset.eval); if (!ev) return;
+      lancer(ev.exercices.map((x) => ({ ...x, _cle: `${pref.mid}/eval/${ev.id}/${x.id}`, _ou: ev.titre })), ev.duree || 100);
+    }
     if (b.dataset.action === 'fin') bilan();
     if (b.dataset.action === 'refaire') formulaire();
   });
 
   const notes = new Map();
   let serie = []; let fin = 0;
-  function lancer(liste) {
-    serie = liste; notes.clear(); fin = Date.now() + pref.min * 60000;
+  function lancer(liste, minutes = +pref.min) {
+    serie = liste; notes.clear(); fin = Date.now() + minutes * 60000;
     const m = matiere(pref.mid);
     el.innerHTML = `<div class="mc" ${styleMatiere(m)}>
       <div class="exam-barre"><span class="exam-chrono">${icone('chrono')} <b data-chrono></b></span>
