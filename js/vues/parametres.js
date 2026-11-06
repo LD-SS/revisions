@@ -9,6 +9,7 @@ import { listerPdfs, supprimerPdf, enregistrerPdf, cleFichier, cleSource } from 
 import { sourcesDe } from '../synthese.js';
 import { estAuteur, devenirAuteur, boiteActive, ouvrirProposition } from '../proposer.js';
 import { CONFIG } from '../config.js';
+import { CGU_HTML } from '../conditions.js';
 import { synchroniser, infosSynchro } from '../synchro.js';
 import { utilisateur, monMembre, nomComplet, deconnecter, idAppareil, estAdmin } from '../compte.js';
 
@@ -73,6 +74,8 @@ export function vueParametres(el, app) {
         <p class="muted">Les PDF de cours restent la propriété de leurs auteurs et ne sont pas publiés.
         Seuls les synthèses et exercices générés le sont.</p>
         <p class="muted">Formules affichées avec KaTeX (licence MIT).</p>
+        <p>© 2026 Logan Degossely — tous droits réservés.</p>
+        <details class="cgu-details"><summary>Conditions d'utilisation</summary><div class="cgu-boite">${CGU_HTML}</div></details>
       </div>
     </div>`;
 
