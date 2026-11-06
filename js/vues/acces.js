@@ -6,7 +6,7 @@
    que lorsque le compte est accepté sur cet appareil.
    ===================================================================== */
 
-import { esc, toast } from '../utils.js';
+import { esc, toast, stockage } from '../utils.js';
 import { icone } from '../icones.js';
 import { CONFIG } from '../config.js';
 import {
@@ -125,7 +125,7 @@ function formulaire(el, suite, mode = 'connexion') {
     <form class="acces-form" novalidate>
       ${ins ? `<div class="acces-2"><label>Prénom<input class="field" name="prenom" autocomplete="given-name" required></label>
         <label>Nom<input class="field" name="nom" autocomplete="family-name" required></label></div>` : ''}
-      <label>Adresse e-mail de l'école<input class="field" name="email" type="email" autocomplete="username" placeholder="prenom.nom@student.meuse-cadets.be" required></label>
+      <label>Adresse e-mail de l'école<input class="field" name="email" type="email" autocomplete="username" placeholder="prenom.nom@student.meuse-cadets.be" value="${esc(stockage.lire('compte.email', ''))}" required></label>
       <label>Mot de passe<input class="field" name="mdp" type="password" autocomplete="${ins ? 'new-password' : 'current-password'}" minlength="8" required></label>
       ${ins ? `<label>Confirme le mot de passe<input class="field" name="mdp2" type="password" autocomplete="new-password" minlength="8" required></label>
         <details class="cgu-details"><summary>Lire les conditions d'utilisation</summary><div class="cgu-boite">${CGU_HTML}</div></details>
