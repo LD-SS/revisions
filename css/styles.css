@@ -837,3 +837,10 @@ body.verrou{padding-bottom:0}
 .cgu-details summary{cursor:pointer;color:var(--accent);font-size:14px;font-weight:600}
 label.cgu-ok{flex-direction:row !important;align-items:flex-start;gap:8px !important;font-weight:400 !important;font-size:14px;margin-top:8px}
 label.cgu-ok input{margin-top:3px}
+
+/* Évaluations types (v1.2) */
+.exam-evals{margin-top:18px}
+.exam-h{font-size:1.15rem;margin:0 0 4px}
+.exam-eval{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:10px}
+.ex-img{margin:10px 0;text-align:center}
+.ex-img img{max-width:min(100%,560px);max-height:420px;height:auto;background:#fff;border-radius:8px;padding:6px}
