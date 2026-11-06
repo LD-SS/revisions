@@ -829,3 +829,11 @@ body.verrou{padding-bottom:0}
 .mb-dem-b{display:flex;flex-wrap:wrap;gap:6px}
 .mb-actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
 .at-stats .big.mid{color:var(--warn)}
+
+/* Conditions d'utilisation (v1.1) */
+.cgu-boite{max-height:260px;overflow:auto;padding:10px 12px;border:1px solid var(--line,#d0d7e2);border-radius:8px;font-size:13.5px;line-height:1.5;margin:6px 0}
+.cgu-boite p{margin:4px 0}
+.cgu-liste{margin:6px 0;padding-left:1.2em;display:grid;gap:6px}
+.cgu-details summary{cursor:pointer;color:var(--accent);font-size:14px;font-weight:600}
+label.cgu-ok{flex-direction:row !important;align-items:flex-start;gap:8px !important;font-weight:400 !important;font-size:14px;margin-top:8px}
+label.cgu-ok input{margin-top:3px}
