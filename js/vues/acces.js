@@ -11,8 +11,9 @@ import { icone } from '../icones.js';
 import { CONFIG } from '../config.js';
 import {
   pret, ouvrirSession, inscrire, connecter, deconnecter, renvoyerVerification, motDePasseOublie,
-  messageErreur, utilisateur, decrireAppareil, reprendreSession,
+  messageErreur, utilisateur, decrireAppareil, reprendreSession, accepterConditions,
 } from '../compte.js';
+import { CGU_HTML } from '../conditions.js';
 
 const cadre = (contenu) => `<div class="acces"><div class="panel acces-boite">
   <div class="acces-tete"><span class="logo">${icone('logo')}</span><div><h1>Révisions</h1>
@@ -82,6 +83,19 @@ function ecran(el, r) {
           Contacte ${esc(CONFIG.auteur)} si tu penses que c'est une erreur.</p>
           <div class="acces-actions">${verifierBtn()}${boutonSortir}</div>`);
         lier(); return;
+      case 'cgu':
+        el.innerHTML = cadre(`<h2>Conditions d'utilisation</h2>
+          <p>Pour continuer à utiliser l'appli, lis et accepte les conditions d'utilisation.</p>
+          <div class="cgu-boite">${CGU_HTML}</div>
+          <label class="cgu-ok"><input type="checkbox" data-a="coche"> J'ai lu et j'accepte les conditions d'utilisation.</label>
+          <div class="acces-actions"><button class="btn primary" data-a="accepter" disabled>Accepter et continuer</button>${boutonSortir}</div>`);
+        lier();
+        el.querySelector('[data-a=coche]').addEventListener('change', (e) => { el.querySelector('[data-a=accepter]').disabled = !e.target.checked; });
+        el.querySelector('[data-a=accepter]').addEventListener('click', async (e) => {
+          e.target.disabled = true;
+          try { await accepterConditions(); suite(); } catch (err) { toast(messageErreur(err), 5000); e.target.disabled = false; }
+        });
+        return;
       case 'appareil':
         el.innerHTML = cadre(`<h2>Nouvel appareil</h2>
           <p>Ton compte est déjà utilisé sur <b>${Object.keys(r.membre?.appareils || {}).length} appareil(s)</b>, le maximum autorisé.
@@ -113,7 +127,9 @@ function formulaire(el, suite, mode = 'connexion') {
         <label>Nom<input class="field" name="nom" autocomplete="family-name" required></label></div>` : ''}
       <label>Adresse e-mail de l'école<input class="field" name="email" type="email" autocomplete="username" placeholder="prenom.nom@student.meuse-cadets.be" required></label>
       <label>Mot de passe<input class="field" name="mdp" type="password" autocomplete="${ins ? 'new-password' : 'current-password'}" minlength="8" required></label>
-      ${ins ? '<label>Confirme le mot de passe<input class="field" name="mdp2" type="password" autocomplete="new-password" minlength="8" required></label>' : ''}
+      ${ins ? `<label>Confirme le mot de passe<input class="field" name="mdp2" type="password" autocomplete="new-password" minlength="8" required></label>
+        <details class="cgu-details"><summary>Lire les conditions d'utilisation</summary><div class="cgu-boite">${CGU_HTML}</div></details>
+        <label class="cgu-ok"><input type="checkbox" name="cgu"> J'ai lu et j'accepte les conditions d'utilisation.</label>` : ''}
       <p class="acces-err" hidden></p>
       <button class="btn primary" type="submit">${ins ? 'Créer mon compte' : 'Se connecter'}</button>
       ${ins ? `<p class="muted">Seules les adresses <b>@student.meuse-cadets.be</b> et <b>@meuse-cadets.be</b> sont acceptées.
@@ -137,7 +153,8 @@ function formulaire(el, suite, mode = 'connexion') {
       if (ins) {
         if (f.mdp.value.length < 8) throw new Error('Mot de passe trop court : au moins 8 caractères.');
         if (f.mdp.value !== f.mdp2.value) throw new Error('Les deux mots de passe sont différents.');
-        await inscrire({ prenom: f.prenom.value, nom: f.nom.value, email: f.email.value, mdp: f.mdp.value });
+        if (!f.cgu.checked) throw new Error('Coche la case pour accepter les conditions d\'utilisation.');
+        await inscrire({ prenom: f.prenom.value, nom: f.nom.value, email: f.email.value, mdp: f.mdp.value, cgu: true });
       } else {
         await connecter(f.email.value, f.mdp.value);
       }
