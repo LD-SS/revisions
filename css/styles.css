@@ -844,3 +844,16 @@ label.cgu-ok input{margin-top:3px}
 .exam-eval{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:10px}
 .ex-img{margin:10px 0;text-align:center}
 .ex-img img{max-width:min(100%,560px);max-height:420px;height:auto;background:#fff;border-radius:8px;padding:6px}
+
+/* Simplification (v1.3) */
+.pastille{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;margin-left:5px;border-radius:999px;background:var(--bad);color:#fff;font-size:11px;font-weight:700;line-height:1}
+.botnav .pastille{position:absolute;top:2px;right:calc(50% - 22px);margin:0}
+.botnav a{position:relative}
+.maj-dispo{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;z-index:200;display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center;
+  background:var(--panel);border:1px solid var(--accent);border-radius:12px;padding:10px 14px;box-shadow:0 6px 24px rgba(0,0,0,.18);max-width:calc(100vw - 32px)}
+@media (max-width:640px){.maj-dispo{bottom:76px}}
+.ci-fac{margin-top:8px;font-size:14px}
+.ci-fac summary{cursor:pointer;color:var(--muted)}
+.exam-h{margin-top:14px}
+.pl-plein-b span{font-size:13px}
+.ex-planche.pl-plein .pl-svg{margin:0 auto}
