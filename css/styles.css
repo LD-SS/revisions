@@ -857,3 +857,9 @@ label.cgu-ok input{margin-top:3px}
 .exam-h{margin-top:14px}
 .pl-plein-b span{font-size:13px}
 .ex-planche.pl-plein .pl-svg{margin:0 auto}
+
+/* bouton « Plein écran » flottant sur la planche (toujours visible, même en faisant défiler) */
+.pl-fab-zone{position:sticky;top:0;left:0;height:0;z-index:3}
+.pl-fab{position:absolute;top:10px;right:10px;box-shadow:0 2px 8px rgba(0,0,0,.25);font-weight:600}
+.pl-fab span{font-size:14px}
+.ex-planche.pl-plein .pl-fab-zone{display:none}
