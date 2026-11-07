@@ -863,3 +863,53 @@ label.cgu-ok input{margin-top:3px}
 .pl-fab{position:absolute;top:10px;right:10px;box-shadow:0 2px 8px rgba(0,0,0,.25);font-weight:600}
 .pl-fab span{font-size:14px}
 .ex-planche.pl-plein .pl-fab-zone{display:none}
+
+/* ---------- Générateur de synthèse ---------- */
+.gs-grille{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:14px;align-items:start}
+@media (max-width:820px){.gs-grille{grid-template-columns:1fr}}
+.gs-opts{position:sticky;top:76px;display:flex;flex-direction:column;gap:10px}
+.gs-opts h3{margin:0}
+.gs-opt{display:flex;gap:8px;align-items:flex-start;font-size:14px;cursor:pointer}
+.gs-notes-l{display:flex;flex-direction:column;gap:4px;font-size:14px}
+.gs-notes-l textarea{resize:vertical;font:inherit;font-size:14px}
+.gs-impr{justify-content:center}
+.gs-astuce{font-size:12.5px;margin:0}
+.gs-barre{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
+.gs-barre .btn{padding:5px 10px;font-size:13px}
+.gs-ch{border-top:1px solid var(--border);padding:6px 0}
+.gs-ch summary{cursor:pointer;padding:6px 0;display:flex;gap:6px;align-items:center;list-style:none}
+.gs-ch summary::-webkit-details-marker{display:none}
+.gs-item{display:grid;grid-template-columns:auto minmax(0,1fr);gap:2px 10px;padding:7px 8px;border-radius:8px;cursor:pointer;align-items:center}
+.gs-item:hover{background:var(--bg)}
+.gs-item input{grid-row:span 2}
+.gs-f{overflow-x:auto;font-size:15px}
+.gs-l{font-size:13px;color:var(--muted)}
+.gs-sch{display:inline-flex;align-items:center;gap:2px;font-size:11.5px;color:var(--mt);margin-left:4px}
+.gs-sch svg{width:12px;height:12px}
+.gs-apercu-t{margin:22px 0 8px}
+/* la feuille : rendu « papier », identique à l'impression */
+.gs-feuille{background:#fff;color:#111;border:1px solid var(--border);border-radius:6px;padding:14mm 12mm;max-width:210mm;margin:0 auto;box-shadow:0 2px 10px rgba(0,0,0,.08);columns:2;column-gap:10mm;font-size:12.5px}
+@media (max-width:700px){.gs-feuille{columns:1;padding:16px}}
+.gs-entete{column-span:all;display:flex;justify-content:space-between;border-bottom:2px solid #111;padding-bottom:4px;margin-bottom:10px;font-size:15px}
+.gs-sec{break-inside:auto;margin-bottom:8px}
+.gs-sec h3{font-size:13px;margin:0 0 6px;padding:3px 6px;background:#eef1f5;border-radius:3px;break-after:avoid}
+.gs-bloc{break-inside:avoid;border:1px solid #d5d9e0;border-radius:5px;padding:6px 8px;margin-bottom:6px}
+.gs-titre{font-weight:600;font-size:12px;margin-bottom:2px}
+.gs-math{overflow-x:auto}
+.gs-math .katex-display{margin:4px 0}
+.gs-vide{height:44px;border-bottom:1px dotted #999;margin:4px 0}
+.gs-vars{display:grid;grid-template-columns:auto 1fr;gap:1px 8px;font-size:11.5px;border-top:1px dashed #ccc;padding-top:4px;margin-top:2px}
+.gs-vars i{color:#555;font-style:normal}
+.gs-fig{margin:4px 0 0;text-align:center}
+.gs-fig svg{max-width:100%;height:auto;max-height:150px;width:auto}
+.gs-mes-notes p{margin:0 0 4px}
+@media print{
+  @page{size:A4;margin:10mm}
+  .gs .no-print,.gs .no-print *{display:none!important}
+  .gs-feuille{border:0;box-shadow:none;padding:0;max-width:none;columns:2}
+  .gs-sec h3{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+/* la feuille reste « papier blanc » même en thème sombre (schémas compris) */
+.gs-feuille{--bg:#f3f5f8;--panel:#ffffff;--panel2:#f7f9fc;--text:#18212d;--muted:#5a6577;--border:#d8dee8;--accent:#1d5fd1;--ok:#1b7f47;--warn:#a15c00;--bad:#c42b2b;--def:#1d5fd1;--mt:var(--mc);color-scheme:light}
+.gs-feuille .fig.gs-fig{margin:4px 0 0;padding:0;border:0;background:none}
+.gs-feuille .fig.gs-fig svg{max-height:150px;width:auto;font-size:12px}
