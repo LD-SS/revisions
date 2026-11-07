@@ -7,6 +7,7 @@
    Les notes sont les mêmes que dans l'onglet Exercices du chapitre.
    ===================================================================== */
 
+import { ongletsMatiere } from './schemas.js';
 import { esc, stockage } from '../utils.js';
 import { icone } from '../icones.js';
 import { styleMatiere } from '../matieres.js';
@@ -123,11 +124,12 @@ export async function vueAtelier(el, params = []) {
 
   el.innerHTML = `
     <div class="mc" ${styleMatiere(m)}>
-      <div class="crumb"><a href="#/">Accueil</a><span class="crumb-sep">›</span><span>Atelier de dessin</span></div>
+      <div class="crumb"><a href="#/">Accueil</a><span class="crumb-sep">›</span><a href="#/m/${esc(m.id)}">${esc(m.nom)}</a><span class="crumb-sep">›</span><span>Atelier de dessin</span></div>
       <div class="page-head">
         <span class="m-ic">${icone('crayon')}</span>
         <div><h2>Atelier de dessin</h2><p class="muted">Dessine les vues directement dans l'appli : correction automatique et expliquée.</p></div>
       </div>
+      ${ongletsMatiere(m, 'atelier')}
       <div class="at-stats">
         <div class="panel"><div class="big">${exos.length}</div>planches</div>
         <div class="panel"><div class="big">${faits.length}</div>faites</div>
