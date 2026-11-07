@@ -41,6 +41,8 @@ export function vueExamen(el) {
       <div class="mc" ${styleMatiere(m)}>
         <div class="page-head"><span class="m-ic">${icone('examen')}</span>
           <div><h1>Examen blanc</h1><p class="muted">Des exercices tirés au hasard, en temps limité. Résous sur ta feuille, puis note-toi.</p></div></div>
+        <div class="exam-evals" data-evals></div>
+        <h2 class="exam-h" data-hasard-titre hidden>Exercices au hasard</h2>
         <div class="panel exam-form">
           <label>Matière <select class="field" data-k="mid">${mats.map((x) => `<option value="${esc(x.id)}" ${x.id === pref.mid ? 'selected' : ''}>${esc(x.nom)}</option>`).join('')}</select></label>
           <label>Chapitre <select class="field" data-k="cid"><option value="">Tous les chapitres</option>
@@ -50,10 +52,10 @@ export function vueExamen(el) {
           <label>Durée <select class="field" data-k="min">${[10, 20, 30, 45, 60].map((v) => `<option value="${v}" ${+pref.min === v ? 'selected' : ''}>${v} min</option>`).join('')}</select></label>
           <button class="btn primary" data-action="go">${icone('chrono')} Commencer</button>
         </div>
-        <div class="exam-evals" data-evals></div>
       </div>`;
     chargerEvaluations(pref.mid).then((evs) => {
       const z = el.querySelector('[data-evals]'); if (!z || !evs.length) return;
+      el.querySelector('[data-hasard-titre]').hidden = false;
       z.innerHTML = `<h2 class="exam-h">Évaluations types</h2><p class="muted">Une évaluation complète, dans l'ordre, en temps limité, avec le corrigé détaillé de chaque question.</p>
         ${evs.map((ev) => `<div class="panel exam-eval"><div><b>${esc(ev.titre)}</b><br><span class="muted">${esc(ev.desc || '')} · ${ev.duree || 100} min</span></div>
           <button class="btn primary" data-action="eval" data-eval="${esc(ev.id)}">${icone('chrono')} Commencer</button></div>`).join('')}`;
