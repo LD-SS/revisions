@@ -1,14 +1,11 @@
 /* =====================================================================
    CONFIG — réglages de l'application (publics : rien de secret ici !)
    ---------------------------------------------------------------------
-   formulaire : adresse du formulaire Formspree qui reçoit les propositions
-                d'amélioration (https://formspree.io/f/xxxxxxx). Vide = boîte
-                à idées désactivée. L'adresse e-mail de l'auteur n'apparaît pas.
-   auteur     : prénom affiché dans la boîte à idées.
+   auteur : prénom affiché dans l'appli (« Logan validera ton accès »).
+   admin  : adresse du compte administrateur (reçoit aussi les « Signaler une erreur »).
    ===================================================================== */
 
 export const CONFIG = {
-  formulaire: 'https://formspree.io/f/xyeevdjq',
   auteur: 'Logan',
   // Compte administrateur : valide les inscriptions et les appareils (page Membres).
   admin: 'e20653@student.meuse-cadets.be',
