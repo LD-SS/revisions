@@ -47,8 +47,13 @@ async function importer(brute) {
 export async function cleConnue() {
   if (cleAes) return true;
   try {
-    const h = localStorage.getItem(CLE_STOCKAGE);
-    if (!h) return false;
+    let h = localStorage.getItem(CLE_STOCKAGE);
+    if (!h) {   // clé fournie aux comptes acceptés (contenu protégé), plus de mot de passe à taper
+      const { lireContenu } = await import('./compte.js');
+      h = (await lireContenu('content/cle-pages.json'))?.cle;
+      if (!h) return false;
+      try { localStorage.setItem(CLE_STOCKAGE, h); } catch { /* rien */ }
+    }
     const cle = await importer(hex(h));
     const m = await chargerManifeste();
     await dechiffrer(cle, hex(m.verif)); // vérifie qu'elle est toujours valable
