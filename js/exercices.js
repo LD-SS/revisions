@@ -164,7 +164,7 @@ export function lecteurExercices(conteneur, tous, options = {}) {
         </div>
         <div class="fc-actions ex-nav">
           <button class="btn icon" data-action="prec" title="Exercice précédent" ${etat.pos === 0 ? 'disabled' : ''}>${icone('fleche-g')}</button>
-          ${estAuteur() || !boiteActive() ? '' : `<button class="btn ex-prop" data-action="proposer" title="Signaler une erreur ou proposer une amélioration pour cet exercice">${icone('ampoule')}<span>Une erreur ? Une idée ?</span></button>`}
+          ${estAuteur() || !boiteActive() ? '' : `<button class="btn ex-prop" data-action="proposer" title="Signaler une erreur dans cet exercice (ouvre ta messagerie)">${icone('alerte')}<span>Signaler une erreur</span></button>`}
           <button class="btn" data-action="suiv" ${etat.pos >= etat.liste.length - 1 ? 'disabled' : ''}>Passer ${icone('fleche-d')}</button>
         </div>
       </div>`;
@@ -224,7 +224,7 @@ export function lecteurExercices(conteneur, tous, options = {}) {
         </div>
         <div class="fc-actions ex-nav">
           <button class="btn icon" data-action="prec" title="Exercice précédent" ${etat.pos === 0 ? 'disabled' : ''}>${icone('fleche-g')}</button>
-          ${estAuteur() || !boiteActive() ? '' : `<button class="btn ex-prop" data-action="proposer" title="Signaler une erreur ou proposer une amélioration pour cet exercice">${icone('ampoule')}<span>Une erreur ? Une idée ?</span></button>`}
+          ${estAuteur() || !boiteActive() ? '' : `<button class="btn ex-prop" data-action="proposer" title="Signaler une erreur dans cet exercice (ouvre ta messagerie)">${icone('alerte')}<span>Signaler une erreur</span></button>`}
           <button class="btn" data-action="suiv" ${etat.pos >= etat.liste.length - 1 ? 'disabled' : ''}>Passer ${icone('fleche-d')}</button>
         </div>
       </div>`;
