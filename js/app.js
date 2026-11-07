@@ -28,7 +28,7 @@ import { majBoutonProposer, viderAttente } from './proposer.js';
 import { demarrerSynchro, adopterCompte } from './synchro.js';
 import { exigerAcces, ecranPerte } from './vues/acces.js';
 
-const VERSION = '1.3.1 (bouton plein écran plus visible)';
+const VERSION = '1.4.0 (générateur de synthèse)';
 const vue = document.getElementById('vue');
 let nettoyer = null; // fonction fournie par la page affichée, appelée avant d'en changer
 
@@ -86,7 +86,9 @@ function rendreOnglets(route) {
 /* ---------- Routeur ---------- */
 const ROUTES = {
   '': (el) => vueAccueil(el),
-  m: (el, [mid, cid, onglet, extra]) => (cid === 'schemas' ? vueSchemas(el, mid, onglet) : cid ? vueChapitre(el, mid, cid, onglet, extra) : vueMatiere(el, mid)),
+  m: (el, [mid, cid, onglet, extra]) => (cid === 'schemas' ? vueSchemas(el, mid, onglet)
+    : cid === 'generateur' ? import('./vues/generateur.js').then((x) => x.vueGenerateur(el, mid))
+    : cid ? vueChapitre(el, mid, cid, onglet, extra) : vueMatiere(el, mid)),
   parametres: (el) => vueParametres(el, { version: VERSION, theme, changerTheme }),
   dessin: (el, params) => vueAtelier(el, params),
   plus: (el) => vuePlus(el),
