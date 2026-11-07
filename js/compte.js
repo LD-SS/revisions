@@ -15,7 +15,8 @@
    pas un secret) ; aucun mot de passe n'est stocké par l'appli.
    ===================================================================== */
 
-// Bibliothèque Firebase (version figée ; copiée hors ligne par le service worker).
+// Bibliothèque Firebase 10.12.2, servie par Google (gstatic.com = distribution officielle de Firebase,
+// même fournisseur) ; copiée hors ligne par le service worker.
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import {
   initializeAuth, indexedDBLocalPersistence, browserLocalPersistence, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut,
@@ -62,16 +63,9 @@ export function decrireAppareil(ua = navigator.userAgent) {
 }
 
 /* ---------- notifications par e-mail (Formspree) ---------- */
-export async function notifier(sujet, message) {
-  if (!CONFIG.formulaire) return;
-  try {
-    await fetch(CONFIG.formulaire, {
-      method: 'POST', headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
-      body: JSON.stringify({ _subject: sujet, message, email: auth.currentUser?.email || '', lien: `${location.origin}${location.pathname}#/membres` }),
-    });
-  } catch (e) { console.warn('Notification non envoyée', e); }
-}
-
+// Plus d'envoi de mail (Formspree retiré) : les demandes s'affichent dans la page Membres,
+// avec une pastille sur l'onglet (surveillerDemandes).
+export async function notifier() {}
 /* ---------- connexion / inscription ---------- */
 const lienRetour = () => ({ url: `${location.origin}${location.pathname}`, handleCodeInApp: false });
 
@@ -237,5 +231,13 @@ export async function listerMembres() {
   return s.docs.map((d) => ({ uid: d.id, ...d.data() }));
 }
 export const majMembre = (uid, champs) => updateDoc(refMembre(uid), champs);
+/** Admin : nombre de demandes en attente (inscriptions + appareils en plus), en direct. */
+export function surveillerDemandes(cb) {
+  return onSnapshot(collection(db, 'membres'), (s) => {
+    let n = 0;
+    s.forEach((d) => { const m = d.data(); if (m.statut === 'attente') n++; n += Object.keys(m.demandes || {}).length; });
+    cb(n);
+  }, () => {});
+}
 export const champSupprime = deleteField;
 export const supprimerMembre = (uid) => deleteDoc(refMembre(uid));
