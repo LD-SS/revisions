@@ -122,8 +122,11 @@ function corpsBloc(type, b) {
       return `<div class="formule-math">${math(b.latex, true)}</div>
         ${b.legende ? `<div class="formule-legende">${enLigne(b.legende)}</div>` : ''}${vars}`;
     }
-    case 'figure':
-      return `<figure class="fig">${svgSur(b.svg)}${b.legende ? `<figcaption>${enLigne(b.legende)}</figcaption>` : ''}</figure>`;
+    case 'figure': {
+      // largeur d'origine du schéma : il est agrandi à l'écran (texte lisible) sans dépasser la colonne
+      const w = Number(/<svg[^>]*\swidth="(\d+(?:\.\d+)?)"/.exec(b.svg || '')?.[1]) || 0;
+      return `<figure class="fig syn-fig"${w ? ` style="--w:${w}px"` : ''}><div class="syn-fig-svg">${svgSur(b.svg)}</div>${b.legende ? `<figcaption>${enLigne(b.legende)}</figcaption>` : ''}</figure>`;
+    }
     case 'liste': {
       const tag = b.ordonnee ? 'ol' : 'ul';
       return `<${tag}>${(b.items || []).map((it) => `<li>${enLigne(it)}</li>`).join('')}</${tag}>`;
@@ -141,6 +144,18 @@ function corpsBloc(type, b) {
 /** Comportements de la synthèse : clic dans le sommaire + section active en surbrillance.
     Renvoie une fonction de nettoyage appelée quand on quitte la page. */
 export function activerSynthese(racine) {
+  // toucher un schéma = l'afficher en grand (utile sur téléphone, surtout tourné en paysage)
+  racine.addEventListener('click', (e) => {
+    const svg = e.target.closest?.('.syn-fig-svg')?.querySelector('svg');
+    if (!svg || e.target.closest('.pg')) return;
+    const fond = document.createElement('div');
+    fond.className = 'syn-zoom'; fond.title = 'Toucher pour fermer';
+    fond.innerHTML = `<div class="fig">${svg.outerHTML}</div><p>Toucher pour fermer · tourne ton téléphone pour agrandir</p>`;
+    const fermer = () => { fond.remove(); document.removeEventListener('keydown', esc); };
+    const esc = (k) => { if (k.key === 'Escape') fermer(); };
+    fond.addEventListener('click', fermer); document.addEventListener('keydown', esc);
+    document.body.appendChild(fond);
+  });
   const liens = $$('.syn-toc a', racine);
   liens.forEach((a) => a.addEventListener('click', (e) => {
     e.preventDefault();
