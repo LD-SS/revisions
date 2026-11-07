@@ -163,7 +163,7 @@ export function monterPlanche(el, ex, opts) {
         <button class="btn icon" type="button" data-act="refaire" title="Rétablir (Ctrl+Y)">↷</button>
         <button class="btn icon" type="button" data-act="moins" title="Réduire">−</button>
         <button class="btn icon" type="button" data-act="plus" title="Agrandir">+</button>
-        <button class="btn icon" type="button" data-act="plein" title="Plein écran">⛶</button>
+        <button class="btn pl-plein-b" type="button" data-act="plein" title="Plein écran (planche en grand)">⛶ <span>Plein écran</span></button>
         <button class="btn" type="button" data-act="effacer" title="Tout effacer">${icone('croix')}<span>Effacer</span></button>
       </div>
       <div class="pl-chainbar" hidden>
@@ -279,7 +279,11 @@ export function monterPlanche(el, ex, opts) {
     el.querySelectorAll('[data-style]').forEach((b) => b.classList.toggle('actif', b.dataset.style === etat.style));
     el.querySelectorAll('[data-outil]').forEach((b) => b.classList.toggle('actif', b.dataset.outil === etat.outil));
     el.querySelector('[data-act=chaine]')?.classList.toggle('actif', etat.enchainer);
-    svg.style.width = `${Math.round(100 * etat.zoom)}%`;
+    if (el.classList.contains('pl-plein') && cadre.clientHeight > 50) {
+      // plein écran : la planche entière tient dans l'écran (largeur ou hauteur), puis zoom
+      const base = Math.min(cadre.clientWidth - 4, (cadre.clientHeight - 4) * W / H);
+      svg.style.width = `${Math.round(base * etat.zoom)}px`;
+    } else svg.style.width = `${Math.round(100 * etat.zoom)}%`;
     svg.style.maxWidth = 'none';
     svg.style.touchAction = etat.outil === 'main' ? 'auto' : 'none';
     cadre.classList.toggle('pl-pan', etat.outil === 'main');
@@ -451,10 +455,26 @@ export function monterPlanche(el, ex, opts) {
     const on = force ?? !el.classList.contains('pl-plein');
     el.classList.toggle('pl-plein', on);
     document.body.classList.toggle('pl-plein-ouvert', on);
-    el.querySelector('[data-act=plein]').textContent = on ? '✕' : '⛶';
-    el.querySelector('[data-act=plein]').title = on ? 'Quitter le plein écran (Échap)' : 'Plein écran';
+    const b = el.querySelector('[data-act=plein]');
+    b.innerHTML = on ? '✕ <span>Quitter</span>' : '⛶ <span>Plein écran</span>';
+    b.title = on ? 'Quitter le plein écran (Échap)' : 'Plein écran (planche en grand)';
+    // vrai plein écran (cache la barre du navigateur) et paysage sur téléphone, si l'appareil le permet
+    try {
+      if (on && !document.fullscreenElement) {
+        el.requestFullscreen?.().then(() => { if (W > H) screen.orientation?.lock?.('landscape').catch(() => {}); }).catch(() => {});
+      } else if (!on && document.fullscreenElement === el) {
+        screen.orientation?.unlock?.(); document.exitFullscreen?.().catch(() => {});
+      }
+    } catch { /* navigateur sans plein écran : l'agrandissement dans la page suffit */ }
     opts.onPlein?.(on);
+    requestAnimationFrame(maj);
   }
+  const auRedimensionnement = () => { if (el.classList.contains('pl-plein')) maj(); };
+  window.addEventListener('resize', auRedimensionnement);
+  document.addEventListener('fullscreenchange', () => {
+    if (!document.fullscreenElement && el.classList.contains('pl-plein')) pleinEcran(false);   // sortie par Échap / geste système
+    else auRedimensionnement();
+  });
 
   el.querySelector('.pl-outils').addEventListener('click', (ev) => {
     const b = ev.target.closest('button'); if (!b || b.disabled) return;
@@ -504,7 +524,7 @@ export function monterPlanche(el, ex, opts) {
     elements: () => etat.els,
     basculer(v) { etat.voirCorr = v; dessiner(); },
     focus(i) { etat.focus = i; dessiner(); },
-    detruire() { document.removeEventListener('keydown', clavier); document.body.classList.remove('pl-plein-ouvert'); if (instance === this) instance = null; },
+    detruire() { document.removeEventListener('keydown', clavier); window.removeEventListener('resize', auRedimensionnement); if (document.fullscreenElement === el) document.exitFullscreen?.().catch(() => {}); document.body.classList.remove('pl-plein-ouvert'); if (instance === this) instance = null; },
   };
   return instance;
 }
