@@ -7,7 +7,6 @@ import { icone } from '../icones.js';
 import { dateContenu, matieres, chargerChapitre } from '../store.js';
 import { listerPdfs, supprimerPdf, enregistrerPdf, cleFichier, cleSource } from '../pdfs.js';
 import { sourcesDe } from '../synthese.js';
-import { estAuteur, devenirAuteur, boiteActive, ouvrirProposition } from '../proposer.js';
 import { CONFIG } from '../config.js';
 import { CGU_HTML } from '../conditions.js';
 import { synchroniser, infosSynchro } from '../synchro.js';
@@ -34,33 +33,13 @@ export function vueParametres(el, app) {
       </div>
 
 
-      <div class="panel" id="mes-pdf">
-        <h3>Mes PDF de cours</h3>
-        <p class="muted">Lie tes PDF pour que les pastilles « p. X » ouvrent directement la bonne page.
-        Ils restent <b>uniquement dans ce navigateur</b> (jamais envoyés ni publiés) : à faire une fois sur chaque appareil.</p>
-        <div class="set-row"><label class="btn primary">${icone('page')} Ajouter des PDF (plusieurs à la fois)
-          <input type="file" accept="application/pdf,.pdf" multiple hidden data-action="ajout-pdf"></label></div>
-        <div class="liste-pdf muted">Chargement…</div>
-      </div>
-
-
-      <div class="panel" id="boite-idees">
-        <h3>Boîte à idées</h3>
-        <p class="muted">Tout le monde peut proposer une correction ou une amélioration avec le bouton
-        <b>« Proposer »</b> (en haut) ou <b>« Une erreur ? Une idée ? »</b> sous chaque exercice.
-        ${esc(CONFIG.auteur)} reçoit les propositions et décide seul de ce qui est intégré.</p>
-        ${boiteActive() ? '' : '<p class="notice">La boîte à idées n\'est pas encore activée (formulaire à configurer).</p>'}
-        <div class="set-row"><button class="btn" data-action="proposer">Faire une proposition</button></div>
-        <label class="set-row choix-auteur"><input type="checkbox" data-action="auteur" ${estAuteur() ? 'checked' : ''}>
-          C'est moi l'auteur de l'appli (${esc(CONFIG.auteur)}) : masquer les boutons « Proposer » sur cet appareil</label>
-        ${estAuteur() ? '<p class="muted">Les propositions arrivent dans ta boîte e-mail et sur <a href="https://formspree.io/forms" target="_blank" rel="noopener">formspree.io</a>.</p>' : ''}
-      </div>
       <div class="panel" id="synchro"></div>
 
       <div class="panel">
         <h3>Mes données</h3>
         <p class="muted">Ta progression (exercices notés, flashcards à revoir, annotations des schémas) est enregistrée
         dans ton compte : tu la retrouves sur chacun de tes appareils.</p>
+        <p class="muted" data-horsligne></p>
         <div class="set-row"><button class="btn" data-action="maj">${icone('recommencer')} Forcer la mise à jour de l'appli</button></div>
         <p class="muted">À utiliser si une nouvelle version n'apparaît pas : vide la copie hors ligne et recharge la page.
         Ta progression n'est pas effacée.</p>
@@ -71,7 +50,7 @@ export function vueParametres(el, app) {
         <h3>À propos</h3>
         <p class="set-row">Révisions — version ${esc(app.version)}</p>
         ${dateContenu() ? `<p class="muted">Contenu mis à jour le ${esc(formatDate(dateContenu()))}.</p>` : ''}
-        <p class="muted">Les PDF de cours restent la propriété de leurs auteurs et ne sont pas publiés.
+        <p class="muted">Les cours restent la propriété de leurs auteurs (les professeurs).
         Seuls les synthèses et exercices générés le sont.</p>
         <p class="muted">Formules affichées avec KaTeX (licence MIT).</p>
         <p>© 2026 Logan Degossely — tous droits réservés.</p>
@@ -81,11 +60,10 @@ export function vueParametres(el, app) {
 
   el.addEventListener('change', (e) => {
     if (e.target.name === 'theme') app.changerTheme(e.target.value);
-    if (e.target.dataset.action === 'auteur') { devenirAuteur(e.target.checked); toast(e.target.checked ? 'Mode auteur : boutons « Proposer » masqués sur cet appareil' : 'Boutons « Proposer » affichés'); }
   });
-  el.querySelector('[data-action="proposer"]').addEventListener('click', () => ouvrirProposition('amelioration'));
-  activerPdfs(el.querySelector('#mes-pdf'));
   panneauSynchro(el.querySelector('#synchro'));
+  const hl = stockage.lire('horsligne.jour', '');
+  el.querySelector('[data-horsligne]').textContent = hl ? `Tout le contenu est gardé sur cet appareil pour le hors ligne (mis à jour le ${hl.split('-').reverse().join('/')}).` : 'Le contenu est copié automatiquement sur cet appareil pour le hors ligne.';
   el.querySelector('[data-action="raz"]').addEventListener('click', () => {
     if (!confirm(`Effacer toutes tes notes d'exercices, flashcards à revoir et annotations' sur TOUS tes appareils' ?`)) return;
     for (const k of ['exos', 'fc', 'circuits', 'dernier', 'planches']) stockage.supprimer(k);
