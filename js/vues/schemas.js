@@ -19,10 +19,12 @@ const NOTES = { ok: ['Réussi', 'ok'], mid: ['Presque', 'mid'], ko: ['À refaire
 
 /** Onglets « Chapitres | Exercices sur schéma » en tête de la page matière. */
 export function ongletsMatiere(m, actif) {
-  if (!m.schemas) return '';
+  const atelier = m.id === 'dessin';   // l'atelier de dessin est rangé dans la matière Dessin
+  if (!m.schemas && !atelier) return '';
   return `<nav class="m-onglets" aria-label="Sections">
     <a class="m-onglet ${actif === 'chapitres' ? 'actif' : ''}" href="#/m/${esc(m.id)}">${icone('synthese')} Chapitres</a>
-    <a class="m-onglet ${actif === 'schemas' ? 'actif' : ''}" href="#/m/${esc(m.id)}/schemas">${icone('eclair')} Exercices sur schéma <span class="badge">${m.schemas.nb || ''}</span></a>
+    ${m.schemas ? `<a class="m-onglet ${actif === 'schemas' ? 'actif' : ''}" href="#/m/${esc(m.id)}/schemas">${icone('eclair')} Exercices sur schéma <span class="badge">${m.schemas.nb || ''}</span></a>` : ''}
+    ${atelier ? `<a class="m-onglet ${actif === 'atelier' ? 'actif' : ''}" href="#/dessin">${icone('crayon')} Atelier de dessin</a>` : ''}
   </nav>`;
 }
 
