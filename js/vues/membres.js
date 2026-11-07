@@ -74,6 +74,7 @@ export async function vueMembres(el) {
     <div class="at-barre"><div class="at-filtres" role="radiogroup">
       ${[['tous', 'Tous'], ['attente', 'En attente'], ['demandes', 'Demandes d\'appareil'], ['bloque', 'Bloqués']].map(([v, l]) => `<label class="chip"><input type="radio" name="mbf" value="${v}" ${v === filtre ? 'checked' : ''}><span>${l}</span></label>`).join('')}
       <button class="btn" data-a="actualiser">${icone('recommencer')} Actualiser</button>
+      <button class="btn" data-a="excel">${icone('telecharger')} Exporter en Excel</button>
     </div></div>
     <div class="mb-liste">${liste.filter(garde).map(carte).join('') || '<p class="muted">Personne ici.</p>'}</div>
     <details class="panel mb-contenu"><summary><b>${icone('page')} Contenu des cours</b> <span class="muted">(mise à jour des synthèses et exercices)</span></summary>
@@ -124,6 +125,20 @@ export async function vueMembres(el) {
   });
   el.querySelector('.at-filtres').addEventListener('change', (e) => { el.dataset.filtre = e.target.value; refaire(); });
   el.querySelector('[data-a=actualiser]').addEventListener('click', refaire);
+  el.querySelector('[data-a=excel]').addEventListener('click', () => {   // CSV lisible par Excel (séparateur « ; », accents conservés)
+    const cel = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
+    const d = (t) => (t ? new Date(t).toLocaleString('fr-BE') : '');
+    const lignes = [['Prénom', 'Nom', 'E-mail', 'Statut', 'Inscrit le', 'Conditions acceptées le', 'Appareils', 'Limite', 'Détail des appareils', 'Demandes en attente']];
+    for (const m of liste) {
+      const apps = Object.values(m.appareils || {});
+      lignes.push([m.prenom, m.nom, m.email, (STATUTS[m.statut] || [m.statut])[0], d(m.cree), d(m.cgu?.t), apps.length, m.maxApp || 2,
+        apps.map((a) => `${a.nom} (vu le ${d(a.dernier)})`).join(' | '), Object.keys(m.demandes || {}).length]);
+    }
+    const blob = new Blob(['\ufeff' + lignes.map((l) => l.map(cel).join(';')).join('\r\n')], { type: 'text/csv;charset=utf-8' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+    a.download = `membres-revisions-${new Date().toISOString().slice(0, 10)}.csv`; a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  });
   el.querySelector('.mb-liste').addEventListener('click', async (e) => {
     const b = e.target.closest('button'); const c = e.target.closest('[data-uid]'); if (!b || !c) return;
     const m = liste.find((x) => x.uid === c.dataset.uid); const n = nomComplet(m);
