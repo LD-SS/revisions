@@ -163,7 +163,7 @@ export function monterPlanche(el, ex, opts) {
         <button class="btn icon" type="button" data-act="refaire" title="Rétablir (Ctrl+Y)">↷</button>
         <button class="btn icon" type="button" data-act="moins" title="Réduire">−</button>
         <button class="btn icon" type="button" data-act="plus" title="Agrandir">+</button>
-        <button class="btn pl-plein-b" type="button" data-act="plein" title="Plein écran (planche en grand)">⛶ <span>Plein écran</span></button>
+        <button class="btn primary pl-plein-b" type="button" data-act="plein" title="Plein écran (planche en grand)">⛶ <span>Plein écran</span></button>
         <button class="btn" type="button" data-act="effacer" title="Tout effacer">${icone('croix')}<span>Effacer</span></button>
       </div>
       <div class="pl-chainbar" hidden>
@@ -178,6 +178,7 @@ export function monterPlanche(el, ex, opts) {
       </div>
     </div>
     <div class="pl-cadre fig">
+      <div class="pl-fab-zone"><button class="btn primary pl-fab" type="button" data-act="plein" title="Plein écran (planche en grand)">⛶ <span>Plein écran</span></button></div>
       <svg class="pl-svg" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Planche de dessin"></svg>
       <div class="pl-loupe" hidden><svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg"></svg></div>
     </div>
@@ -455,9 +456,10 @@ export function monterPlanche(el, ex, opts) {
     const on = force ?? !el.classList.contains('pl-plein');
     el.classList.toggle('pl-plein', on);
     document.body.classList.toggle('pl-plein-ouvert', on);
-    const b = el.querySelector('[data-act=plein]');
-    b.innerHTML = on ? '✕ <span>Quitter</span>' : '⛶ <span>Plein écran</span>';
-    b.title = on ? 'Quitter le plein écran (Échap)' : 'Plein écran (planche en grand)';
+    el.querySelectorAll('[data-act=plein]').forEach((b) => {
+      b.innerHTML = on ? '✕ <span>Quitter</span>' : '⛶ <span>Plein écran</span>';
+      b.title = on ? 'Quitter le plein écran (Échap)' : 'Plein écran (planche en grand)';
+    });
     // vrai plein écran (cache la barre du navigateur) et paysage sur téléphone, si l'appareil le permet
     try {
       if (on && !document.fullscreenElement) {
@@ -476,6 +478,7 @@ export function monterPlanche(el, ex, opts) {
     else auRedimensionnement();
   });
 
+  el.querySelector('.pl-fab').addEventListener('click', (ev) => { ev.stopPropagation(); pleinEcran(); });
   el.querySelector('.pl-outils').addEventListener('click', (ev) => {
     const b = ev.target.closest('button'); if (!b || b.disabled) return;
     if (b.dataset.style) {
