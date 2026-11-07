@@ -12,10 +12,10 @@
    Pour ajouter une page : une entrée dans ROUTES + un module dans js/vues/.
    ===================================================================== */
 
-import { esc, toast } from './utils.js';
+import { esc, toast, stockage } from './utils.js';
 import { icone } from './icones.js';
 import { nomCourt, styleMatiere } from './matieres.js';
-import { chargerIndex, matieres } from './store.js';
+import { chargerIndex, matieres, chargerChapitre, chargerSchemas, chargerEvaluations } from './store.js';
 import { vueAccueil } from './vues/accueil.js';
 import { vueMatiere } from './vues/matiere.js';
 import { vueChapitre } from './vues/chapitre.js';
@@ -28,7 +28,7 @@ import { majBoutonProposer, viderAttente } from './proposer.js';
 import { demarrerSynchro, adopterCompte } from './synchro.js';
 import { exigerAcces, ecranPerte } from './vues/acces.js';
 
-const VERSION = '1.2.0 (évaluations types)';
+const VERSION = '1.3.0 (simplifications, plein écran, sans service tiers)';
 const vue = document.getElementById('vue');
 let nettoyer = null; // fonction fournie par la page affichée, appelée avant d'en changer
 
@@ -59,25 +59,26 @@ document.getElementById('btn-theme').addEventListener('click', () => {
 });
 
 /* ---------- Barre d'onglets (haut, ordinateur) et barre du bas (téléphone) ---------- */
+let routeAffichee = [''];
+const pastille = () => (window.__nbDemandes ? `<span class="pastille" title="Demandes en attente">${window.__nbDemandes}</span>` : '');
 function rendreOnglets(route) {
+  routeAffichee = route;
   const actif = (cond) => (cond ? 'active' : '');
-  const dessin = matieres().find((m) => m.id === 'dessin');
-  const enPlus = ['plus', 'dessin', 'recherche', 'examen', 'parametres'].includes(route[0]);
+  const enPlus = ['plus', 'recherche', 'examen', 'parametres', 'membres'].includes(route[0]);
+  const surMatiere = (m) => (route[0] === 'm' && route[1] === m.id) || (route[0] === 'dessin' && m.id === 'dessin');
   const tabs = [
     `<a class="tab ${actif(route[0] === '')}" href="#/">${icone('accueil')}<span class="txt">Accueil</span></a>`,
-    ...matieres().map((m) => `<a class="tab mc ${actif(route[0] === 'm' && route[1] === m.id)}" ${styleMatiere(m)} href="#/m/${esc(m.id)}" title="${esc(m.nom)}">
+    ...matieres().map((m) => `<a class="tab mc ${actif(surMatiere(m))}" ${styleMatiere(m)} href="#/m/${esc(m.id)}" title="${esc(m.nom)}">
       ${icone(m.icone)}<span class="txt">${esc(nomCourt(m))}</span></a>`),
-    ...(dessin ? [`<a class="tab mc ${actif(route[0] === 'dessin')}" ${styleMatiere(dessin)} href="#/dessin" title="Atelier de dessin : exercices à dessiner dans l'appli">
-      ${icone('crayon')}<span class="txt">Atelier dessin</span></a>`] : []),
     `<a class="tab ${actif(route[0] === 'examen')}" href="#/examen">${icone('examen')}<span class="txt">Examen blanc</span></a>`,
-    ...(window.__admin ? [`<a class="tab ${actif(route[0] === 'membres')}" href="#/membres">${icone('cadenas')}<span class="txt">Membres</span></a>`] : []),
+    ...(window.__admin ? [`<a class="tab ${actif(route[0] === 'membres')}" href="#/membres">${icone('cadenas')}<span class="txt">Membres</span>${pastille()}</a>`] : []),
     `<a class="tab ${actif(route[0] === 'parametres')}" href="#/parametres">${icone('reglages')}<span class="txt">Paramètres</span></a>`,
   ];
   document.getElementById('tabs').innerHTML = tabs.join('');
   const bas = [
     `<a class="${actif(route[0] === '')}" href="#/">${icone('accueil')}<span>Accueil</span></a>`,
-    ...matieres().map((m) => `<a class="mc ${actif(route[0] === 'm' && route[1] === m.id)}" ${styleMatiere(m)} href="#/m/${esc(m.id)}">${icone(m.icone)}<span>${esc(m.mini || nomCourt(m).split(' ')[0])}</span></a>`),
-    `<a class="${actif(enPlus)}" href="#/plus">${icone('plus')}<span>Plus</span></a>`,
+    ...matieres().map((m) => `<a class="mc ${actif(surMatiere(m))}" ${styleMatiere(m)} href="#/m/${esc(m.id)}">${icone(m.icone)}<span>${esc(m.mini || nomCourt(m).split(' ')[0])}</span></a>`),
+    `<a class="${actif(enPlus)}" href="#/plus">${icone('plus')}<span>Plus</span>${window.__admin ? pastille() : ''}</a>`,
   ];
   document.getElementById('botnav').innerHTML = bas.join('');
 }
@@ -174,6 +175,10 @@ async function demarrer() {
     if (sur && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName || '')) router();
   });
   demarrerSynchro();
+  // Administrateur : pastille du nombre de demandes (inscriptions, appareils) sur l'onglet Membres.
+  if (window.__admin) compte.surveillerDemandes((n) => { window.__nbDemandes = n; rendreOnglets(routeAffichee); });
+  // Hors ligne : une fois par jour, tout le contenu est copié sur l'appareil (en arrière-plan).
+  setTimeout(() => prechargerTout().catch(() => {}), 6000);
   compte.surveiller((raison) => {
     compte.arreterSurveillance();
     if (typeof nettoyer === 'function') nettoyer();
@@ -182,9 +187,32 @@ async function demarrer() {
   });
 }
 
-/* Copie hors ligne (service worker) : seulement si la page est servie par un site web. */
+/* Copie de tout le contenu sur l'appareil (cache Firestore), au plus une fois par jour. */
+async function prechargerTout() {
+  const jour = new Date().toISOString().slice(0, 10);
+  if (!navigator.onLine || stockage.lire('horsligne.jour', '') === jour) return;
+  for (const m of matieres()) {
+    for (const c of m.chapitres) await chargerChapitre(m.id, c.id).catch(() => {});
+    if (m.schemas) await chargerSchemas(m.id).catch(() => {});
+    await chargerEvaluations(m.id).catch(() => {});
+  }
+  stockage.ecrire('horsligne.jour', jour);
+}
+
+/* Copie hors ligne (service worker) + bandeau « nouvelle version » (sans fermer/rouvrir deux fois). */
 if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
-  navigator.serviceWorker.register('sw.js').catch((e) => console.warn('Service worker non enregistré :', e));
+  const avaitControleur = !!navigator.serviceWorker.controller;
+  navigator.serviceWorker.register('sw.js').then((reg) => {
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') reg.update().catch(() => {}); });
+  }).catch((e) => console.warn('Service worker non enregistré :', e));
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (!avaitControleur || document.getElementById('maj-dispo')) return;
+    const b = document.createElement('div');
+    b.id = 'maj-dispo'; b.className = 'maj-dispo';
+    b.innerHTML = '<span>Une nouvelle version de l\'appli est disponible.</span><button class="btn primary" type="button">Mettre à jour</button>';
+    b.querySelector('button').addEventListener('click', () => location.reload());
+    document.body.appendChild(b);
+  });
 }
 
 demarrer();
