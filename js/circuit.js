@@ -287,7 +287,15 @@ export function monterCircuit(el, ex, opts = {}) {
         <button class="btn icon" type="button" data-ci="fermer" title="Fermer">✕</button></div>
       <button class="btn ci-barrer ${a.x ? 'actif' : ''}" type="button" data-ci="barrer">${a.x ? '↩ Ne plus barrer' : '✖ Barrer : cette portion ne compte pas'}</button>
       ${a.x ? '<p class="muted">Barré : tu indiques que ce composant ne participe pas au circuit (aucun courant possible, court-circuité…).</p>'
-        : `${dTxt ? `<p class="notice info ci-donnee"><span>${estSource ? 'Tension de la source' : 'Donnée de l\'énoncé'} : <b>${esc(dTxt)}</b>${estSource ? '' : ' (en orange)'}. ${estSource ? 'Tu peux dessiner son vecteur tension.' : 'Tu peux la réécrire à ta façon, par ex. une valeur positive avec la flèche dans l\'autre sens.'} Ce n'est pas noté, mais « Vérifier » contrôle le sens et la valeur.</span></p>` : ''}${vI ? ligneG('i', 'Courant I', 'sens de la flèche sur le fil' + note('I')) : ''}${vU ? ligneG('u', 'Tension U', 'la pointe du vecteur = côté +' + note('U')) : ''}`}`;
+        : `${dTxt ? `<p class="notice info ci-donnee"><span>${estSource ? 'Tension de la source' : 'Donnée de l\'énoncé'} : <b>${esc(dTxt)}</b>${estSource ? '' : ' (en orange)'}. ${estSource ? 'Tu peux dessiner son vecteur tension.' : 'Tu peux la réécrire à ta façon, par ex. une valeur positive avec la flèche dans l\'autre sens.'} Ce n'est pas noté, mais « Vérifier » contrôle le sens et la valeur.</span></p>` : ''}${(() => {
+          // lignes corrigées (ou données) visibles ; lignes facultatives repliées sauf si déjà remplies
+          const fac = (k, g) => s[k] === undefined && !leurre && dv[k] === undefined && !a[g];
+          const lI = vI ? ligneG('i', 'Courant I', 'sens de la flèche sur le fil' + note('I')) : '';
+          const lU = vU ? ligneG('u', 'Tension U', 'la pointe du vecteur = côté +' + note('U')) : '';
+          const vis = (vI && !fac('I', 'i') ? lI : '') + (vU && !fac('U', 'u') ? lU : '');
+          const rep = (vI && fac('I', 'i') ? lI : '') + (vU && fac('U', 'u') ? lU : '');
+          return vis + (rep ? `<details class="ci-fac"><summary>Annoter quand même (facultatif, pas corrigé)</summary>${rep}</details>` : '');
+        })()}`}`;
   }
 
   function maj(g, champ, val) {
