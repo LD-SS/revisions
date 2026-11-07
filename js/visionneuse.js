@@ -167,7 +167,7 @@ export async function ouvrirVisionneuse(doc, page = 1) {
           <input type="file" accept="application/pdf,.pdf" hidden data-v="fichier"></label>
         <p class="muted">Le PDF reste <b>uniquement dans ce navigateur</b>, sur cet appareil : il n'est jamais envoyé
         ni publié. Une fois lié, il s'ouvre directement à la page citée, même hors ligne.
-        Tu peux aussi lier tous tes PDF d'un coup dans Paramètres.</p>
+</p>
       </div>`;
   }
 
