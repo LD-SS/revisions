@@ -928,3 +928,27 @@ label.cgu-ok input{margin-top:3px}
 .ex-img-corr{margin:4px 0 14px}
 .ex-img-corr img{max-width:min(100%,900px)!important;max-height:none!important}
 .ex-img-corr figcaption .vert{color:#15803d}.ex-img-corr figcaption .bleu{color:#1d4ed8}
+
+/* ---------- Impression d'une évaluation type ---------- */
+.exam-eval-b{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+#impr-eval{position:absolute;left:-99999px;top:0;width:18cm}   /* hors écran : les polices des formules se chargent avant l'impression */
+@media print{
+  body.impr-eval-on > *:not(#impr-eval){display:none!important}
+  body.impr-eval-on{background:#fff;color:#000;display:block}
+  body.impr-eval-on #impr-eval{display:block;position:static;width:auto;font-size:11.5pt;color:#000}
+  #impr-eval .ie-tete{border-bottom:2px solid #000;margin-bottom:10px}
+  #impr-eval .ie-tete h1{font-size:15pt;margin:0 0 4px}
+  #impr-eval .ie-tete p{margin:0 0 6px;font-size:10pt}
+  #impr-eval .ie-ex{margin:0 0 12px}
+  #impr-eval .ie-ex h2{font-size:12.5pt;margin:10px 0 4px;break-after:avoid}
+  #impr-eval .ie-fig{margin:6px 0;text-align:center;break-inside:avoid}
+  #impr-eval .ie-fig img{max-width:16cm;max-height:9cm}
+  #impr-eval .ie-q{list-style:none;padding:0;margin:4px 0}
+  #impr-eval .ie-q > li{display:flex;gap:6px;break-inside:avoid;margin:4px 0}
+  #impr-eval .ie-l{font-weight:700;min-width:1.4em}
+  #impr-eval .ie-zone{height:2.6cm;border-bottom:1px dotted #999}
+  #impr-eval .ie-rep{margin:3px 0}
+  #impr-eval .ie-et{margin:2px 0 6px;padding-left:1.4em;font-size:10.5pt}
+  #impr-eval p{margin:2px 0}
+}
+@media print{#impr-eval .ie-q > li > div{flex:1}}
