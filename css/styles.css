@@ -925,3 +925,6 @@ label.cgu-ok input{margin-top:3px}
 .syn-zoom .fig{width:100%;height:calc(100% - 30px);display:flex;align-items:center;justify-content:center}
 .syn-zoom svg{width:100%!important;height:100%!important;max-width:none;max-height:100%}
 .syn-zoom p{margin:6px 0 0;font-size:13px;color:var(--muted)}
+.ex-img-corr{margin:4px 0 14px}
+.ex-img-corr img{max-width:min(100%,900px)!important;max-height:none!important}
+.ex-img-corr figcaption .vert{color:#15803d}.ex-img-corr figcaption .bleu{color:#1d4ed8}
