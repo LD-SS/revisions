@@ -12,6 +12,32 @@ import { styleMatiere } from '../matieres.js';
 import { matieres, matiere, chargerChapitre, chargerSchemas, chargerEvaluations } from '../store.js';
 import { sourcesDe } from '../synthese.js';
 import { lecteurExercices } from '../exercices.js';
+import { texte } from '../rendu.js';
+
+/* ---------- impression d'une évaluation (énoncé seul, ou corrigé) ---------- */
+const LETTRES = 'abcdefghijklmnopqrstuvwxyz';
+const imgOk = (x) => typeof x === 'string' && /^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(x);
+function imprimerEvaluation(ev, corrige) {
+  const nq = ev.exercices.reduce((a, x) => a + x.items.length, 0);
+  const feuille = document.createElement('div');
+  feuille.id = 'impr-eval';
+  feuille.innerHTML = `<header class="ie-tete"><h1>${esc(ev.titre)}${corrige ? ' — corrigé' : ''}</h1>
+    <p>${corrige ? '' : 'Nom : ........................................   Date : ................   '}Durée : ${ev.duree || 100} min · ${ev.exercices.length} exercices · ${nq} questions</p></header>
+    ${ev.exercices.map((x, i) => `<section class="ie-ex"><h2>${i + 1}. ${esc(x.titre)}</h2>
+      ${x.consigne ? `<div class="ie-consigne">${texte(x.consigne)}</div>` : ''}
+      ${imgOk(corrige && x.imageCorr ? x.imageCorr : x.image) ? `<figure class="ie-fig"><img src="${corrige && x.imageCorr ? x.imageCorr : x.image}" alt=""></figure>` : ''}
+      <ol class="ie-q">${x.items.map((it, k) => `<li><span class="ie-l">${x.items.length > 1 ? LETTRES[k] + ')' : ''}</span><div>${texte(it.q)}
+        ${corrige ? `<div class="ie-rep"><b>Réponse :</b> ${texte(it.r)}</div>${(it.etapes || []).length ? `<ol class="ie-et">${it.etapes.map((e) => `<li>${texte(e)}</li>`).join('')}</ol>` : ''}`
+          : '<div class="ie-zone"></div>'}</div></li>`).join('')}</ol></section>`).join('')}`;
+  document.getElementById('impr-eval')?.remove();
+  document.body.appendChild(feuille); document.body.classList.add('impr-eval-on');
+  const fin = () => { feuille.remove(); document.body.classList.remove('impr-eval-on'); window.removeEventListener('afterprint', fin); };
+  window.addEventListener('afterprint', fin);
+  // attend les polices des formules (KaTeX) et les images avant d'imprimer
+  void feuille.offsetHeight;
+  new Promise((r) => requestAnimationFrame(r)).then(() => Promise.all([document.fonts?.ready, ...[...feuille.querySelectorAll('img')].map((i) => i.decode?.().catch(() => {}))]))
+    .catch(() => {}).then(() => setTimeout(() => { window.print(); setTimeout(fin, 1500); }, 150));
+}
 
 async function reserve(mid, cid) {
   const m = matiere(mid); const r = [];
@@ -58,7 +84,9 @@ export function vueExamen(el) {
       el.querySelector('[data-hasard-titre]').hidden = false;
       z.innerHTML = `<h2 class="exam-h">Évaluations types</h2><p class="muted">Une évaluation complète, dans l'ordre, en temps limité, avec le corrigé détaillé de chaque question.</p>
         ${evs.map((ev) => `<div class="panel exam-eval"><div><b>${esc(ev.titre)}</b><br><span class="muted">${esc(ev.desc || '')} · ${ev.duree || 100} min</span></div>
-          <button class="btn primary" data-action="eval" data-eval="${esc(ev.id)}">${icone('chrono')} Commencer</button></div>`).join('')}`;
+          <span class="exam-eval-b"><button class="btn" data-action="impr" data-eval="${esc(ev.id)}" title="Imprimer l'énoncé pour le faire sur papier">${icone('telecharger')} Imprimer</button>
+          <button class="btn" data-action="imprc" data-eval="${esc(ev.id)}" title="Imprimer le corrigé détaillé">Corrigé</button>
+          <button class="btn primary" data-action="eval" data-eval="${esc(ev.id)}">${icone('chrono')} Commencer</button></span></div>`).join('')}`;
     }).catch(() => {});
   };
   formulaire();
@@ -80,6 +108,10 @@ export function vueExamen(el) {
     if (b.dataset.action === 'eval') {
       const ev = (await chargerEvaluations(pref.mid)).find((x) => x.id === b.dataset.eval); if (!ev) return;
       lancer(ev.exercices.map((x) => ({ ...x, _cle: `${pref.mid}/eval/${ev.id}/${x.id}`, _ou: ev.titre })), ev.duree || 100);
+    }
+    if (b.dataset.action === 'impr' || b.dataset.action === 'imprc') {
+      const ev = (await chargerEvaluations(pref.mid)).find((x) => x.id === b.dataset.eval);
+      if (ev) imprimerEvaluation(ev, b.dataset.action === 'imprc');
     }
     if (b.dataset.action === 'fin') bilan();
     if (b.dataset.action === 'refaire') formulaire();
