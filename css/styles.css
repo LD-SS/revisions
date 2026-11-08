@@ -935,20 +935,27 @@ label.cgu-ok input{margin-top:3px}
 @media print{
   body.impr-eval-on > *:not(#impr-eval){display:none!important}
   body.impr-eval-on{background:#fff;color:#000;display:block}
-  body.impr-eval-on #impr-eval{display:block;position:static;width:auto;font-size:11.5pt;color:#000}
-  #impr-eval .ie-tete{border-bottom:2px solid #000;margin-bottom:10px}
-  #impr-eval .ie-tete h1{font-size:15pt;margin:0 0 4px}
+  body.impr-eval-on #impr-eval{display:block;position:static;width:auto;font-size:10.5pt;line-height:1.3;color:#000}
+  #impr-eval .ie-tete{border-bottom:2px solid #000;margin-bottom:6px}
+  #impr-eval .ie-tete h1{font-size:13.5pt;margin:0 0 2px}
   #impr-eval .ie-tete p{margin:0 0 6px;font-size:10pt}
-  #impr-eval .ie-ex{margin:0 0 12px}
-  #impr-eval .ie-ex h2{font-size:12.5pt;margin:10px 0 4px;break-after:avoid}
-  #impr-eval .ie-fig{margin:6px 0;text-align:center;break-inside:avoid}
-  #impr-eval .ie-fig img{max-width:16cm;max-height:9cm}
+  #impr-eval .ie-ex{margin:0 0 6px}
+  #impr-eval .ie-intro{break-inside:avoid;page-break-inside:avoid}
+  #impr-eval .ie-ex h2{font-size:11.5pt;margin:8px 0 2px;break-after:avoid;page-break-after:avoid}
+  #impr-eval .ie-fig{margin:3px 0;text-align:center;break-inside:avoid}
+  #impr-eval .ie-fig img{max-width:13cm;max-height:6.2cm}
+  #impr-eval .ie-ex{display:flow-root}
+  #impr-eval .ie-fig.ie-fig-d{float:right;margin:0 0 4px 12px}
+  #impr-eval .ie-fig-d img{max-width:7.8cm;max-height:6cm}
   #impr-eval .ie-q{list-style:none;padding:0;margin:4px 0}
-  #impr-eval .ie-q > li{display:flex;gap:6px;break-inside:avoid;margin:4px 0}
+  #impr-eval .ie-q > li{display:flex;gap:6px;break-inside:avoid;page-break-inside:avoid;margin:2px 0}
+  #impr-eval .ie-q > li:first-child{break-before:avoid;page-break-before:avoid}
   #impr-eval .ie-l{font-weight:700;min-width:1.4em}
-  #impr-eval .ie-zone{height:2.6cm;border-bottom:1px dotted #999}
+  #impr-eval .ie-zone{height:2cm;border-bottom:1px dotted #999}
   #impr-eval .ie-rep{margin:3px 0}
-  #impr-eval .ie-et{margin:2px 0 6px;padding-left:1.4em;font-size:10.5pt}
+  #impr-eval .ie-rep p{display:inline}
+  #impr-eval .ie-et{margin:1px 0 4px;padding-left:1.4em;font-size:9.5pt}
   #impr-eval p{margin:2px 0}
 }
-@media print{#impr-eval .ie-q > li > div{flex:1}}
+@media print{#impr-eval .ie-q > li > div{flex:1}
+  body.impr-eval-on{margin:0}}
