@@ -113,6 +113,8 @@ export function lecteurExercices(conteneur, tous, options = {}) {
     monter();
   }
 
+  const imageOk = (x) => typeof x === 'string' && /^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(x);
+
   function carte(e, t) {
     if (e.type === 'dessin') return carteDessin(e, t);
     const note = t[cle(e)];
@@ -134,8 +136,11 @@ export function lecteurExercices(conteneur, tous, options = {}) {
         </div></div>`;
       }).join('');
       const nDev = avecDev.filter(Boolean).length;
+      // schéma corrigé : toutes les tensions et tous les courants calculés, notés sur le schéma
+      const schemaCorr = imageOk(e.imageCorr)
+        ? `<figure class="fig ex-img ex-img-corr"><img src="${e.imageCorr}" alt="Schéma corrigé"><figcaption>Schéma corrigé : valeurs calculées en <b class="vert">vert</b> (courants, potentiels) et en <b class="bleu">bleu</b> (tensions, pointe = côté +).</figcaption></figure>` : '';
       corr = `<div class="ex-corr"><h4>${icone('crayon')} Correction
-        ${nDev > 1 ? `<button class="btn ex-dev-tout" data-action="devtout">${etat.dev.size >= nDev ? 'Tout masquer' : 'Tout développer'}</button>` : ''}</h4>${html}</div>`;
+        ${nDev > 1 ? `<button class="btn ex-dev-tout" data-action="devtout">${etat.dev.size >= nDev ? 'Tout masquer' : 'Tout développer'}</button>` : ''}</h4>${schemaCorr}${html}</div>`;
     }
     return `
       <div class="panel ex-card">
@@ -148,7 +153,7 @@ export function lecteurExercices(conteneur, tous, options = {}) {
         </div>
         ${e.consigne ? `<div class="ex-consigne">${texte(e.consigne)}</div>` : ''}
         ${e.schema ? '<div class="ex-circuit" data-circuit></div>' : ''}
-        ${typeof e.image === 'string' && /^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(e.image) ? `<figure class="fig ex-img"><img src="${e.image}" alt="Schéma de l'exercice"></figure>` : ''}
+        ${imageOk(e.image) ? `<figure class="fig ex-img"><img src="${e.image}" alt="Schéma de l'exercice"></figure>` : ''}
         <ol class="ex-items ${e.items.length > 1 ? '' : 'seul'}">${items}</ol>
         ${!etat.rep ? `<p class="ex-papier">${icone('crayon')} Résous sur ta feuille, puis vérifie avec la correction.</p>` : ''}
         ${e.indice ? (etat.indice ? `<div class="ex-indice">${icone('ampoule')}<div>${texte(e.indice)}</div></div>`
