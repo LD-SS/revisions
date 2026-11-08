@@ -17,18 +17,20 @@ import { texte } from '../rendu.js';
 /* ---------- impression d'une évaluation (énoncé seul, ou corrigé) ---------- */
 const LETTRES = 'abcdefghijklmnopqrstuvwxyz';
 const imgOk = (x) => typeof x === 'string' && /^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(x);
-function imprimerEvaluation(ev, corrige) {
+// place pour répondre : selon la longueur du calcul attendu (nombre d'étapes du corrigé)
+const zone = (it) => Math.min(3, 1.1 + 0.35 * (it.etapes || []).length).toFixed(1);
+export function imprimerEvaluation(ev, corrige) {
   const nq = ev.exercices.reduce((a, x) => a + x.items.length, 0);
   const feuille = document.createElement('div');
   feuille.id = 'impr-eval';
   feuille.innerHTML = `<header class="ie-tete"><h1>${esc(ev.titre)}${corrige ? ' — corrigé' : ''}</h1>
     <p>${corrige ? '' : 'Nom : ........................................   Date : ................   '}Durée : ${ev.duree || 100} min · ${ev.exercices.length} exercices · ${nq} questions</p></header>
-    ${ev.exercices.map((x, i) => `<section class="ie-ex"><h2>${i + 1}. ${esc(x.titre)}</h2>
+    ${ev.exercices.map((x, i) => `<section class="ie-ex"><div class="ie-intro"><h2>${i + 1}. ${esc(x.titre)}</h2>
       ${x.consigne ? `<div class="ie-consigne">${texte(x.consigne)}</div>` : ''}
-      ${imgOk(corrige && x.imageCorr ? x.imageCorr : x.image) ? `<figure class="ie-fig"><img src="${corrige && x.imageCorr ? x.imageCorr : x.image}" alt=""></figure>` : ''}
+      ${imgOk(corrige && x.imageCorr ? x.imageCorr : x.image) ? `<figure class="ie-fig"><img src="${corrige && x.imageCorr ? x.imageCorr : x.image}" alt=""></figure>` : ''}</div>
       <ol class="ie-q">${x.items.map((it, k) => `<li><span class="ie-l">${x.items.length > 1 ? LETTRES[k] + ')' : ''}</span><div>${texte(it.q)}
         ${corrige ? `<div class="ie-rep"><b>Réponse :</b> ${texte(it.r)}</div>${(it.etapes || []).length ? `<ol class="ie-et">${it.etapes.map((e) => `<li>${texte(e)}</li>`).join('')}</ol>` : ''}`
-          : '<div class="ie-zone"></div>'}</div></li>`).join('')}</ol></section>`).join('')}`;
+          : `<div class="ie-zone" style="height:${zone(it)}cm"></div>`}</div></li>`).join('')}</ol></section>`).join('')}`;
   document.getElementById('impr-eval')?.remove();
   document.body.appendChild(feuille); document.body.classList.add('impr-eval-on');
   const fin = () => { feuille.remove(); document.body.classList.remove('impr-eval-on'); window.removeEventListener('afterprint', fin); };
@@ -36,7 +38,13 @@ function imprimerEvaluation(ev, corrige) {
   // attend les polices des formules (KaTeX) et les images avant d'imprimer
   void feuille.offsetHeight;
   new Promise((r) => requestAnimationFrame(r)).then(() => Promise.all([document.fonts?.ready, ...[...feuille.querySelectorAll('img')].map((i) => i.decode?.().catch(() => {}))]))
-    .catch(() => {}).then(() => setTimeout(() => { window.print(); setTimeout(fin, 1500); }, 150));
+    .catch(() => {}).then(() => {
+      // schéma plutôt haut que large : à droite, les questions passent à côté (moins de pages)
+      feuille.querySelectorAll('.ie-fig img').forEach((im) => {
+        if (im.naturalWidth && im.naturalWidth / im.naturalHeight < 1.6) im.parentElement.classList.add('ie-fig-d');
+      });
+      setTimeout(() => { window.print(); setTimeout(fin, 1500); }, 150);
+    });
 }
 
 async function reserve(mid, cid) {
