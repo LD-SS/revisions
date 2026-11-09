@@ -28,7 +28,7 @@ import { majBoutonProposer, viderAttente } from './proposer.js';
 import { demarrerSynchro, adopterCompte } from './synchro.js';
 import { exigerAcces, ecranPerte } from './vues/acces.js';
 
-const VERSION = '1.5.2 (cercle trigonométrique dans le générateur)';
+const VERSION = '1.6.0 (générateur Dessin, liens « À revoir »)';
 const vue = document.getElementById('vue');
 let nettoyer = null; // fonction fournie par la page affichée, appelée avant d'en changer
 
@@ -93,7 +93,7 @@ const ROUTES = {
   dessin: (el, params) => vueAtelier(el, params),
   plus: (el) => vuePlus(el),
   recherche: (el, [q]) => vueRecherche(el, q),
-  examen: (el) => vueExamen(el),
+  examen: (el, params) => vueExamen(el, params),
   membres: async (el) => (await import('./vues/membres.js')).vueMembres(el),
   progression: () => { location.replace('#/'); },
   planning: () => { location.replace('#/'); },
