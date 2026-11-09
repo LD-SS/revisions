@@ -11,9 +11,10 @@
 
 import { esc, stockage, toast } from '../utils.js';
 import { icone } from '../icones.js';
-import { styleMatiere } from '../matieres.js';
+import { styleMatiere, TYPES_BLOCS } from '../matieres.js';
 import { matiere, chargerChapitre } from '../store.js';
 import { math, enLigne, svgSur } from '../rendu.js';
+import { corpsBloc } from '../synthese.js';
 import { ongletsMatiere } from './schemas.js';
 
 const OPTIONS = [
@@ -21,6 +22,35 @@ const OPTIONS = [
   ['schemas', 'Schémas explicatifs (quand il y en a)', true],
   ['vierge', 'Version à compléter (formules masquées, pour t\'entraîner)', false],
 ];
+
+/* Matières sans (presque) aucune formule (dessin) : on choisit les encadrés de la synthèse
+   (définitions, à retenir, tableaux, figures, listes, pièges) au lieu des formules. */
+const MODE_FICHE = ['dessin'];
+const TYPES_FICHE = ['definition', 'point-cle', 'tableau', 'figure', 'liste', 'piege', 'formule'];
+
+/** Texte court pour reconnaître un encadré dans la liste. */
+function apercuBloc(b) {
+  const brut = b.contenu || b.legende || (b.entetes || []).join(' · ') || (b.items || [])[0] || b.latex || '';
+  const t = String(brut).replace(/\$[^$]*\$/g, '…').replace(/[*_`#>]/g, '').replace(/\s+/g, ' ').trim();
+  return t.length > 80 ? `${t.slice(0, 78)}…` : t;
+}
+
+/** Les encadrés d'une matière « fiche » : [{ info, items: [{ id, sec, b, fiche: true }] }] */
+async function encadresDe(m) {
+  const chapitres = await Promise.all(m.chapitres.map(async (c) => {
+    const ch = await chargerChapitre(m.id, c.id).catch(() => null);
+    if (!ch) return null;
+    const items = [];
+    for (const s of ch.synthese.sections) {
+      s.blocs.forEach((b, i) => {
+        if (!TYPES_FICHE.includes(b.type) || (b.type === 'figure' && !b.svg)) return;
+        items.push({ id: `${c.id}/${s.id}/${i}`, sec: s.titre, b, fiche: true });
+      });
+    }
+    return items.length ? { info: c, items } : null;
+  }));
+  return chapitres.filter(Boolean);
+}
 
 /** Toutes les formules d'une matière : [{ ch, items: [{ id, sec, b, fig }] }] */
 async function formulesDe(m) {
@@ -66,28 +96,34 @@ const ecrireEtat = (mid, etat) => {
 export async function vueGenerateur(el, mid) {
   const m = matiere(mid);
   if (!m) throw new Error(`Matière inconnue : « ${mid} ».`);
-  el.innerHTML = `<div class="mc" ${styleMatiere(m)}><p class="muted">Chargement des formules…</p></div>`;
-  const chapitres = await formulesDe(m);
+  const fiche = MODE_FICHE.includes(mid);
+  const mot = fiche ? 'élément' : 'formule';
+  el.innerHTML = `<div class="mc" ${styleMatiere(m)}><p class="muted">Chargement de la synthèse…</p></div>`;
+  const chapitres = await (fiche ? encadresDe(m) : formulesDe(m));
+  const OPTS = fiche ? [] : OPTIONS;
   const tous = chapitres.flatMap((c) => c.items);
   const etat = lireEtat(mid);
   const sel = new Set(etat.sel ?? tous.map((x) => x.id));            // première visite : tout coché
-  const opts = Object.fromEntries(OPTIONS.map(([k, , d]) => [k, etat.opts[k] ?? d]));
+  const opts = Object.fromEntries(OPTS.map(([k, , d]) => [k, etat.opts[k] ?? d]));
   let notes = etat.notes;
   const sauver = () => ecrireEtat(mid, { sel: [...sel], opts, notes });
 
-  const ligne = (x) => `<label class="gs-item"><input type="checkbox" data-id="${esc(x.id)}" ${sel.has(x.id) ? 'checked' : ''}>
+  const ligne = (x) => x.fiche ? `<label class="gs-item"><input type="checkbox" data-id="${esc(x.id)}" ${sel.has(x.id) ? 'checked' : ''}>
+    <span class="gs-f"><b>${esc(TYPES_BLOCS[x.b.type]?.libelle || (x.b.type === 'tableau' ? 'Tableau' : 'Liste'))}</b>${x.b.titre ? ` · ${enLigne(x.b.titre)}` : ''}</span>
+    <span class="gs-l">${esc(apercuBloc(x.b))} <span class="muted">— ${enLigne(x.sec)}</span></span></label>`
+    : `<label class="gs-item"><input type="checkbox" data-id="${esc(x.id)}" ${sel.has(x.id) ? 'checked' : ''}>
     <span class="gs-f">${x.seule ? `<b>${esc(x.b.titre || 'Schéma')}</b>` : math(x.b.latex)}</span><span class="gs-l">${enLigne(x.seule ? x.sec : (x.b.legende || x.sec))}${x.fig || x.seule ? ` <span class="gs-sch" title="Un schéma explicatif est disponible">${icone('eclair')} schéma</span>` : ''}</span></label>`;
 
   el.innerHTML = `
     <div class="mc gs" ${styleMatiere(m)}>
       <div class="crumb no-print"><a href="#/">Accueil</a><span class="crumb-sep">›</span><a href="#/m/${esc(m.id)}">${esc(m.nom)}</a><span class="crumb-sep">›</span><span>Générateur de synthèse</span></div>
       <div class="page-head no-print"><span class="m-ic">${icone('liste')}</span><div><h1>Générateur de synthèse</h1>
-        <p class="muted">Coche les formules, imprime ta fiche (ou enregistre-la en PDF).</p></div></div>
+        <p class="muted">Coche ${fiche ? 'ce que tu veux garder (définitions, tableaux, schémas…)' : 'les formules'}, imprime ta fiche (ou enregistre-la en PDF).</p></div></div>
       <div class="no-print">${ongletsMatiere(m, 'generateur')}</div>
       ${tous.length ? `
       <div class="gs-grille no-print">
         <div class="panel gs-choix">
-          <div class="gs-barre"><b><span data-nb></span> formule(s) choisie(s)</b>
+          <div class="gs-barre"><b><span data-nb></span> ${mot}(s) choisi${fiche ? '' : 'e'}(s)</b>
             <span><button class="btn" type="button" data-a="tout">Tout cocher</button>
             <button class="btn" type="button" data-a="rien">Tout décocher</button></span></div>
           ${chapitres.map((c) => `<details class="gs-ch" open><summary>
@@ -97,16 +133,16 @@ export async function vueGenerateur(el, mid) {
         </div>
         <div class="panel gs-opts">
           <h3>Options</h3>
-          ${OPTIONS.map(([k, l]) => `<label class="gs-opt"><input type="checkbox" data-opt="${k}" ${opts[k] ? 'checked' : ''}> ${esc(l)}</label>`).join('')}
+          ${OPTS.map(([k, l]) => `<label class="gs-opt"><input type="checkbox" data-opt="${k}" ${opts[k] ? 'checked' : ''}> ${esc(l)}</label>`).join('')}
           <label class="gs-notes-l">Mes notes <span class="muted">(ajoutées en fin de fiche)</span>
-            <textarea class="field" rows="5" data-notes placeholder="Ex. : pour passer de Ah en C, on multiplie par 3600.">${esc(notes)}</textarea></label>
+            <textarea class="field" rows="5" data-notes placeholder="${fiche ? 'Ex. : trait mixte fin = axe de symétrie.' : 'Ex. : pour passer de Ah en C, on multiplie par 3600.'}">${esc(notes)}</textarea></label>
           <button class="btn primary gs-impr" type="button" data-a="imprimer">${icone('telecharger')} Imprimer / PDF</button>
           <p class="muted gs-astuce">Dans la fenêtre d'impression, choisis « Enregistrer au format PDF » pour garder un fichier.</p>
         </div>
       </div>
       <h2 class="no-print gs-apercu-t">Aperçu</h2>
       <div class="gs-feuille" data-apercu></div>`
-      : '<div class="panel empty"><h3>Aucune formule dans cette matière</h3></div>'}
+      : `<div class="panel empty"><h3>Aucun${fiche ? ' élément' : 'e formule'} dans cette matière</h3></div>`}
     </div>`;
   if (!tous.length) return null;
 
@@ -119,6 +155,13 @@ export async function vueGenerateur(el, mid) {
       return `<section class="gs-sec"><h3>Ch. ${esc(c.info.ordre ?? '')} · ${esc(c.info.titre)}</h3>
         ${items.map((x) => {
           const b = x.b;
+          if (x.fiche) {
+            const titre = b.titre ? enLigne(b.titre) : esc(TYPES_BLOCS[b.type]?.libelle || x.sec);
+            const corps = b.type === 'figure'
+              ? `<figure class="fig gs-fig">${svgSur(b.svg)}${b.legende ? `<figcaption>${enLigne(b.legende)}</figcaption>` : ''}</figure>`
+              : corpsBloc(b.type, b);
+            return `<div class="gs-bloc gs-fiche gs-${esc(b.type)}"><div class="gs-titre">${titre}</div>${corps}</div>`;
+          }
           if (x.seule) {
             return `<div class="gs-bloc gs-large"><div class="gs-titre">${esc(b.titre || x.sec)}</div>
               <figure class="fig gs-fig">${opts.vierge ? sansValeurs(b.svg) : svgSur(b.svg)}</figure></div>`;
@@ -133,8 +176,8 @@ export async function vueGenerateur(el, mid) {
             ${vars}${fig}</div>`;
         }).join('')}</section>`;
     }).join('');
-    apercu.innerHTML = `<header class="gs-entete"><b>${esc(m.nom)} — formules</b><span>${opts.vierge ? 'À compléter' : ''}</span></header>
-      ${parts || '<p class="muted">Coche au moins une formule.</p>'}
+    apercu.innerHTML = `<header class="gs-entete"><b>${esc(m.nom)} — ${fiche ? 'synthèse' : 'formules'}</b><span>${opts.vierge ? 'À compléter' : ''}</span></header>
+      ${parts || `<p class="muted">Coche au moins un${fiche ? ' élément' : 'e formule'}.</p>`}
       ${notes.trim() ? `<section class="gs-sec gs-mes-notes"><h3>Mes notes</h3>${notes.trim().split(/\n+/).map((l) => `<p>${esc(l)}</p>`).join('')}</section>` : ''}`;
   };
 
@@ -165,7 +208,7 @@ export async function vueGenerateur(el, mid) {
     if (a === 'tout') { tous.forEach((x) => sel.add(x.id)); changer(); }
     else if (a === 'rien') { sel.clear(); changer(); }
     else if (a === 'imprimer') {
-      if (!sel.size && !notes.trim()) { toast('Coche au moins une formule'); return; }
+      if (!sel.size && !notes.trim()) { toast(`Coche au moins un${fiche ? ' élément' : 'e formule'}`); return; }
       document.body.classList.add('gs-impression');
       const fin = () => { document.body.classList.remove('gs-impression'); window.removeEventListener('afterprint', fin); };
       window.addEventListener('afterprint', fin);
