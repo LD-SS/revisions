@@ -15,6 +15,7 @@ function lienExo(cle) {
   const [mid, cid, ...r] = cle.split('/'); const eid = r.join('/');
   if (mid === 'dessin' && cid === 'hasard') return `#/dessin/hasard/${eid}`;
   if (cid === 'schemas') return `#/m/${mid}/schemas/${eid}`;
+  if (cid === 'eval') return `#/examen/eval/${mid}/${eid}`;
   return `#/m/${mid}/${cid}/exercices/${eid}`;
 }
 
@@ -25,6 +26,7 @@ export function vueAccueil(el) {
     const m = liste.find((x) => x.id === mid);
     if (cid === 'schemas') return [m, 'Exercices sur schéma'];
     if (cid === 'hasard') return [m, 'Pièce au hasard'];
+    if (cid === 'eval') return [m, 'Évaluation type'];
     return [m, m?.chapitres.find((c) => c.id === cid)?.titre || cid];
   };
 
@@ -38,7 +40,9 @@ export function vueAccueil(el) {
   }
   const revoir = [
     ...ex.map(([k, n]) => {
-      const [mid, cid] = k.split('/'); const [m, ch] = nomChap(mid, cid);
+      const [mid, cid, evId] = k.split('/'); const [m, nom] = nomChap(mid, cid);
+      const nv = cid === 'eval' ? String(evId).match(/-(\d+)$/)?.[1] : null;   // « Évaluation type 2 »
+      const ch = nv ? `${nom} ${nv}` : nom;
       return `<a class="rv-l mc" ${m ? styleMatiere(m) : ''} href="${lienExo(k)}">
         <span class="badge ex-${NOTE[n.r][1]}">${NOTE[n.r][0]}</span>
         <span><b>${esc(n.t || 'Exercice')}</b><span class="muted">${esc(m?.court || m?.nom || '')} · ${esc(ch)}</span></span>${icone('fleche-d')}</a>`;
