@@ -34,6 +34,8 @@ async function formulesDe(m) {
       const nbF = s.blocs.filter((b) => b.type === 'formule' && b.latex).length;
       let k = 0;
       s.blocs.forEach((b, i) => {
+        // schéma de référence proposé seul (ex. le cercle trigonométrique complet)
+        if (b.type === 'figure' && b.generateur && b.svg) { items.push({ id: `${c.id}/${s.id}/${i}`, sec: s.titre, b, seule: true }); return; }
         if (b.type !== 'formule' || !b.latex) return;
         const fig = figs.length === nbF ? figs[k] : figs[0];
         k++;
@@ -43,6 +45,14 @@ async function formulesDe(m) {
     return items.length ? { info: c, items } : null;
   }));
   return chapitres.filter(Boolean);
+}
+
+/** Version à compléter d'un schéma de référence : on retire les valeurs marquées « acompl » */
+function sansValeurs(svg) {
+  const t = document.createElement('div');
+  t.innerHTML = svgSur(svg);
+  t.querySelectorAll('.acompl').forEach((n) => n.remove());
+  return t.innerHTML;
 }
 
 const lireEtat = (mid) => {
@@ -66,7 +76,7 @@ export async function vueGenerateur(el, mid) {
   const sauver = () => ecrireEtat(mid, { sel: [...sel], opts, notes });
 
   const ligne = (x) => `<label class="gs-item"><input type="checkbox" data-id="${esc(x.id)}" ${sel.has(x.id) ? 'checked' : ''}>
-    <span class="gs-f">${math(x.b.latex)}</span><span class="gs-l">${enLigne(x.b.legende || x.sec)}${x.fig ? ` <span class="gs-sch" title="Un schéma explicatif est disponible">${icone('eclair')} schéma</span>` : ''}</span></label>`;
+    <span class="gs-f">${x.seule ? `<b>${esc(x.b.titre || 'Schéma')}</b>` : math(x.b.latex)}</span><span class="gs-l">${enLigne(x.seule ? x.sec : (x.b.legende || x.sec))}${x.fig || x.seule ? ` <span class="gs-sch" title="Un schéma explicatif est disponible">${icone('eclair')} schéma</span>` : ''}</span></label>`;
 
   el.innerHTML = `
     <div class="mc gs" ${styleMatiere(m)}>
@@ -109,6 +119,10 @@ export async function vueGenerateur(el, mid) {
       return `<section class="gs-sec"><h3>Ch. ${esc(c.info.ordre ?? '')} · ${esc(c.info.titre)}</h3>
         ${items.map((x) => {
           const b = x.b;
+          if (x.seule) {
+            return `<div class="gs-bloc gs-large"><div class="gs-titre">${esc(b.titre || x.sec)}</div>
+              <figure class="fig gs-fig">${opts.vierge ? sansValeurs(b.svg) : svgSur(b.svg)}</figure></div>`;
+          }
           const vars = opts.vars && Array.isArray(b.variables) && b.variables.length
             ? `<div class="gs-vars">${b.variables.map((v) => `<span>${math(v.symbole)}</span><span>${enLigne(v.nom)}${v.unite ? ` <i>en ${esc(v.unite)}</i>` : ''}</span>`).join('')}</div>` : '';
           // un même schéma n'est montré qu'une fois par chapitre (ex. les 2 formules du parallèle)
