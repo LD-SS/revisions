@@ -916,6 +916,11 @@ label.cgu-ok input{margin-top:3px}
 .gs-feuille .fig.gs-fig svg{width:100%;height:auto;max-height:none;font-size:17px}
 .gs-feuille .fig.gs-fig svg .petit{font-size:15px}
 .gs-feuille .fig.gs-fig svg .grand{font-size:19px}
+/* schéma de référence (cercle trigonométrique…) : sur toute la largeur de la feuille */
+.gs-bloc.gs-large{column-span:all}
+.gs-feuille .gs-large .fig.gs-fig svg{max-width:15cm;font-size:14px}
+.gs-feuille .gs-large .fig.gs-fig svg .petit{font-size:12.5px}
+.gs-feuille .gs-large .fig.gs-fig svg .grand{font-size:17px}
 /* schémas des synthèses : agrandis (×1,3) pour que les annotations soient aussi lisibles que le texte ;
    toucher un schéma l’affiche en plein écran (activerSynthese) */
 .syn-fig-svg{overflow-x:auto;-webkit-overflow-scrolling:touch}
