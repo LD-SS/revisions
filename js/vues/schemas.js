@@ -18,7 +18,7 @@ import { memoriserVisite } from '../suivi.js';
 const NOTES = { ok: ['Réussi', 'ok'], mid: ['Presque', 'mid'], ko: ['À refaire', 'ko'] };
 
 /** Onglets « Chapitres | Exercices sur schéma » en tête de la page matière. */
-const SANS_GENERATEUR = ['dessin'];   // matières sans (presque) aucune formule
+const SANS_GENERATEUR = [];   // le dessin a son générateur en mode « fiche » (encadrés au lieu de formules)
 export function ongletsMatiere(m, actif) {
   const atelier = m.id === 'dessin';   // l'atelier de dessin est rangé dans la matière Dessin
   const generateur = !SANS_GENERATEUR.includes(m.id);
