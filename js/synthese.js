@@ -112,7 +112,7 @@ export function sourcesDe(ch) {
   return s.pdf ? [{ id: 'cours', nom: s.pdf, pages: s.pages }] : [];
 }
 
-function corpsBloc(type, b) {
+export function corpsBloc(type, b) {
   switch (type) {
     case 'formule': {
       const vars = Array.isArray(b.variables) && b.variables.length
