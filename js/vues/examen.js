@@ -64,7 +64,25 @@ async function reserve(mid, cid) {
   return r;
 }
 
-export function vueExamen(el) {
+/** #/examen/eval/<matière>/<évaluation>/<exercice> : un exercice d'évaluation seul (lien « À revoir »). */
+async function exerciceEvaluation(el, mid, evId, exId) {
+  const m = matiere(mid);
+  const ev = m ? (await chargerEvaluations(mid).catch(() => [])).find((x) => x.id === evId) : null;
+  const ex = ev?.exercices.find((x) => x.id === exId);
+  const tete = `<div class="crumb"><a href="#/">Accueil</a><span class="crumb-sep">›</span><a href="#/examen">Examen blanc</a><span class="crumb-sep">›</span><span>${esc(ev?.titre || 'Évaluation type')}</span></div>`;
+  if (!ex) {
+    el.innerHTML = `<div class="mc" ${m ? styleMatiere(m) : ''}>${tete}<div class="panel empty"><h3>Exercice introuvable</h3>
+      <p class="muted">Cette évaluation a changé depuis. Retrouve les évaluations types dans l'examen blanc.</p>
+      <a class="btn primary" href="#/examen">Examen blanc</a></div></div>`;
+    return null;
+  }
+  el.innerHTML = `<div class="mc" ${styleMatiere(m)}>${tete}<div id="exam-lecteur"></div></div>`;
+  lecteurExercices(el.querySelector('#exam-lecteur'), [{ ...ex, _cle: `${mid}/eval/${ev.id}/${ex.id}`, _ou: ev.titre }]);
+  return null;
+}
+
+export function vueExamen(el, params = []) {
+  if (params[0] === 'eval' && params.length >= 4) return exerciceEvaluation(el, params[1], params[2], params[3]);
   const pref = stockage.lire('examen.choix', { mid: matieres()[0]?.id, cid: '', n: 10, min: 30 });
   const mats = matieres().filter((m) => m.chapitres.some((c) => c.nb?.exercices) || m.schemas);
   if (!mats.some((m) => m.id === pref.mid)) pref.mid = mats[0]?.id;
