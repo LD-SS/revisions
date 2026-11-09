@@ -918,6 +918,19 @@ label.cgu-ok input{margin-top:3px}
 .gs-feuille .fig.gs-fig svg .grand{font-size:19px}
 /* schéma de référence (cercle trigonométrique…) : sur toute la largeur de la feuille */
 .gs-bloc.gs-large{column-span:all}
+/* générateur « fiche » (dessin) : encadrés de la synthèse, compacts */
+.gs-fiche p{margin:2px 0;font-size:12px}
+.gs-fiche ul,.gs-fiche ol{margin:2px 0;padding-left:18px;font-size:12px}
+.gs-fiche .tbl-wrap{overflow:visible}
+.gs-fiche .tbl{width:100%;font-size:11px;border-collapse:collapse}
+.gs-fiche .tbl th,.gs-fiche .tbl td{border:1px solid #ccd2db;padding:2px 4px;text-align:left;vertical-align:top}
+.gs-fiche figcaption{font-size:11px;color:#555;margin-top:2px}
+.gs-feuille .gs-fiche .fig.gs-fig svg{font-size:13px}
+.gs-feuille .gs-fiche .fig.gs-fig svg .petit{font-size:11px}
+.gs-feuille .gs-fiche .fig.gs-fig svg .grand{font-size:15px}
+.gs-fiche.gs-definition{border-left:3px solid #1d5fd1}
+.gs-fiche.gs-point-cle{border-left:3px solid #1b7f47}
+.gs-fiche.gs-piege{border-left:3px solid #c42b2b}
 .gs-feuille .gs-large .fig.gs-fig svg{max-width:15cm;font-size:14px}
 .gs-feuille .gs-large .fig.gs-fig svg .petit{font-size:12.5px}
 .gs-feuille .gs-large .fig.gs-fig svg .grand{font-size:17px}
