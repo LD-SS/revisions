@@ -104,7 +104,9 @@ const fmt = (v) => (Math.round(v * 10) / 10).toLocaleString('fr-BE', { minimumFr
 let corrigerAuMontage = false;
 const PERSP = ['iso', 'cav'];
 /** Pièce de l'exercice (sans trous pour les perspectives). */
-const pieceDe = (exo) => { const pc = trouverPiece(exo?.piece); return pc && PERSP.includes(exo.mode) ? { ...pc, trous: [] } : pc; };   // après « Rendre la copie » : corriger dès que la page est remontée
+/** Pièce adaptée à l'exercice : en cavalière, seuls les trous de la face avant (cercles) sont gardés. */
+const pourPersp = (pc, mode) => (pc && mode === 'cav' ? { ...pc, trous: (pc.trous || []).filter((t) => t.axe === 'y') } : pc);
+const pieceDe = (exo) => pourPersp(trouverPiece(exo?.piece), exo?.mode);   // après « Rendre la copie » : corriger dès que la page est remontée
 
 /** Graine d'une nouvelle pièce au hasard (1 à 99 999). */
 export const grainePiece = () => 1 + Math.floor(Math.random() * 99999);
@@ -114,7 +116,7 @@ export const grainePiece = () => 1 + Math.floor(Math.random() * 99999);
  * mode 'vues' : dessine les 3 vues ; 'cotes' : les 3 vues sont données, cote-les.
  */
 function creerExo(pc, depuis = null, mode = 'vues', examen = 0) {
-  if (PERSP.includes(mode)) pc = { ...pc, trous: [] };   // perspective : pièce pleine (les trous viendront plus tard)
+  pc = pourPersp(pc, mode);
   const t = toutes(); const n = nouvelId();
   const np = nouvellePlanche();
   const titre = `${examen ? 'Examen – ' : ''}${{ cotes: 'Cotation', coupe: 'Coupe A-A', demi: 'Demi-coupe', section: 'Section B-B', locale: 'Coupe locale', iso: 'Isométrique', cav: 'Cavalière' }[mode] || 'Vues'} : ${pc.nom}`.slice(0, 31);
@@ -234,9 +236,9 @@ function monterPage(el, remonter) {
         </div>
         ${p.exo ? `<div class="panel dao-exobar">
           <b>Exercice :</b> <span>${p.exo.mode === 'iso'
-            ? 'dessine la perspective isométrique de la pièce à partir de ses 3 vues, à l\'échelle 1:1 (mêmes longueurs sur les 3 axes) : largeur selon l\'axe à 30° vers la droite, profondeur selon l\'axe à 30° vers la gauche, hauteurs verticales. Le coin avant-bas-gauche est au repère ✚. Seules les arêtes vues, en traits forts. Astuce : saisie « longueur&lt;angle », ex. 40&lt;30 ou 25&lt;150.'
+            ? 'dessine la perspective isométrique de la pièce à partir de ses 3 vues, à l\'échelle 1:1 (mêmes longueurs sur les 3 axes) : largeur selon l\'axe à 30° vers la droite, profondeur selon l\'axe à 30° vers la gauche, hauteurs verticales. Le coin avant-bas-gauche est au repère ✚. Seules les arêtes vues, en traits forts. Trous : seulement le bord de l\'entrée, en ellipse tracée par la méthode des 4 centres (4 arcs). Astuce : saisie « longueur&lt;angle », ex. 40&lt;30 ou 25&lt;150.'
             : p.exo.mode === 'cav'
-            ? 'dessine la perspective cavalière de la pièce à partir de ses 3 vues : face avant en vraie grandeur (1:1), fuyantes à 45° vers la droite et vers le haut, réduites de moitié (k = 0,5). Le coin avant-bas-gauche est au repère ✚. Seules les arêtes vues, en traits forts. Astuce : saisie « longueur&lt;angle », ex. 15&lt;45.'
+            ? 'dessine la perspective cavalière de la pièce à partir de ses 3 vues : face avant en vraie grandeur (1:1), fuyantes à 45° vers la droite et vers le haut, réduites de moitié (k = 0,5). Le coin avant-bas-gauche est au repère ✚. Seules les arêtes vues, en traits forts. Trous de la face avant : leur cercle d\'entrée. Astuce : saisie « longueur&lt;angle », ex. 15&lt;45.'
             : p.exo.mode === 'locale'
             ? 'dessine la vue de face avec une coupe locale autour du trou vertical : entre les deux traits ondulés (fins, déjà tracés), le trou est vu en coupe (traits forts) et la matière coupée est hachurée ; ailleurs, la vue reste normale (traits cachés compris). Le coin inférieur gauche de la vue de face est au repère ✚.'
             : p.exo.mode === 'section'
