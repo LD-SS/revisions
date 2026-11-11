@@ -129,8 +129,10 @@ export function monterFeuille(el, planche, opts = {}) {
   let p = planche;
   el.innerHTML = `<svg class="dao-svg" xmlns="${NS}" role="img" aria-label="Feuille de dessin">
     <g class="dao-papier"></g><g class="dao-grille"></g><g class="dao-cadre-g"></g>
-    <g class="dao-dessin"></g><g class="dao-apercu"></g><g class="dao-curseur"></g></svg>`;
+    <g class="dao-dessin"></g><g class="dao-apercu"></g><g class="dao-curseur"></g></svg>
+    <div class="dao-loupe" hidden><svg class="dao-svg" xmlns="${NS}"></svg></div>`;
   const svg = el.querySelector('svg');
+  const loupe = el.querySelector('.dao-loupe'), loupeSvg = loupe.querySelector('svg');
   const calque = (n) => svg.querySelector(`.dao-${n}`);
   const vb = { x: 0, y: 0, w: 100, h: 100 };   // fenêtre visible, en mm papier
   let espace = false;
@@ -196,6 +198,20 @@ export function monterFeuille(el, planche, opts = {}) {
     const pt = ev ? versPapierEcran(ev) : null;
     const res = opts.surPointeur?.(type, ev, pt);
     if (type !== 'haut') curseur(Array.isArray(res) ? res : pt);
+    // loupe au-dessus du doigt (le doigt cache le point visé)
+    if (ev?.pointerType === 'touch' && (type === 'bas' || type === 'bouge')) montrerLoupe(ev, Array.isArray(res) ? res : pt);
+    else loupe.hidden = true;
+  }
+  function montrerLoupe(ev, pt) {
+    const T = 132, G = 3;                       // taille (px) et grossissement
+    const b = el.getBoundingClientRect();
+    const w = T / G / Math.max(echelleEcran(), 1e-6);
+    loupeSvg.setAttribute('viewBox', `${r(pt[0] - w / 2)} ${r(pt[1] - w / 2)} ${r(w)} ${r(w)}`);
+    loupeSvg.innerHTML = svg.innerHTML;
+    let x = ev.clientX - b.left - T / 2, y = ev.clientY - b.top - T - 40;
+    if (y < 4) y = ev.clientY - b.top + 40;
+    loupe.style.left = `${Math.max(4, Math.min(b.width - T - 4, x))}px`; loupe.style.top = `${y}px`;
+    loupe.hidden = false;
   }
 
   /* ----- pointeurs : souris, stylet, doigts ----- */
@@ -205,6 +221,7 @@ export function monterFeuille(el, planche, opts = {}) {
   let traceDoigt = null;         // pointerId du doigt qui trace (outil actif)
   const outilActif = () => (opts.outil?.() || 'main') !== 'main';
 
+  const capturer = (ev) => { try { svg.setPointerCapture(ev.pointerId); } catch { /* pointeur déjà relâché */ } };
   const centreDoigts = () => {
     const [a, b] = [...doigts.values()];
     return { d: Math.hypot(a.x - b.x, a.y - b.y), cx: (a.x + b.x) / 2, cy: (a.y + b.y) / 2 };
@@ -213,12 +230,13 @@ export function monterFeuille(el, planche, opts = {}) {
   svg.addEventListener('pointerdown', (ev) => {
     if (ev.pointerType === 'touch') {
       doigts.set(ev.pointerId, { x: ev.clientX, y: ev.clientY });
-      svg.setPointerCapture(ev.pointerId);
+      capturer(ev);
       if (doigts.size === 2) {
         if (traceDoigt != null) { versOutil('annule', null); traceDoigt = null; }
         pan = null; pince = centreDoigts();
       } else if (doigts.size === 1) {
-        if (outilActif()) { traceDoigt = ev.pointerId; versOutil('bas', ev); } else pan = { x: ev.clientX, y: ev.clientY };
+        // « stylet seulement » : le doigt déplace la feuille, seul le stylet dessine
+        if (outilActif() && !opts.styletSeul?.()) { traceDoigt = ev.pointerId; versOutil('bas', ev); } else pan = { x: ev.clientX, y: ev.clientY };
       }
       ev.preventDefault();
       return;
@@ -226,13 +244,13 @@ export function monterFeuille(el, planche, opts = {}) {
     // souris / stylet : déplacer avec le clic du milieu, espace + clic, ou l'outil « main »
     if (ev.button === 1 || (ev.button === 0 && (espace || !outilActif()))) {
       pan = { x: ev.clientX, y: ev.clientY };
-      svg.setPointerCapture(ev.pointerId);
+      capturer(ev);
       svg.classList.add('dao-pan-actif');
       ev.preventDefault();
       return;
     }
     if (ev.button === 2) { ev.preventDefault(); versOutil('droit', ev); return; }
-    if (ev.button === 0) { svg.setPointerCapture(ev.pointerId); versOutil('bas', ev); ev.preventDefault(); }
+    if (ev.button === 0) { capturer(ev); versOutil('bas', ev); ev.preventDefault(); }
   });
 
   svg.addEventListener('pointermove', (ev) => {
@@ -256,7 +274,8 @@ export function monterFeuille(el, planche, opts = {}) {
       if (traceDoigt === ev.pointerId) { traceDoigt = null; if (ev.type === 'pointerup') versOutil('haut', ev); else versOutil('annule', null); }
       doigts.delete(ev.pointerId);
       pince = null;
-      pan = doigts.size === 1 && !outilActif() ? (() => { const [d] = doigts.values(); return { x: d.x, y: d.y }; })() : null;
+      loupe.hidden = true;
+      pan = doigts.size === 1 && (!outilActif() || opts.styletSeul?.()) ? (() => { const [d] = doigts.values(); return { x: d.x, y: d.y }; })() : null;
       return;
     }
     if (pan) { pan = null; svg.classList.remove('dao-pan-actif'); return; }
