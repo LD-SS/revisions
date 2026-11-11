@@ -13,7 +13,7 @@ import { esc, stockage } from '../utils.js';
 import { icone } from '../icones.js';
 import { styleMatiere } from '../matieres.js';
 import { matiere } from '../store.js';
-import { monterFeuille, nouvellePlanche, ECHELLES, FORMATS, pasGrille, zone, facteur, versPapier } from '../dao/feuille.js';
+import { monterFeuille, nouvellePlanche, ECHELLES, FORMATS, pasGrille, zone, facteur, versPapier, imprimerPlanche } from '../dao/feuille.js';
 import { PIECES, vues, boite as boitePiece, trouverPiece, coupeA, estSymetrique, sectionB, coupeLocale, aTrouVertical, graineTrouVertical } from '../dao/pieces.js';
 import { svgPerspective } from '../dao/perspective.js';
 import { creerTraceur, STYLES, OUTILS, COTES, svgEntite } from '../dao/trace.js';
@@ -176,6 +176,7 @@ function monterPage(el, remonter) {
             <button class="btn icon" type="button" data-act="annuler" title="Annuler (Ctrl+Z)">↶</button>
             <button class="btn icon" type="button" data-act="retablir" title="Rétablir (Ctrl+Y)">↷</button>
             <button class="btn" type="button" data-act="effacer" title="Effacer tout le dessin">${icone('croix')}<span>Tout effacer</span></button>
+            <button class="btn" type="button" data-act="imprimer" title="Imprimer la planche à l'échelle réelle : dans la fenêtre d'impression, choisis « Taille réelle » ou « 100 % » (pas « Ajuster à la page »)">🖨<span>Imprimer</span></button>
             <select class="field dao-exo-choix" title="Nouvel exercice sur une pièce vue en perspective cotée, corrigé automatiquement">
               <option value="">Exercice…</option>
               ${[['vues', 'Dessine les 3 vues'], ['cotes', 'Cote les 3 vues'], ['coupe', 'Coupe A-A'], ['demi', 'Demi-coupe A-A'], ['section', 'Section sortie B-B'], ['locale', 'Coupe locale']].map(([m, l]) => `<optgroup label="${l}">
@@ -322,6 +323,7 @@ function monterPage(el, remonter) {
     else if (b.dataset.act === 'ortho') traceur.basculerOrtho();
     else if (b.dataset.act === 'annuler') traceur.annuler();
     else if (b.dataset.act === 'retablir') traceur.retablir();
+    else if (b.dataset.act === 'imprimer') imprimerPlanche(el.querySelector('.dao-cadre-ecran svg.dao-svg'), p);
     else if (b.dataset.act === 'effacer') {
       if (b.dataset.sur === '1') { traceur.toutEffacer(); b.dataset.sur = ''; b.querySelector('span').textContent = 'Tout effacer'; }
       else { b.dataset.sur = '1'; b.querySelector('span').textContent = 'Confirmer ?'; setTimeout(() => { if (b.isConnected) { b.dataset.sur = ''; b.querySelector('span').textContent = 'Tout effacer'; } }, 3000); }
