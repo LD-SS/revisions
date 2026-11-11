@@ -13,11 +13,13 @@ import { esc, stockage } from '../utils.js';
 import { icone } from '../icones.js';
 import { styleMatiere } from '../matieres.js';
 import { matiere } from '../store.js';
-import { monterFeuille, nouvellePlanche, ECHELLES, FORMATS, pasGrille, zone, facteur, versPapier, imprimerPlanche } from '../dao/feuille.js';
+import { monterFeuille, nouvellePlanche, ECHELLES, FORMATS, pasGrille, zone, facteur, versPapier, imprimerPlanche, CARTOUCHE } from '../dao/feuille.js';
 import { PIECES, vues, boite as boitePiece, trouverPiece, coupeA, estSymetrique, sectionB, coupeLocale, aTrouVertical, graineTrouVertical } from '../dao/pieces.js';
 import { svgPerspective, perspectiveEntites } from '../dao/perspective.js';
+import { monterPiece3D } from '../piece3d.js';
+import { svgSur } from '../rendu.js';
 import { creerTraceur, STYLES, OUTILS, COTES, svgEntite } from '../dao/trace.js';
-import { corriger, corrigerCotes, corrigerCoupe, corrigerSection } from '../dao/correction.js';
+import { corriger, corrigerCotes, corrigerCoupe, corrigerSection, corrigerAncien } from '../dao/correction.js';
 
 const CLE = 'planches';
 const CLE_COURANTE = 'dao.courante';
@@ -107,6 +109,44 @@ const PERSP = ['iso', 'cav'];
 /** Pièce adaptée à l'exercice : en cavalière, seuls les trous de la face avant (cercles) sont gardés. */
 const pourPersp = (pc, mode) => (pc && mode === 'cav' ? { ...pc, trous: (pc.trous || []).filter((t) => t.axe === 'y') } : pc);
 const pieceDe = (exo) => pourPersp(trouverPiece(exo?.piece), exo?.mode);   // après « Rendre la copie » : corriger dès que la page est remontée
+
+/**
+ * Ancien exercice de l'Atelier (grille en « carreaux », y vers le bas : js/geometrie.js construire)
+ * → planche du nouveau moteur en mm (1 carreau = 10 mm, ou 8 mm si la planche est grande).
+ * Les données deviennent des entités de la planche ; la solution est gardée dans exo (pour la correction).
+ */
+export function creerAncien(e, depuis = null) {
+  if (!e?.planche || !Array.isArray(e.solution)) return false;
+  const np = nouvellePlanche();
+  const base = { ...np, format: 'A4', orientation: 'paysage', echelle: '1:1', cartouche: { ...np.cartouche, titre: String(e.titre || 'Exercice').slice(0, 31), auteur: depuis?.cartouche?.auteur || np.cartouche.auteur, classe: depuis?.cartouche?.classe || np.cartouche.classe } };
+  const z = zone(base);
+  const U = e.planche.h * 10 <= z.h - CARTOUCHE.h - 8 ? 10 : 8;
+  const X = (x) => Math.round(x * U * 1000) / 1000, Y = (y) => Math.round((z.h - y * U) * 1000) / 1000;
+  const conv = (c) => {
+    if (c[0] === 'l') return [{ t: 'l', x1: X(c[1]), y1: Y(c[2]), x2: X(c[3]), y2: Y(c[4]), s: c[5] || 'v' }];
+    if (c[0] === 'c') return [{ t: 'c', cx: X(c[1]), cy: Y(c[2]), r: Math.round(c[3] * U * 1000) / 1000, s: c[4] || 'v' }];
+    if (c[0] === 't') return [{ t: 'x', x: X(c[1]) - 2, y: Y(c[2]), txt: String(c[3]), h: 5, s: 'n' }];
+    if (c[0] === 'f') {           // flèche : trait fin + pointe
+      const [x1, y1, x2, y2] = [X(c[1]), Y(c[2]), X(c[3]), Y(c[4])], L = Math.hypot(x2 - x1, y2 - y1) || 1, u = [(x2 - x1) / L, (y2 - y1) / L], n = [-u[1], u[0]];
+      return [{ t: 'l', x1, y1, x2, y2, s: 'n' }, ...[1, -1].map((k) => ({ t: 'l', x1: x2, y1: y2, x2: x2 - u[0] * 3.5 + n[0] * 1.2 * k, y2: y2 - u[1] * 3.5 + n[1] * 1.2 * k, s: 'n' }))];
+    }
+    return [];
+  };
+  const entites = [...e.donnees.flatMap(conv)];
+  if (e.planche.l45) entites.push(...conv(e.planche.l45));
+  const cb = e.planche.cible;
+  if (cb) {                       // cadre de la zone à dessiner (trait fin)
+    const [x, y, w, h] = cb;
+    entites.push(...[[x, y, x + w, y], [x + w, y, x + w, y + h], [x + w, y + h, x, y + h], [x, y + h, x, y]].map(([a, b, c, d]) => ({ t: 'l', x1: X(a), y1: Y(b), x2: X(c), y2: Y(d), s: 'n' })));
+  }
+  const sol = e.solution.filter((c) => c[0] === 'l' || c[0] === 'c').flatMap(conv);
+  const hach = e.solution.filter((c) => c[0] === 'h').flatMap((c) => c[1].map(([x, y]) => [X(x), Y(y + 0.5), Math.round(0.5 * U * 1000) / 1000]));   // carrés [x, y bas, côté]
+  const cible = cb ? { x: X(cb[0]), y: Y(cb[1] + cb[3]), w: cb[2] * U, h: cb[3] * U } : null;
+  const t = toutes(); const n = nouvelId();
+  t[n] = { ...base, entites, exo: { mode: 'ancien', piece: '', u: U, ...(e.piece?.vox ? { vox: e.piece } : e.perspective ? { persp: String(e.perspective) } : {}), consigne: String(e.consigne || ''), sol, hach, cible, ref: e._cle || e.id || '' }, maj: Date.now() };
+  stockage.ecrire(CLE, t); stockage.ecrire(CLE_COURANTE, n);
+  return true;
+}
 
 /** Graine d'une nouvelle pièce au hasard (1 à 99 999). */
 export const grainePiece = () => 1 + Math.floor(Math.random() * 99999);
@@ -235,7 +275,9 @@ function monterPage(el, remonter) {
           <span class="muted">Un type de trait choisi ci-dessus s'applique à la sélection.</span>
         </div>
         ${p.exo ? `<div class="panel dao-exobar">
-          <b>Exercice :</b> <span>${p.exo.mode === 'iso'
+          <b>Exercice :</b> <span>${p.exo.mode === 'ancien'
+            ? `${esc(p.exo.consigne).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')} (Ancien exercice de l'Atelier, repris en mm : 1 carreau = ${p.exo.u || 10} mm ; dessine dans le cadre en trait fin.)`
+            : p.exo.mode === 'iso'
             ? 'dessine la perspective isométrique de la pièce à partir de ses 3 vues, à l\'échelle 1:1 (mêmes longueurs sur les 3 axes) : largeur selon l\'axe à 30° vers la droite, profondeur selon l\'axe à 30° vers la gauche, hauteurs verticales. Le coin avant-bas-gauche est au repère ✚. Seules les arêtes vues, en traits forts. Trous : seulement le bord de l\'entrée, en ellipse tracée par la méthode des 4 centres (4 arcs). Astuce : saisie « longueur&lt;angle », ex. 40&lt;30 ou 25&lt;150.'
             : p.exo.mode === 'cav'
             ? 'dessine la perspective cavalière de la pièce à partir de ses 3 vues : face avant en vraie grandeur (1:1), fuyantes à 45° vers la droite et vers le haut, réduites de moitié (k = 0,5). Le coin avant-bas-gauche est au repère ✚. Seules les arêtes vues, en traits forts. Trous de la face avant : leur cercle d\'entrée. Astuce : saisie « longueur&lt;angle », ex. 15&lt;45.'
@@ -255,7 +297,7 @@ function monterPage(el, remonter) {
               ? `<button class="btn primary" type="button" data-exo="rendre">Rendre la copie</button> <span class="dao-chrono" title="Temps restant">⏱ ${p.exo.examen.duree}:00</span>`
               : `<button class="btn primary" type="button" data-exo="corriger">${icone('check')} Corriger</button>
             ${p.exo.mode === 'cotes' ? '' : '<button class="btn" type="button" data-exo="solution" aria-pressed="false">Voir la solution</button>'}`}
-            ${PERSP.includes(p.exo.mode) ? '' : '<button class="btn" type="button" data-exo="piece">Pièce</button>'}
+            ${PERSP.includes(p.exo.mode) || (p.exo.mode === 'ancien' && !p.exo.vox && !p.exo.persp) ? '' : '<button class="btn" type="button" data-exo="piece">Pièce</button>'}
           </span>
           <span class="dao-exo-res">${p.exo.examen && !p.exo.examen.fini ? '<b>Mode examen</b> : pas de correction ni de solution avant d\'avoir rendu la copie.' : p.exo.score != null ? `Meilleur score : <b>${p.exo.score} %</b>` : ''}</span>
           ${p.exo.examen?.note != null ? `<span class="dao-exam-note">Note d'examen : <b>${p.exo.examen.note} %</b> · rendu en ${p.exo.examen.temps} min sur ${p.exo.examen.duree}</span>` : ''}
@@ -366,6 +408,12 @@ function monterPage(el, remonter) {
   /* ----- exercice « dessine les 3 vues » ----- */
   const montrerPiece = (pc) => {
     const pan = el.querySelector('.dao-piece');
+    if (pc.ancien) {           // ancien exercice : pièce en cubes (vue 3D tournante) ou perspective du cours
+      pan.querySelector('.dao-piece-nom').textContent = p.cartouche.titre || 'Pièce';
+      const fig = pan.querySelector('.dao-piece-fig');
+      if (p.exo.vox) { fig.innerHTML = ''; monterPiece3D(fig, p.exo.vox, { rotation: true }); } else fig.innerHTML = svgSur(p.exo.persp || '');
+      pan.hidden = false; return;
+    }
     pan.querySelector('.dao-piece-nom').textContent = pc.nom;
     pan.querySelector('.dao-piece-fig').innerHTML = svgPerspective(pc, { largeur: 300 });
     pan.hidden = false;
@@ -388,6 +436,16 @@ function monterPage(el, remonter) {
   let minuteur = null;
   function dessinerExo(res) {
     resultat = res;
+    if (p.exo.mode === 'ancien') {
+      let svg = '';
+      if (voirSolution) svg += [...(p.exo.sol || []), ...(p.exo.hach || []).map(([x, y, d]) => ({ t: 'h', pts: [[x, y], [x + d, y], [x + d, y + d], [x, y + d]], ang: 45, pas: 3, s: 'n' }))].map((e) => svgEntite(p, e, 'dao-cor-sol')).join('');
+      if (res) {
+        if (res.hach) svg += res.hach.manque.map((q) => { const [a, c] = versPapier(p, q[0], q[1]); return `<circle class="dao-pt-man" cx="${a}" cy="${c}" r="0.7"/>`; }).join('') + res.hach.trop.map((q) => { const [a, c] = versPapier(p, q[0], q[1]); return `<circle class="dao-pt-trop" cx="${a}" cy="${c}" r="0.7"/>`; }).join('');
+        svg += res.manquants.map((e) => svgEntite(p, e, 'dao-cor-man')).join('') + res.type.map((e) => svgEntite(p, e, 'dao-cor-type')).join('') + res.trop.map((e) => svgEntite(p, e, 'dao-cor-trop')).join('');
+      }
+      feuille.calque('correction').innerHTML = svg;
+      return;
+    }
     const pc = pieceDe(p.exo);
     if (!pc) return;
     if (p.exo.mode === 'cotes') { feuille.calque('correction').innerHTML = res ? svgCorrCotes(pc, res) : ''; return; }
@@ -419,8 +477,8 @@ function monterPage(el, remonter) {
     feuille.calque('correction').innerHTML = svg;
   }
   if (p.exo) {
-    const pc = pieceDe(p.exo);
-    if (pc) { if (!PERSP.includes(p.exo.mode)) montrerPiece(pc); dessinerExo(null); }
+    const pc = p.exo.mode === 'ancien' ? { ancien: true } : pieceDe(p.exo);
+    if (pc) { if (!PERSP.includes(p.exo.mode) && (!pc.ancien || p.exo.vox || p.exo.persp)) montrerPiece(pc); dessinerExo(null); }
     const resTxt = el.querySelector('.dao-exo-res');
     // mode examen : la 1re correction après avoir rendu la copie donne la note (elle ne change plus ensuite)
     const noterExamen = (score) => {
@@ -474,7 +532,8 @@ function monterPage(el, remonter) {
         return;
       }
       let r;
-      if (PERSP.includes(p.exo.mode)) {
+      if (p.exo.mode === 'ancien') r = corrigerAncien(p.exo, p.entites || []);
+      else if (PERSP.includes(p.exo.mode)) {
         const sol = perspectiveEntites(pc, p.exo.r, p.exo.mode), c = sol.cadre, M = 6;
         const dans = (x, y) => x >= c.x - M && x <= c.x + c.w + M && y >= c.y - M && y <= c.y + c.h + M;
         r = corriger(sol.traits, (p.entites || []).filter((e) => (e.t === 'l' && dans((e.x1 + e.x2) / 2, (e.y1 + e.y2) / 2)) || ((e.t === 'c' || e.t === 'a') && dans(e.cx, e.cy))));
