@@ -539,6 +539,8 @@ export function creerTraceur(o) {
     choisirOutil, choisirStyle,
     basculerOrtho() { st.ortho = !st.ortho; apercu(); return st.ortho; },
     toutEffacer() { st.sel.clear(); st.op = null; if (entites().length) changer([]); },
+    /** Ajoute des entités toutes faites (ex. vues d'une pièce) ; annulable. */
+    inserer(es) { if (es.length) changer([...entites(), ...es]); },
     supprimerSelection, lancerOp,
     reglerParam(nom, v) { if (nom === 'texte') st.param.texte = v; else if (v > 0) st.param[nom] = v; },
     choisirCote(k) { st.coteK = k; st.pts = []; st.cible = null; if (st.outil !== 'cote') choisirOutil('cote'); else apercu(); },
