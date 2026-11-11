@@ -28,7 +28,7 @@ import { majBoutonProposer, viderAttente } from './proposer.js';
 import { demarrerSynchro, adopterCompte } from './synchro.js';
 import { exigerAcces, ecranPerte } from './vues/acces.js';
 
-const VERSION = '1.31.1 (barres de cote et de sélection dans la zone de dessin)';
+const VERSION = '1.32.0 (Atelier : catalogue d’exercices sur le nouveau logiciel, ancien dessin retiré)';
 const vue = document.getElementById('vue');
 let nettoyer = null; // fonction fournie par la page affichée, appelée avant d'en changer
 
