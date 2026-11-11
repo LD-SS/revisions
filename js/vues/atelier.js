@@ -189,9 +189,9 @@ export async function vueAtelier(el, params = []) {
           <span class="at-hl">Section</span>
           ${[1, 2, 3].map((n) => `<a class="btn" href="#/dessin/libre/section-h${n}-${grainePiece()}" title="Section sortie B-B d'une pièce au hasard, niveau ${n}">${'★'.repeat(n)}</a>`).join('')}
           <span class="at-hl">Isométrique</span>
-          ${[1, 2, 3].map((n) => `<a class="btn" href="#/dessin/libre/iso-h${n}-${grainePiece()}" title="Perspective isométrique d'une pièce au hasard (sans trous), niveau ${n}">${'★'.repeat(n)}</a>`).join('')}
+          ${[1, 2, 3].map((n) => `<a class="btn" href="#/dessin/libre/iso-h${n}-${grainePiece()}" title="Perspective isométrique d'une pièce au hasard, niveau ${n}">${'★'.repeat(n)}</a>`).join('')}
           <span class="at-hl">Cavalière</span>
-          ${[1, 2, 3].map((n) => `<a class="btn" href="#/dessin/libre/cav-h${n}-${grainePiece()}" title="Perspective cavalière d'une pièce au hasard (sans trous), niveau ${n}">${'★'.repeat(n)}</a>`).join('')}
+          ${[1, 2, 3].map((n) => `<a class="btn" href="#/dessin/libre/cav-h${n}-${grainePiece()}" title="Perspective cavalière d'une pièce au hasard, niveau ${n}">${'★'.repeat(n)}</a>`).join('')}
           <span class="at-hl">Coupe locale</span>
           ${[1, 2, 3].map((n) => `<a class="btn" href="#/dessin/libre/locale-h${n}-${graineTrouVertical(n)}" title="Coupe locale autour d'un trou, pièce au hasard, niveau ${n}">${'★'.repeat(n)}</a>`).join('')}
         </div>
