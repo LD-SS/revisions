@@ -1098,3 +1098,11 @@ label.cgu-ok input{margin-top:3px}
 .dao-svg .dao-cor-trop{stroke:#e07b00;stroke-width:.9;opacity:.85}
 .dao-regles{display:block;margin-top:4px}
 .dao-svg .dao-pt-man{fill:#d33;stroke:none}.dao-svg .dao-pt-trop{fill:#e07b00;stroke:none}
+#impr-dao{display:none}
+@media print{
+  body.impr-dao-on > *:not(#impr-dao){display:none!important}
+  body.impr-dao-on{background:#fff;margin:0;padding:0}
+  body.impr-dao-on #impr-dao{display:block}
+  #impr-dao svg{display:block;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #impr-dao .dao-t,#impr-dao .dao-cadre,#impr-dao .dao-centrage{stroke:#000}
+}
