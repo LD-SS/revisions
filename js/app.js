@@ -28,7 +28,7 @@ import { majBoutonProposer, viderAttente } from './proposer.js';
 import { demarrerSynchro, adopterCompte } from './synchro.js';
 import { exigerAcces, ecranPerte } from './vues/acces.js';
 
-const VERSION = '1.36.0 (dessin : angle affiché en traçant, outil Point de repère)';
+const VERSION = '1.36.1 (ligne : cases Longueur et Angle, Tab pour passer de l’une à l’autre)';
 const vue = document.getElementById('vue');
 let nettoyer = null; // fonction fournie par la page affichée, appelée avant d'en changer
 
