@@ -17,6 +17,7 @@ import { monterFeuille, nouvellePlanche, ECHELLES, FORMATS, pasGrille, zone, fac
 import { PIECES, vues, boite as boitePiece, trouverPiece, coupeA, estSymetrique, sectionB, coupeLocale, aTrouVertical, graineTrouVertical } from '../dao/pieces.js';
 import { svgPerspective, perspectiveEntites } from '../dao/perspective.js';
 import { EXERCICES } from '../dao/catalogue.js';
+import { ZONES, attendu, detecter, controler, texteCalcul, nombreFr } from '../dao/miseenpage.js';
 import { monterPiece3D } from '../piece3d.js';
 import { svgSur } from '../rendu.js';
 import { creerTraceur, STYLES, OUTILS, COTES, svgEntite } from '../dao/trace.js';
@@ -125,6 +126,20 @@ const PERSP = ['iso', 'cav'];
 /** Pièce de l'exercice (sans trous pour les perspectives). */
 /** Pièce adaptée à l'exercice : en cavalière, seuls les trous de la face avant (cercles) sont gardés. */
 const pourPersp = (pc, mode) => (pc && mode === 'cav' ? { ...pc, trous: (pc.trous || []).filter((t) => t.axe === 'y') } : pc);
+/** Placement des vues pour la correction : attendu si la mise en page est notée, sinon retrouvé sur le dessin. */
+function placementVues(p, pc) {
+  const m = p.exo.mep;
+  if (!m) return { o: p.exo.o, ecart: p.exo.ecart };
+  const a = attendu(p, pc, m.zone);
+  if (m.note) return a;
+  return detecter(pc, p.entites || []) || a;
+}
+function consigneMep(p) {
+  const pc = pieceDe(p.exo); const m = p.exo.mep;
+  if (!m.note) return 'dessine la vue de face, la vue de dessus et la vue de gauche (projection européenne, échelle 1:1) où tu veux sur la feuille : la correction retrouve tes vues. Garde-les alignées (lignes de rappel) ; la mise en page n\'est pas notée.';
+  const a = pc ? attendu(p, pc, m.zone) : null;
+  return `dessine la vue de face, la vue de dessus et la vue de gauche (projection européenne, échelle 1:1) et place-les toi-même par la <b>méthode des 3 intervalles égaux</b> dans le ${ZONES[m.zone]}${a ? ` : zone utile <b>${nombreFr(a.A)} × ${nombreFr(a.B)} mm</b>${m.zone === 'sans' ? `, son bas à ${nombreFr(a.zu.y0)} mm au-dessus du bas du cadre (cartouche)` : ''}` : ''}. Horizontalement e = (largeur de la zone − L − P) / 3, verticalement e' = (hauteur de la zone − H − P) / 3. Mise en page notée sur 20 %.`;
+}
 const pieceDe = (exo) => pourPersp(trouverPiece(exo?.piece), exo?.mode);   // après « Rendre la copie » : corriger dès que la page est remontée
 
 /**
@@ -187,7 +202,9 @@ function creerExo(pc, depuis = null, mode = 'vues', examen = 0, cat = null) {
     const haut = mode === 'iso' ? (W + P) * 0.5 + H : H + P * 0.354;
     r0 = [Math.round(o[0] + W + ecart + P + 35 + (mode === 'iso' ? P * 0.866 : 0)), Math.round(Math.max(55, o[1] + H - haut))];
   }
-  const exo = { piece: pc.id, o, ecart, ...(r0 ? { r: r0 } : {}), ...(mode !== 'vues' ? { mode } : {}), ...(examen ? { examen: { duree: examen, debut: Date.now() } } : {}), ...(cat ? { cat: cat.cat } : {}) };
+  const mep = mode === 'vues' ? { note: true, zone: 'sans' } : null;
+  const pl = mep ? attendu(base, pc, mep.zone) : null;
+  const exo = { piece: pc.id, o: pl ? pl.o : o, ecart: pl ? pl.ecart : ecart, ...(mep ? { mep } : {}), ...(r0 ? { r: r0 } : {}), ...(mode !== 'vues' ? { mode } : {}), ...(examen ? { examen: { duree: examen, debut: Date.now() } } : {}), ...(cat ? { cat: cat.cat } : {}) };
   let entites = [];
   if (mode === 'cotes') { const v = vues(pc, o, ecart); entites = [...v.face, ...v.dessus, ...v.gauche]; }
   if (mode === 'coupe' || mode === 'demi') entites = coupeA(pc, o, ecart, { demi: mode === 'demi' }).dessus;
@@ -203,6 +220,8 @@ function monterPage(el, remonter) {
   const id = idCourant();
   let p = normaliser(toutes()[id]);
   const sauver = () => { const t = toutes(); t[id] = { ...p, maj: Date.now() }; stockage.ecrire(CLE, t); };
+  // anciennes planches « 3 vues » (repère imposé) : mise en page ajoutée ; notée seulement si rien n'est encore dessiné
+  if (p.exo && !p.exo.mode && !p.exo.mep && p.exo.piece && !p.exo.examen) { const vide = !(p.entites || []).length; p = { ...p, exo: { ...p.exo, mep: { note: vide, zone: 'sans' } } }; sauver(); }
   const liste = Object.entries(toutes()).sort((a, b) => (b[1].maj || 0) - (a[1].maj || 0));
   const choix = (nom, valeurs, actuel, etiquette) => `<label class="dao-choix"><span>${etiquette}</span>
     <select class="field" data-p="${nom}">${valeurs.map(([v, l]) => `<option value="${esc(v)}" ${v === actuel ? 'selected' : ''}>${esc(l)}</option>`).join('')}</select></label>`;
@@ -300,8 +319,10 @@ function monterPage(el, remonter) {
             ? 'dessine la vue de face en coupe A-A (le plan est tracé sur la vue de dessus, les flèches montrent le sens d\'observation) : la matière coupée est hachurée (outil Hachures), les trous restent vides, pas de traits cachés. Le coin inférieur gauche de la vue de face est au repère ✚.'
             : p.exo.mode === 'cotes'
             ? 'cote les 3 vues avec l\'outil Cote : chaque arête et chaque axe de trou doit être situé une seule fois (pas de chaîne fermée), avec les 3 cotes d\'encombrement et le Ø de chaque trou (sur son cercle). Mesures sur la perspective (bouton Pièce).'
+            : p.exo.mep ? consigneMep(p)
             : `dessine la vue de face, la vue de dessus et la vue de gauche (projection européenne, échelle 1:1, écart de ${p.exo.ecart} mm entre les vues). Le coin inférieur gauche de la vue de face est au repère ✚.`}</span>
           <span class="dao-exo-btns">
+            ${p.exo.mep && !p.exo.examen ? `<label class="dao-choix"><span>Mise en page</span><select class="field" data-mep>${[['sans', 'notée · cadre sans cartouche'], ['cadre', 'notée · cadre entier'], ['libre', 'libre (non notée)']].map(([v, l]) => `<option value="${v}" ${(p.exo.mep.note ? p.exo.mep.zone : 'libre') === v ? 'selected' : ''}>${l}</option>`).join('')}</select></label>` : ''}
             ${p.exo.examen && !p.exo.examen.fini
               ? `<button class="btn primary" type="button" data-exo="rendre">Rendre la copie</button> <span class="dao-chrono" title="Temps restant">⏱ ${p.exo.examen.duree}:00</span>`
               : `<button class="btn primary" type="button" data-exo="corriger">${icone('check')} Corriger</button>
@@ -530,7 +551,7 @@ function monterPage(el, remonter) {
     if (p.exo.mode === 'cotes') { feuille.calque('correction').innerHTML = res ? svgCorrCotes(pc, res) : ''; return; }
     const sb = p.exo.mode === 'section' ? sectionB(pc, p.exo.o, p.exo.ecart) : null;
     const [x, y] = versPapier(p, ...(sb ? sb.repere : p.exo.r || p.exo.o));
-    let svg = `<path class="dao-repere" d="M${x - 4} ${y}H${x + 4}M${x} ${y - 4}V${y + 4}"/>`;
+    let svg = p.exo.mep ? '' : `<path class="dao-repere" d="M${x - 4} ${y}H${x + 4}M${x} ${y - 4}V${y + 4}"/>`;
     const points = (r) => {
       const pt = (q, cls) => { const [a, c] = versPapier(p, q[0], q[1]); return `<circle class="${cls}" cx="${a}" cy="${c}" r="0.7"/>`; };
       return r.hach.manque.map((q) => pt(q, 'dao-pt-man')).join('') + r.hach.trop.map((q) => pt(q, 'dao-pt-trop')).join('');
@@ -545,8 +566,14 @@ function monterPage(el, remonter) {
       if (voirSolution) svg += [...cp.face, cp.hachure].map((e) => svgEntite(p, e, 'dao-cor-sol')).join('');
       if (res) svg += points(res);
     } else {
-      const sol = vues(pc, p.exo.o, p.exo.ecart);
+      const pl = placementVues(p, pc);
+      const sol = vues(pc, pl.o, pl.ecart);
       if (voirSolution) svg += [...sol.face, ...sol.dessus, ...sol.gauche].map((e) => svgEntite(p, e, 'dao-cor-sol')).join('');
+      if (res?.mep && res.mep.ok < 4) {   // emplacement attendu des 3 vues (cadres en tirets rouges)
+        const c = vues(pc, res.mep.a.o, res.mep.a.ecart).cadres;
+        svg += Object.values(c).flatMap((q) => [[q.x, q.y, q.x + q.w, q.y], [q.x + q.w, q.y, q.x + q.w, q.y + q.h], [q.x + q.w, q.y + q.h, q.x, q.y + q.h], [q.x, q.y + q.h, q.x, q.y]])
+          .map(([x1, y1, x2, y2]) => svgEntite(p, { t: 'l', x1, y1, x2, y2, s: 'c' }, 'dao-cor-man')).join('');
+      }
     }
     if (res) {
       svg += res.manquants.map((e) => svgEntite(p, e, 'dao-cor-man')).join('');
@@ -618,7 +645,15 @@ function monterPage(el, remonter) {
         r = corriger(sol.traits, (p.entites || []).filter((e) => (e.t === 'l' && dans((e.x1 + e.x2) / 2, (e.y1 + e.y2) / 2)) || ((e.t === 'c' || e.t === 'a') && dans(e.cx, e.cy))));
       } else if (p.exo.mode === 'section') r = corrigerSection(pc, p.exo, p.entites || []);
       else if (['coupe', 'demi', 'locale'].includes(p.exo.mode)) r = corrigerCoupe(pc, p.exo, p.entites || []);
-      else { const sol = vues(pc, p.exo.o, p.exo.ecart); r = corriger([...sol.face, ...sol.dessus, ...sol.gauche], p.entites || []); }
+      else {
+        const pl = (p.exo.mep && detecter(pc, p.entites || [])) || placementVues(p, pc);   // le dessin est jugé là où l'élève l'a placé
+        const sol = vues(pc, pl.o, pl.ecart); r = corriger([...sol.face, ...sol.dessus, ...sol.gauche], p.entites || []);
+        if (p.exo.mep?.note) {   // 80 % le dessin des vues, 20 % la mise en page
+          r.mep = controler(p, pc, p.entites || [], p.exo.mep.zone);
+          r.scoreVues = r.score;
+          r.score = Math.round(r.score * 0.8 + r.mep.ok * 5);
+        }
+      }
       const meilleur = Math.max(r.score, p.exo.score ?? 0);
       p = { ...p, exo: { ...p.exo, score: meilleur } }; noterExamen(r.score); sauver();
       dessinerExo(r);
@@ -627,7 +662,13 @@ function monterPage(el, remonter) {
         + (r.type.length ? ` · <span class="dao-l-type">${n(r.type.length, 'mauvais type de trait', 'mauvais types de trait')}</span>` : '')
         + (r.trop.length ? ` · <span class="dao-l-trop">${n(r.trop.length, 'trait en trop', 'traits en trop')}</span>` : '')
         + (r.hach ? ` · hachures : <b>${r.hach.score} %</b>${r.hach.manque.length ? ' <span class="dao-l-man">(points rouges : matière non hachurée)</span>' : ''}${r.hach.trop.length ? ' <span class="dao-l-trop">(points orange : hachures dans un vide)</span>' : ''}` : '')
-        + ` · meilleur : ${meilleur} %`;
+        + ` · meilleur : ${meilleur} %`
+        + (r.mep ? `<span class="dao-regles">Vues : <b>${r.scoreVues} %</b> · mise en page : <b>${r.mep.ok}/4</b>${r.mep.d ? ` (${r.mep.items.map((i) => `<span class="${i.ok ? '' : 'dao-l-man'}">${i.nom} ${nombreFr(i.v)}${i.ok ? ' ✓' : ` au lieu de ${nombreFr(i.att)}`}</span>`).join(' · ')})` : ''}${r.mep.ok < 4 ? ' — emplacement attendu en tirets rouges' : ''}. Calcul : ${texteCalcul(r.mep.a)}.</span>` : '');
+    });
+    el.querySelector('[data-mep]')?.addEventListener('change', (ev) => {
+      const v = ev.target.value;
+      p = { ...p, exo: { ...p.exo, mep: v === 'libre' ? { note: false, zone: p.exo.mep.zone } : { note: true, zone: v } } };
+      sauver(); remonter();
     });
   }
   if (corrigerAuMontage) { corrigerAuMontage = false; el.querySelector('[data-exo=corriger]')?.click(); }
