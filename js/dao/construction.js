@@ -10,7 +10,7 @@ const r4 = (v) => arrondi(v, 4);
 const norm = (v) => { const L = Math.hypot(v[0], v[1]) || 1; return [v[0] / L, v[1] / L]; };
 const dot = (a, b) => a[0] * b[0] + a[1] * b[1];
 const ligne = (a, b, s) => ({ t: 'l', x1: r4(a[0]), y1: r4(a[1]), x2: r4(b[0]), y2: r4(b[1]), s });
-const tracables = (es, sauf) => es.filter((e, k) => k !== sauf && e.t !== 'q');
+const tracables = (es, sauf) => es.filter((e, k) => k !== sauf && (e.t === 'l' || e.t === 'c' || e.t === 'a'));
 
 /** Ajuster : enlève le morceau de l'entité i (ligne, cercle, arc) qui contient p, entre deux intersections. */
 export function ajuster(es, i, p) {
