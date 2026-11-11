@@ -11,12 +11,14 @@
    ===================================================================== */
 
 import { boite, intervallesZ } from './pieces.js';
+import { svgRevolution } from './revolution.js';
 
 const C30 = Math.cos(Math.PI / 6), S30 = 0.5;
 const f2 = (v) => Math.round(v * 100) / 100;
 const nb = (v) => String(Math.round(v * 10) / 10).replace('.', ',');
 
 export function svgPerspective(piece, { cotes = true, largeur = 420 } = {}) {
+  if (piece.rev) return svgRevolution(piece, { cotes, largeur });
   const b = boite(piece), P = piece.prof;
   const pr = ([x, y, z]) => [(x - y) * C30, -((x + y) * S30 + z)];   // y écran vers le bas
   const prof = piece.profil;
