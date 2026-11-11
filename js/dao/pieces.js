@@ -309,3 +309,64 @@ export function pieceSymetrique(niveau = 1, graine = 1) {
   if (!trous.length && zOk(xm)) trous.push({ axe: 'z', x: xm, y, d });   // pièce trop étroite pour 2 trous
   return { id: `s${niv}-${graine}`, nom: `${NOMS_SYM[forme]} n° ${graine}`, prof, profil, trous, hasard: niv, sym: true };
 }
+
+/* ----- section sortie B-B : plan perpendiculaire à x (x = c), dessinée à la place de la vue de gauche ----- */
+/**
+ * Plan par l'axe du 1er trou (sinon au milieu de la largeur). Flèches vers la droite : la section est vue
+ * comme la vue de gauche (avant de la pièce à droite) et placée au même endroit.
+ * @returns {{ c, donnees: object[] (vue de face avec la trace B-B + vue de dessus), section: object[] (traits solution),
+ *             hachures: object[], matiere: (y, z) => boolean, cadre: { x, y, w, h }, repere: [x, y] }}
+ */
+export function sectionB(piece, origine = [20, 90], ecart = 20) {
+  const v = vues(piece, origine, ecart);
+  const b = boite(piece), P = piece.prof, [ox, oy] = origine, W = b.x1 - b.x0;
+  const F = (x, z) => [ox + x - b.x0, oy + z - b.z0];
+  const gx = ox + W + ecart;                                  // bord gauche de la section (y = P)
+  const G = (y, z) => [gx + P - y, oy + z - b.z0];
+  const tr = piece.trous || [];
+  const c = tr.length ? tr[0].x : Math.round((b.x0 + b.x1) / 2);
+  const ivz = intervallesZ(piece.profil, c + 1e-6);
+  const coupe = (t) => Math.abs(c - t.x) < t.d / 2 - 1e-6;
+  const bandesZ = tr.filter((t) => t.axe === 'y' && coupe(t)).map((t) => { const w = Math.sqrt((t.d / 2) ** 2 - (c - t.x) ** 2); return { t, a: t.z - w, b: t.z + w }; });
+  const bandesY = tr.filter((t) => t.axe === 'z' && coupe(t)).map((t) => { const w = Math.sqrt((t.d / 2) ** 2 - (c - t.x) ** 2); return { t, a: t.y - w, b: t.y + w }; });
+  const matiere = (y, z) => y > 0 && y < P && ivz.some(([a, q]) => z > a && z < q) && !bandesZ.some((u) => z > u.a && z < u.b) && !bandesY.some((u) => y > u.a && y < u.b);
+  // traits : frontières entre cellules (matière / vide) de la grille des cassures
+  const Ys = [...new Set([0, P, ...bandesY.flatMap((u) => [u.a, u.b])].map(r3))].sort((p, q) => p - q);
+  const Zs = [...new Set([...ivz.flat(), ...bandesZ.flatMap((u) => [u.a, u.b])].map(r3))].sort((p, q) => p - q);
+  const cel = (i, j) => i >= 0 && j >= 0 && i < Ys.length - 1 && j < Zs.length - 1 && matiere((Ys[i] + Ys[i + 1]) / 2, (Zs[j] + Zs[j + 1]) / 2);
+  const section = [];
+  const ajoute = (y1, z1, y2, z2) => { const p = G(y1, z1), q = G(y2, z2); section.push(L(p[0], p[1], q[0], q[1], 'v')); };
+  for (let j = 0; j < Zs.length; j++) {          // bords horizontaux (z = Zs[j]), fusionnés le long de y
+    let debut = null;
+    for (let i = 0; i <= Ys.length - 1; i++) {
+      const bord = i < Ys.length - 1 && cel(i, j - 1) !== cel(i, j);
+      if (bord && debut === null) debut = Ys[i];
+      if (!bord && debut !== null) { ajoute(debut, Zs[j], Ys[i], Zs[j]); debut = null; }
+    }
+  }
+  for (let i = 0; i < Ys.length; i++) {          // bords verticaux (y = Ys[i]), fusionnés le long de z
+    let debut = null;
+    for (let j = 0; j <= Zs.length - 1; j++) {
+      const bord = j < Zs.length - 1 && cel(i - 1, j) !== cel(i, j);
+      if (bord && debut === null) debut = Zs[j];
+      if (!bord && debut !== null) { ajoute(Ys[i], debut, Ys[i], Zs[j]); debut = null; }
+    }
+  }
+  const zmin = Math.min(...ivz.map((u) => u[0])), zmax = Math.max(...ivz.map((u) => u[1]));
+  for (const u of bandesZ) { const p = G(-DEB_AXE, u.t.z), q = G(P + DEB_AXE, u.t.z); section.push(L(p[0], p[1], q[0], q[1], 'a')); }
+  for (const u of bandesY) { const p = G(u.t.y, zmin - DEB_AXE), q = G(u.t.y, zmax + DEB_AXE); section.push(L(p[0], p[1], q[0], q[1], 'a')); }
+  // hachures de la solution : une par cellule de matière
+  const hachures = [];
+  for (let i = 0; i < Ys.length - 1; i++) for (let j = 0; j < Zs.length - 1; j++) {
+    if (cel(i, j)) hachures.push({ t: 'h', pts: [G(Ys[i], Zs[j]), G(Ys[i + 1], Zs[j]), G(Ys[i + 1], Zs[j + 1]), G(Ys[i], Zs[j + 1])], trous: [], ang: 45, pas: 3, s: 'n' });
+  }
+  // trace B-B sur la vue de face : trait mixte, extrémités renforcées, flèches vers la droite
+  const trace = [];
+  const [xc] = F(c, 0), [, ya] = F(0, b.z0 - 9), [, yb] = F(0, b.z1 + 9);
+  trace.push(L(xc, ya, xc, yb, 'a'), L(xc, ya, xc, ya + 5, 'v'), L(xc, yb - 5, xc, yb, 'v'));
+  for (const y of [ya + 1.5, yb - 1.5]) {
+    trace.push(L(xc, y, xc + 8, y, 'n'), L(xc + 8, y, xc + 4.5, y + 1.2, 'n'), L(xc + 8, y, xc + 4.5, y - 1.2, 'n'));
+    trace.push({ t: 'x', x: r3(xc + 3), y: r3(y < oy ? y - 6 : y + 2), txt: 'B', h: 5, s: 'n' });
+  }
+  return { c, donnees: [...v.face, ...v.dessus, ...trace], section: nettoyer(section), hachures, matiere, cadre: { x: gx, y: oy + zmin - b.z0, w: P, h: zmax - zmin }, repere: [gx, oy + zmin - b.z0] };
+}
