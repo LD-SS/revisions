@@ -15,6 +15,7 @@ import { styleMatiere } from '../matieres.js';
 import { matiere } from '../store.js';
 import { monterFeuille, nouvellePlanche, ECHELLES, FORMATS, pasGrille, zone, facteur } from '../dao/feuille.js';
 import { PIECES, vues, boite as boitePiece } from '../dao/pieces.js';
+import { svgPerspective } from '../dao/perspective.js';
 import { creerTraceur, STYLES, OUTILS, COTES } from '../dao/trace.js';
 
 const CLE = 'planches';
@@ -175,7 +176,14 @@ function monterPage(el, remonter) {
           <button class="btn dao-b bad" type="button" data-op="supprimer" title="Supprimer la sélection (Suppr)">${icone('croix')}<span>Supprimer</span></button>
           <span class="muted">Un type de trait choisi ci-dessus s'applique à la sélection.</span>
         </div>
+        <div class="dao-zone">
+        <div class="panel dao-piece" hidden>
+          <div class="dao-piece-t"><b class="dao-piece-nom"></b><button class="btn icon" type="button" data-act="fermer-piece" title="Fermer">${icone('croix')}</button></div>
+          <div class="dao-piece-fig"></div>
+          <p class="muted">Perspective isométrique cotée (mm). Les 3 vues sont sur la feuille.</p>
+        </div>
         <div class="dao-cadre-ecran"></div>
+        </div>
         <div class="dao-etat muted">
           <span class="dao-pos">X — · Y —</span>
           <span class="dao-mes"></span>
@@ -278,7 +286,12 @@ function monterPage(el, remonter) {
     const oy = Math.max(pc.prof + ecart + marge, z.h / k - marge - H);
     const v = vues(pc, [marge, oy], ecart);
     traceur.inserer([...v.face, ...v.dessus, ...v.gauche]);
+    const pan = el.querySelector('.dao-piece');
+    pan.querySelector('.dao-piece-nom').textContent = pc.nom;
+    pan.querySelector('.dao-piece-fig').innerHTML = svgPerspective(pc, { largeur: 300 });
+    pan.hidden = false;
   });
+  el.querySelector('[data-act=fermer-piece]').addEventListener('click', () => { el.querySelector('.dao-piece').hidden = true; });
   el.querySelector('[data-stylet]').addEventListener('change', (ev) => stockage.ecrire('dao.stylet', ev.target.checked));
   el.querySelectorAll('[data-p]').forEach((c) => c.addEventListener('change', () => {
     const k = c.dataset.p;
