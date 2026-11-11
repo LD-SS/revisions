@@ -1160,3 +1160,6 @@ label.cgu-ok input{margin-top:3px}
 .dao-saisie-ang{display:flex;align-items:center;gap:6px}
 .dao-saisie-ang[hidden]{display:none}
 .dao-saisie-f input[name=ang]{width:6.5em}
+.dao-consigne{flex-basis:100%;line-height:1.45}
+.dao-consigne ul,.dao-consigne ol{margin:4px 0 2px;padding-left:22px}
+.dao-consigne li{margin:1px 0}
