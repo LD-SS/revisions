@@ -274,26 +274,6 @@ function monterPage(el, remonter) {
           <label>N° <input class="field" name="numero" maxlength="10" value="${esc(p.cartouche.numero)}"></label>
           <p class="muted">La date, l'échelle et le format se remplissent tout seuls.</p>
         </form>
-        <div class="dao-barre dao-selbar dao-parambar" hidden>
-          <label class="dao-choix"><span class="dao-param-nom">Distance</span>
-            <input class="field dao-param" type="number" min="0.5" step="0.5" value="5" style="width:80px"> mm</label>
-        </div>
-        <div class="dao-barre dao-selbar dao-textebar" hidden>
-          <label class="dao-choix"><span>Texte</span><input class="field dao-texte-in" type="text" maxlength="60" placeholder="Ex. : VUE DE FACE" style="width:200px"></label>
-          <label class="dao-choix"><span>Hauteur</span><select class="field dao-texte-h">${[2.5, 3.5, 5, 7, 10].map((h) => `<option value="${h}" ${h === 3.5 ? 'selected' : ''}>${String(h).replace('.', ',')} mm</option>`).join('')}</select></label>
-        </div>
-        <div class="dao-barre dao-selbar dao-cotebar" hidden>
-          <b>Cote :</b>
-          ${Object.entries(COTES).map(([k, c]) => `<button class="btn dao-b" type="button" data-cote="${k}">${esc(c.nom)}</button>`).join('')}
-        </div>
-        <div class="dao-barre dao-selbar" hidden>
-          <b class="dao-sel-n"></b>
-          <button class="btn dao-b" type="button" data-op="deplacer" title="Déplacer la sélection (point de base, puis destination)">Déplacer</button>
-          <button class="btn dao-b" type="button" data-op="copier" title="Copier la sélection (point de base, puis une ou plusieurs destinations)">Copier</button>
-          <button class="btn dao-b" type="button" data-op="miroir" title="Symétrie de la sélection par rapport à un axe (2 points)">Miroir</button>
-          <button class="btn dao-b bad" type="button" data-op="supprimer" title="Supprimer la sélection (Suppr)">${icone('croix')}<span>Supprimer</span></button>
-          <span class="muted">Un type de trait choisi ci-dessus s'applique à la sélection.</span>
-        </div>
         ${p.exo ? `<div class="panel dao-exobar">
           <b>Exercice :</b> <span>${p.exo.mode === 'ancien'
             ? `${esc(p.exo.consigne).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')} (Ancien exercice de l'Atelier, repris en mm : 1 carreau = ${p.exo.u || 10} mm ; dessine dans le cadre en trait fin.)`
@@ -329,6 +309,26 @@ function monterPage(el, remonter) {
           <input class="field" name="v" inputmode="decimal" enterkeyhint="done" spellcheck="false" aria-label="Valeur">
           <button class="btn primary" type="submit" aria-label="Valider la valeur">✓</button>
         </form>
+        <div class="dao-barre dao-selbar dao-parambar" hidden>
+          <label class="dao-choix"><span class="dao-param-nom">Distance</span>
+            <input class="field dao-param" type="number" min="0.5" step="0.5" value="5" style="width:80px"> mm</label>
+        </div>
+        <div class="dao-barre dao-selbar dao-textebar" hidden>
+          <label class="dao-choix"><span>Texte</span><input class="field dao-texte-in" type="text" maxlength="60" placeholder="Ex. : VUE DE FACE" style="width:200px"></label>
+          <label class="dao-choix"><span>Hauteur</span><select class="field dao-texte-h">${[2.5, 3.5, 5, 7, 10].map((h) => `<option value="${h}" ${h === 3.5 ? 'selected' : ''}>${String(h).replace('.', ',')} mm</option>`).join('')}</select></label>
+        </div>
+        <div class="dao-barre dao-selbar dao-cotebar" hidden>
+          <b>Cote :</b>
+          ${Object.entries(COTES).map(([k, c]) => `<button class="btn dao-b" type="button" data-cote="${k}">${esc(c.nom)}</button>`).join('')}
+        </div>
+        <div class="dao-barre dao-selbar" hidden>
+          <b class="dao-sel-n"></b>
+          <button class="btn dao-b" type="button" data-op="deplacer" title="Déplacer la sélection (point de base, puis destination)">Déplacer</button>
+          <button class="btn dao-b" type="button" data-op="copier" title="Copier la sélection (point de base, puis une ou plusieurs destinations)">Copier</button>
+          <button class="btn dao-b" type="button" data-op="miroir" title="Symétrie de la sélection par rapport à un axe (2 points)">Miroir</button>
+          <button class="btn dao-b bad" type="button" data-op="supprimer" title="Supprimer la sélection (Suppr)">${icone('croix')}<span>Supprimer</span></button>
+          <span class="muted">Un type de trait choisi ci-dessus s'applique à la sélection.</span>
+        </div>
         <div class="panel dao-piece" hidden>
           <div class="dao-piece-t"><b class="dao-piece-nom"></b><button class="btn icon" type="button" data-act="fermer-piece" title="Fermer">${icone('croix')}</button></div>
           <div class="dao-piece-fig"></div>
