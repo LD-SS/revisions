@@ -4,6 +4,7 @@
    #/dessin                       galerie (filtres, progression)
    #/dessin/<chapitre>/<exercice> planche de l'exercice (lecteur commun)
    #/dessin/hasard/<type>-<niveau>-<graine>  pièce générée au hasard (vue ou coupe)
+   #/dessin/libre                 planche libre (nouveau moteur en mm, js/dao/)
    Les notes sont les mêmes que dans l'onglet Exercices du chapitre.
    ===================================================================== */
 
@@ -18,6 +19,7 @@ import { lecteurExercices, noteExo, preparerDessin } from '../exercices.js';
 import { pieceAuHasard, CONSIGNES } from '../geometrie.js';
 import { monterPiece3D } from '../piece3d.js';
 import { niveauAide, AIDES } from '../planche.js';
+import { vuePlancheLibre } from './planche-libre.js';
 
 const MID = 'dessin';
 const NOTES = { ok: ['Réussi', 'ok'], mid: ['Presque', 'mid'], ko: ['À refaire', 'ko'] };
@@ -65,6 +67,7 @@ export async function vueAtelier(el, params = []) {
   const { m, exos } = await tousLesExercices();
   if (!m) throw new Error('Matière « dessin » introuvable.');
   const [cid, eid] = params;
+  if (cid === 'libre') return vuePlancheLibre(el);
 
   if (cid === 'hasard') {   // ---------- pièce au hasard
     const e = exerciceAuHasard(eid);
@@ -155,6 +158,11 @@ export async function vueAtelier(el, params = []) {
           <span class="at-hl">Coupes</span>
           ${[1, 2, 3].map((n) => `<a class="btn" href="${lienHasard('coupe', n)}">${'★'.repeat(n)}</a>`).join('')}
         </div>
+      </section>
+      <section class="panel at-hasard">
+        <div><h3>${icone('regle')} Planche libre <span class="badge">En construction</span></h3>
+          <p class="muted">Feuille blanche A4 ou A3 avec cadre et cartouche, à l'échelle de ton choix : le futur mini-DAO.</p></div>
+        <div class="at-hasard-b"><a class="btn primary" href="#/dessin/libre">${icone('crayon')} Ouvrir la planche</a></div>
       </section>
       <div class="at-grille">${visibles.length ? visibles.map(([e, i]) => carte(e, i)).join('') : '<p class="muted">Aucune planche pour ce filtre.</p>'}</div>
       <p class="muted at-note">D'autres planches (plans inclinés, cylindres, cotation) viendront s'ajouter ici.</p>
