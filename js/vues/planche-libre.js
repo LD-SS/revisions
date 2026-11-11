@@ -84,9 +84,11 @@ const ICONES_OUTILS = {
 export function vuePlancheLibre(el, piece = null) {
   // #/dessin/libre/<id de pièce> : nouvel exercice, puis l'adresse redevient #/dessin/libre (un rechargement ne le recrée pas)
   if (piece) {
-    const m = /^(cotes|coupe|demi|section|locale)-(.+)$/.exec(String(piece));
+    // exam-<durée en min>-<type>-<id> : mode examen
+    const ex = /^exam-(\d{1,3})-(vues|cotes|coupe|demi|section|locale)-(.+)$/.exec(String(piece));
+    const m = ex ? [null, ex[2], ex[3]] : /^(cotes|coupe|demi|section|locale)-(.+)$/.exec(String(piece));
     const pc = trouverPiece(m ? m[2] : piece);
-    if (pc) creerExo(pc, normaliser(toutes()[idCourant()]), m ? m[1] : 'vues');
+    if (pc) creerExo(pc, normaliser(toutes()[idCourant()]), m ? m[1] : 'vues', ex ? Math.min(240, Math.max(5, +ex[1])) : 0);
     history.replaceState(null, '', '#/dessin/libre');
   }
   let stop = null;
@@ -99,6 +101,8 @@ const boutonsOutils = (liste) => liste.map((k) => { const o = OUTILS[k]; return 
 
 const fmt = (v) => (Math.round(v * 10) / 10).toLocaleString('fr-BE', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 
+let corrigerAuMontage = false;   // après « Rendre la copie » : corriger dès que la page est remontée
+
 /** Graine d'une nouvelle pièce au hasard (1 à 99 999). */
 export const grainePiece = () => 1 + Math.floor(Math.random() * 99999);
 
@@ -106,21 +110,21 @@ export const grainePiece = () => 1 + Math.floor(Math.random() * 99999);
  * Crée une planche d'exercice pour la pièce pc et la rend courante.
  * mode 'vues' : dessine les 3 vues ; 'cotes' : les 3 vues sont données, cote-les.
  */
-function creerExo(pc, depuis = null, mode = 'vues') {
+function creerExo(pc, depuis = null, mode = 'vues', examen = 0) {
   const t = toutes(); const n = nouvelId();
   const np = nouvellePlanche();
-  const titre = `${{ cotes: 'Cotation', coupe: 'Coupe A-A', demi: 'Demi-coupe', section: 'Section B-B', locale: 'Coupe locale' }[mode] || 'Vues'} : ${pc.nom}`.slice(0, 34);
+  const titre = `${examen ? 'Examen – ' : ''}${{ cotes: 'Cotation', coupe: 'Coupe A-A', demi: 'Demi-coupe', section: 'Section B-B', locale: 'Coupe locale' }[mode] || 'Vues'} : ${pc.nom}`.slice(0, 34);
   const base = { ...np, format: 'A4', orientation: 'paysage', echelle: '1:1', cartouche: { ...np.cartouche, titre, auteur: depuis?.cartouche?.auteur || np.cartouche.auteur, classe: depuis?.cartouche?.classe || np.cartouche.classe } };
   const b = boitePiece(pc), z = zone(base), k = facteur(base.echelle);
   const [ecart, marge] = mode === 'cotes' ? [30, 25] : [15, 15];
   const o = [marge, Math.round(Math.max(pc.prof + ecart + marge, z.h / k - marge - (b.z1 - b.z0)))];
-  const exo = { piece: pc.id, o, ecart, ...(mode !== 'vues' ? { mode } : {}) };
+  const exo = { piece: pc.id, o, ecart, ...(mode !== 'vues' ? { mode } : {}), ...(examen ? { examen: { duree: examen, debut: Date.now() } } : {}) };
   let entites = [];
   if (mode === 'cotes') { const v = vues(pc, o, ecart); entites = [...v.face, ...v.dessus, ...v.gauche]; }
   if (mode === 'coupe' || mode === 'demi') entites = coupeA(pc, o, ecart, { demi: mode === 'demi' }).dessus;
   if (mode === 'section') entites = sectionB(pc, o, ecart).donnees;
   if (mode === 'locale') entites = coupeLocale(pc, o, ecart)?.donnees || [];
-  t[n] = { ...base, entites, exo, maj: Date.now() };
+  t[n] = { ...base, ...(examen ? { grille: false } : {}), entites, exo, maj: Date.now() };
   stockage.ecrire(CLE, t); stockage.ecrire(CLE_COURANTE, n);
 }
 
@@ -184,7 +188,7 @@ function monterPage(el, remonter) {
                 ${PIECES.filter((pc) => (m !== 'demi' || estSymetrique(pc)) && (m !== 'locale' || aTrouVertical(pc))).map((pc) => `<option value="${m}:${esc(pc.id)}">${l.split(' ')[0]} · ${esc(pc.nom)}</option>`).join('')}
               </optgroup>`).join('')}
             </select>
-            <select class="field dao-exemple" title="Ajoute les 3 vues (face, dessus, gauche) d'une pièce d'exemple, pour observer la mise en page européenne">
+            <select class="field dao-exemple" ${p.exo?.examen && !p.exo.examen.fini ? 'disabled' : ''} title="Ajoute les 3 vues (face, dessus, gauche) d'une pièce d'exemple, pour observer la mise en page européenne">
               <option value="">Exemple : 3 vues d'une pièce…</option>
               ${PIECES.map((pc) => `<option value="${esc(pc.id)}">${esc(pc.nom)}</option>`).join('')}
             </select>
@@ -230,11 +234,14 @@ function monterPage(el, remonter) {
             ? 'cote les 3 vues avec l\'outil Cote : chaque arête et chaque axe de trou doit être situé une seule fois (pas de chaîne fermée), avec les 3 cotes d\'encombrement et le Ø de chaque trou (sur son cercle). Mesures sur la perspective (bouton Pièce).'
             : `dessine la vue de face, la vue de dessus et la vue de gauche (projection européenne, échelle 1:1, écart de ${p.exo.ecart} mm entre les vues). Le coin inférieur gauche de la vue de face est au repère ✚.`}</span>
           <span class="dao-exo-btns">
-            <button class="btn primary" type="button" data-exo="corriger">${icone('check')} Corriger</button>
-            ${p.exo.mode === 'cotes' ? '' : '<button class="btn" type="button" data-exo="solution" aria-pressed="false">Voir la solution</button>'}
+            ${p.exo.examen && !p.exo.examen.fini
+              ? `<button class="btn primary" type="button" data-exo="rendre">Rendre la copie</button> <span class="dao-chrono" title="Temps restant">⏱ ${p.exo.examen.duree}:00</span>`
+              : `<button class="btn primary" type="button" data-exo="corriger">${icone('check')} Corriger</button>
+            ${p.exo.mode === 'cotes' ? '' : '<button class="btn" type="button" data-exo="solution" aria-pressed="false">Voir la solution</button>'}`}
             <button class="btn" type="button" data-exo="piece">Pièce</button>
           </span>
-          <span class="dao-exo-res">${p.exo.score != null ? `Meilleur score : <b>${p.exo.score} %</b>` : ''}</span>
+          <span class="dao-exo-res">${p.exo.examen && !p.exo.examen.fini ? '<b>Mode examen</b> : pas de correction ni de solution avant d\'avoir rendu la copie.' : p.exo.score != null ? `Meilleur score : <b>${p.exo.score} %</b>` : ''}</span>
+          ${p.exo.examen?.note != null ? `<span class="dao-exam-note">Note d'examen : <b>${p.exo.examen.note} %</b> · rendu en ${p.exo.examen.temps} min sur ${p.exo.examen.duree}</span>` : ''}
         </div>` : ''}
         <div class="dao-zone">
         <div class="panel dao-piece" hidden>
@@ -361,6 +368,7 @@ function monterPage(el, remonter) {
     return svg;
   };
   let voirSolution = false, resultat = null;
+  let minuteur = null;
   function dessinerExo(res) {
     resultat = res;
     const pc = trouverPiece(p.exo?.piece);
@@ -395,9 +403,34 @@ function monterPage(el, remonter) {
     const pc = trouverPiece(p.exo.piece);
     if (pc) { montrerPiece(pc); dessinerExo(null); }
     const resTxt = el.querySelector('.dao-exo-res');
+    // mode examen : la 1re correction après avoir rendu la copie donne la note (elle ne change plus ensuite)
+    const noterExamen = (score) => {
+      const ex = p.exo.examen;
+      if (ex?.fini && ex.note == null) { p = { ...p, exo: { ...p.exo, examen: { ...ex, note: score } } }; const s = el.querySelector('.dao-exam-note') || resTxt.insertAdjacentElement('afterend', Object.assign(document.createElement('span'), { className: 'dao-exam-note' })); s.innerHTML = `Note d'examen : <b>${score} %</b> · rendu en ${ex.temps} min sur ${ex.duree}`; }
+    };
+    const rendre = () => {
+      const ex = p.exo.examen; if (!ex || ex.fini) return;
+      const temps = Math.min(ex.duree, Math.max(1, Math.round((Date.now() - ex.debut) / 60000)));
+      p = { ...p, exo: { ...p.exo, examen: { ...ex, fini: true, fin: Date.now(), temps } } }; sauver();
+      corrigerAuMontage = true; remonter();
+    };
+    if (p.exo.examen && !p.exo.examen.fini) {
+      const chrono = el.querySelector('.dao-chrono');
+      const tic = () => {
+        const reste = p.exo.examen.duree * 60000 - (Date.now() - p.exo.examen.debut);
+        if (reste <= 0) { clearInterval(minuteur); rendre(); return; }
+        const s = Math.ceil(reste / 1000);
+        if (chrono) { chrono.textContent = `⏱ ${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; chrono.classList.toggle('bad', s <= 300); }
+      };
+      minuteur = setInterval(tic, 1000); tic();
+    }
     el.querySelector('.dao-exobar').addEventListener('click', (ev) => {
       const b = ev.target.closest('[data-exo]'); if (!b || !pc) return;
       if (b.dataset.exo === 'piece') { montrerPiece(pc); return; }
+      if (b.dataset.exo === 'rendre') {
+        if (!b.dataset.ok) { b.dataset.ok = '1'; b.textContent = 'Confirmer : rendre la copie'; setTimeout(() => { if (b.isConnected) { delete b.dataset.ok; b.textContent = 'Rendre la copie'; } }, 4000); return; }
+        rendre(); return;
+      }
       if (b.dataset.exo === 'solution') {
         voirSolution = !voirSolution; b.setAttribute('aria-pressed', String(voirSolution)); b.classList.toggle('on', voirSolution);
         dessinerExo(resultat); return;
@@ -406,7 +439,7 @@ function monterPage(el, remonter) {
       if (p.exo.mode === 'cotes') {
         const r = corrigerCotes(pc, p.exo, p.entites || []);
         const meilleur = Math.max(r.score, p.exo.score ?? 0);
-        p = { ...p, exo: { ...p.exo, score: meilleur } }; sauver();
+        p = { ...p, exo: { ...p.exo, score: meilleur } }; noterExamen(r.score); sauver();
         dessinerExo(r);
         const nonSit = Object.values(r.axes).reduce((s, a) => s + a.situees.filter((x) => !x).length, 0);
         const sansEnc = Object.values(r.axes).filter((a) => !a.encombrement).map((a) => a.nom);
@@ -426,7 +459,7 @@ function monterPage(el, remonter) {
       else if (['coupe', 'demi', 'locale'].includes(p.exo.mode)) r = corrigerCoupe(pc, p.exo, p.entites || []);
       else { const sol = vues(pc, p.exo.o, p.exo.ecart); r = corriger([...sol.face, ...sol.dessus, ...sol.gauche], p.entites || []); }
       const meilleur = Math.max(r.score, p.exo.score ?? 0);
-      p = { ...p, exo: { ...p.exo, score: meilleur } }; sauver();
+      p = { ...p, exo: { ...p.exo, score: meilleur } }; noterExamen(r.score); sauver();
       dessinerExo(r);
       resTxt.innerHTML = `Score : <b>${r.score} %</b>${r.score === 100 ? ' — parfait !' : ''} · ${n(r.ok.length, 'trait juste', 'traits justes')}`
         + (r.manquants.length ? ` · <span class="dao-l-man">${n(r.manquants.length, 'manquant', 'manquants')}</span>` : '')
@@ -436,6 +469,7 @@ function monterPage(el, remonter) {
         + ` · meilleur : ${meilleur} %`;
     });
   }
+  if (corrigerAuMontage) { corrigerAuMontage = false; el.querySelector('[data-exo=corriger]')?.click(); }
   el.querySelector('.dao-exo-choix').addEventListener('change', (ev) => {
     const [mode, v] = ev.target.value.split(':'); ev.target.value = '';
     const pc = /^[hs][123]$/.test(v) ? trouverPiece(`${v}-${mode === 'locale' ? graineTrouVertical(+v[1]) : grainePiece()}`) : trouverPiece(v);
@@ -506,5 +540,5 @@ function monterPage(el, remonter) {
   });
 
   // appelé par le routeur avant de quitter la page
-  return () => { feuille.detruire(); window.removeEventListener('keydown', echap); window.removeEventListener('keydown', touches); document.body.classList.remove('pl-plein-ouvert'); };
+  return () => { clearInterval(minuteur); feuille.detruire(); window.removeEventListener('keydown', echap); window.removeEventListener('keydown', touches); document.body.classList.remove('pl-plein-ouvert'); };
 }
