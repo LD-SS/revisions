@@ -19,7 +19,7 @@ import { lecteurExercices, noteExo, preparerDessin } from '../exercices.js';
 import { pieceAuHasard, CONSIGNES } from '../geometrie.js';
 import { monterPiece3D } from '../piece3d.js';
 import { niveauAide, AIDES } from '../planche.js';
-import { vuePlancheLibre } from './planche-libre.js';
+import { vuePlancheLibre, grainePiece } from './planche-libre.js';
 
 const MID = 'dessin';
 const NOTES = { ok: ['Réussi', 'ok'], mid: ['Presque', 'mid'], ko: ['À refaire', 'ko'] };
@@ -63,11 +63,18 @@ function exerciceAuHasard(code) {
   });
 }
 
+/** Exercices « 3 vues » corrigés dans la planche libre : nombre et moyenne des meilleurs scores. */
+function statsVues() {
+  const t = stockage.lire('planches', {}) || {};
+  const s = Object.values(t).map((pl) => pl?.exo?.score).filter((v) => typeof v === 'number');
+  return { n: s.length, moy: s.length ? Math.round(s.reduce((a, b) => a + b, 0) / s.length) : 0 };
+}
+
 export async function vueAtelier(el, params = []) {
   const { m, exos } = await tousLesExercices();
   if (!m) throw new Error('Matière « dessin » introuvable.');
   const [cid, eid] = params;
-  if (cid === 'libre') return vuePlancheLibre(el);
+  if (cid === 'libre') return vuePlancheLibre(el, eid);
 
   if (cid === 'hasard') {   // ---------- pièce au hasard
     const e = exerciceAuHasard(eid);
@@ -160,9 +167,13 @@ export async function vueAtelier(el, params = []) {
         </div>
       </section>
       <section class="panel at-hasard">
-        <div><h3>${icone('regle')} Planche libre <span class="badge">En construction</span></h3>
-          <p class="muted">Feuille blanche A4 ou A3 avec cadre et cartouche, à l'échelle de ton choix : le futur mini-DAO.</p></div>
-        <div class="at-hasard-b"><a class="btn primary" href="#/dessin/libre">${icone('crayon')} Ouvrir la planche</a></div>
+        <div><h3>${icone('regle')} Planche libre (mini-DAO)</h3>
+          <p class="muted">Feuille A4 ou A3 en mm, avec cadre, cartouche, cotes, hachures… Exercice : dessine les 3 vues d'une pièce vue en perspective, corrigées au ½ mm près.${(() => { const r = statsVues(); return r.n ? ` Déjà <b>${r.n}</b> exercice${r.n > 1 ? 's' : ''} corrigé${r.n > 1 ? 's' : ''}, meilleur score moyen <b>${r.moy} %</b>.` : ''; })()}</p></div>
+        <div class="at-hasard-b">
+          <a class="btn primary" href="#/dessin/libre">${icone('crayon')} Ouvrir la planche</a>
+          <span class="at-hl">3 vues</span>
+          ${[1, 2, 3].map((n) => `<a class="btn" href="#/dessin/libre/h${n}-${grainePiece()}" title="Nouvelle pièce au hasard, niveau ${n}">${'★'.repeat(n)}</a>`).join('')}
+        </div>
       </section>
       <div class="at-grille">${visibles.length ? visibles.map(([e, i]) => carte(e, i)).join('') : '<p class="muted">Aucune planche pour ce filtre.</p>'}</div>
       <p class="muted at-note">D'autres planches (plans inclinés, cylindres, cotation) viendront s'ajouter ici.</p>
