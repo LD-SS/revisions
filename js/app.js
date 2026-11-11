@@ -28,7 +28,7 @@ import { majBoutonProposer, viderAttente } from './proposer.js';
 import { demarrerSynchro, adopterCompte } from './synchro.js';
 import { exigerAcces, ecranPerte } from './vues/acces.js';
 
-const VERSION = '1.36.2 (correction 3 vues : placement le plus favorable, contour à repasser signalé)';
+const VERSION = '1.36.3 (mise en page : seulement les 4 coins de chaque vue)';
 const vue = document.getElementById('vue');
 let nettoyer = null; // fonction fournie par la page affichée, appelée avant d'en changer
 
