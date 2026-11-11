@@ -88,7 +88,8 @@ export function intersections(a, b) {
 }
 
 /** Tous les points d'accroche du dessin (entités + intersections). */
-export function tousLesPoints(entites) {
+export function tousLesPoints(tout) {
+  const entites = tout.filter((e) => e.t !== 'q');   // les cotes ne servent pas d'accroche
   const pts = [];
   for (const e of entites) pts.push(...pointsAccroche(e));
   for (let i = 0; i < entites.length; i++) {
