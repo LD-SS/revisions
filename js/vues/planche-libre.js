@@ -69,6 +69,7 @@ const ICONES_OUTILS = {
   main: '<svg viewBox="0 0 24 24" class="ic"><path d="M12 2v20M2 12h20M12 2l-3 3M12 2l3 3M12 22l-3-3M12 22l3-3M2 12l3-3M2 12l3 3M22 12l-3-3M22 12l-3 3" stroke="currentColor" stroke-width="1.8" fill="none"/></svg>',
   selection: '<svg viewBox="0 0 24 24" class="ic"><path d="M5 3l14 8-6 2-3 6z" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/></svg>',
   cote: '<svg viewBox="0 0 24 24" class="ic"><path d="M4 6v12M20 6v12M4 12h16M4 12l3-2v4zM20 12l-3-2v4z" stroke="currentColor" stroke-width="1.6" fill="currentColor" stroke-linejoin="round"/></svg>',
+  point: '<svg viewBox="0 0 24 24" class="ic"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.6" fill="none"/><path d="M4 20l5-5" stroke="currentColor" stroke-width="1.2" stroke-dasharray="2 2" fill="none"/></svg>',
   rappel: '<svg viewBox="0 0 24 24" class="ic"><path d="M3 8h18M3 16h18" stroke="currentColor" stroke-width="1.4" stroke-dasharray="3 2" fill="none"/><circle cx="6" cy="8" r="1.8" fill="currentColor"/></svg>',
   l45: '<svg viewBox="0 0 24 24" class="ic"><path d="M4 20 20 4M4 20h8" stroke="currentColor" stroke-width="1.6" fill="none"/><path d="M8 20a4 4 0 0 0-1.2-2.8" stroke="currentColor" fill="none"/></svg>',
   ajuster: '<svg viewBox="0 0 24 24" class="ic"><path d="M3 12h7M14 12h7M12 3v18" stroke="currentColor" stroke-width="2" fill="none"/><path d="M8 9l3 3-3 3" stroke="#d33" stroke-width="1.6" fill="none"/></svg>',
@@ -114,7 +115,7 @@ const boutonsOutils = (liste, touches = false) => liste.map((k) => { const o = O
 /** Rubriques de la barre d'outils (chacune s'ouvre en menu). */
 const GROUPES = [
   ['dessiner', 'Dessiner', ['ligne', 'rect', 'cercle', 'arc']],
-  ['construire', 'Construire', ['rappel', 'l45', 'ajuster', 'prolonger', 'chanfrein', 'conge']],
+  ['construire', 'Construire', ['point', 'rappel', 'l45', 'ajuster', 'prolonger', 'chanfrein', 'conge']],
   ['annoter', 'Annoter', ['cote', 'hachures', 'texte']],
   ['modifier', 'Modifier', ['selection', 'gomme', 'main']],
 ];
