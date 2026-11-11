@@ -20,6 +20,7 @@ import { pieceAuHasard, CONSIGNES } from '../geometrie.js';
 import { monterPiece3D } from '../piece3d.js';
 import { niveauAide, AIDES } from '../planche.js';
 import { vuePlancheLibre, grainePiece } from './planche-libre.js';
+import { graineTrouVertical } from '../dao/pieces.js';
 
 const MID = 'dessin';
 const NOTES = { ok: ['Réussi', 'ok'], mid: ['Presque', 'mid'], ko: ['À refaire', 'ko'] };
@@ -168,7 +169,7 @@ export async function vueAtelier(el, params = []) {
       </section>
       <section class="panel at-hasard">
         <div><h3>${icone('regle')} Planche libre (mini-DAO)</h3>
-          <p class="muted">Feuille A4 ou A3 en mm, avec cadre, cartouche, cotes, hachures… Exercices corrigés automatiquement : dessiner les 3 vues d'une pièce vue en perspective (au ½ mm près), les coter, dessiner une coupe, une demi-coupe ou une section.${(() => { const t = [['vues', 'vues'], ['cotes', 'cotation'], ['coupe', 'coupe'], ['demi', 'demi-coupe'], ['section', 'section']].map(([m, l]) => { const r = statsVues(m); return r.n ? `${l} : <b>${r.n}</b> exercice${r.n > 1 ? 's' : ''}, moyenne <b>${r.moy} %</b>` : ''; }).filter(Boolean); return t.length ? ` Tes scores — ${t.join(' · ')}.` : ''; })()}</p></div>
+          <p class="muted">Feuille A4 ou A3 en mm, avec cadre, cartouche, cotes, hachures… Exercices corrigés automatiquement : dessiner les 3 vues d'une pièce vue en perspective (au ½ mm près), les coter, dessiner une coupe (entière, demi, locale) ou une section.${(() => { const t = [['vues', 'vues'], ['cotes', 'cotation'], ['coupe', 'coupe'], ['demi', 'demi-coupe'], ['section', 'section'], ['locale', 'coupe locale']].map(([m, l]) => { const r = statsVues(m); return r.n ? `${l} : <b>${r.n}</b> exercice${r.n > 1 ? 's' : ''}, moyenne <b>${r.moy} %</b>` : ''; }).filter(Boolean); return t.length ? ` Tes scores — ${t.join(' · ')}.` : ''; })()}</p></div>
         <div class="at-hasard-b">
           <a class="btn primary" href="#/dessin/libre">${icone('crayon')} Ouvrir la planche</a>
           <span class="at-hl">3 vues</span>
@@ -181,6 +182,8 @@ export async function vueAtelier(el, params = []) {
           ${[1, 2, 3].map((n) => `<a class="btn" href="#/dessin/libre/demi-s${n}-${grainePiece()}" title="Demi-coupe A-A d'une pièce symétrique au hasard, niveau ${n}">${'★'.repeat(n)}</a>`).join('')}
           <span class="at-hl">Section</span>
           ${[1, 2, 3].map((n) => `<a class="btn" href="#/dessin/libre/section-h${n}-${grainePiece()}" title="Section sortie B-B d'une pièce au hasard, niveau ${n}">${'★'.repeat(n)}</a>`).join('')}
+          <span class="at-hl">Coupe locale</span>
+          ${[1, 2, 3].map((n) => `<a class="btn" href="#/dessin/libre/locale-h${n}-${graineTrouVertical(n)}" title="Coupe locale autour d'un trou, pièce au hasard, niveau ${n}">${'★'.repeat(n)}</a>`).join('')}
         </div>
       </section>
       <div class="at-grille">${visibles.length ? visibles.map(([e, i]) => carte(e, i)).join('') : '<p class="muted">Aucune planche pour ce filtre.</p>'}</div>
