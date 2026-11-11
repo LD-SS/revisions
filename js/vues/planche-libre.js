@@ -363,6 +363,7 @@ function monterPage(el, remonter) {
         <form class="dao-saisie-f" hidden autocomplete="off" title="Tape une valeur puis Entrée (ou ✓). Au clavier, tu peux aussi taper directement sans cliquer ici.">
           <span class="dao-saisie-t"></span>
           <input class="field" name="v" inputmode="decimal" enterkeyhint="done" spellcheck="false" aria-label="Valeur">
+          <label class="dao-saisie-ang" hidden><span class="dao-saisie-t">Angle</span><input class="field" name="ang" inputmode="decimal" enterkeyhint="done" spellcheck="false" aria-label="Angle en degrés" placeholder="vide = souris"> °</label>
           <button class="btn primary" type="submit" aria-label="Valider la valeur">✓</button>
         </form>
         <div class="dao-barre dao-selbar dao-parambar" hidden>
@@ -418,7 +419,9 @@ function monterPage(el, remonter) {
     annuler: el.querySelector('[data-act=annuler]'), retablir: el.querySelector('[data-act=retablir]'),
   };
   let traceur = null;
-  const saisieF = el.querySelector('.dao-saisie-f'), saisieIn = saisieF.querySelector('input');
+  const saisieF = el.querySelector('.dao-saisie-f'), saisieIn = saisieF.querySelector('input[name=v]');
+  const angLab = saisieF.querySelector('.dao-saisie-ang'), angIn = saisieF.querySelector('input[name=ang]');
+  let modeAngle = false;   // ligne : 2 cases, longueur et angle (Tab pour passer de l'une à l'autre)
   const guideT = el.querySelector('.dao-guide-t'), guideFin = el.querySelector('[data-fin]');
   guideFin.addEventListener('click', () => traceur.terminer());
   const selbar = el.querySelector('.dao-selbar:not(.dao-cotebar):not(.dao-parambar):not(.dao-textebar)'), selN = el.querySelector('.dao-sel-n');
@@ -479,10 +482,12 @@ function monterPage(el, remonter) {
       // case de saisie à l'écran (utile au stylet) : visible quand une valeur peut être tapée
       if (saisieF) {
         saisieF.hidden = !i.attente || !!i.attente.premier;   // au 1er point, la saisie x;y reste possible au clavier
+        modeAngle = !!i.attente?.angle;
+        angLab.hidden = !modeAngle;
         if (i.attente) {
           saisieF.querySelector('.dao-saisie-t').textContent = i.attente.titre;
           saisieIn.placeholder = i.attente.exemple;
-          if (document.activeElement !== saisieIn) saisieIn.value = i.saisie || '';
+          if (document.activeElement !== saisieIn && document.activeElement !== angIn) { saisieIn.value = i.saisie || ''; angIn.value = ''; }
         }
       }
       etat.ortho.classList.toggle('on', i.ortho);
@@ -521,12 +526,24 @@ function monterPage(el, remonter) {
   });
   saisieF.addEventListener('submit', (ev) => {
     ev.preventDefault();
-    const v = saisieIn.value.trim(); saisieIn.value = '';
-    traceur.saisir(v); saisieIn.blur();
+    let v = saisieIn.value.trim(); const a = angIn.value.trim();
+    if (modeAngle && a && v && !/[<;]/.test(v)) v = `${v}<${a}`;
+    const garder = modeAngle && saisieF.contains(document.activeElement);
+    saisieIn.value = ''; angIn.value = '';
+    traceur.saisir(v);
+    if (garder && modeAngle) saisieIn.focus(); else { saisieIn.blur(); angIn.blur(); }   // ligne enchaînée : on reste dans la case Longueur
   });
-  saisieIn.addEventListener('keydown', (ev) => { if (ev.key === 'Escape') { saisieIn.value = ''; saisieIn.blur(); } });
+  for (const inp of [saisieIn, angIn]) inp.addEventListener('keydown', (ev) => {
+    if (ev.key === 'Escape') { saisieIn.value = ''; angIn.value = ''; inp.blur(); }
+    else if (ev.key === 'Tab' && modeAngle) { ev.preventDefault(); (inp === saisieIn ? angIn : saisieIn).focus(); (inp === saisieIn ? angIn : saisieIn).select(); }
+  });
   const touches = (ev) => {
     if (ev.target.closest?.('input, textarea, select, [contenteditable]')) return;
+    // ligne : un chiffre tapé va dans la case Longueur, Tab passe à la case Angle
+    if (modeAngle && !saisieF.hidden && !ev.ctrlKey && !ev.metaKey && !ev.altKey) {
+      if (/^[0-9.,\-]$/.test(ev.key)) { ev.preventDefault(); saisieIn.focus(); saisieIn.value += ev.key; return; }
+      if (ev.key === 'Tab') { ev.preventDefault(); (ev.shiftKey ? saisieIn : angIn).focus(); return; }
+    }
     if (traceur.clavier(ev)) ev.preventDefault();
   };
   window.addEventListener('keydown', touches);
