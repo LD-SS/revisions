@@ -12,9 +12,12 @@
      cercle    : « 15 » (rayon) ou « Ø30 » / « d30 » (diamètre)
      arc       : centre, puis début (« 20<0 »), puis angle balayé (« 90 »)
    Annuler / rétablir : Ctrl+Z / Ctrl+Y (historique de 100 étapes).
+   Sélection (S) : clic, Maj+clic, cadre ; puis Déplacer, Copier, Miroir,
+   Supprimer (Suppr) ou changer le type de trait. Gomme (E) : toucher un trait.
    ===================================================================== */
 
 import { versReel, versPapier, facteur, pasGrille } from './feuille.js';
+import { toucher, dansRectangle, translater, symetrie } from './edition.js';
 import { tousLesPoints, accrocher, ortho, lireSaisie, angleDe, surCercle, arcNormal, dist, arrondi, mesure, EPS } from './geom.js';
 
 export const STYLES = {
@@ -25,10 +28,17 @@ export const STYLES = {
 };
 export const OUTILS = {
   main: { nom: 'Déplacer', touche: 'm', aide: 'Glisse pour déplacer la feuille, molette ou 2 doigts pour zoomer.' },
+  selection: { nom: 'Sélection', touche: 's', aide: 'Sélection : touche un trait (Maj pour en ajouter) ou glisse un cadre : vers la droite = entièrement dedans, vers la gauche = qui touchent.' },
   ligne: { nom: 'Ligne', touche: 'l', aide: ['Ligne : clique le 1er point (ou tape x;y puis Entrée).', 'Ligne : clique le point suivant, ou tape une longueur (50), longueur<angle (50<30) ou dx;dy. Clic droit / Échap pour finir.'] },
   rect: { nom: 'Rectangle', touche: 'r', aide: ['Rectangle : clique un 1er coin (ou tape x;y).', 'Rectangle : clique le coin opposé, ou tape largeur;hauteur (40;20).'] },
   cercle: { nom: 'Cercle', touche: 'o', aide: ['Cercle : clique le centre (ou tape x;y).', 'Cercle : clique un point du cercle, ou tape le rayon (15) ou le diamètre (Ø30).'] },
   arc: { nom: 'Arc', touche: 'k', aide: ['Arc : clique le centre.', 'Arc : clique le point de départ (ou tape rayon<angle, ex. 20<0).', 'Arc : clique le point d\'arrivée (sens anti-horloger) ou tape l\'angle balayé (90).'] },
+  gomme: { nom: 'Gomme', touche: 'e', aide: 'Gomme : touche un trait pour l\'effacer (Ctrl+Z pour le récupérer).' },
+};
+export const OPERATIONS = {
+  deplacer: { nom: 'Déplacer', aide: ['Déplacer : clique le point de base.', 'Déplacer : clique la destination, ou tape dx;dy, longueur ou longueur<angle.'] },
+  copier: { nom: 'Copier', aide: ['Copier : clique le point de base.', 'Copier : clique où poser la copie (ou tape dx;dy). Plusieurs copies possibles ; Échap pour finir.'] },
+  miroir: { nom: 'Miroir', aide: ['Miroir : clique le 1er point de l\'axe de symétrie.', 'Miroir : clique le 2e point de l\'axe (les originaux sont gardés).'] },
 };
 
 const f2 = (v) => Math.round(v * 100) / 100;
@@ -78,6 +88,8 @@ export function creerTraceur(o) {
     bas: null,                    // {px:[x,y] écran, pt} au moment de l'appui
     hist: [], refaire: [],
     cache: null,                  // points d'accroche du dessin
+    sel: new Set(), op: null,     // sélection (indices) et opération en cours
+    cadre: null, survol: -1,      // cadre de sélection, trait sous la gomme
   };
   const P = () => o.planche();
   const entites = () => P().entites || [];
@@ -93,8 +105,8 @@ export function creerTraceur(o) {
     const p = P();
     let q = versReel(p, pp[0], pp[1]);
     const tol = toleranceReel(12);
-    const origine = st.outil === 'ligne' || st.outil === 'rect' ? st.pts[st.pts.length - 1] : null;
-    const orth = (st.ortho || st.maj) && origine && st.outil === 'ligne';
+    const origine = st.outil === 'ligne' || st.outil === 'rect' || st.op ? st.pts[st.pts.length - 1] : null;
+    const orth = (st.ortho || st.maj) && origine && (st.outil === 'ligne' || st.op);
     const pts = [...pointsDuDessin(), ...st.pts.map((x) => [x[0], x[1], 'ext'])];
     if (orth) q = ortho(origine, q);
     let a = accrocher(q, orth ? pts.filter((x) => Math.abs(x[0] - origine[0]) < EPS || Math.abs(x[1] - origine[1]) < EPS) : pts, tol);
@@ -120,16 +132,35 @@ export function creerTraceur(o) {
     if (st.pts.length) { st.pts = []; apercu(); return; }
     if (!st.hist.length) return;
     st.refaire.push(JSON.stringify(entites()));
-    o.enregistrer(JSON.parse(st.hist.pop())); st.cache = null; redessiner();
+    o.enregistrer(JSON.parse(st.hist.pop())); st.cache = null; st.sel.clear(); st.op = null; redessiner();
   }
   function retablir() {
     if (!st.refaire.length) return;
     st.hist.push(JSON.stringify(entites()));
-    o.enregistrer(JSON.parse(st.refaire.pop())); st.cache = null; redessiner();
+    o.enregistrer(JSON.parse(st.refaire.pop())); st.cache = null; st.sel.clear(); st.op = null; redessiner();
   }
 
   /* ----- construction des entités ----- */
+  /** Point posé pendant une opération sur la sélection. */
+  function poserOp(q) {
+    st.pts.push(q);
+    if (st.pts.length < 2) { apercu(); return; }
+    const [a, b] = st.pts; const es = entites(); const idx = [...st.sel];
+    if (st.op === 'deplacer') {
+      changer(es.map((e, i) => (st.sel.has(i) ? translater(e, b[0] - a[0], b[1] - a[1]) : e)));
+      st.op = null; st.pts = [];
+    } else if (st.op === 'copier') {
+      changer([...es, ...idx.map((i) => translater(es[i], b[0] - a[0], b[1] - a[1]))]);
+      st.pts = [a];
+    } else if (st.op === 'miroir') {
+      if (dist(a, b) > EPS) changer([...es, ...idx.map((i) => symetrie(es[i], a, b))]);
+      st.op = null; st.pts = [];
+    }
+    apercu();
+  }
+
   function poser(q) {
+    if (st.op) { poserOp(q); return; }
     const pts = st.pts;
     const der = pts[pts.length - 1];
     if (st.outil === 'ligne') {
@@ -159,7 +190,7 @@ export function creerTraceur(o) {
     }
     apercu();
   }
-  function finir() { st.pts = []; st.saisie = ''; apercu(); }
+  function finir() { st.pts = []; st.saisie = ''; st.op = null; apercu(); }
 
   /** Applique la saisie clavier (Entrée). */
   function appliquerSaisie() {
@@ -179,7 +210,7 @@ export function creerTraceur(o) {
       return [der[0] + ((c[0] - der[0]) / d) * lg, der[1] + ((c[1] - der[1]) / d) * lg];
     };
     const polaire = (lg, ang) => [der[0] + lg * Math.cos((ang * Math.PI) / 180), der[1] + lg * Math.sin((ang * Math.PI) / 180)];
-    if (st.outil === 'ligne') {
+    if (st.outil === 'ligne' || st.op) {
       if (v.dx != null) poser([der[0] + v.dx, der[1] + v.dy]);
       else if (v.lg != null) poser(v.ang != null ? polaire(v.lg, v.ang) : dirVers(v.lg));
     } else if (st.outil === 'rect') {
@@ -217,6 +248,7 @@ export function creerTraceur(o) {
   function enCours() {
     const der = st.pts[st.pts.length - 1], q = st.cur;
     if (!der || !q) return null;
+    if (st.op) return { t: 'l', x1: der[0], y1: der[1], x2: q[0], y2: q[1], s: 'n', aide: true };
     if (st.outil === 'ligne') return { t: 'l', x1: der[0], y1: der[1], x2: q[0], y2: q[1], s: st.style };
     if (st.outil === 'rect') return { t: 'r', a: der, b: q };
     if (st.outil === 'cercle') return { t: 'c', cx: der[0], cy: der[1], r: dist(der, q), s: st.style };
@@ -248,23 +280,41 @@ export function creerTraceur(o) {
       } else if (e.t === 'l') info = `R ${arrondi(dist([e.x1, e.y1], [e.x2, e.y2]), 2)} mm`;
       else info = mesure(e);
     }
+    const es = entites();
+    for (const i of st.sel) if (es[i]) svg += svgEntite(p, es[i], 'dao-sel');
+    if (st.survol >= 0 && es[st.survol]) svg += svgEntite(p, es[st.survol], 'dao-gomme');
+    if (st.op && st.pts.length && st.cur) {
+      const [a, b] = [st.pts[0], st.cur];
+      for (const i of st.sel) {
+        if (!es[i]) continue;
+        const g = st.op === 'miroir' ? (dist(a, b) > EPS ? symetrie(es[i], a, b) : null) : translater(es[i], b[0] - a[0], b[1] - a[1]);
+        if (g) svg += svgEntite(p, g, 'dao-ap');
+      }
+    }
+    if (st.cadre) {
+      const [a, b] = st.cadre.map((q) => versPapier(p, q[0], q[1]));
+      const fen = st.cadre[1][0] >= st.cadre[0][0];
+      svg += `<rect class="dao-cadre-sel${fen ? '' : ' dao-cadre-tch'}" x="${f2(Math.min(a[0], b[0]))}" y="${f2(Math.min(a[1], b[1]))}" width="${f2(Math.abs(b[0] - a[0]))}" height="${f2(Math.abs(b[1] - a[1]))}"/>`;
+    }
     for (const q of st.pts) { const [x, y] = versPapier(p, q[0], q[1]); svg += `<circle class="dao-pt" cx="${f2(x)}" cy="${f2(y)}" r="${f2(t * 0.45)}"/>`; }
     if (st.acc) svg += svgAccroche(p, st.acc, t);
     o.feuille.calque('apercu').innerHTML = svg;
-    const aide = OUTILS[st.outil].aide;
+    const aide = st.op ? OPERATIONS[st.op].aide : OUTILS[st.outil].aide;
     o.surEtat({
       aide: message || (Array.isArray(aide) ? aide[Math.min(st.pts.length, aide.length - 1)] : aide),
       saisie: st.saisie, mesure: info, accroche: st.acc ? NOM_ACC[st.acc[2]] : '', ortho: st.ortho,
       annuler: st.hist.length > 0 || st.pts.length > 0, retablir: st.refaire.length > 0,
+      sel: st.sel.size, op: st.op,
     });
   }
 
   /* ----- événements venant de la feuille ----- */
   function surPointeur(type, ev, pp) {
     if (st.outil === 'main') return pp;
-    if (type === 'annule') { st.bas = null; apercu(); return null; }
+    if (type === 'annule') { st.bas = null; st.cadre = null; apercu(); return null; }
     if (type === 'droit') { finir(); return pp; }
     st.maj = !!ev?.shiftKey;
+    if (st.outil === 'gomme' || (st.outil === 'selection' && !st.op)) return pointerSansAccroche(type, ev, pp);
     const q = viser(pp);
     st.cur = q;
     if (type === 'bas') st.bas = { x: ev.clientX, y: ev.clientY, q };
@@ -278,21 +328,60 @@ export function creerTraceur(o) {
     return versPapier(P(), q[0], q[1]);
   }
 
+  /** Sélection et gomme : point brut (sans accroche). */
+  function pointerSansAccroche(type, ev, pp) {
+    const p = P();
+    const q = versReel(p, pp[0], pp[1]);
+    const tol = toleranceReel(9);
+    st.acc = null; st.cur = q;
+    const es = entites();
+    if (st.outil === 'gomme') {
+      st.survol = toucher(es, q, tol);
+      if (type === 'haut' && st.survol >= 0) { const i = st.survol; st.survol = -1; changer(es.filter((_, k) => k !== i)); return pp; }
+      apercu(); return pp;
+    }
+    if (type === 'bas') st.bas = { x: ev.clientX, y: ev.clientY, q };
+    if (type === 'bouge' && st.bas && Math.hypot(ev.clientX - st.bas.x, ev.clientY - st.bas.y) > 8) st.cadre = [st.bas.q, q];
+    if (type === 'haut' && st.bas) {
+      const ajout = ev.shiftKey || ev.ctrlKey;
+      if (st.cadre) {
+        const fen = st.cadre[1][0] >= st.cadre[0][0];
+        const trouves = dansRectangle(es, st.cadre[0], st.cadre[1], fen);
+        if (!ajout) st.sel.clear();
+        trouves.forEach((i) => st.sel.add(i));
+      } else {
+        const i = toucher(es, q, tol);
+        if (i < 0) { if (!ajout) st.sel.clear(); } else if (ajout) { st.sel.has(i) ? st.sel.delete(i) : st.sel.add(i); } else { st.sel = new Set([i]); }
+      }
+      st.cadre = null; st.bas = null;
+    }
+    apercu(); return pp;
+  }
+
+  function supprimerSelection() {
+    if (!st.sel.size) return;
+    const s = st.sel; st.sel = new Set(); st.op = null;
+    changer(entites().filter((_, i) => !s.has(i)));
+  }
+  function lancerOp(op) { if (!st.sel.size) return; st.op = op; st.pts = []; st.saisie = ''; apercu(); }
+
   /** Clavier (renvoie true si la touche a été utilisée). */
   function clavier(ev) {
     if (ev.ctrlKey || ev.metaKey) {
       const k = ev.key.toLowerCase();
       if (k === 'z' && !ev.shiftKey) { annuler(); return true; }
       if (k === 'y' || (k === 'z' && ev.shiftKey)) { retablir(); return true; }
+      if (k === 'a') { choisirOutil('selection'); st.sel = new Set(entites().map((_, i) => i)); apercu(); return true; }
       return false;
     }
     if (ev.key === 'F8') { st.ortho = !st.ortho; apercu(); return true; }
-    if (ev.key === 'Escape') { if (st.saisie) st.saisie = ''; else finir(); apercu(); return true; }
+    if (ev.key === 'Escape') { if (st.saisie) st.saisie = ''; else if (st.op || st.pts.length) finir(); else st.sel.clear(); apercu(); return true; }
+    if ((ev.key === 'Delete' || ev.key === 'Backspace') && !st.saisie && st.sel.size && !st.op) { supprimerSelection(); return true; }
     if (ev.key === 'Enter' && st.saisie) { appliquerSaisie(); return true; }
     if (ev.key === 'Backspace' && st.saisie) { st.saisie = st.saisie.slice(0, -1); apercu(); return true; }
     const enSaisie = st.saisie.length > 0;
     if (/^[0-9.,;<\-]$/.test(ev.key) || (/^[dDøØ]$/.test(ev.key) && !enSaisie && st.outil === 'cercle' && st.pts.length)) {
-      if (st.outil === 'main') return false;
+      if (st.outil === 'main' || st.outil === 'gomme' || (st.outil === 'selection' && !st.op)) return false;
       st.saisie += ev.key; apercu(); return true;
     }
     if (enSaisie) return false;
@@ -304,8 +393,15 @@ export function creerTraceur(o) {
     return false;
   }
 
-  function choisirOutil(t) { st.outil = t; st.pts = []; st.saisie = ''; st.acc = null; o.surOutil?.(t); apercu(); }
-  function choisirStyle(s) { st.style = s; o.surStyle?.(s); apercu(); }
+  function choisirOutil(t) {
+    st.outil = t; st.pts = []; st.saisie = ''; st.acc = null; st.op = null; st.survol = -1; st.cadre = null;
+    if (t !== 'selection') st.sel.clear();
+    o.surOutil?.(t); apercu();
+  }
+  function choisirStyle(s) {
+    if (st.outil === 'selection' && st.sel.size) { changer(entites().map((e, i) => (st.sel.has(i) ? { ...e, s } : e))); return; }
+    st.style = s; o.surStyle?.(s); apercu();
+  }
 
   redessiner();
   return {
@@ -313,7 +409,8 @@ export function creerTraceur(o) {
     outil: () => st.outil, style: () => st.style,
     choisirOutil, choisirStyle,
     basculerOrtho() { st.ortho = !st.ortho; apercu(); return st.ortho; },
-    toutEffacer() { if (entites().length) changer([]); },
+    toutEffacer() { st.sel.clear(); st.op = null; if (entites().length) changer([]); },
+    supprimerSelection, lancerOp,
     /** À appeler quand l'échelle ou le format change (les entités restent en mm réels). */
     rafraichir() { st.cache = null; redessiner(); },
   };
