@@ -1140,3 +1140,6 @@ label.cgu-ok input{margin-top:3px}
 .dao-svg .dao-acc{stroke-width:2.2;fill:rgba(224,123,0,.12)}
 .dao-svg .dao-acc-t{fill:#e07b00;font-family:"Segoe UI",Arial,sans-serif;font-weight:600}
 .dao-svg .dao-acc-t{paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round}
+/* barres contextuelles (cote, sélection, chanfrein, texte) : dans la zone de dessin, en haut au centre */
+.dao-zone>.dao-selbar{top:8px;left:50%;transform:translateX(-50%);margin:0;width:max-content;max-width:calc(100% - 320px);padding:4px 8px;gap:4px}
+.dao-zone>.dao-selbar .dao-b{padding:4px 9px}
