@@ -1106,3 +1106,8 @@ label.cgu-ok input{margin-top:3px}
   #impr-dao svg{display:block;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   #impr-dao .dao-t,#impr-dao .dao-cadre,#impr-dao .dao-centrage{stroke:#000}
 }
+.dao-chrono{font-variant-numeric:tabular-nums;font-weight:600;padding:4px 8px;border-radius:8px;background:var(--panel2)}
+.dao-chrono.bad{color:#fff;background:#d33}
+.dao-exam-note{display:block;margin-top:4px;font-size:14px}
+.at-exam-h{margin:6px 0 0;padding-left:18px;font-size:13px}
+.at-exam-f select{width:auto}
