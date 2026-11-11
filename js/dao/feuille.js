@@ -335,3 +335,29 @@ export function monterFeuille(el, planche, opts = {}) {
     detruire() { ro.disconnect(); window.removeEventListener('keydown', clavier); window.removeEventListener('keyup', clavier); },
   };
 }
+
+/**
+ * Impression de la planche à l'échelle réelle (1 mm du dessin = 1 mm sur le papier, à imprimer « taille réelle / 100 % »).
+ * On copie le SVG à l'écran sans la grille, le curseur, l'aperçu ni la correction, au format de la feuille.
+ * @param {SVGSVGElement} svg  SVG affiché (monterFeuille)
+ * @param {object} p           planche (format, orientation)
+ */
+export function imprimerPlanche(svg, p) {
+  const [W, H] = taille(p);
+  const copie = svg.cloneNode(true);
+  for (const n of ['grille', 'curseur', 'apercu', 'correction']) copie.querySelector(`.dao-${n}`)?.remove();
+  copie.querySelector('.dao-ombre')?.remove();
+  copie.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  copie.setAttribute('style', `width:${W}mm;height:${H}mm`);
+  const boite = document.createElement('div');
+  boite.id = 'impr-dao';
+  boite.appendChild(copie);
+  const page = document.createElement('style');
+  page.id = 'impr-dao-page';
+  page.textContent = `@media print{@page{size:${p.format || 'A4'} ${p.orientation === 'portrait' ? 'portrait' : 'landscape'};margin:0}}`;
+  document.getElementById('impr-dao')?.remove(); document.getElementById('impr-dao-page')?.remove();
+  document.head.appendChild(page); document.body.appendChild(boite); document.body.classList.add('impr-dao-on');
+  const fin = () => { boite.remove(); page.remove(); document.body.classList.remove('impr-dao-on'); window.removeEventListener('afterprint', fin); };
+  window.addEventListener('afterprint', fin);
+  window.print();
+}
