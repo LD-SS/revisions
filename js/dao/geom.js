@@ -90,7 +90,7 @@ export function intersections(a, b) {
 /** Tous les points d'accroche du dessin (entités + intersections). */
 export function tousLesPoints(tout) {
   const entites = tout.filter((e) => e.t === 'l' || e.t === 'c' || e.t === 'a');   // cotes, hachures, textes : pas d'accroche
-  const pts = [];
+  const pts = tout.filter((e) => e.t === 'p').map((e) => [e.cx, e.cy, 'ext']);    // points de repère
   for (const e of entites) pts.push(...pointsAccroche(e));
   for (let i = 0; i < entites.length; i++) {
     for (let j = i + 1; j < entites.length; j++) for (const p of intersections(entites[i], entites[j])) pts.push([p[0], p[1], 'int']);
