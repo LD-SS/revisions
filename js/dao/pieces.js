@@ -15,6 +15,8 @@
    Toutes les pièces ont été créées pour l'appli (aucune ne vient d'un cours).
    ===================================================================== */
 
+import { vuesRevolution } from './revolution.js';
+
 const EPS = 1e-6;
 const r3 = (v) => Math.round(v * 1000) / 1000;
 const L = (x1, y1, x2, y2, s) => ({ t: 'l', x1: r3(x1), y1: r3(y1), x2: r3(x2), y2: r3(y2), s });
@@ -67,6 +69,7 @@ function aretesVues(piece, sens) {
  * @returns {{ face: object[], dessus: object[], gauche: object[], cadres: object }}
  */
 export function vues(piece, origine = [20, 90], ecart = 20) {
+  if (piece.rev) return vuesRevolution(piece, origine, ecart);
   const b = boite(piece);
   const W = b.x1 - b.x0, H = b.z1 - b.z0, P = piece.prof;
   const [ox, oy] = origine;
