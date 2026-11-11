@@ -116,12 +116,13 @@ function morceaux(f, t0, t1, n, secs) {
  * Les 3 vues d'une pièce de révolution (même format que vues() de pieces.js).
  */
 export function vuesRevolution(pc, origine = [20, 90], ecart = 20) {
+  const [ex, ey] = Array.isArray(ecart) ? ecart : [ecart, ecart];
   const ets = etagesDe(pc);
   const R = pc.prof / 2, P = pc.prof, W = ets[ets.length - 1].xb;
   const [ox, oy] = origine;
   const F = (x, Z) => [ox + x, oy + R + Z];
-  const D = (x, Y) => [ox + x, oy - ecart - P + R + Y];
-  const G = (Y, Z) => [ox + W + ecart + P - (R + Y), oy + R + Z];
+  const D = (x, Y) => [ox + x, oy - ey - P + R + Y];
+  const G = (Y, Z) => [ox + W + ex + P - (R + Y), oy + R + Z];
   const face = [], dessus = [], gauche = [];
   const seg = (arr, f, a, c, s) => { const p = f(...a), q = f(...c); arr.push(L(p[0], p[1], q[0], q[1], s)); };
 
@@ -197,8 +198,8 @@ export function vuesRevolution(pc, origine = [20, 90], ecart = 20) {
   }
   const cadres = {
     face: { x: ox, y: oy, w: W, h: P },
-    dessus: { x: ox, y: oy - ecart - P, w: W, h: P },
-    gauche: { x: ox + W + ecart, y: oy, w: P, h: P },
+    dessus: { x: ox, y: oy - ey - P, w: W, h: P },
+    gauche: { x: ox + W + ex, y: oy, w: P, h: P },
   };
   return { face: dedoubler(face), dessus: dedoubler(dessus), gauche: dedoubler(gauche), cadres };
 }
