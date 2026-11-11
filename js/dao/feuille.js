@@ -129,7 +129,7 @@ export function monterFeuille(el, planche, opts = {}) {
   let p = planche;
   el.innerHTML = `<svg class="dao-svg" xmlns="${NS}" role="img" aria-label="Feuille de dessin">
     <g class="dao-papier"></g><g class="dao-grille"></g><g class="dao-cadre-g"></g>
-    <g class="dao-dessin"></g><g class="dao-apercu"></g><g class="dao-curseur"></g></svg>
+    <g class="dao-dessin"></g><g class="dao-correction"></g><g class="dao-apercu"></g><g class="dao-curseur"></g></svg>
     <div class="dao-loupe" hidden><svg class="dao-svg" xmlns="${NS}"></svg></div>`;
   const svg = el.querySelector('svg');
   const loupe = el.querySelector('.dao-loupe'), loupeSvg = loupe.querySelector('svg');
