@@ -28,7 +28,7 @@ import { majBoutonProposer, viderAttente } from './proposer.js';
 import { demarrerSynchro, adopterCompte } from './synchro.js';
 import { exigerAcces, ecranPerte } from './vues/acces.js';
 
-const VERSION = '1.35.0 (3 vues : calcul de la mise en page avant de dessiner, cadres de construction)';
+const VERSION = '1.35.1 (mise en page : e et e’ calculés à partir de L, H, P)';
 const vue = document.getElementById('vue');
 let nettoyer = null; // fonction fournie par la page affichée, appelée avant d'en changer
 
