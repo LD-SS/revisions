@@ -28,7 +28,7 @@ import { majBoutonProposer, viderAttente } from './proposer.js';
 import { demarrerSynchro, adopterCompte } from './synchro.js';
 import { exigerAcces, ecranPerte } from './vues/acces.js';
 
-const VERSION = '1.14.0 (planche libre : loupe, stylet seul, gros boutons sur tablette)';
+const VERSION = '1.15.0 (pièces en mm et leurs 3 vues automatiques)';
 const vue = document.getElementById('vue');
 let nettoyer = null; // fonction fournie par la page affichée, appelée avant d'en changer
 
