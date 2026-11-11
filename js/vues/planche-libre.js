@@ -99,7 +99,15 @@ export function vuePlancheLibre(el, piece = null) {
   return () => stop?.();
 }
 
-const boutonsOutils = (liste) => liste.map((k) => { const o = OUTILS[k]; return `<button class="btn dao-b" type="button" data-outil="${k}" title="${esc(o.nom)}${o.touche ? ` (${o.touche.toUpperCase()})` : ''}">${ICONES_OUTILS[k] || ''}<span>${esc(o.nom)}</span></button>`; }).join('');
+const boutonsOutils = (liste, touches = false) => liste.map((k) => { const o = OUTILS[k]; return `<button class="btn dao-b" type="button" data-outil="${k}" title="${esc(o.nom)}${o.touche ? ` (${o.touche.toUpperCase()})` : ''}">${ICONES_OUTILS[k] || ''}<span>${esc(o.nom)}</span>${touches && o.touche ? `<kbd>${o.touche.toUpperCase()}</kbd>` : ''}</button>`; }).join('');
+
+/** Rubriques de la barre d'outils (chacune s'ouvre en menu). */
+const GROUPES = [
+  ['dessiner', 'Dessiner', ['ligne', 'rect', 'cercle', 'arc']],
+  ['construire', 'Construire', ['rappel', 'l45', 'ajuster', 'prolonger', 'chanfrein', 'conge']],
+  ['annoter', 'Annoter', ['cote', 'hachures', 'texte']],
+  ['modifier', 'Modifier', ['selection', 'gomme', 'main']],
+];
 
 const fmt = (v) => (Math.round(v * 10) / 10).toLocaleString('fr-BE', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 
@@ -203,37 +211,45 @@ function monterPage(el, remonter) {
         <span class="muted dao-synchro" title="Tes planches suivent ton compte sur tous tes appareils">${liste.length} planche${liste.length > 1 ? 's' : ''} · enregistrées dans ton compte</span>
       </div>
       <div class="dao" data-plein="0">
-        <div class="dao-barre" role="toolbar" aria-label="Réglages de la feuille">
-          ${choix('format', Object.keys(FORMATS).map((f) => [f, f]), p.format, 'Format')}
-          ${choix('orientation', [['paysage', 'Paysage'], ['portrait', 'Portrait']], p.orientation, 'Sens')}
-          ${choix('echelle', ECHELLES.map((e) => [e, e]), p.echelle, 'Échelle')}
-          <label class="chip dao-chip"><input type="checkbox" data-p="grille" ${p.grille ? 'checked' : ''}><span>Grille d'aide</span></label>
-          <span class="dao-sep"></span>
-          <label class="chip dao-chip dao-tactile" title="Sur tablette avec stylet : le doigt déplace la feuille, seul le stylet dessine"><input type="checkbox" data-stylet ${stockage.lire('dao.stylet', false) ? 'checked' : ''}><span>Stylet seul</span></label>
-          <button class="btn" type="button" data-act="cartouche" aria-expanded="false">${icone('crayon')} Cartouche</button>
+        <div class="dao-barres">
+        <div class="dao-barre dao-reglages" role="toolbar" aria-label="Réglages de la feuille">
+          <div class="dao-menu" data-nom="Feuille">
+            <button class="btn dao-b dao-menu-b" type="button" data-menu="feuille" aria-haspopup="true" aria-expanded="false"><span class="dao-menu-nom">Feuille</span> ▾</button>
+            <div class="panel dao-menu-p dao-menu-r" hidden aria-label="Réglages de la feuille">
+              ${choix('format', Object.keys(FORMATS).map((f) => [f, f]), p.format, 'Format')}
+              ${choix('orientation', [['paysage', 'Paysage'], ['portrait', 'Portrait']], p.orientation, 'Sens')}
+              ${choix('echelle', ECHELLES.map((e) => [e, e]), p.echelle, 'Échelle')}
+              <label class="chip dao-chip"><input type="checkbox" data-p="grille" ${p.grille ? 'checked' : ''}><span>Grille d'aide</span></label>
+              <label class="chip dao-chip" title="Sur tablette avec stylet : le doigt déplace la feuille, seul le stylet dessine"><input type="checkbox" data-stylet ${stockage.lire('dao.stylet', false) ? 'checked' : ''}><span>Stylet seul</span></label>
+              <button class="btn" type="button" data-act="cartouche" aria-expanded="false">${icone('crayon')} Cartouche…</button>
+            </div>
+          </div>
           <span class="dao-sep"></span>
           <button class="btn icon" type="button" data-act="moins" title="Réduire (molette ou 2 doigts)">−</button>
           <span class="dao-zoom muted" title="100 % ≈ taille réelle à l'écran">100 %</span>
           <button class="btn icon" type="button" data-act="plus" title="Agrandir (molette ou 2 doigts)">+</button>
-          <button class="btn" type="button" data-act="ajuster" title="Voir toute la feuille">Feuille entière</button>
-          <button class="btn primary" type="button" data-act="plein" title="Plein écran">⛶ <span>Plein écran</span></button>
+          <button class="btn" type="button" data-act="ajuster" title="Voir toute la feuille" aria-label="Voir toute la feuille">⤢</button>
+          <button class="btn primary" type="button" data-act="plein" title="Plein écran" aria-label="Plein écran">⛶</button>
         </div>
         <div class="dao-barre dao-outils" role="toolbar" aria-label="Outils de dessin">
-          <div class="dao-groupe" role="group" aria-label="Outil">
-            ${boutonsOutils(['main', 'selection', 'ligne', 'rect', 'cercle', 'arc', 'cote', 'hachures', 'texte', 'gomme'])}
+          ${GROUPES.map(([id, nom, liste]) => `<div class="dao-menu" data-groupe="${liste.join(' ')}" data-nom="${nom}">
+            <button class="btn dao-b dao-menu-b" type="button" data-menu="${id}" aria-haspopup="true" aria-expanded="false"><span class="dao-menu-ic"></span><span class="dao-menu-nom">${nom}</span> ▾</button>
+            <div class="panel dao-menu-p" hidden aria-label="${nom}">${boutonsOutils(liste, true)}</div>
+          </div>`).join('')}
+          <div class="dao-menu" data-nom="Trait">
+            <button class="btn dao-b dao-menu-b" type="button" data-menu="trait" aria-haspopup="true" aria-expanded="false" title="Type de trait"><span class="dao-menu-ic"></span><span class="dao-menu-nom">Trait</span> ▾</button>
+            <div class="panel dao-menu-p" hidden aria-label="Type de trait">
+              ${Object.entries(STYLES).map(([k, o]) => `<button class="btn dao-b" type="button" data-style="${k}" title="${esc(o.titre)}"><svg viewBox="0 0 34 10" class="dao-ech"><line class="dao-ech-${k}" x1="2" y1="5" x2="32" y2="5"/></svg><span>${esc(o.nom)}</span>${o.touche ? `<kbd>${o.touche.toUpperCase()}</kbd>` : ''}</button>`).join('')}
+            </div>
           </div>
-          <div class="dao-groupe" role="group" aria-label="Construction">
-            ${boutonsOutils(['rappel', 'l45', 'ajuster', 'prolonger', 'chanfrein', 'conge'])}
-          </div>
-          <div class="dao-groupe" role="group" aria-label="Type de trait">
-            ${Object.entries(STYLES).map(([k, o]) => `<button class="btn dao-b" type="button" data-style="${k}" title="${esc(o.titre)}"><svg viewBox="0 0 34 10" class="dao-ech"><line class="dao-ech-${k}" x1="2" y1="5" x2="32" y2="5"/></svg><span>${esc(o.nom)}</span></button>`).join('')}
-          </div>
-          <div class="dao-groupe">
-            <button class="btn dao-b" type="button" data-act="ortho" title="Mode orthogonal : traits horizontaux ou verticaux seulement (F8, ou maintenir Maj)">⊾ <span>Ortho</span></button>
-            <button class="btn icon" type="button" data-act="annuler" title="Annuler (Ctrl+Z)">↶</button>
-            <button class="btn icon" type="button" data-act="retablir" title="Rétablir (Ctrl+Y)">↷</button>
-            <button class="btn" type="button" data-act="effacer" title="Effacer tout le dessin">${icone('croix')}<span>Tout effacer</span></button>
-            <button class="btn" type="button" data-act="imprimer" title="Imprimer la planche à l'échelle réelle : dans la fenêtre d'impression, choisis « Taille réelle » ou « 100 % » (pas « Ajuster à la page »)">🖨<span>Imprimer</span></button>
+          <span class="dao-sep"></span>
+          <button class="btn dao-b" type="button" data-act="ortho" title="Mode orthogonal : traits horizontaux ou verticaux seulement (F8, ou maintenir Maj)">⊾ <span>Ortho</span></button>
+          <button class="btn icon" type="button" data-act="annuler" title="Annuler (Ctrl+Z)">↶</button>
+          <button class="btn icon" type="button" data-act="retablir" title="Rétablir (Ctrl+Y)">↷</button>
+          <span class="dao-sep"></span>
+          <div class="dao-menu" data-nom="Planche">
+            <button class="btn dao-b dao-menu-b" type="button" data-menu="planche" aria-haspopup="true" aria-expanded="false"><span class="dao-menu-nom">Exercices &amp; planche</span> ▾</button>
+            <div class="panel dao-menu-p dao-menu-r" hidden aria-label="Exercices et planche">
             <select class="field dao-exo-choix" title="Nouvel exercice sur une pièce vue en perspective cotée, corrigé automatiquement">
               <option value="">Exercice…</option>
               ${[['vues', 'Dessine les 3 vues'], ['cotes', 'Cote les 3 vues'], ['coupe', 'Coupe A-A'], ['demi', 'Demi-coupe A-A'], ['section', 'Section sortie B-B'], ['locale', 'Coupe locale'], ['iso', 'Perspective isométrique'], ['cav', 'Perspective cavalière']].map(([m, l]) => `<optgroup label="${l}">
@@ -245,7 +261,11 @@ function monterPage(el, remonter) {
               <option value="">Exemple : 3 vues d'une pièce…</option>
               ${PIECES.map((pc) => `<option value="${esc(pc.id)}">${esc(pc.nom)}</option>`).join('')}
             </select>
+              <button class="btn" type="button" data-act="imprimer" title="Imprimer la planche à l'échelle réelle : dans la fenêtre d'impression, choisis « Taille réelle » ou « 100 % » (pas « Ajuster à la page »)">🖨 <span>Imprimer à l'échelle</span></button>
+              <button class="btn" type="button" data-act="effacer" title="Effacer tout le dessin">${icone('croix')}<span>Tout effacer</span></button>
+            </div>
           </div>
+        </div>
         </div>
         <form class="panel dao-cartouche-f" hidden>
           <label>Titre <input class="field" name="titre" maxlength="40" value="${esc(p.cartouche.titre)}" placeholder="Ex. : Support en équerre"></label>
@@ -303,6 +323,12 @@ function monterPage(el, remonter) {
           ${p.exo.examen?.note != null ? `<span class="dao-exam-note">Note d'examen : <b>${p.exo.examen.note} %</b> · rendu en ${p.exo.examen.temps} min sur ${p.exo.examen.duree}</span>` : ''}
         </div>` : ''}
         <div class="dao-zone">
+        <div class="dao-guide" aria-live="polite"><span class="dao-guide-t"></span><button class="btn" type="button" data-fin hidden title="Terminer le tracé en cours (comme Échap ou le clic droit)">Terminer</button></div>
+        <form class="dao-saisie-f" hidden autocomplete="off" title="Tape une valeur puis Entrée (ou ✓). Au clavier, tu peux aussi taper directement sans cliquer ici.">
+          <span class="dao-saisie-t"></span>
+          <input class="field" name="v" inputmode="decimal" enterkeyhint="done" spellcheck="false" aria-label="Valeur">
+          <button class="btn primary" type="submit" aria-label="Valider la valeur">✓</button>
+        </form>
         <div class="panel dao-piece" hidden>
           <div class="dao-piece-t"><b class="dao-piece-nom"></b><button class="btn icon" type="button" data-act="fermer-piece" title="Fermer">${icone('croix')}</button></div>
           <div class="dao-piece-fig"></div>
@@ -336,6 +362,9 @@ function monterPage(el, remonter) {
     annuler: el.querySelector('[data-act=annuler]'), retablir: el.querySelector('[data-act=retablir]'),
   };
   let traceur = null;
+  const saisieF = el.querySelector('.dao-saisie-f'), saisieIn = saisieF.querySelector('input');
+  const guideT = el.querySelector('.dao-guide-t'), guideFin = el.querySelector('[data-fin]');
+  guideFin.addEventListener('click', () => traceur.terminer());
   const selbar = el.querySelector('.dao-selbar:not(.dao-cotebar):not(.dao-parambar):not(.dao-textebar)'), selN = el.querySelector('.dao-sel-n');
   const textebar = el.querySelector('.dao-textebar');
   textebar.querySelector('.dao-texte-in').addEventListener('input', (ev) => traceur.reglerParam('texte', ev.target.value));
@@ -353,18 +382,53 @@ function monterPage(el, remonter) {
   });
   majPas();
 
+  /* ----- menus de la barre d'outils ----- */
+  const fermerMenus = (sauf = null) => el.querySelectorAll('.dao-menu-p').forEach((m) => { if (m !== sauf && !m.hidden) { m.hidden = true; m.previousElementSibling?.setAttribute('aria-expanded', 'false'); } });
+  el.querySelectorAll('[data-menu]').forEach((b) => b.addEventListener('click', () => {
+    const pnl = b.nextElementSibling, ouvrir = pnl.hidden;
+    fermerMenus(pnl); pnl.hidden = !ouvrir; b.setAttribute('aria-expanded', String(ouvrir));
+  }));
+  el.querySelectorAll('.dao-menu-p').forEach((pnl) => pnl.addEventListener('click', (ev) => {
+    if (ev.target.closest('[data-outil], [data-style], [data-act=imprimer], [data-act=cartouche]')) setTimeout(() => fermerMenus(), 0);
+  }));
+  const horsMenu = (ev) => { if (!ev.target.closest?.('.dao-menu')) fermerMenus(); };
+  document.addEventListener('pointerdown', horsMenu);
+
   const marquer = (attr, v) => el.querySelectorAll(`[data-${attr}]`).forEach((b) => b.classList.toggle('on', b.dataset[attr] === v));
   traceur = creerTraceur({
     feuille,
     planche: () => p,
     enregistrer: (entites) => { p = { ...p, entites }; sauver(); if (p.exo) dessinerExo(null); },
-    surOutil: (t) => { marquer('outil', t); stockage.ecrire('dao.outil', t); },
-    surStyle: (s) => marquer('style', s),
+    surOutil: (t) => {
+      marquer('outil', t); stockage.ecrire('dao.outil', t);
+      el.querySelectorAll('.dao-menu[data-groupe]').forEach((m) => {   // la rubrique affiche l'outil choisi
+        const dedans = m.dataset.groupe.split(' ').includes(t), b = m.querySelector('.dao-menu-b');
+        b.classList.toggle('on', dedans);
+        b.querySelector('.dao-menu-ic').innerHTML = dedans ? ICONES_OUTILS[t] || '' : '';
+        b.querySelector('.dao-menu-nom').textContent = dedans ? OUTILS[t].nom : m.dataset.nom;
+      });
+    },
+    surStyle: (s) => {
+      marquer('style', s);
+      const b = el.querySelector('[data-menu=trait]');
+      b.querySelector('.dao-menu-ic').innerHTML = `<svg viewBox="0 0 34 10" class="dao-ech"><line class="dao-ech-${s}" x1="2" y1="5" x2="32" y2="5"/></svg>`;
+      b.querySelector('.dao-menu-nom').textContent = STYLES[s].nom;
+    },
     surEtat: (i) => {
       etat.aide.textContent = i.aide;
       etat.mes.textContent = i.mesure;
       etat.acc.textContent = i.accroche ? `accroche : ${i.accroche}` : '';
       etat.saisie.hidden = !i.saisie; etat.saisie.textContent = i.saisie ? `saisie : ${i.saisie} ↵` : '';
+      guideT.textContent = i.aide; guideFin.hidden = !i.enCours;
+      // case de saisie à l'écran (utile au stylet) : visible quand une valeur peut être tapée
+      if (saisieF) {
+        saisieF.hidden = !i.attente || !!i.attente.premier;   // au 1er point, la saisie x;y reste possible au clavier
+        if (i.attente) {
+          saisieF.querySelector('.dao-saisie-t').textContent = i.attente.titre;
+          saisieIn.placeholder = i.attente.exemple;
+          if (document.activeElement !== saisieIn) saisieIn.value = i.saisie || '';
+        }
+      }
       etat.ortho.classList.toggle('on', i.ortho);
       etat.annuler.disabled = !i.annuler; etat.retablir.disabled = !i.retablir;
       cotebar.hidden = traceur?.outil() !== 'cote';
@@ -399,6 +463,12 @@ function monterPage(el, remonter) {
     const b = ev.target.closest('[data-op]'); if (!b) return;
     if (b.dataset.op === 'supprimer') traceur.supprimerSelection(); else traceur.lancerOp(b.dataset.op);
   });
+  saisieF.addEventListener('submit', (ev) => {
+    ev.preventDefault();
+    const v = saisieIn.value.trim(); saisieIn.value = '';
+    traceur.saisir(v); saisieIn.blur();
+  });
+  saisieIn.addEventListener('keydown', (ev) => { if (ev.key === 'Escape') { saisieIn.value = ''; saisieIn.blur(); } });
   const touches = (ev) => {
     if (ev.target.closest?.('input, textarea, select, [contenteditable]')) return;
     if (traceur.clavier(ev)) ev.preventDefault();
@@ -622,5 +692,5 @@ function monterPage(el, remonter) {
   });
 
   // appelé par le routeur avant de quitter la page
-  return () => { clearInterval(minuteur); feuille.detruire(); window.removeEventListener('keydown', echap); window.removeEventListener('keydown', touches); document.body.classList.remove('pl-plein-ouvert'); };
+  return () => { clearInterval(minuteur); document.removeEventListener('pointerdown', horsMenu); feuille.detruire(); window.removeEventListener('keydown', echap); window.removeEventListener('keydown', touches); document.body.classList.remove('pl-plein-ouvert'); };
 }
