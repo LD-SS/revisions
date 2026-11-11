@@ -117,6 +117,7 @@ function monterPage(el, remonter) {
           ${choix('echelle', ECHELLES.map((e) => [e, e]), p.echelle, 'Échelle')}
           <label class="chip dao-chip"><input type="checkbox" data-p="grille" ${p.grille ? 'checked' : ''}><span>Grille d'aide</span></label>
           <span class="dao-sep"></span>
+          <label class="chip dao-chip dao-tactile" title="Sur tablette avec stylet : le doigt déplace la feuille, seul le stylet dessine"><input type="checkbox" data-stylet ${stockage.lire('dao.stylet', false) ? 'checked' : ''}><span>Stylet seul</span></label>
           <button class="btn" type="button" data-act="cartouche" aria-expanded="false">${icone('crayon')} Cartouche</button>
           <span class="dao-sep"></span>
           <button class="btn icon" type="button" data-act="moins" title="Réduire (molette ou 2 doigts)">−</button>
@@ -206,6 +207,7 @@ function monterPage(el, remonter) {
   cotebar.addEventListener('click', (ev) => { const b = ev.target.closest('[data-cote]'); if (b) traceur.choisirCote(b.dataset.cote); });
   const feuille = monterFeuille(el.querySelector('.dao-cadre-ecran'), p, {
     outil: () => traceur?.outil() || 'main',
+    styletSeul: () => stockage.lire('dao.stylet', false) === true,
     surPointeur: (...a) => traceur?.surPointeur(...a),
     surZoom: (z) => { zoomTxt.textContent = `${z} %`; },
     surCurseur: (c) => { pos.textContent = c ? `X ${fmt(c[0])} · Y ${fmt(c[1])} mm` : 'X — · Y —'; },
@@ -263,6 +265,7 @@ function monterPage(el, remonter) {
   };
   window.addEventListener('keydown', touches);
 
+  el.querySelector('[data-stylet]').addEventListener('change', (ev) => stockage.ecrire('dao.stylet', ev.target.checked));
   el.querySelectorAll('[data-p]').forEach((c) => c.addEventListener('change', () => {
     const k = c.dataset.p;
     p = { ...p, [k]: c.type === 'checkbox' ? c.checked : c.value };
