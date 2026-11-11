@@ -208,3 +208,48 @@ export function trouverPiece(id) {
   const m = /^h([123])-(\d{1,6})$/.exec(String(id || ''));
   return m ? pieceAuHasard(+m[1], +m[2]) : PIECES.find((x) => x.id === id) || null;
 }
+
+/* ----- coupe A-A : plan parallèle à la face avant (y = c), vue de face coupée ----- */
+/**
+ * Plan par l'axe du 1er trou vertical (sinon au milieu de la profondeur).
+ * @returns {{ c: number, face: object[] (vue de face coupée, sans hachures), dessus: object[] (vue de dessus + trace du plan A-A),
+ *             hachure: object (entité t:'h' de la solution), matiere: (x, z) => boolean (coordonnées pièce), cadres: object }}
+ */
+export function coupeA(piece, origine = [20, 90], ecart = 20) {
+  const v = vues(piece, origine, ecart);
+  const b = boite(piece), P = piece.prof, [ox, oy] = origine;
+  const F = (x, z) => [ox + x - b.x0, oy + z - b.z0];
+  const D = (x, y) => [ox + x - b.x0, oy - ecart - P + y];
+  const tz = (piece.trous || []).filter((t) => t.axe === 'z');
+  const c = tz.length ? tz[0].y : Math.round(P / 2);
+  const coupes = tz.filter((t) => Math.abs(t.y - c) < t.d / 2 - 1e-6).map((t) => ({ ...t, w: Math.sqrt((t.d / 2) ** 2 - (t.y - c) ** 2) }));
+  const ty = (piece.trous || []).filter((t) => t.axe === 'y');
+  const face = [];
+  const seg = (a, q, s) => { const p1 = F(...a), p2 = F(...q); face.push(L(p1[0], p1[1], p2[0], p2[1], s)); };
+  piece.profil.forEach((p, i) => seg(p, piece.profil[(i + 1) % piece.profil.length], 'v'));
+  for (const t of ty) {
+    const [cx, cz] = F(t.x, t.z), r = t.d / 2;
+    face.push({ t: 'c', cx: r3(cx), cy: r3(cz), r: r3(r), s: 'v' }, L(cx - r - DEB_AXE, cz, cx + r + DEB_AXE, cz, 'a'), L(cx, cz - r - DEB_AXE, cx, cz + r + DEB_AXE, 'a'));
+  }
+  for (const t of coupes) {
+    const iv = intervallesZ(piece.profil, t.x);
+    for (const [a, q] of iv) for (const dx of [-t.w, t.w]) seg([t.x + dx, a], [t.x + dx, q], 'v');
+    seg([t.x, Math.min(...iv.map((u) => u[0])) - DEB_AXE], [t.x, Math.max(...iv.map((u) => u[1])) + DEB_AXE], 'a');
+  }
+  // trace du plan dans la vue de dessus : trait mixte fin, extrémités renforcées, flèches vers l'arrière (sens d'observation), lettres A
+  const trace = [];
+  const [xa, ya] = D(b.x0 - 9, c), [xb] = D(b.x1 + 9, c);
+  trace.push(L(xa, ya, xb, ya, 'a'), L(xa, ya, xa + 5, ya, 'v'), L(xb - 5, ya, xb, ya, 'v'));
+  for (const x of [xa + 1.5, xb - 1.5]) {
+    trace.push(L(x, ya, x, ya + 8, 'n'), L(x, ya + 8, x - 1.2, ya + 4.5, 'n'), L(x, ya + 8, x + 1.2, ya + 4.5, 'n'));
+    trace.push({ t: 'x', x: r3(x + (x < ox ? -5 : 2)), y: r3(ya + 3), txt: 'A', h: 5, s: 'n' });
+  }
+  // matière coupée (coordonnées pièce)
+  const dansP = (x, z) => { let d = false; const pr = piece.profil; for (let i = 0, j = pr.length - 1; i < pr.length; j = i++) { const [xi, zi] = pr[i], [xj, zj] = pr[j]; if ((zi > z) !== (zj > z) && x < ((xj - xi) * (z - zi)) / (zj - zi) + xi) d = !d; } return d; };
+  const matiere = (x, z) => dansP(x, z) && !ty.some((t) => Math.hypot(x - t.x, z - t.z) < t.d / 2) && !coupes.some((t) => Math.abs(x - t.x) < t.w);
+  // hachure de la solution (contour du profil, trous = disques et bandes des trous coupés)
+  const cercle = (t) => Array.from({ length: 48 }, (_, k) => F(t.x + (t.d / 2) * Math.cos((k / 48) * 2 * Math.PI), t.z + (t.d / 2) * Math.sin((k / 48) * 2 * Math.PI)));
+  const bandes = coupes.flatMap((t) => intervallesZ(piece.profil, t.x).map(([a, q]) => [F(t.x - t.w, a), F(t.x + t.w, a), F(t.x + t.w, q), F(t.x - t.w, q)]));
+  const hachure = { t: 'h', pts: piece.profil.map((p) => F(...p)), trous: [...ty.map(cercle), ...bandes], ang: 45, pas: 3, s: 'n' };
+  return { c, face: nettoyer(face), dessus: [...v.dessus, ...trace], hachure, matiere, cadres: v.cadres };
+}
