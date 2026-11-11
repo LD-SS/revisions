@@ -103,3 +103,79 @@ export function svgPerspective(piece, { cotes = true, largeur = 420 } = {}) {
   const x0 = Math.min(...us) - m, y0 = Math.min(...vs) - m, w = Math.max(...us) - Math.min(...us) + 2 * m, h = Math.max(...vs) - Math.min(...vs) + 2 * m;
   return `<svg viewBox="${f2(x0)} ${f2(y0)} ${f2(w)} ${f2(h)}" width="${largeur}" role="img" aria-label="Perspective isométrique de la pièce ${String(piece.nom || '').replace(/"/g, '')}" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;background:#fff">${corps}${cot}</svg>`;
 }
+
+/* =====================================================================
+   PERSPECTIVE EN ENTITÉS DAO (pour les exercices : la solution à comparer)
+   ---------------------------------------------------------------------
+   type 'iso'  : isométrique, X = (x − y)·cos30°, Y = (x + y)·sin30° + z
+   type 'cav'  : cavalière à 45°, k = 0,5 : X = x + k·y·cos45°, Y = z + k·y·sin45°
+   Seules les arêtes vues sont rendues (traits forts), par un test de
+   visibilité point par point (tous les 0,5 mm) contre les faces tournées
+   vers l'observateur. Les trous ne sont pas représentés (pièce pleine).
+   origine = position sur la feuille (mm réels) du coin avant-bas-gauche.
+   ===================================================================== */
+const r3 = (v) => Math.round(v * 1000) / 1000;
+export function perspectiveEntites(piece, origine, type = 'iso') {
+  const b = boite(piece), P = piece.prof, prof = piece.profil, [Ox, Oy] = origine;
+  const k = 0.5, c45 = Math.SQRT1_2;
+  const proj = type === 'cav'
+    ? ([x, y, z]) => [Ox + (x - b.x0) + k * y * c45, Oy + (z - b.z0) + k * y * c45]
+    : ([x, y, z]) => [Ox + (x - b.x0 - y) * C30, Oy + (x - b.x0 + y) * S30 + (z - b.z0)];
+  const w = type === 'cav' ? [-k * c45, 1, -k * c45] : [1, 1, -1];        // direction d'observation (vers l'arrière)
+  const aire = prof.reduce((s, p, i) => { const q = prof[(i + 1) % prof.length]; return s + p[0] * q[1] - q[0] * p[1]; }, 0);
+  const sens = aire > 0 ? 1 : -1;
+  // faces : avant (y = 0, normale −y), arrière (y = P), latérales
+  const faces = [{ n: [0, -1, 0], c: 0, dedans: (p) => p[1] > -1e-6 && p[1] < 1e-6 && dansProf(p[0], p[2]) }];
+  faces.push({ n: [0, 1, 0], c: P, dedans: (p) => Math.abs(p[1] - P) < 1e-6 && dansProf(p[0], p[2]) });
+  function dansProf(x, z) {
+    let d = false;
+    for (let i = 0, j = prof.length - 1; i < prof.length; j = i++) { const [xi, zi] = prof[i], [xj, zj] = prof[j]; if ((zi > z) !== (zj > z) && x < ((xj - xi) * (z - zi)) / (zj - zi) + xi) d = !d; }
+    return d;
+  }
+  prof.forEach(([x1, z1], i) => {
+    const [x2, z2] = prof[(i + 1) % prof.length];
+    const L0 = Math.hypot(x2 - x1, z2 - z1);
+    const n = [sens * (z2 - z1) / L0, 0, -sens * (x2 - x1) / L0];
+    faces.push({ n, c: n[0] * x1 + n[2] * z1, dedans: (p) => { const s = ((p[0] - x1) * (x2 - x1) + (p[2] - z1) * (z2 - z1)) / (L0 * L0); return s > 1e-4 && s < 1 - 1e-4 && p[1] > 1e-4 && p[1] < P - 1e-4; }, lat: i });
+  });
+  const dot = (a, q) => a[0] * q[0] + a[1] * q[1] + a[2] * q[2];
+  const avant = faces.filter((f) => dot(f.n, w) < -1e-9);
+  const vue = (p) => !avant.some((f) => {
+    const t = (f.c - dot(f.n, p)) / dot(f.n, w);
+    if (t > -1e-4) return false;                         // la face n'est pas devant le point
+    const q = [p[0] + t * w[0], p[1] + t * w[1], p[2] + t * w[2]];
+    return f.dedans(q);
+  });
+  const avantLat = new Set(avant.filter((f) => f.lat !== undefined).map((f) => f.lat));
+  const aretes = [];
+  prof.forEach(([x1, z1], i) => {
+    const [x2, z2] = prof[(i + 1) % prof.length];
+    aretes.push([[x1, 0, z1], [x2, 0, z2]]);                                         // face avant (toujours vue)
+    if (avantLat.has(i)) aretes.push([[x1, P, z1], [x2, P, z2]]);                    // arrière, si la face latérale est vue
+    if (avantLat.has(i) || avantLat.has((i - 1 + prof.length) % prof.length)) aretes.push([[x1, 0, z1], [x1, P, z1]]);
+  });
+  const out = [];
+  for (const [A, B] of aretes) {
+    const L = Math.hypot(B[0] - A[0], B[1] - A[1], B[2] - A[2]), n = Math.max(2, Math.ceil(L / 0.5));
+    let debut = null;
+    for (let s = 0; s <= n; s++) {
+      const t = s / n, p = [A[0] + (B[0] - A[0]) * t, A[1] + (B[1] - A[1]) * t, A[2] + (B[2] - A[2]) * t];
+      const v = vue(p);
+      if (v && debut === null) debut = t;
+      if ((!v || s === n) && debut !== null) {
+        const fin = v ? t : (s - 1) / n;
+        if ((fin - debut) * L > 1) {
+          const P1 = proj([A[0] + (B[0] - A[0]) * debut, A[1] + (B[1] - A[1]) * debut, A[2] + (B[2] - A[2]) * debut]);
+          const P2 = proj([A[0] + (B[0] - A[0]) * fin, A[1] + (B[1] - A[1]) * fin, A[2] + (B[2] - A[2]) * fin]);
+          out.push({ t: 'l', x1: r3(P1[0]), y1: r3(P1[1]), x2: r3(P2[0]), y2: r3(P2[1]), s: 'v' });
+        }
+        debut = null;
+      }
+    }
+  }
+  // cadre de la figure (pour situer la zone de l'élève)
+  const pts = [];
+  for (const [x, z] of prof) for (const y of [0, P]) pts.push(proj([x, y, z]));
+  const xs = pts.map((q) => q[0]), ys = pts.map((q) => q[1]);
+  return { traits: out, cadre: { x: Math.min(...xs), y: Math.min(...ys), w: Math.max(...xs) - Math.min(...xs), h: Math.max(...ys) - Math.min(...ys) } };
+}
