@@ -1015,3 +1015,26 @@ label.cgu-ok input{margin-top:3px}
 .dao-svg .dao-ct-sym .dao-ct-axe{stroke-width:.18;stroke-dasharray:2 .6 .3 .6}
 .dao-svg .dao-reticule{fill:none;stroke:var(--accent);stroke-width:1.2;vector-effect:non-scaling-stroke}
 @media (max-width:640px){.dao-sep{display:none}.dao-astuce{display:none}.dao-cadre-ecran{height:60vh}}
+
+/* DAO : outils de tracé */
+.dao-groupe{display:flex;flex-wrap:wrap;gap:4px;padding-right:8px;border-right:1px solid var(--border)}
+.dao-groupe:last-child{border-right:0}
+.dao-b{gap:5px;padding:6px 10px}
+.dao-b.on{background:var(--accent-weak);border-color:var(--accent);color:var(--text);font-weight:600}
+.dao-ech{width:30px;height:10px}
+.dao-ech line{stroke:currentColor;fill:none}
+.dao-ech .dao-ech-v{stroke-width:2.6}.dao-ech .dao-ech-n{stroke-width:1}
+.dao-ech .dao-ech-c{stroke-width:1.2;stroke-dasharray:5 3}.dao-ech .dao-ech-a{stroke-width:1;stroke-dasharray:10 3 2 3}
+.dao-aide{display:flex;flex-wrap:wrap;gap:4px 18px;font-size:12.5px}
+.dao-aide-t{color:var(--text)}
+.dao-saisie{background:var(--accent-weak);color:var(--text);border-radius:6px;padding:0 8px;font-weight:600}
+.dao-svg .dao-t{fill:none;stroke:#111;stroke-linecap:round}
+.dao-svg .dao-t-v{stroke-width:.5}
+.dao-svg .dao-t-n{stroke-width:.25}
+.dao-svg .dao-t-c{stroke-width:.3;stroke-dasharray:3 1.2;stroke-linecap:butt}
+.dao-svg .dao-t-a{stroke-width:.25;stroke-dasharray:8 1.2 1 1.2;stroke-linecap:butt}
+.dao-svg .dao-ap{stroke:var(--accent)}
+.dao-svg .dao-ap-aide{stroke-dasharray:1.5 1.5;stroke-width:.2}
+.dao-svg .dao-acc{fill:none;stroke:#e07b00;stroke-width:1.6;vector-effect:non-scaling-stroke}
+.dao-svg .dao-pt{fill:var(--accent)}
+@media (max-width:640px){.dao-b span{display:none}.dao-groupe{border-right:0}}
