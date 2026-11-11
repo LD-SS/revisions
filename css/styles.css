@@ -1047,3 +1047,11 @@ label.cgu-ok input{margin-top:3px}
 .dao-svg .dao-gomme{stroke:#d33;stroke-width:1.2;opacity:.6;stroke-dasharray:none}
 .dao-svg .dao-cadre-sel{fill:rgba(29,95,209,.08);stroke:#1d5fd1;stroke-width:1;vector-effect:non-scaling-stroke}
 .dao-svg .dao-cadre-tch{fill:rgba(40,160,80,.08);stroke:#28a050;stroke-dasharray:5 3}
+
+/* DAO : cotes */
+.dao-svg .dao-cote-l{fill:none;stroke:#111;stroke-width:.25}
+.dao-svg .dao-fl{fill:#111;stroke:none}
+.dao-svg .dao-cote-t{font-size:3.5px;fill:#111;font-family:"Segoe UI",Roboto,Arial,sans-serif}
+.dao-svg .dao-ap .dao-cote-l{stroke:var(--accent)}.dao-svg .dao-ap .dao-fl,.dao-svg .dao-ap .dao-cote-t{fill:var(--accent)}
+.dao-svg .dao-sel .dao-cote-l{stroke:#1d5fd1;stroke-width:.7;opacity:.6}.dao-svg .dao-sel .dao-fl,.dao-svg .dao-sel .dao-cote-t{fill:#1d5fd1}
+.dao-svg .dao-gomme .dao-cote-l{stroke:#d33;stroke-width:.8}.dao-svg .dao-gomme .dao-fl,.dao-svg .dao-gomme .dao-cote-t{fill:#d33}
