@@ -28,7 +28,7 @@ import { majBoutonProposer, viderAttente } from './proposer.js';
 import { demarrerSynchro, adopterCompte } from './synchro.js';
 import { exigerAcces, ecranPerte } from './vues/acces.js';
 
-const VERSION = '1.31.0 (ergonomie de la planche : rubriques, saisie de mesures, cotes aimantées)';
+const VERSION = '1.31.1 (barres de cote et de sélection dans la zone de dessin)';
 const vue = document.getElementById('vue');
 let nettoyer = null; // fonction fournie par la page affichée, appelée avant d'en changer
 
