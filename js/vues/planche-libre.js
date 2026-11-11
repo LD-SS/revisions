@@ -158,6 +158,13 @@ function formMep(p) {
     <span class="dao-mep-msg">${n ? `<span class="dao-l-man">${esc(m.msg || '')}</span>` : ''}</span>
   </form>`;
 }
+/** Coins des 3 vues (petites équerres de 4 mm en trait fin, marquées mep). */
+function coinsMep(pc, a) {
+  const c = vues(pc, a.o, a.ecart).cadres, r3 = (v) => Math.round(v * 1000) / 1000, k = 4;
+  return Object.values(c).flatMap((q) => [[q.x, q.y, 1, 1], [q.x + q.w, q.y, -1, 1], [q.x + q.w, q.y + q.h, -1, -1], [q.x, q.y + q.h, 1, -1]]
+    .flatMap(([x, y, sx, sy]) => [[x, y, x + sx * Math.min(k, q.w / 3), y], [x, y, x, y + sy * Math.min(k, q.h / 3)]]))
+    .map(([x1, y1, x2, y2]) => ({ t: 'l', x1: r3(x1), y1: r3(y1), x2: r3(x2), y2: r3(y2), s: 'n', mep: 1 }));
+}
 function consigneMep(p) {
   const pc = pieceDe(p.exo); const m = p.exo.mep;
   if (!m.note) return 'dessine la vue de face, la vue de dessus et la vue de gauche (projection européenne, échelle 1:1) où tu veux sur la feuille : la correction retrouve tes vues. Garde-les alignées (lignes de rappel) ; la mise en page n\'est pas notée.';
@@ -246,6 +253,11 @@ function monterPage(el, remonter) {
   const sauver = () => { const t = toutes(); t[id] = { ...p, maj: Date.now() }; stockage.ecrire(CLE, t); };
   // anciennes planches « 3 vues » (repère imposé) : mise en page ajoutée ; notée seulement si rien n'est encore dessiné
   if (p.exo && !p.exo.mode && !p.exo.mep && p.exo.piece && !p.exo.examen) { const vide = !(p.entites || []).length; p = { ...p, exo: { ...p.exo, mep: { note: vide, zone: 'sans' } } }; sauver(); }
+  // anciens cadres de construction complets (v1.35) → seulement les coins
+  if (p.exo?.mep?.ok && (p.entites || []).some((e) => e.mep && e.t === 'l' && Math.hypot(e.x2 - e.x1, e.y2 - e.y1) > 6)) {
+    const pc0 = pieceDe(p.exo);
+    if (pc0) { p = { ...p, entites: [...p.entites.filter((e) => !e.mep), ...coinsMep(pc0, attendu(p, pc0, p.exo.mep.zone))] }; sauver(); }
+  }
   const liste = Object.entries(toutes()).sort((a, b) => (b[1].maj || 0) - (a[1].maj || 0));
   const choix = (nom, valeurs, actuel, etiquette) => `<label class="dao-choix"><span>${etiquette}</span>
     <select class="field" data-p="${nom}">${valeurs.map(([v, l]) => `<option value="${esc(v)}" ${v === actuel ? 'selected' : ''}>${esc(l)}</option>`).join('')}</select></label>`;
@@ -353,7 +365,7 @@ function monterPage(el, remonter) {
             ${p.exo.mode === 'cotes' ? '' : '<button class="btn" type="button" data-exo="solution" aria-pressed="false">Voir la solution</button>'}`}
             ${PERSP.includes(p.exo.mode) || (p.exo.mode === 'ancien' && !p.exo.vox && !p.exo.persp) ? '' : '<button class="btn" type="button" data-exo="piece">Pièce</button>'}
           </span>
-          ${mepAFaire(p) ? formMep(p) : p.exo.mep?.note && p.exo.mep.ok ? `<span class="dao-mep-ok">Mise en page validée${p.exo.mep.essais > 1 ? ` en ${p.exo.mep.essais} essais` : ' du premier coup'} : cadres de construction tracés en trait fin, dessine dedans.</span>` : ''}
+          ${mepAFaire(p) ? formMep(p) : p.exo.mep?.note && p.exo.mep.ok ? `<span class="dao-mep-ok">Mise en page validée${p.exo.mep.essais > 1 ? ` en ${p.exo.mep.essais} essais` : ' du premier coup'} : les 4 coins de chaque vue sont marqués en trait fin (accroches) : dessine le contour de chaque vue en trait fort entre ses coins.</span>` : ''}
           <span class="dao-exo-res">${p.exo.examen && !p.exo.examen.fini ? '<b>Mode examen</b> : pas de correction ni de solution avant d\'avoir rendu la copie.' : p.exo.score != null ? `Meilleur score : <b>${p.exo.score} %</b>` : ''}</span>
           ${p.exo.examen?.note != null ? `<span class="dao-exam-note">Note d'examen : <b>${p.exo.examen.note} %</b> · rendu en ${p.exo.examen.temps} min sur ${p.exo.examen.duree}</span>` : ''}
         </div>` : ''}
@@ -745,11 +757,8 @@ function monterPage(el, remonter) {
         if (essais >= 4) msg += ` Réponse : L = ${nombreFr(a.W)}, H = ${nombreFr(a.H)}, P = ${nombreFr(a.P)} ; ${texteCalcul(a)}.`;
         p = { ...p, exo: { ...p.exo, mep: { ...p.exo.mep, essais, saisie, msg } } }; sauver(); remonter(); return;
       }
-      // juste : cadres de construction des 3 vues en trait fin (points d'accroche)
-      const c = vues(pc2, a.o, a.ecart).cadres, r3 = (v) => Math.round(v * 1000) / 1000;
-      const cadres = Object.values(c).flatMap((q) => [[q.x, q.y, q.x + q.w, q.y], [q.x + q.w, q.y, q.x + q.w, q.y + q.h], [q.x + q.w, q.y + q.h, q.x, q.y + q.h], [q.x, q.y + q.h, q.x, q.y]])
-        .map(([x1, y1, x2, y2]) => ({ t: 'l', x1: r3(x1), y1: r3(y1), x2: r3(x2), y2: r3(y2), s: 'n', mep: 1 }));
-      p = { ...p, entites: [...(p.entites || []).filter((e) => !e.mep), ...cadres], exo: { ...p.exo, mep: { ...p.exo.mep, ok: true, essais, saisie, msg: '' } } }; sauver(); remonter();
+      // juste : les 4 coins de chaque vue en trait fin (points d'accroche)
+      p = { ...p, entites: [...(p.entites || []).filter((e) => !e.mep), ...coinsMep(pc2, a)], exo: { ...p.exo, mep: { ...p.exo.mep, ok: true, essais, saisie, msg: '' } } }; sauver(); remonter();
     });
     el.querySelector('[data-mep]')?.addEventListener('change', (ev) => {
       const v = ev.target.value;
