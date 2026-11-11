@@ -4,7 +4,9 @@
    Feuille blanche A4/A3 avec cadre et cartouche, échelle au choix,
    grille d'aide masquable, zoom et déplacement (souris, stylet, doigts).
    Outils de tracé : js/dao/trace.js (ligne, rectangle, cercle, arc, accroches).
-   La planche est gardée sur l'appareil (clé « dao.planche »).
+   Plusieurs planches, rangées dans « planches » ({ id: planche }) :
+   cette clé est synchronisée avec le compte (js/synchro.js), planche par planche.
+   La planche ouverte sur cet appareil : « dao.courante » (non synchronisée).
    ===================================================================== */
 
 import { esc, stockage } from '../utils.js';
@@ -14,11 +16,36 @@ import { matiere } from '../store.js';
 import { monterFeuille, nouvellePlanche, ECHELLES, FORMATS, pasGrille } from '../dao/feuille.js';
 import { creerTraceur, STYLES, OUTILS } from '../dao/trace.js';
 
-const CLE = 'dao.planche';
+const CLE = 'planches';
+const CLE_COURANTE = 'dao.courante';
+const nouvelId = () => `p${Date.now().toString(36)}${Math.floor(Math.random() * 1296).toString(36)}`;
+const toutes = () => { const t = stockage.lire(CLE, {}); return t && typeof t === 'object' ? t : {}; };
+const nomDe = (pl) => pl.cartouche?.titre?.trim() || 'Sans titre';
 
-function lirePlanche() {
+/** Ancienne planche unique (v1.7–1.8, clé « dao.planche ») → liste des planches. */
+function migrer() {
+  const ancienne = stockage.lire('dao.planche', null);
+  if (!ancienne || typeof ancienne !== 'object') return;
+  const t = toutes(); const id = nouvelId();
+  t[id] = { ...ancienne, maj: Date.now() };
+  stockage.ecrire(CLE, t); stockage.ecrire(CLE_COURANTE, id); stockage.supprimer('dao.planche');
+}
+
+/** Id de la planche ouverte (créée si besoin). */
+function idCourant() {
+  migrer();
+  const t = toutes();
+  let id = stockage.lire(CLE_COURANTE, '');
+  if (!t[id]) {
+    id = Object.keys(t).sort((a, b) => (t[b].maj || 0) - (t[a].maj || 0))[0];
+    if (!id) { id = nouvelId(); t[id] = { ...nouvellePlanche(), maj: Date.now() }; stockage.ecrire(CLE, t); }
+    stockage.ecrire(CLE_COURANTE, id);
+  }
+  return id;
+}
+
+function normaliser(s) {
   const d = nouvellePlanche();
-  const s = stockage.lire(CLE, null);
   if (!s || typeof s !== 'object') return d;
   return {
     ...d, ...s,
@@ -39,12 +66,22 @@ const ICONES_OUTILS = {
   arc: '<svg viewBox="0 0 24 24" class="ic"><path d="M5 18A9 9 0 0 1 19 9" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="12" cy="17" r="1.4" fill="currentColor"/></svg>',
 };
 
+/** Rendu de la page ; se remonte elle-même quand on change de planche. */
+export function vuePlancheLibre(el) {
+  let stop = null;
+  const monter = () => { stop?.(); stop = monterPage(el, monter); };
+  monter();
+  return () => stop?.();
+}
+
 const fmt = (v) => (Math.round(v * 10) / 10).toLocaleString('fr-BE', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 
-export function vuePlancheLibre(el) {
+function monterPage(el, remonter) {
   const m = matiere('dessin');
-  let p = lirePlanche();
-  const sauver = () => stockage.ecrire(CLE, p);
+  const id = idCourant();
+  let p = normaliser(toutes()[id]);
+  const sauver = () => { const t = toutes(); t[id] = { ...p, maj: Date.now() }; stockage.ecrire(CLE, t); };
+  const liste = Object.entries(toutes()).sort((a, b) => (b[1].maj || 0) - (a[1].maj || 0));
   const choix = (nom, valeurs, actuel, etiquette) => `<label class="dao-choix"><span>${etiquette}</span>
     <select class="field" data-p="${nom}">${valeurs.map(([v, l]) => `<option value="${esc(v)}" ${v === actuel ? 'selected' : ''}>${esc(l)}</option>`).join('')}</select></label>`;
 
@@ -53,8 +90,12 @@ export function vuePlancheLibre(el) {
       <div class="crumb"><a href="#/">Accueil</a><span class="crumb-sep">›</span><a href="#/dessin">Atelier de dessin</a><span class="crumb-sep">›</span><span>Planche libre</span></div>
       <div class="atelier-retour">
         <a class="btn" href="#/dessin">${icone('fleche-g')} Atelier</a>
-        <span class="badge">En construction</span>
-        <span class="muted">Tracé, accroches et saisie des longueurs au clavier sont prêts ; sélection, cotation et hachures arrivent ensuite.</span>
+        <label class="dao-choix"><span>Planche</span>
+          <select class="field" data-pl>${liste.map(([k, pl]) => `<option value="${esc(k)}" ${k === id ? 'selected' : ''}>${esc(nomDe(pl))}${pl.maj ? ` · ${new Date(pl.maj).toLocaleDateString('fr-BE')}` : ''}</option>`).join('')}</select></label>
+        <button class="btn" type="button" data-pla="nouvelle">${icone('plus')}<span>Nouvelle</span></button>
+        <button class="btn" type="button" data-pla="dupliquer" title="Faire une copie de cette planche">Dupliquer</button>
+        <button class="btn" type="button" data-pla="supprimer" title="Supprimer cette planche">${icone('croix')}<span>Supprimer</span></button>
+        <span class="muted dao-synchro" title="Tes planches suivent ton compte sur tous tes appareils">${liste.length} planche${liste.length > 1 ? 's' : ''} · enregistrées dans ton compte</span>
       </div>
       <div class="dao" data-plein="0">
         <div class="dao-barre" role="toolbar" aria-label="Réglages de la feuille">
@@ -177,6 +218,7 @@ export function vuePlancheLibre(el) {
     const f = new FormData(form);
     p = { ...p, cartouche: { ...p.cartouche, ...Object.fromEntries([...f.entries()].map(([k, v]) => [k, String(v).trim()])) } };
     sauver(); feuille.maj(p);
+    const opt = el.querySelector(`[data-pl] option[value="${id}"]`); if (opt) opt.textContent = nomDe(p);
   });
   form.addEventListener('submit', (ev) => ev.preventDefault());
 
@@ -188,6 +230,21 @@ export function vuePlancheLibre(el) {
   };
   const echap = (ev) => { if (ev.key === 'Escape' && bloc.classList.contains('dao-plein')) plein(false); };
   window.addEventListener('keydown', echap);
+
+  el.querySelector('[data-pl]').addEventListener('change', (ev) => { stockage.ecrire(CLE_COURANTE, ev.target.value); remonter(); });
+  el.querySelectorAll('[data-pla]').forEach((b) => b.addEventListener('click', () => {
+    const t = toutes(); const a = b.dataset.pla;
+    if (a === 'nouvelle' || a === 'dupliquer') {
+      const n = nouvelId();
+      const base = a === 'nouvelle' ? { ...nouvellePlanche(), format: p.format, orientation: p.orientation, cartouche: { ...nouvellePlanche().cartouche, auteur: p.cartouche.auteur, classe: p.cartouche.classe } }
+        : { ...p, cartouche: { ...p.cartouche, titre: `${nomDe(p)} (copie)` } };
+      t[n] = { ...base, maj: Date.now() };
+      stockage.ecrire(CLE, t); stockage.ecrire(CLE_COURANTE, n); remonter();
+    } else if (a === 'supprimer') {
+      if (b.dataset.sur !== '1') { b.dataset.sur = '1'; b.querySelector('span').textContent = `Supprimer « ${nomDe(p)} » ?`; setTimeout(() => { if (b.isConnected) { b.dataset.sur = ''; b.querySelector('span').textContent = 'Supprimer'; } }, 3500); return; }
+      delete t[id]; stockage.ecrire(CLE, t); stockage.supprimer(CLE_COURANTE); remonter();
+    }
+  }));
 
   el.querySelector('.dao-barre').addEventListener('click', (ev) => {
     const b = ev.target.closest('[data-act]'); if (!b) return;
