@@ -1111,3 +1111,32 @@ label.cgu-ok input{margin-top:3px}
 .dao-exam-note{display:block;margin-top:4px;font-size:14px}
 .at-exam-h{margin:6px 0 0;padding-left:18px;font-size:13px}
 .at-exam-f select{width:auto}
+.dao-saisie-f{position:absolute;left:8px;top:8px;z-index:4;display:flex;align-items:center;gap:6px;padding:6px 8px;border-radius:10px;background:var(--panel);border:1px solid var(--border);box-shadow:0 4px 14px rgba(0,0,0,.12);font-size:13px}
+.dao-saisie-f[hidden]{display:none}
+.dao-saisie-f .dao-saisie-t{font-weight:600;white-space:nowrap}
+.dao-saisie-f input{width:9.5em;padding:4px 8px}
+.dao-svg .dao-bulle rect{fill:var(--panel,#fff);stroke:var(--accent);stroke-width:.15;opacity:.92}
+.dao-svg .dao-bulle text{fill:var(--accent);font-family:"Segoe UI",Arial,sans-serif;font-weight:600}
+/* barre d'outils en rubriques */
+.dao-barres{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.dao-barres>.dao-barre{display:contents}
+.dao-barres>.dao-reglages>*{order:2}
+.dao-barres>.dao-reglages>.dao-sep:first-of-type{display:none}
+.dao-menu{position:relative}
+.dao-menu-b{gap:6px}
+.dao-menu-b .dao-menu-ic:empty{display:none}
+.dao-menu-b .dao-menu-ic{display:inline-flex}
+.dao-menu-p{position:absolute;top:100%;left:0;z-index:30;margin-top:4px;padding:6px;display:flex;flex-direction:column;gap:3px;min-width:210px;box-shadow:0 10px 28px rgba(0,0,0,.18)}
+.dao-menu-p[hidden]{display:none}
+.dao-menu-p .dao-b{justify-content:flex-start;width:100%}
+.dao-menu-p .dao-b span{display:inline!important;flex:1;text-align:left}
+.dao-menu-p kbd{font:600 11px/1 ui-monospace,Consolas,monospace;padding:3px 5px;border:1px solid var(--border);border-radius:5px;color:var(--muted)}
+.dao-menu-r{min-width:250px;gap:8px}
+.dao-menu-r .field,.dao-menu-r .dao-choix{width:100%}
+.dao-menu-r .btn{justify-content:flex-start}
+.dao-guide{position:absolute;left:50%;transform:translateX(-50%);bottom:10px;z-index:4;display:flex;align-items:center;gap:8px;max-width:min(92%,640px);padding:6px 8px 6px 12px;border-radius:999px;background:var(--panel);border:1px solid var(--border);box-shadow:0 4px 14px rgba(0,0,0,.12);font-size:13px;pointer-events:none}
+.dao-guide .btn{pointer-events:auto;padding:4px 12px;min-height:0}
+.dao-guide-t:empty{display:none}
+.dao-svg .dao-acc{stroke-width:2.2;fill:rgba(224,123,0,.12)}
+.dao-svg .dao-acc-t{fill:#e07b00;font-family:"Segoe UI",Arial,sans-serif;font-weight:600}
+.dao-svg .dao-acc-t{paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round}
