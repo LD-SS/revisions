@@ -1038,3 +1038,12 @@ label.cgu-ok input{margin-top:3px}
 .dao-svg .dao-acc{fill:none;stroke:#e07b00;stroke-width:1.6;vector-effect:non-scaling-stroke}
 .dao-svg .dao-pt{fill:var(--accent)}
 @media (max-width:640px){.dao-b span{display:none}.dao-groupe{border-right:0}}
+
+/* DAO : sélection, gomme */
+.dao{position:relative}
+.dao-selbar{position:absolute;z-index:5;margin:6px 0 0 6px;background:var(--panel);border:1px solid var(--accent);border-radius:8px;padding:5px 8px;box-shadow:var(--shadow);max-width:calc(100% - 12px)}
+.dao.dao-plein{position:fixed}
+.dao-svg .dao-sel{stroke:#1d5fd1;stroke-width:.9;opacity:.55;stroke-dasharray:none}
+.dao-svg .dao-gomme{stroke:#d33;stroke-width:1.2;opacity:.6;stroke-dasharray:none}
+.dao-svg .dao-cadre-sel{fill:rgba(29,95,209,.08);stroke:#1d5fd1;stroke-width:1;vector-effect:non-scaling-stroke}
+.dao-svg .dao-cadre-tch{fill:rgba(40,160,80,.08);stroke:#28a050;stroke-dasharray:5 3}
