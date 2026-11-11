@@ -64,6 +64,12 @@ function exerciceAuHasard(code) {
   });
 }
 
+/** Examens rendus (planche libre), du plus récent au plus ancien. */
+function examensFaits() {
+  const t = stockage.lire('planches', {}) || {};
+  return Object.values(t).filter((pl) => pl?.exo?.examen?.fini).sort((a, b) => (b.exo.examen.fin || 0) - (a.exo.examen.fin || 0));
+}
+
 /** Exercices corrigés dans la planche libre (mode 'vues' ou 'cotes') : nombre et moyenne des meilleurs scores. */
 function statsVues(mode = 'vues') {
   const t = stockage.lire('planches', {}) || {};
@@ -186,10 +192,31 @@ export async function vueAtelier(el, params = []) {
           ${[1, 2, 3].map((n) => `<a class="btn" href="#/dessin/libre/locale-h${n}-${graineTrouVertical(n)}" title="Coupe locale autour d'un trou, pièce au hasard, niveau ${n}">${'★'.repeat(n)}</a>`).join('')}
         </div>
       </section>
+      <section class="panel at-hasard at-exam">
+        <div><h3>${icone('chrono')} Mode examen</h3>
+          <p class="muted">Un exercice tiré au hasard, chronométré, sans solution ni correction avant d'avoir rendu la copie. La première correction donne la note.</p>
+          ${(() => { const h = examensFaits(); return h.length ? `<ul class="at-exam-h">${h.slice(0, 5).map((pl) => `<li>${esc(pl.cartouche?.titre || '')} — <b>${pl.exo.examen.note ?? '?'} %</b> · ${pl.exo.examen.temps} / ${pl.exo.examen.duree} min · ${new Date(pl.exo.examen.fin).toLocaleDateString('fr-BE')}</li>`).join('')}</ul>` : ''; })()}</div>
+        <form class="at-hasard-b at-exam-f">
+          <select class="field" name="type" aria-label="Type d'exercice">
+            <option value="hasard">Type au hasard</option><option value="vues">3 vues</option><option value="cotes">Cotation</option><option value="coupe">Coupe A-A</option><option value="demi">Demi-coupe</option><option value="section">Section</option><option value="locale">Coupe locale</option>
+          </select>
+          <select class="field" name="niv" aria-label="Niveau"><option value="1">★</option><option value="2" selected>★★</option><option value="3">★★★</option></select>
+          <select class="field" name="duree" aria-label="Durée"><option value="20">20 min</option><option value="30" selected>30 min</option><option value="45">45 min</option><option value="60">60 min</option></select>
+          <button class="btn primary" type="submit">Commencer</button>
+        </form>
+      </section>
       <div class="at-grille">${visibles.length ? visibles.map(([e, i]) => carte(e, i)).join('') : '<p class="muted">Aucune planche pour ce filtre.</p>'}</div>
       <p class="muted at-note">D'autres planches (plans inclinés, cylindres, cotation) viendront s'ajouter ici.</p>
     </div>`;
   el.querySelectorAll('[data-mini]').forEach((z) => { const e = exos[+z.dataset.mini]; if (e?.piece) monterPiece3D(z, e.piece, { rotation: false }); });
+  el.querySelector('.at-exam-f')?.addEventListener('submit', (ev) => {
+    ev.preventDefault();
+    const f = new FormData(ev.target), n = +f.get('niv');
+    let type = f.get('type');
+    if (type === 'hasard') { const t = ['vues', 'cotes', 'coupe', 'demi', 'section', 'locale']; type = t[Math.floor(Math.random() * t.length)]; }
+    const id = type === 'demi' ? `s${n}-${grainePiece()}` : type === 'locale' ? `h${n}-${graineTrouVertical(n)}` : `h${n}-${grainePiece()}`;
+    location.hash = `#/dessin/libre/exam-${f.get('duree')}-${type}-${id}`;
+  });
   el.querySelectorAll('input[name=atf]').forEach((r) => r.addEventListener('change', () => { stockage.ecrire('atelier.filtre', r.value); vueAtelier(el, params); }));
   return null;
 }
