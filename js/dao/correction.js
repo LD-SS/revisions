@@ -223,3 +223,31 @@ export function corrigerCoupe(pc, exo, es, tol = TOL) {
   const scoreH = nMat ? Math.max(0, (ok.length / nMat) * (vides ? 1 - 0.6 * (videsH / vides) : 1) - dehors / nMat) : 1;
   return { ...r, traits: r.score, hach: { score: Math.round(scoreH * 100), manque, trop }, score: Math.round(r.score * 0.7 + scoreH * 100 * 0.3) };
 }
+
+/* ----- correction d'une section sortie B-B (js/dao/pieces.js sectionB) : même principe que la coupe ----- */
+import { sectionB } from './pieces.js';
+
+export function corrigerSection(pc, exo, es, tol = TOL) {
+  const sol = sectionB(pc, exo.o, exo.ecart), cf = sol.cadre, M = 6, P = pc.prof;
+  const pres = (x, y) => x >= cf.x - M && x <= cf.x + cf.w + M && y >= cf.y - M && y <= cf.y + cf.h + M;
+  const zone = es.filter((e) => (e.t === 'l' && pres((e.x1 + e.x2) / 2, (e.y1 + e.y2) / 2)) || ((e.t === 'c' || e.t === 'a') && pres(e.cx, e.cy)));
+  const r = corriger(sol.section, zone, tol);
+  const hs = es.filter((e) => e.t === 'h' && e.pts?.length > 2 && pres(e.pts[0][0], e.pts[0][1]));
+  const hachure = (x, y) => hs.some((h) => dansPolygone([x, y], h.pts) && !(h.trous || []).some((t) => dansPolygone([x, y], t)));
+  const b = boitePiece(pc), [, oy] = exo.o;
+  const ok = [], manque = [], trop = [];
+  let vides = 0, videsH = 0;
+  const zmin = (cf.y - oy) + b.z0, zmax = zmin + cf.h;
+  const loinBord = (y, z) => [[1, 0], [-1, 0], [0, 1], [0, -1]].every(([dy, dz]) => sol.matiere(y + dy, z + dz) === sol.matiere(y, z));
+  for (let y = 1; y < P; y += 2) {
+    for (let z = zmin + 1; z < zmax; z += 2) {
+      if (!loinBord(y, z)) continue;
+      const m = sol.matiere(y, z), X = cf.x + P - y, Y = oy + z - b.z0, h = hachure(X, Y);
+      if (!m) { vides++; if (h) videsH++; }
+      if (m && h) ok.push([X, Y]); else if (m) manque.push([X, Y]); else if (h) trop.push([X, Y]);
+    }
+  }
+  const nMat = ok.length + manque.length;
+  const scoreH = nMat ? Math.max(0, (ok.length / nMat) * (vides ? 1 - 0.6 * (videsH / vides) : 1)) : 1;
+  return { ...r, traits: r.score, hach: { score: Math.round(scoreH * 100), manque, trop }, score: Math.round(r.score * 0.7 + scoreH * 100 * 0.3) };
+}
