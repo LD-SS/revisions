@@ -16,6 +16,7 @@ import { matiere } from '../store.js';
 import { monterFeuille, nouvellePlanche, ECHELLES, FORMATS, pasGrille, zone, facteur, versPapier, imprimerPlanche, CARTOUCHE } from '../dao/feuille.js';
 import { PIECES, vues, boite as boitePiece, trouverPiece, coupeA, estSymetrique, sectionB, coupeLocale, aTrouVertical, graineTrouVertical } from '../dao/pieces.js';
 import { svgPerspective, perspectiveEntites } from '../dao/perspective.js';
+import { EXERCICES } from '../dao/catalogue.js';
 import { monterPiece3D } from '../piece3d.js';
 import { svgSur } from '../rendu.js';
 import { creerTraceur, STYLES, OUTILS, COTES, svgEntite } from '../dao/trace.js';
@@ -85,7 +86,15 @@ const ICONES_OUTILS = {
 /** Rendu de la page ; se remonte elle-même quand on change de planche. */
 export function vuePlancheLibre(el, piece = null) {
   // #/dessin/libre/<id de pièce> : nouvel exercice, puis l'adresse redevient #/dessin/libre (un rechargement ne le recrée pas)
-  if (piece) {
+  if (piece && String(piece).startsWith('cat-')) {   // exercice du catalogue : on rouvre sa planche s'il en a déjà une
+    const ex = EXERCICES.find((x) => x.id === String(piece).slice(4));
+    if (ex) {
+      const t = toutes(); const deja = Object.entries(t).find(([, pl]) => pl?.exo?.cat === ex.id);
+      if (deja) stockage.ecrire(CLE_COURANTE, deja[0]);
+      else creerExo(ex.piece, normaliser(toutes()[idCourant()]), ex.mode, 0, { cat: ex.id, titre: ex.titre });
+    }
+    history.replaceState(null, '', '#/dessin/libre');
+  } else if (piece) {
     // exam-<durée en min>-<type>-<id> : mode examen
     const ex = /^exam-(\d{1,3})-(vues|cotes|coupe|demi|section|locale|iso|cav)-(.+)$/.exec(String(piece));
     const m = ex ? [null, ex[2], ex[3]] : /^(cotes|coupe|demi|section|locale|iso|cav)-(.+)$/.exec(String(piece));
@@ -163,11 +172,11 @@ export const grainePiece = () => 1 + Math.floor(Math.random() * 99999);
  * Crée une planche d'exercice pour la pièce pc et la rend courante.
  * mode 'vues' : dessine les 3 vues ; 'cotes' : les 3 vues sont données, cote-les.
  */
-function creerExo(pc, depuis = null, mode = 'vues', examen = 0) {
+function creerExo(pc, depuis = null, mode = 'vues', examen = 0, cat = null) {
   pc = pourPersp(pc, mode);
   const t = toutes(); const n = nouvelId();
   const np = nouvellePlanche();
-  const titre = `${examen ? 'Examen – ' : ''}${{ cotes: 'Cotation', coupe: 'Coupe A-A', demi: 'Demi-coupe', section: 'Section B-B', locale: 'Coupe locale', iso: 'Isométrique', cav: 'Cavalière' }[mode] || 'Vues'} : ${pc.nom}`.slice(0, 31);
+  const titre = cat ? String(cat.titre).slice(0, 31) : `${examen ? 'Examen – ' : ''}${{ cotes: 'Cotation', coupe: 'Coupe A-A', demi: 'Demi-coupe', section: 'Section B-B', locale: 'Coupe locale', iso: 'Isométrique', cav: 'Cavalière' }[mode] || 'Vues'} : ${pc.nom}`.slice(0, 31);
   const base = { ...np, format: PERSP.includes(mode) ? 'A3' : 'A4', orientation: 'paysage', echelle: '1:1', cartouche: { ...np.cartouche, titre, auteur: depuis?.cartouche?.auteur || np.cartouche.auteur, classe: depuis?.cartouche?.classe || np.cartouche.classe } };
   const b = boitePiece(pc), z = zone(base), k = facteur(base.echelle);
   const [ecart, marge] = mode === 'cotes' ? [30, 25] : [15, 15];
@@ -178,7 +187,7 @@ function creerExo(pc, depuis = null, mode = 'vues', examen = 0) {
     const haut = mode === 'iso' ? (W + P) * 0.5 + H : H + P * 0.354;
     r0 = [Math.round(o[0] + W + ecart + P + 35 + (mode === 'iso' ? P * 0.866 : 0)), Math.round(Math.max(55, o[1] + H - haut))];
   }
-  const exo = { piece: pc.id, o, ecart, ...(r0 ? { r: r0 } : {}), ...(mode !== 'vues' ? { mode } : {}), ...(examen ? { examen: { duree: examen, debut: Date.now() } } : {}) };
+  const exo = { piece: pc.id, o, ecart, ...(r0 ? { r: r0 } : {}), ...(mode !== 'vues' ? { mode } : {}), ...(examen ? { examen: { duree: examen, debut: Date.now() } } : {}), ...(cat ? { cat: cat.cat } : {}) };
   let entites = [];
   if (mode === 'cotes') { const v = vues(pc, o, ecart); entites = [...v.face, ...v.dessus, ...v.gauche]; }
   if (mode === 'coupe' || mode === 'demi') entites = coupeA(pc, o, ecart, { demi: mode === 'demi' }).dessus;
