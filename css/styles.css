@@ -1146,3 +1146,9 @@ label.cgu-ok input{margin-top:3px}
 .at-serie{margin:18px 0 6px}
 .at-serie h3{margin:0 0 2px}
 .at-serie>p{margin:0 0 10px;font-size:13.5px}
+
+.dao-mep-form{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;padding:8px 0;border-top:1px dashed var(--border);border-bottom:1px dashed var(--border);margin:4px 0}
+.dao-mep-msg{flex-basis:100%}
+.dao-mep-ok{display:block;color:var(--ok,#15803d);margin:2px 0}
+.dao-zone[data-bloque]>*:not(.dao-bloque-msg){pointer-events:none;opacity:.45;filter:grayscale(.6)}
+.dao-bloque-msg{position:absolute;z-index:5;top:40%;left:50%;transform:translate(-50%,-50%);background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:12px 16px;max-width:360px;text-align:center;box-shadow:0 4px 18px rgba(0,0,0,.15)}
