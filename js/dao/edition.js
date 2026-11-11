@@ -25,6 +25,7 @@ export function distanceA(e, p) {
     if (e.k === 'ang') return Math.min(distSeg(p, q[1], q[2]), distSeg(p, q[2], q[3]));
     return distSeg(p, q[2], q[3]);
   }
+  if (e.t === 'p') return dist([e.cx, e.cy], p);
   if (e.t === 'h' || e.t === 'x') {
     const q = pointsDe(e);
     if (e.t === 'h' ? dansPolygone(p, q) : (p[0] >= q[0][0] && p[0] <= q[2][0] && p[1] >= q[0][1] && p[1] <= q[2][1])) return 0;
@@ -53,6 +54,7 @@ export function boite(e) {
   if (e.t === 'q') { const q = pointsCote(e); const xs = q.map((v) => v[0]), ys = q.map((v) => v[1]); return [Math.min(...xs), Math.min(...ys), Math.max(...xs), Math.max(...ys)]; }
   if (e.t === 'l') return [Math.min(e.x1, e.x2), Math.min(e.y1, e.y2), Math.max(e.x1, e.x2), Math.max(e.y1, e.y2)];
   if (e.t === 'c') return [e.cx - e.r, e.cy - e.r, e.cx + e.r, e.cy + e.r];
+  if (e.t === 'p') return [e.cx, e.cy, e.cx, e.cy];
   const pts = [surCercle(e.cx, e.cy, e.r, e.a0), surCercle(e.cx, e.cy, e.r, e.a1)];
   for (const a of [0, 90, 180, 270, 360, 450, 540, 630]) if (a > e.a0 && a < e.a1) pts.push(surCercle(e.cx, e.cy, e.r, a));
   const xs = pts.map((q) => q[0]), ys = pts.map((q) => q[1]);
@@ -110,7 +112,7 @@ export function symetrie(e, a, b) {
   if (e.t === 'x') { const [x, y] = refl([e.x, e.y]); return { ...e, x, y }; }
   if (e.t === 'l') { const [x1, y1] = refl([e.x1, e.y1]); const [x2, y2] = refl([e.x2, e.y2]); return { ...e, x1, y1, x2, y2 }; }
   const [cx, cy] = refl([e.cx, e.cy]);
-  if (e.t === 'c') return { ...e, cx, cy };
+  if (e.t === 'c' || e.t === 'p') return { ...e, cx, cy };
   const phi = (Math.atan2(dy, dx) * 180) / Math.PI;
   return arcNormal({ ...e, cx, cy, a0: 2 * phi - e.a1, a1: 2 * phi - e.a0 });
 }
