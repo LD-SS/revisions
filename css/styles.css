@@ -1084,3 +1084,15 @@ label.cgu-ok input{margin-top:3px}
 .dao-piece-t{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px}
 .dao-piece-fig svg{display:block;width:100%;height:auto;border-radius:6px}
 .dao-piece p{margin:4px 0 0;font-size:12px}
+
+/* DAO : exercice des 3 vues et correction */
+.dao-exobar{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;font-size:13.5px;padding:8px 12px}
+.dao-exo-btns{display:flex;gap:6px;flex-wrap:wrap}
+.dao-exo-res{font-size:13.5px}
+.dao-exobar .btn.on{background:var(--accent-weak);border-color:var(--accent)}
+.dao-l-man{color:#d33;font-weight:600}.dao-l-type{color:#8a3ffc;font-weight:600}.dao-l-trop{color:#e07b00;font-weight:600}
+.dao-svg .dao-repere{fill:none;stroke:#1d5fd1;stroke-width:.5}
+.dao-svg .dao-cor-sol{stroke:#1aa35a;opacity:.55}
+.dao-svg .dao-cor-man{stroke:#d33;stroke-width:.9;opacity:.85}
+.dao-svg .dao-cor-type{stroke:#8a3ffc;stroke-width:.9;opacity:.85}
+.dao-svg .dao-cor-trop{stroke:#e07b00;stroke-width:.9;opacity:.85}
