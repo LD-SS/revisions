@@ -28,7 +28,7 @@ import { majBoutonProposer, viderAttente } from './proposer.js';
 import { demarrerSynchro, adopterCompte } from './synchro.js';
 import { exigerAcces, ecranPerte } from './vues/acces.js';
 
-const VERSION = '1.33.0 (Atelier : cylindres, méplats et perçages d’arbres)';
+const VERSION = '1.34.0 (3 vues : mise en page par 3 intervalles égaux, notée ou libre)';
 const vue = document.getElementById('vue');
 let nettoyer = null; // fonction fournie par la page affichée, appelée avant d'en changer
 
