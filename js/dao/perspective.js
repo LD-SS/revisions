@@ -111,7 +111,8 @@ export function svgPerspective(piece, { cotes = true, largeur = 420 } = {}) {
    type 'cav'  : cavalière à 45°, k = 0,5 : X = x + k·y·cos45°, Y = z + k·y·sin45°
    Seules les arêtes vues sont rendues (traits forts), par un test de
    visibilité point par point (tous les 0,5 mm) contre les faces tournées
-   vers l'observateur. Les trous ne sont pas représentés (pièce pleine).
+   vers l'observateur. Trous : bord de l'entrée s'il est vu (ellipse par
+   4 centres en isométrique ; en cavalière, cercle des trous de la face avant).
    origine = position sur la feuille (mm réels) du coin avant-bas-gauche.
    ===================================================================== */
 const r3 = (v) => Math.round(v * 1000) / 1000;
@@ -173,9 +174,53 @@ export function perspectiveEntites(piece, origine, type = 'iso') {
       }
     }
   }
+  // trous : bord de l'entrée, s'il est vu (cercle en cavalière sur la face avant, ellipse par 4 arcs en isométrique)
+  const vec = type === 'cav'
+    ? ([x, y, z]) => [x + k * y * c45, z + k * y * c45]
+    : ([x, y, z]) => [(x - y) * C30, (x + y) * S30 + z];
+  for (const t of piece.trous || []) {
+    const r = t.d / 2;
+    let centre, a, bb;
+    if (t.axe === 'y') { centre = [t.x, 0, t.z]; a = [1, 0, 0]; bb = [0, 0, 1]; }
+    else { const iv = intervallesZ(prof, t.x); centre = [t.x, t.y, Math.max(...iv.map((u) => u[1]))]; a = [1, 0, 0]; bb = [0, 1, 0]; }
+    if (!vue(centre)) continue;
+    const C = proj(centre);
+    if (type === 'cav') {
+      if (t.axe === 'y') out.push({ t: 'c', cx: r3(C[0]), cy: r3(C[1]), r: r3(r), s: 'v' });
+      continue;                                            // en cavalière, les trous verticaux ne sont pas demandés
+    }
+    out.push(...ellipse4(C, vec(a.map((q) => q * r)), vec(bb.map((q) => q * r))));
+  }
   // cadre de la figure (pour situer la zone de l'élève)
   const pts = [];
   for (const [x, z] of prof) for (const y of [0, P]) pts.push(proj([x, y, z]));
   const xs = pts.map((q) => q[0]), ys = pts.map((q) => q[1]);
   return { traits: out, cadre: { x: Math.min(...xs), y: Math.min(...ys), w: Math.max(...xs) - Math.min(...xs), h: Math.max(...ys) - Math.min(...ys) } };
+}
+
+/**
+ * Ellipse isométrique par la méthode des 4 centres : cercle inscrit dans le losange C ± u ± v
+ * (u, v : images des deux rayons perpendiculaires). Renvoie 4 arcs (traits forts, tolérance 1 mm).
+ */
+function ellipse4(C, u, v) {
+  const add = (p, q, f = 1) => [p[0] + f * q[0], p[1] + f * q[1]];
+  const cos = (u[0] * v[0] + u[1] * v[1]) / (Math.hypot(...u) * Math.hypot(...v));
+  if (cos > 0) v = [-v[0], -v[1]];                      // u et v à 120° : les coins obtus sont C + u + v et C − u − v
+  const O1 = add(add(C, u), v), O2 = add(add(C, u, -1), v, -1);
+  const Mu = add(C, u), Mmu = add(C, u, -1), Mv = add(C, v), Mmv = add(C, v, -1);
+  const inter = (p1, p2, p3, p4) => {                   // intersection des droites p1p2 et p3p4
+    const d1 = [p2[0] - p1[0], p2[1] - p1[1]], d2 = [p4[0] - p3[0], p4[1] - p3[1]];
+    const den = d1[0] * d2[1] - d1[1] * d2[0];
+    const t = ((p3[0] - p1[0]) * d2[1] - (p3[1] - p1[1]) * d2[0]) / den;
+    return [p1[0] + d1[0] * t, p1[1] + d1[1] * t];
+  };
+  const Q1 = inter(O1, Mmu, O2, Mv), Q2 = inter(O1, Mmv, O2, Mu);
+  const arc = (c, p, q) => {
+    const ang = (m) => (Math.atan2(m[1] - c[1], m[0] - c[0]) * 180) / Math.PI;
+    let a0 = ang(p), a1 = ang(q);
+    let span = (((a1 - a0) % 360) + 360) % 360;
+    if (span > 180) { [a0, a1] = [a1, a0]; span = 360 - span; }
+    return { t: 'a', cx: r3(c[0]), cy: r3(c[1]), r: r3(Math.hypot(p[0] - c[0], p[1] - c[1])), a0: r3(a0), a1: r3(a0 + span), s: 'v', tol: 1 };
+  };
+  return [arc(O1, Mmu, Mmv), arc(O2, Mu, Mv), arc(Q1, Mmu, Mv), arc(Q2, Mmv, Mu)];
 }
