@@ -62,3 +62,103 @@ export function corriger(solution, eleve, tol = TOL) {
   res.score = total ? Math.max(0, Math.round(((gagne - malus) / total) * 100)) : 0;
   return res;
 }
+
+/* =====================================================================
+   CORRECTION DE LA COTATION des 3 vues d'une pièce (js/dao/pieces.js)
+   ---------------------------------------------------------------------
+   Sur chaque axe de la pièce (x : largeur, z : hauteur, y : profondeur),
+   les « positions » à situer sont les abscisses des arêtes du profil et
+   des axes des trous. Chaque cote linéaire de l'élève (h ou v) est
+   rattachée à la vue où se trouvent ses 2 points d'attache, puis
+   traduite en un lien entre 2 positions de cet axe.
+     situé        : position reliée (par une chaîne de cotes) à l'arête
+                    de départ (la plus petite) ; cotation complète si
+                    toutes les positions sont situées
+     encombrement : la cote d'ensemble (min → max) est exigée
+     en double    : même lien coté deux fois (même dans 2 vues)
+     surabondante : lien qui ferme une chaîne déjà déterminée
+     fausse       : point d'attache qui n'est pas une arête ou un axe
+     Ø            : chaque trou porte une cote de diamètre (vue où il est
+                    un cercle)
+   Les cotes alignées, de rayon et d'angle ne sont pas comptées.
+   ===================================================================== */
+import { vues as vuesPiece, boite as boitePiece } from './pieces.js';
+
+const AXES = { x: 'largeur', z: 'hauteur', y: 'profondeur' };
+
+/** Positions à situer, par axe. */
+export function positionsPiece(pc) {
+  const r = (v) => Math.round(v * 1000) / 1000;
+  const uniq = (t) => [...new Set(t.map(r))].sort((a, b) => a - b);
+  const tr = pc.trous || [];
+  return {
+    x: uniq([...pc.profil.map((p) => p[0]), ...tr.map((t) => t.x)]),
+    z: uniq([...pc.profil.map((p) => p[1]), ...tr.filter((t) => t.axe === 'y').map((t) => t.z)]),
+    y: uniq([0, pc.prof, ...tr.filter((t) => t.axe === 'z').map((t) => t.y)]),
+  };
+}
+
+/**
+ * @param {object} pc     pièce
+ * @param {object} exo    { o, ecart } (placement des vues)
+ * @param {object[]} es   entités de l'élève
+ * @returns {{ score, axes: { x|y|z: { pos, situees: boolean[], encombrement: boolean } }, diam: { ok: object[], manquants: object[] },
+ *             justes: object[], double: object[], surab: object[], fausses: object[] }}
+ */
+export function corrigerCotes(pc, exo, es, tol = TOL) {
+  const v = vuesPiece(pc, exo.o, exo.ecart), b = boitePiece(pc), P = pc.prof;
+  const W = b.x1 - b.x0, [ox, oy] = exo.o;
+  const C = v.cadres;
+  const dans = (c, x, y) => x >= c.x - tol && x <= c.x + c.w + tol && y >= c.y - tol && y <= c.y + c.h + tol;
+  // vue → (axe, conversion vers la coordonnée pièce) pour une cote h ou v
+  const lire = (e) => {
+    for (const [nom, c] of Object.entries(C)) {
+      if (!dans(c, e.x1, e.y1) || !dans(c, e.x2, e.y2)) continue;
+      if (nom === 'face') return e.k === 'h' ? ['x', e.x1 - ox + b.x0, e.x2 - ox + b.x0] : ['z', e.y1 - oy + b.z0, e.y2 - oy + b.z0];
+      if (nom === 'dessus') return e.k === 'h' ? ['x', e.x1 - ox + b.x0, e.x2 - ox + b.x0] : ['y', e.y1 - (oy - exo.ecart - P), e.y2 - (oy - exo.ecart - P)];
+      const g = ox + W + exo.ecart + P;
+      return e.k === 'h' ? ['y', g - e.x1, g - e.x2] : ['z', e.y1 - oy + b.z0, e.y2 - oy + b.z0];
+    }
+    return null;
+  };
+  const pos = positionsPiece(pc);
+  const parent = {}, liens = {};
+  for (const a of Object.keys(pos)) { parent[a] = pos[a].map((_, i) => i); liens[a] = new Set(); }
+  const racine = (a, i) => { while (parent[a][i] !== i) i = parent[a][i] = parent[a][parent[a][i]]; return i; };
+  const res = { justes: [], double: [], surab: [], fausses: [], diam: { ok: [], manquants: [] }, axes: {} };
+  const encombre = { x: false, y: false, z: false };
+  for (const e of es) {
+    if (e.t !== 'q' || (e.k !== 'h' && e.k !== 'v')) continue;
+    const l = lire(e);
+    if (!l) { res.fausses.push(e); continue; }
+    const [a, u, w] = l;
+    const i = pos[a].findIndex((p) => Math.abs(p - u) <= tol), j = pos[a].findIndex((p) => Math.abs(p - w) <= tol);
+    if (i < 0 || j < 0 || i === j) { res.fausses.push(e); continue; }
+    const cle = `${Math.min(i, j)}-${Math.max(i, j)}`;
+    if (liens[a].has(cle)) { res.double.push(e); continue; }
+    liens[a].add(cle);
+    if (Math.min(i, j) === 0 && Math.max(i, j) === pos[a].length - 1) encombre[a] = true;
+    const ri = racine(a, i), rj = racine(a, j);
+    if (ri === rj) { res.surab.push(e); continue; }
+    parent[a][ri] = rj; res.justes.push(e);
+  }
+  let total = 0, gagne = 0;
+  for (const a of Object.keys(pos)) {
+    const r0 = racine(a, 0);
+    const situees = pos[a].map((_, i) => racine(a, i) === r0);
+    res.axes[a] = { nom: AXES[a], pos: pos[a], situees, encombrement: encombre[a] };
+    total += pos[a].length - 1 + 1;
+    gagne += situees.filter(Boolean).length - 1 + (encombre[a] ? 1 : 0);
+  }
+  // diamètres des trous (cote Ø sur le cercle)
+  const ds = es.filter((e) => e.t === 'q' && e.k === 'd');
+  for (const t of pc.trous || []) {
+    const c = t.axe === 'y' ? [ox + t.x - b.x0, oy + t.z - b.z0] : [ox + t.x - b.x0, oy - exo.ecart - P + t.y];
+    const ok = ds.some((d) => Math.hypot(d.cx - c[0], d.cy - c[1]) <= tol && Math.abs(2 * d.r - t.d) <= 0.1);
+    (ok ? res.diam.ok : res.diam.manquants).push({ ...t, c });
+    total += 1; if (ok) gagne += 1;
+  }
+  const malus = 0.5 * (res.double.length + res.surab.length + res.fausses.length);
+  res.score = total ? Math.max(0, Math.round(((gagne - malus) / total) * 100)) : 0;
+  return res;
+}
