@@ -60,6 +60,8 @@ function normaliser(s) {
 
 const ICONES_OUTILS = {
   main: '<svg viewBox="0 0 24 24" class="ic"><path d="M12 2v20M2 12h20M12 2l-3 3M12 2l3 3M12 22l-3-3M12 22l3-3M2 12l3-3M2 12l3 3M22 12l-3-3M22 12l-3 3" stroke="currentColor" stroke-width="1.8" fill="none"/></svg>',
+  selection: '<svg viewBox="0 0 24 24" class="ic"><path d="M5 3l14 8-6 2-3 6z" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/></svg>',
+  gomme: '<svg viewBox="0 0 24 24" class="ic"><path d="M7 21h10M5 15l9-11 6 5-9 11H8z" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/></svg>',
   ligne: '<svg viewBox="0 0 24 24" class="ic"><path d="M4 18 10 7l5 8 5-10" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/></svg>',
   rect: '<svg viewBox="0 0 24 24" class="ic"><rect x="4" y="6" width="16" height="12" stroke="currentColor" stroke-width="2" fill="none"/></svg>',
   cercle: '<svg viewBox="0 0 24 24" class="ic"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/></svg>',
@@ -92,7 +94,7 @@ function monterPage(el, remonter) {
         <a class="btn" href="#/dessin">${icone('fleche-g')} Atelier</a>
         <label class="dao-choix"><span>Planche</span>
           <select class="field" data-pl>${liste.map(([k, pl]) => `<option value="${esc(k)}" ${k === id ? 'selected' : ''}>${esc(nomDe(pl))}${pl.maj ? ` · ${new Date(pl.maj).toLocaleDateString('fr-BE')}` : ''}</option>`).join('')}</select></label>
-        <button class="btn" type="button" data-pla="nouvelle">${icone('plus')}<span>Nouvelle</span></button>
+        <button class="btn" type="button" data-pla="nouvelle">+ <span>Nouvelle</span></button>
         <button class="btn" type="button" data-pla="dupliquer" title="Faire une copie de cette planche">Dupliquer</button>
         <button class="btn" type="button" data-pla="supprimer" title="Supprimer cette planche">${icone('croix')}<span>Supprimer</span></button>
         <span class="muted dao-synchro" title="Tes planches suivent ton compte sur tous tes appareils">${liste.length} planche${liste.length > 1 ? 's' : ''} · enregistrées dans ton compte</span>
@@ -133,6 +135,14 @@ function monterPage(el, remonter) {
           <label>N° <input class="field" name="numero" maxlength="10" value="${esc(p.cartouche.numero)}"></label>
           <p class="muted">La date, l'échelle et le format se remplissent tout seuls.</p>
         </form>
+        <div class="dao-barre dao-selbar" hidden>
+          <b class="dao-sel-n"></b>
+          <button class="btn dao-b" type="button" data-op="deplacer" title="Déplacer la sélection (point de base, puis destination)">Déplacer</button>
+          <button class="btn dao-b" type="button" data-op="copier" title="Copier la sélection (point de base, puis une ou plusieurs destinations)">Copier</button>
+          <button class="btn dao-b" type="button" data-op="miroir" title="Symétrie de la sélection par rapport à un axe (2 points)">Miroir</button>
+          <button class="btn dao-b bad" type="button" data-op="supprimer" title="Supprimer la sélection (Suppr)">${icone('croix')}<span>Supprimer</span></button>
+          <span class="muted">Un type de trait choisi ci-dessus s'applique à la sélection.</span>
+        </div>
         <div class="dao-cadre-ecran"></div>
         <div class="dao-etat muted">
           <span class="dao-pos">X — · Y —</span>
@@ -160,6 +170,7 @@ function monterPage(el, remonter) {
     annuler: el.querySelector('[data-act=annuler]'), retablir: el.querySelector('[data-act=retablir]'),
   };
   let traceur = null;
+  const selbar = el.querySelector('.dao-selbar'), selN = el.querySelector('.dao-sel-n');
   const feuille = monterFeuille(el.querySelector('.dao-cadre-ecran'), p, {
     outil: () => traceur?.outil() || 'main',
     surPointeur: (...a) => traceur?.surPointeur(...a),
@@ -182,6 +193,8 @@ function monterPage(el, remonter) {
       etat.saisie.hidden = !i.saisie; etat.saisie.textContent = i.saisie ? `saisie : ${i.saisie} ↵` : '';
       etat.ortho.classList.toggle('on', i.ortho);
       etat.annuler.disabled = !i.annuler; etat.retablir.disabled = !i.retablir;
+      selbar.hidden = !i.sel; selN.textContent = `${i.sel} élément${i.sel > 1 ? 's' : ''} sélectionné${i.sel > 1 ? 's' : ''} :`;
+      selbar.querySelectorAll('[data-op]').forEach((b) => b.classList.toggle('on', b.dataset.op === i.op));
     },
   });
   const outilMemo = stockage.lire('dao.outil', 'ligne');
@@ -198,6 +211,10 @@ function monterPage(el, remonter) {
       if (b.dataset.sur === '1') { traceur.toutEffacer(); b.dataset.sur = ''; b.querySelector('span').textContent = 'Tout effacer'; }
       else { b.dataset.sur = '1'; b.querySelector('span').textContent = 'Confirmer ?'; setTimeout(() => { if (b.isConnected) { b.dataset.sur = ''; b.querySelector('span').textContent = 'Tout effacer'; } }, 3000); }
     }
+  });
+  selbar.addEventListener('click', (ev) => {
+    const b = ev.target.closest('[data-op]'); if (!b) return;
+    if (b.dataset.op === 'supprimer') traceur.supprimerSelection(); else traceur.lancerOp(b.dataset.op);
   });
   const touches = (ev) => {
     if (ev.target.closest?.('input, textarea, select, [contenteditable]')) return;
