@@ -438,7 +438,8 @@ export function creerTraceur(o) {
     if (st.op) return st.pts.length ? { titre: 'Déplacement', exemple: '20;0 ou 15<90' } : null;
     const n = st.pts.length;
     switch (st.outil) {
-      case 'ligne': case 'rappel': return n ? { titre: 'Longueur', exemple: '15 · 40<30 · 20;-10' } : { titre: '1er point x;y', exemple: '20;30', premier: true };
+      case 'ligne': return n ? { titre: 'Longueur', exemple: '50', angle: true } : { titre: '1er point x;y', exemple: '20;30', premier: true };
+      case 'rappel': return n ? { titre: 'Longueur', exemple: '15 · 40<30 · 20;-10' } : { titre: '1er point x;y', exemple: '20;30', premier: true };
       case 'l45': return n ? { titre: 'Longueur', exemple: '25' } : null;
       case 'point': return n ? { titre: 'Décalage', exemple: '30;15 · 25<45' } : { titre: 'Départ x;y', exemple: '20;30', premier: true };
       case 'rect': return n ? { titre: 'Côtés', exemple: '40;25 ou 30' } : { titre: '1er coin x;y', exemple: '20;30', premier: true };
