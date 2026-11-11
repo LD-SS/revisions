@@ -13,10 +13,11 @@ import { esc, stockage } from '../utils.js';
 import { icone } from '../icones.js';
 import { styleMatiere } from '../matieres.js';
 import { matiere } from '../store.js';
-import { monterFeuille, nouvellePlanche, ECHELLES, FORMATS, pasGrille, zone, facteur } from '../dao/feuille.js';
+import { monterFeuille, nouvellePlanche, ECHELLES, FORMATS, pasGrille, zone, facteur, versPapier } from '../dao/feuille.js';
 import { PIECES, vues, boite as boitePiece } from '../dao/pieces.js';
 import { svgPerspective } from '../dao/perspective.js';
-import { creerTraceur, STYLES, OUTILS, COTES } from '../dao/trace.js';
+import { creerTraceur, STYLES, OUTILS, COTES, svgEntite } from '../dao/trace.js';
+import { corriger } from '../dao/correction.js';
 
 const CLE = 'planches';
 const CLE_COURANTE = 'dao.courante';
@@ -143,6 +144,10 @@ function monterPage(el, remonter) {
             <button class="btn icon" type="button" data-act="annuler" title="Annuler (Ctrl+Z)">↶</button>
             <button class="btn icon" type="button" data-act="retablir" title="Rétablir (Ctrl+Y)">↷</button>
             <button class="btn" type="button" data-act="effacer" title="Effacer tout le dessin">${icone('croix')}<span>Tout effacer</span></button>
+            <select class="field dao-exo-choix" title="Nouvel exercice : dessine les 3 vues d'une pièce à partir de sa perspective cotée, puis fais corriger">
+              <option value="">Exercice : dessine les 3 vues…</option>
+              ${PIECES.map((pc) => `<option value="${esc(pc.id)}">${esc(pc.nom)}</option>`).join('')}
+            </select>
             <select class="field dao-exemple" title="Ajoute les 3 vues (face, dessus, gauche) d'une pièce d'exemple, pour observer la mise en page européenne">
               <option value="">Exemple : 3 vues d'une pièce…</option>
               ${PIECES.map((pc) => `<option value="${esc(pc.id)}">${esc(pc.nom)}</option>`).join('')}
@@ -176,6 +181,15 @@ function monterPage(el, remonter) {
           <button class="btn dao-b bad" type="button" data-op="supprimer" title="Supprimer la sélection (Suppr)">${icone('croix')}<span>Supprimer</span></button>
           <span class="muted">Un type de trait choisi ci-dessus s'applique à la sélection.</span>
         </div>
+        ${p.exo ? `<div class="panel dao-exobar">
+          <b>Exercice :</b> <span>dessine la vue de face, la vue de dessus et la vue de gauche (projection européenne, échelle 1:1, écart de ${p.exo.ecart} mm entre les vues). Le coin inférieur gauche de la vue de face est au repère ✚.</span>
+          <span class="dao-exo-btns">
+            <button class="btn primary" type="button" data-exo="corriger">${icone('check')} Corriger</button>
+            <button class="btn" type="button" data-exo="solution" aria-pressed="false">Voir la solution</button>
+            <button class="btn" type="button" data-exo="piece">Pièce</button>
+          </span>
+          <span class="dao-exo-res">${p.exo.score != null ? `Meilleur score : <b>${p.exo.score} %</b>` : ''}</span>
+        </div>` : ''}
         <div class="dao-zone">
         <div class="panel dao-piece" hidden>
           <div class="dao-piece-t"><b class="dao-piece-nom"></b><button class="btn icon" type="button" data-act="fermer-piece" title="Fermer">${icone('croix')}</button></div>
@@ -231,7 +245,7 @@ function monterPage(el, remonter) {
   traceur = creerTraceur({
     feuille,
     planche: () => p,
-    enregistrer: (entites) => { p = { ...p, entites }; sauver(); },
+    enregistrer: (entites) => { p = { ...p, entites }; sauver(); if (p.exo) dessinerExo(null); },
     surOutil: (t) => { marquer('outil', t); stockage.ecrire('dao.outil', t); },
     surStyle: (s) => marquer('style', s),
     surEtat: (i) => {
@@ -278,6 +292,68 @@ function monterPage(el, remonter) {
   };
   window.addEventListener('keydown', touches);
 
+  /* ----- exercice « dessine les 3 vues » ----- */
+  const montrerPiece = (pc) => {
+    const pan = el.querySelector('.dao-piece');
+    pan.querySelector('.dao-piece-nom').textContent = pc.nom;
+    pan.querySelector('.dao-piece-fig').innerHTML = svgPerspective(pc, { largeur: 300 });
+    pan.hidden = false;
+  };
+  const placement = (pc, pl = p) => {
+    const b = boitePiece(pc), z = zone(pl), k = facteur(pl.echelle);
+    const H = b.z1 - b.z0, ecart = 15, marge = 15;
+    return { o: [marge, Math.round(Math.max(pc.prof + ecart + marge, z.h / k - marge - H))], ecart };
+  };
+  let voirSolution = false, resultat = null;
+  function dessinerExo(res) {
+    resultat = res;
+    const pc = PIECES.find((x) => x.id === p.exo?.piece);
+    if (!pc) return;
+    const [x, y] = versPapier(p, ...p.exo.o);
+    let svg = `<path class="dao-repere" d="M${x - 4} ${y}H${x + 4}M${x} ${y - 4}V${y + 4}"/>`;
+    const sol = vues(pc, p.exo.o, p.exo.ecart);
+    const tout = [...sol.face, ...sol.dessus, ...sol.gauche];
+    if (voirSolution) svg += tout.map((e) => svgEntite(p, e, 'dao-cor-sol')).join('');
+    if (res) {
+      svg += res.manquants.map((e) => svgEntite(p, e, 'dao-cor-man')).join('');
+      svg += res.type.map((e) => svgEntite(p, e, 'dao-cor-type')).join('');
+      svg += res.trop.map((e) => svgEntite(p, e, 'dao-cor-trop')).join('');
+    }
+    feuille.calque('correction').innerHTML = svg;
+  }
+  if (p.exo) {
+    const pc = PIECES.find((x) => x.id === p.exo.piece);
+    if (pc) { montrerPiece(pc); dessinerExo(null); }
+    const resTxt = el.querySelector('.dao-exo-res');
+    el.querySelector('.dao-exobar').addEventListener('click', (ev) => {
+      const b = ev.target.closest('[data-exo]'); if (!b || !pc) return;
+      if (b.dataset.exo === 'piece') { montrerPiece(pc); return; }
+      if (b.dataset.exo === 'solution') {
+        voirSolution = !voirSolution; b.setAttribute('aria-pressed', String(voirSolution)); b.classList.toggle('on', voirSolution);
+        dessinerExo(resultat); return;
+      }
+      const sol = vues(pc, p.exo.o, p.exo.ecart);
+      const r = corriger([...sol.face, ...sol.dessus, ...sol.gauche], p.entites || []);
+      const meilleur = Math.max(r.score, p.exo.score ?? 0);
+      p = { ...p, exo: { ...p.exo, score: meilleur } }; sauver();
+      dessinerExo(r);
+      const n = (k, s, pl) => `${k} ${k > 1 ? pl : s}`;
+      resTxt.innerHTML = `Score : <b>${r.score} %</b>${r.score === 100 ? ' — parfait !' : ''} · ${n(r.ok.length, 'trait juste', 'traits justes')}`
+        + (r.manquants.length ? ` · <span class="dao-l-man">${n(r.manquants.length, 'manquant', 'manquants')}</span>` : '')
+        + (r.type.length ? ` · <span class="dao-l-type">${n(r.type.length, 'mauvais type de trait', 'mauvais types de trait')}</span>` : '')
+        + (r.trop.length ? ` · <span class="dao-l-trop">${n(r.trop.length, 'trait en trop', 'traits en trop')}</span>` : '')
+        + ` · meilleur : ${meilleur} %`;
+    });
+  }
+  el.querySelector('.dao-exo-choix').addEventListener('change', (ev) => {
+    const pc = PIECES.find((x) => x.id === ev.target.value); ev.target.value = '';
+    if (!pc) return;
+    const t = toutes(); const n = nouvelId();
+    const base = { ...nouvellePlanche(), format: 'A4', orientation: 'paysage', echelle: '1:1', cartouche: { ...nouvellePlanche().cartouche, titre: `Vues : ${pc.nom}`, auteur: p.cartouche.auteur, classe: p.cartouche.classe } };
+    t[n] = { ...base, exo: { piece: pc.id, ...placement(pc, base) }, maj: Date.now() };
+    stockage.ecrire(CLE, t); stockage.ecrire(CLE_COURANTE, n); remonter();
+  });
+
   el.querySelector('.dao-exemple').addEventListener('change', (ev) => {
     const pc = PIECES.find((x) => x.id === ev.target.value); ev.target.value = '';
     if (!pc) return;
@@ -286,10 +362,7 @@ function monterPage(el, remonter) {
     const oy = Math.max(pc.prof + ecart + marge, z.h / k - marge - H);
     const v = vues(pc, [marge, oy], ecart);
     traceur.inserer([...v.face, ...v.dessus, ...v.gauche]);
-    const pan = el.querySelector('.dao-piece');
-    pan.querySelector('.dao-piece-nom').textContent = pc.nom;
-    pan.querySelector('.dao-piece-fig').innerHTML = svgPerspective(pc, { largeur: 300 });
-    pan.hidden = false;
+    montrerPiece(pc);
   });
   el.querySelector('[data-act=fermer-piece]').addEventListener('click', () => { el.querySelector('.dao-piece').hidden = true; });
   el.querySelector('[data-stylet]').addEventListener('change', (ev) => stockage.ecrire('dao.stylet', ev.target.checked));
