@@ -15,7 +15,7 @@ import { styleMatiere } from '../matieres.js';
 import { matiere } from '../store.js';
 import { monterFeuille, nouvellePlanche, ECHELLES, FORMATS, pasGrille, zone, facteur, versPapier, imprimerPlanche } from '../dao/feuille.js';
 import { PIECES, vues, boite as boitePiece, trouverPiece, coupeA, estSymetrique, sectionB, coupeLocale, aTrouVertical, graineTrouVertical } from '../dao/pieces.js';
-import { svgPerspective } from '../dao/perspective.js';
+import { svgPerspective, perspectiveEntites } from '../dao/perspective.js';
 import { creerTraceur, STYLES, OUTILS, COTES, svgEntite } from '../dao/trace.js';
 import { corriger, corrigerCotes, corrigerCoupe, corrigerSection } from '../dao/correction.js';
 
@@ -85,8 +85,8 @@ export function vuePlancheLibre(el, piece = null) {
   // #/dessin/libre/<id de pièce> : nouvel exercice, puis l'adresse redevient #/dessin/libre (un rechargement ne le recrée pas)
   if (piece) {
     // exam-<durée en min>-<type>-<id> : mode examen
-    const ex = /^exam-(\d{1,3})-(vues|cotes|coupe|demi|section|locale)-(.+)$/.exec(String(piece));
-    const m = ex ? [null, ex[2], ex[3]] : /^(cotes|coupe|demi|section|locale)-(.+)$/.exec(String(piece));
+    const ex = /^exam-(\d{1,3})-(vues|cotes|coupe|demi|section|locale|iso|cav)-(.+)$/.exec(String(piece));
+    const m = ex ? [null, ex[2], ex[3]] : /^(cotes|coupe|demi|section|locale|iso|cav)-(.+)$/.exec(String(piece));
     const pc = trouverPiece(m ? m[2] : piece);
     if (pc) creerExo(pc, normaliser(toutes()[idCourant()]), m ? m[1] : 'vues', ex ? Math.min(240, Math.max(5, +ex[1])) : 0);
     history.replaceState(null, '', '#/dessin/libre');
@@ -101,7 +101,10 @@ const boutonsOutils = (liste) => liste.map((k) => { const o = OUTILS[k]; return 
 
 const fmt = (v) => (Math.round(v * 10) / 10).toLocaleString('fr-BE', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 
-let corrigerAuMontage = false;   // après « Rendre la copie » : corriger dès que la page est remontée
+let corrigerAuMontage = false;
+const PERSP = ['iso', 'cav'];
+/** Pièce de l'exercice (sans trous pour les perspectives). */
+const pieceDe = (exo) => { const pc = trouverPiece(exo?.piece); return pc && PERSP.includes(exo.mode) ? { ...pc, trous: [] } : pc; };   // après « Rendre la copie » : corriger dès que la page est remontée
 
 /** Graine d'une nouvelle pièce au hasard (1 à 99 999). */
 export const grainePiece = () => 1 + Math.floor(Math.random() * 99999);
@@ -111,19 +114,27 @@ export const grainePiece = () => 1 + Math.floor(Math.random() * 99999);
  * mode 'vues' : dessine les 3 vues ; 'cotes' : les 3 vues sont données, cote-les.
  */
 function creerExo(pc, depuis = null, mode = 'vues', examen = 0) {
+  if (PERSP.includes(mode)) pc = { ...pc, trous: [] };   // perspective : pièce pleine (les trous viendront plus tard)
   const t = toutes(); const n = nouvelId();
   const np = nouvellePlanche();
-  const titre = `${examen ? 'Examen – ' : ''}${{ cotes: 'Cotation', coupe: 'Coupe A-A', demi: 'Demi-coupe', section: 'Section B-B', locale: 'Coupe locale' }[mode] || 'Vues'} : ${pc.nom}`.slice(0, 34);
-  const base = { ...np, format: 'A4', orientation: 'paysage', echelle: '1:1', cartouche: { ...np.cartouche, titre, auteur: depuis?.cartouche?.auteur || np.cartouche.auteur, classe: depuis?.cartouche?.classe || np.cartouche.classe } };
+  const titre = `${examen ? 'Examen – ' : ''}${{ cotes: 'Cotation', coupe: 'Coupe A-A', demi: 'Demi-coupe', section: 'Section B-B', locale: 'Coupe locale', iso: 'Isométrique', cav: 'Cavalière' }[mode] || 'Vues'} : ${pc.nom}`.slice(0, 31);
+  const base = { ...np, format: PERSP.includes(mode) ? 'A3' : 'A4', orientation: 'paysage', echelle: '1:1', cartouche: { ...np.cartouche, titre, auteur: depuis?.cartouche?.auteur || np.cartouche.auteur, classe: depuis?.cartouche?.classe || np.cartouche.classe } };
   const b = boitePiece(pc), z = zone(base), k = facteur(base.echelle);
   const [ecart, marge] = mode === 'cotes' ? [30, 25] : [15, 15];
   const o = [marge, Math.round(Math.max(pc.prof + ecart + marge, z.h / k - marge - (b.z1 - b.z0)))];
-  const exo = { piece: pc.id, o, ecart, ...(mode !== 'vues' ? { mode } : {}), ...(examen ? { examen: { duree: examen, debut: Date.now() } } : {}) };
+  let r0 = null;
+  if (PERSP.includes(mode)) {   // origine de la perspective : à droite des 3 vues, sommet aligné sur celui de la vue de face
+    const W = b.x1 - b.x0, H = b.z1 - b.z0, P = pc.prof;
+    const haut = mode === 'iso' ? (W + P) * 0.5 + H : H + P * 0.354;
+    r0 = [Math.round(o[0] + W + ecart + P + 35 + (mode === 'iso' ? P * 0.866 : 0)), Math.round(Math.max(55, o[1] + H - haut))];
+  }
+  const exo = { piece: pc.id, o, ecart, ...(r0 ? { r: r0 } : {}), ...(mode !== 'vues' ? { mode } : {}), ...(examen ? { examen: { duree: examen, debut: Date.now() } } : {}) };
   let entites = [];
   if (mode === 'cotes') { const v = vues(pc, o, ecart); entites = [...v.face, ...v.dessus, ...v.gauche]; }
   if (mode === 'coupe' || mode === 'demi') entites = coupeA(pc, o, ecart, { demi: mode === 'demi' }).dessus;
   if (mode === 'section') entites = sectionB(pc, o, ecart).donnees;
   if (mode === 'locale') entites = coupeLocale(pc, o, ecart)?.donnees || [];
+  if (PERSP.includes(mode)) { const v = vues(pc, o, ecart); entites = [...v.face, ...v.dessus, ...v.gauche]; }
   t[n] = { ...base, ...(examen ? { grille: false } : {}), entites, exo, maj: Date.now() };
   stockage.ecrire(CLE, t); stockage.ecrire(CLE_COURANTE, n);
 }
@@ -183,7 +194,7 @@ function monterPage(el, remonter) {
             <button class="btn" type="button" data-act="imprimer" title="Imprimer la planche à l'échelle réelle : dans la fenêtre d'impression, choisis « Taille réelle » ou « 100 % » (pas « Ajuster à la page »)">🖨<span>Imprimer</span></button>
             <select class="field dao-exo-choix" title="Nouvel exercice sur une pièce vue en perspective cotée, corrigé automatiquement">
               <option value="">Exercice…</option>
-              ${[['vues', 'Dessine les 3 vues'], ['cotes', 'Cote les 3 vues'], ['coupe', 'Coupe A-A'], ['demi', 'Demi-coupe A-A'], ['section', 'Section sortie B-B'], ['locale', 'Coupe locale']].map(([m, l]) => `<optgroup label="${l}">
+              ${[['vues', 'Dessine les 3 vues'], ['cotes', 'Cote les 3 vues'], ['coupe', 'Coupe A-A'], ['demi', 'Demi-coupe A-A'], ['section', 'Section sortie B-B'], ['locale', 'Coupe locale'], ['iso', 'Perspective isométrique'], ['cav', 'Perspective cavalière']].map(([m, l]) => `<optgroup label="${l}">
                 ${[1, 2, 3].map((n) => `<option value="${m}:${m === 'demi' ? 's' : 'h'}${n}">${l.split(' ')[0]} · pièce au hasard ${'★'.repeat(n)}</option>`).join('')}
                 ${PIECES.filter((pc) => (m !== 'demi' || estSymetrique(pc)) && (m !== 'locale' || aTrouVertical(pc))).map((pc) => `<option value="${m}:${esc(pc.id)}">${l.split(' ')[0]} · ${esc(pc.nom)}</option>`).join('')}
               </optgroup>`).join('')}
@@ -222,7 +233,11 @@ function monterPage(el, remonter) {
           <span class="muted">Un type de trait choisi ci-dessus s'applique à la sélection.</span>
         </div>
         ${p.exo ? `<div class="panel dao-exobar">
-          <b>Exercice :</b> <span>${p.exo.mode === 'locale'
+          <b>Exercice :</b> <span>${p.exo.mode === 'iso'
+            ? 'dessine la perspective isométrique de la pièce à partir de ses 3 vues, à l\'échelle 1:1 (mêmes longueurs sur les 3 axes) : largeur selon l\'axe à 30° vers la droite, profondeur selon l\'axe à 30° vers la gauche, hauteurs verticales. Le coin avant-bas-gauche est au repère ✚. Seules les arêtes vues, en traits forts. Astuce : saisie « longueur&lt;angle », ex. 40&lt;30 ou 25&lt;150.'
+            : p.exo.mode === 'cav'
+            ? 'dessine la perspective cavalière de la pièce à partir de ses 3 vues : face avant en vraie grandeur (1:1), fuyantes à 45° vers la droite et vers le haut, réduites de moitié (k = 0,5). Le coin avant-bas-gauche est au repère ✚. Seules les arêtes vues, en traits forts. Astuce : saisie « longueur&lt;angle », ex. 15&lt;45.'
+            : p.exo.mode === 'locale'
             ? 'dessine la vue de face avec une coupe locale autour du trou vertical : entre les deux traits ondulés (fins, déjà tracés), le trou est vu en coupe (traits forts) et la matière coupée est hachurée ; ailleurs, la vue reste normale (traits cachés compris). Le coin inférieur gauche de la vue de face est au repère ✚.'
             : p.exo.mode === 'section'
             ? 'dessine la section sortie B-B (plan tracé sur la vue de face, vue dans le sens des flèches) à la place de la vue de gauche : seule la surface coupée est dessinée, hachurée, avec les axes des trous coupés. Son coin inférieur gauche est au repère ✚.'
@@ -238,7 +253,7 @@ function monterPage(el, remonter) {
               ? `<button class="btn primary" type="button" data-exo="rendre">Rendre la copie</button> <span class="dao-chrono" title="Temps restant">⏱ ${p.exo.examen.duree}:00</span>`
               : `<button class="btn primary" type="button" data-exo="corriger">${icone('check')} Corriger</button>
             ${p.exo.mode === 'cotes' ? '' : '<button class="btn" type="button" data-exo="solution" aria-pressed="false">Voir la solution</button>'}`}
-            <button class="btn" type="button" data-exo="piece">Pièce</button>
+            ${PERSP.includes(p.exo.mode) ? '' : '<button class="btn" type="button" data-exo="piece">Pièce</button>'}
           </span>
           <span class="dao-exo-res">${p.exo.examen && !p.exo.examen.fini ? '<b>Mode examen</b> : pas de correction ni de solution avant d\'avoir rendu la copie.' : p.exo.score != null ? `Meilleur score : <b>${p.exo.score} %</b>` : ''}</span>
           ${p.exo.examen?.note != null ? `<span class="dao-exam-note">Note d'examen : <b>${p.exo.examen.note} %</b> · rendu en ${p.exo.examen.temps} min sur ${p.exo.examen.duree}</span>` : ''}
@@ -371,17 +386,19 @@ function monterPage(el, remonter) {
   let minuteur = null;
   function dessinerExo(res) {
     resultat = res;
-    const pc = trouverPiece(p.exo?.piece);
+    const pc = pieceDe(p.exo);
     if (!pc) return;
     if (p.exo.mode === 'cotes') { feuille.calque('correction').innerHTML = res ? svgCorrCotes(pc, res) : ''; return; }
     const sb = p.exo.mode === 'section' ? sectionB(pc, p.exo.o, p.exo.ecart) : null;
-    const [x, y] = versPapier(p, ...(sb ? sb.repere : p.exo.o));
+    const [x, y] = versPapier(p, ...(sb ? sb.repere : p.exo.r || p.exo.o));
     let svg = `<path class="dao-repere" d="M${x - 4} ${y}H${x + 4}M${x} ${y - 4}V${y + 4}"/>`;
     const points = (r) => {
       const pt = (q, cls) => { const [a, c] = versPapier(p, q[0], q[1]); return `<circle class="${cls}" cx="${a}" cy="${c}" r="0.7"/>`; };
       return r.hach.manque.map((q) => pt(q, 'dao-pt-man')).join('') + r.hach.trop.map((q) => pt(q, 'dao-pt-trop')).join('');
     };
-    if (sb) {
+    if (PERSP.includes(p.exo.mode)) {
+      if (voirSolution) svg += perspectiveEntites(pc, p.exo.r, p.exo.mode).traits.map((e) => svgEntite(p, e, 'dao-cor-sol')).join('');
+    } else if (sb) {
       if (voirSolution) svg += [...sb.section, ...sb.hachures].map((e) => svgEntite(p, e, 'dao-cor-sol')).join('');
       if (res) svg += points(res);
     } else if (['coupe', 'demi', 'locale'].includes(p.exo.mode)) {
@@ -400,8 +417,8 @@ function monterPage(el, remonter) {
     feuille.calque('correction').innerHTML = svg;
   }
   if (p.exo) {
-    const pc = trouverPiece(p.exo.piece);
-    if (pc) { montrerPiece(pc); dessinerExo(null); }
+    const pc = pieceDe(p.exo);
+    if (pc) { if (!PERSP.includes(p.exo.mode)) montrerPiece(pc); dessinerExo(null); }
     const resTxt = el.querySelector('.dao-exo-res');
     // mode examen : la 1re correction après avoir rendu la copie donne la note (elle ne change plus ensuite)
     const noterExamen = (score) => {
@@ -455,7 +472,11 @@ function monterPage(el, remonter) {
         return;
       }
       let r;
-      if (p.exo.mode === 'section') r = corrigerSection(pc, p.exo, p.entites || []);
+      if (PERSP.includes(p.exo.mode)) {
+        const sol = perspectiveEntites(pc, p.exo.r, p.exo.mode), c = sol.cadre, M = 6;
+        const dans = (x, y) => x >= c.x - M && x <= c.x + c.w + M && y >= c.y - M && y <= c.y + c.h + M;
+        r = corriger(sol.traits, (p.entites || []).filter((e) => (e.t === 'l' && dans((e.x1 + e.x2) / 2, (e.y1 + e.y2) / 2)) || ((e.t === 'c' || e.t === 'a') && dans(e.cx, e.cy))));
+      } else if (p.exo.mode === 'section') r = corrigerSection(pc, p.exo, p.entites || []);
       else if (['coupe', 'demi', 'locale'].includes(p.exo.mode)) r = corrigerCoupe(pc, p.exo, p.entites || []);
       else { const sol = vues(pc, p.exo.o, p.exo.ecart); r = corriger([...sol.face, ...sol.dessus, ...sol.gauche], p.entites || []); }
       const meilleur = Math.max(r.score, p.exo.score ?? 0);
