@@ -10,8 +10,10 @@
    ===================================================================== */
 
 import { enregistrerPieces } from './pieces.js';
+import { revolution } from './revolution.js';
 
 const P = (id, nom, prof, profil, trous = []) => ({ id: `cat-${id}`, nom, prof, profil, trous });
+const RV = (id, nom, etages, trous = []) => revolution({ id: `cat-${id}`, nom, etages, trous });
 
 export const SERIES = [
   {
@@ -36,6 +38,18 @@ export const SERIES = [
       { titre: 'Bloc en toit', niveau: 2, mode: 'vues', piece: P('toit', 'Bloc en toit', 40, [[0, 0], [60, 0], [60, 25], [30, 40], [0, 25]]) },
       { titre: 'Pente et marche percées', niveau: 3, mode: 'vues', piece: P('pente-marche', 'Pente et marche percées', 30, [[0, 0], [80, 0], [80, 15], [60, 15], [40, 35], [0, 35]], [{ axe: 'z', x: 20, y: 15, d: 8 }]) },
       { titre: 'Glissière en queue d\'aronde', niveau: 3, mode: 'vues', piece: P('aronde', 'Glissière en queue d\'aronde', 40, [[0, 0], [70, 0], [70, 30], [55, 30], [50, 18], [20, 18], [15, 30], [0, 30]]) },
+    ],
+  },
+  {
+    id: 'cylindres', titre: 'Cylindres et intersections cylindre / plan',
+    intro: 'Un cylindre se voit en rectangle d\'un côté et en cercle de l\'autre, toujours avec son axe. Un méplat (plan qui coupe le cylindre) donne une ligne droite dans une vue et une corde dans la vue de gauche. « méplat à 24 » : hauteur restante depuis le dessous ; « plats 14 » : distance entre les deux plats.',
+    exos: [
+      { titre: 'Axe épaulé', niveau: 1, mode: 'vues', piece: RV('axe-epaule', 'Axe épaulé', [{ l: 25, d: 30 }, { l: 40, d: 20 }]) },
+      { titre: 'Arbre à collerette', niveau: 1, mode: 'vues', piece: RV('collerette', 'Arbre à collerette', [{ l: 25, d: 20 }, { l: 12, d: 36 }, { l: 35, d: 24 }]) },
+      { titre: 'Axe à méplat', niveau: 2, mode: 'vues', piece: RV('meplat', 'Axe à méplat', [{ l: 45, d: 30 }, { l: 25, d: 30, plat: 24 }]) },
+      { titre: 'Tenon à deux plats', niveau: 2, mode: 'vues', piece: RV('tenon', 'Tenon à deux plats', [{ l: 20, d: 24, plats: 14 }, { l: 45, d: 24 }]) },
+      { titre: 'Axe percé', niveau: 2, mode: 'vues', piece: RV('axe-perce', 'Axe percé', [{ l: 30, d: 32 }, { l: 45, d: 20 }], [{ axe: 'z', x: 55, d: 6 }]) },
+      { titre: 'Arbre à plats et goupille', niveau: 3, mode: 'vues', piece: RV('arbre-plats', 'Arbre à plats et goupille', [{ l: 18, d: 22, platsY: 16 }, { l: 30, d: 34 }, { l: 40, d: 26 }], [{ axe: 'y', x: 70, d: 6 }]) },
     ],
   },
   {
