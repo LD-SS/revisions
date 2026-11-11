@@ -251,3 +251,28 @@ export function corrigerSection(pc, exo, es, tol = TOL) {
   const scoreH = nMat ? Math.max(0, (ok.length / nMat) * (vides ? 1 - 0.6 * (videsH / vides) : 1)) : 1;
   return { ...r, traits: r.score, hach: { score: Math.round(scoreH * 100), manque, trop }, score: Math.round(r.score * 0.7 + scoreH * 100 * 0.3) };
 }
+
+/* ----- correction d'un ancien exercice de l'Atelier repris sur la planche (exo.mode = 'ancien') -----
+   exo.sol : traits attendus (mm) ; exo.hach : carrés de matière coupée [x, y bas, côté] ; exo.cible : zone à dessiner. */
+export function corrigerAncien(exo, es, tol = TOL) {
+  const c = exo.cible, M = 6;
+  const pres = (x, y) => !c || (x >= c.x - M && x <= c.x + c.w + M && y >= c.y - M && y <= c.y + c.h + M);
+  const zone = es.filter((e) => (e.t === 'l' && pres((e.x1 + e.x2) / 2, (e.y1 + e.y2) / 2)) || ((e.t === 'c' || e.t === 'a') && pres(e.cx, e.cy)));
+  const r = corriger(exo.sol || [], zone, tol);
+  if (!exo.hach?.length || !c) return { ...r, traits: r.score };
+  const mat = (x, y) => exo.hach.some(([x0, y0, d]) => x >= x0 - 1e-6 && x <= x0 + d + 1e-6 && y >= y0 - 1e-6 && y <= y0 + d + 1e-6);
+  const hs = es.filter((e) => e.t === 'h' && e.pts?.length > 2 && pres(e.pts[0][0], e.pts[0][1]));
+  const hachure = (x, y) => hs.some((h) => dansPolygone([x, y], h.pts) && !(h.trous || []).some((t) => dansPolygone([x, y], t)));
+  const ok = [], manque = [], trop = [];
+  for (let x = c.x + 1; x < c.x + c.w; x += 2) {
+    for (let y = c.y + 1; y < c.y + c.h; y += 2) {
+      const m = mat(x, y);
+      if ([[1, 0], [-1, 0], [0, 1], [0, -1]].some(([dx, dy]) => mat(x + dx, y + dy) !== m)) continue;
+      const h = hachure(x, y);
+      if (m && h) ok.push([x, y]); else if (m) manque.push([x, y]); else if (h) trop.push([x, y]);
+    }
+  }
+  const nMat = ok.length + manque.length;
+  const scoreH = nMat ? Math.max(0, (ok.length - trop.length) / nMat) : 1;
+  return { ...r, traits: r.score, hach: { score: Math.round(scoreH * 100), manque, trop }, score: Math.round(r.score * 0.7 + scoreH * 100 * 0.3) };
+}
