@@ -186,3 +186,40 @@ export function corrigerCotes(pc, exo, es, tol = TOL) {
   res.score = total ? Math.max(0, Math.round(((gagne - malus) / total) * 100)) : 0;
   return res;
 }
+
+/* =====================================================================
+   CORRECTION D'UNE COUPE A-A (vue de face coupée, js/dao/pieces.js coupeA)
+   Traits : comme corriger() (seuls les traits de l'élève dans la zone de
+   la vue de face comptent). Hachures : grille de points tous les 2 mm
+   (à plus de 1 mm des bords) : la matière coupée doit être hachurée, les
+   vides (trous) non ; un trou hachuré fait perdre la part de ce trou.
+   Score = 70 % traits + 30 % hachures.
+   ===================================================================== */
+import { coupeA } from './pieces.js';
+import { dansPolygone } from './hachures.js';
+
+export function corrigerCoupe(pc, exo, es, tol = TOL) {
+  const sol = coupeA(pc, exo.o, exo.ecart), cf = sol.cadres.face, M = 6;
+  const b = boitePiece(pc), [ox, oy] = exo.o;
+  const pres = (x, y) => x >= cf.x - M && x <= cf.x + cf.w + M && y >= cf.y - M && y <= cf.y + cf.h + M;
+  const zoneFace = es.filter((e) => (e.t === 'l' && pres((e.x1 + e.x2) / 2, (e.y1 + e.y2) / 2)) || ((e.t === 'c' || e.t === 'a') && pres(e.cx, e.cy)));
+  const r = corriger(sol.face, zoneFace, tol);
+  const hs = es.filter((e) => e.t === 'h' && e.pts?.length > 2 && pres(e.pts[0][0], e.pts[0][1]));
+  const hachure = (x, y) => hs.some((h) => dansPolygone([x, y], h.pts) && !(h.trous || []).some((t) => dansPolygone([x, y], t)));
+  const ok = [], manque = [], trop = [];
+  let vides = 0, videsH = 0;   // points des trous (dans le contour) : un trou hachuré est une faute grave
+  const loinBord = (x, z) => [[1, 0], [-1, 0], [0, 1], [0, -1], [0.7, 0.7], [-0.7, 0.7], [0.7, -0.7], [-0.7, -0.7]].every(([dx, dz]) => sol.matiere(x + dx, z + dz) === sol.matiere(x, z));
+  for (let x = b.x0 + 1; x < b.x1; x += 2) {
+    for (let z = b.z0 + 1; z < b.z1; z += 2) {
+      if (!loinBord(x, z)) continue;
+      const m = sol.matiere(x, z), X = ox + x - b.x0, Y = oy + z - b.z0, h = hachure(X, Y);
+      const trou = !m && dansPolygone([X, Y], sol.hachure.pts);
+      if (trou) { vides++; if (h) videsH++; }
+      if (m && h) ok.push([X, Y]); else if (m) manque.push([X, Y]); else if (h) trop.push([X, Y]);
+    }
+  }
+  const nMat = ok.length + manque.length;
+  const dehors = trop.length - videsH;
+  const scoreH = nMat ? Math.max(0, (ok.length / nMat) * (vides ? 1 - 0.6 * (videsH / vides) : 1) - dehors / nMat) : 1;
+  return { ...r, traits: r.score, hach: { score: Math.round(scoreH * 100), manque, trop }, score: Math.round(r.score * 0.7 + scoreH * 100 * 0.3) };
+}
