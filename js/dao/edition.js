@@ -5,6 +5,11 @@
 
 import { angleDe, angleSurArc, surCercle, arcNormal, dist, arrondi } from './geom.js';
 import { pointsCote, translaterCote, symetrieCote } from './cotes.js';
+import { dansPolygone } from './hachures.js';
+
+const boiteX = (e) => { const h = e.hr || e.h || 3.5; return [e.x, e.y, e.x + String(e.txt || '').length * h * 0.62, e.y + h]; };
+/** Points d'appui des hachures et textes (sélection au cadre). */
+const pointsDe = (e) => (e.t === 'h' ? e.pts : (() => { const b = boiteX(e); return [[b[0], b[1]], [b[2], b[1]], [b[2], b[3]], [b[0], b[3]]]; })());
 
 const distSeg = (p, a, b) => {
   const dx = b[0] - a[0], dy = b[1] - a[1], L2 = dx * dx + dy * dy;
@@ -19,6 +24,11 @@ export function distanceA(e, p) {
     if (e.k === 'd' || e.k === 'r') return distSeg(p, q[0], q[1]);
     if (e.k === 'ang') return Math.min(distSeg(p, q[1], q[2]), distSeg(p, q[2], q[3]));
     return distSeg(p, q[2], q[3]);
+  }
+  if (e.t === 'h' || e.t === 'x') {
+    const q = pointsDe(e);
+    if (e.t === 'h' ? dansPolygone(p, q) : (p[0] >= q[0][0] && p[0] <= q[2][0] && p[1] >= q[0][1] && p[1] <= q[2][1])) return 0;
+    return Math.min(...q.map((a, i) => distSeg(p, a, q[(i + 1) % q.length])));
   }
   if (e.t === 'l') {
     const dx = e.x2 - e.x1, dy = e.y2 - e.y1, L2 = dx * dx + dy * dy;
@@ -39,6 +49,7 @@ export function toucher(entites, p, tol) {
 
 /** Boîte englobante [xmin, ymin, xmax, ymax]. */
 export function boite(e) {
+  if (e.t === 'h' || e.t === 'x') { const q = pointsDe(e); const xs = q.map((v) => v[0]), ys = q.map((v) => v[1]); return [Math.min(...xs), Math.min(...ys), Math.max(...xs), Math.max(...ys)]; }
   if (e.t === 'q') { const q = pointsCote(e); const xs = q.map((v) => v[0]), ys = q.map((v) => v[1]); return [Math.min(...xs), Math.min(...ys), Math.max(...xs), Math.max(...ys)]; }
   if (e.t === 'l') return [Math.min(e.x1, e.x2), Math.min(e.y1, e.y2), Math.max(e.x1, e.x2), Math.max(e.y1, e.y2)];
   if (e.t === 'c') return [e.cx - e.r, e.cy - e.r, e.cx + e.r, e.cy + e.r];
@@ -64,7 +75,7 @@ export function dansRectangle(entites, a, b, fenetre) {
       const n = 48;
       for (let k = 0; k <= n && !touche; k++) {
         const t = k / n; let q;
-        if (e.t === 'q') { const c = pointsCote(e); q = c[Math.min(c.length - 1, Math.floor(t * c.length))]; } else if (e.t === 'l') q = [e.x1 + t * (e.x2 - e.x1), e.y1 + t * (e.y2 - e.y1)];
+        if (e.t === 'h' || e.t === 'x') { const c = pointsDe(e); q = c[Math.min(c.length - 1, Math.floor(t * c.length))]; } else if (e.t === 'q') { const c = pointsCote(e); q = c[Math.min(c.length - 1, Math.floor(t * c.length))]; } else if (e.t === 'l') q = [e.x1 + t * (e.x2 - e.x1), e.y1 + t * (e.y2 - e.y1)];
         else if (e.t === 'c') q = surCercle(e.cx, e.cy, e.r, t * 360);
         else q = surCercle(e.cx, e.cy, e.r, e.a0 + t * (e.a1 - e.a0));
         touche = q[0] >= x0 && q[0] <= x1 && q[1] >= y0 && q[1] <= y1;
@@ -80,6 +91,8 @@ const r4 = (v) => arrondi(v, 4);
 /** Translation. */
 export function translater(e, dx, dy) {
   if (e.t === 'q') return translaterCote(e, dx, dy);
+  if (e.t === 'h') return { ...e, pts: e.pts.map((q) => [r4(q[0] + dx), r4(q[1] + dy)]), ...(e.trous ? { trous: e.trous.map((t) => t.map((q) => [r4(q[0] + dx), r4(q[1] + dy)])) } : {}) };
+  if (e.t === 'x') return { ...e, x: r4(e.x + dx), y: r4(e.y + dy) };
   if (e.t === 'l') return { ...e, x1: r4(e.x1 + dx), y1: r4(e.y1 + dy), x2: r4(e.x2 + dx), y2: r4(e.y2 + dy) };
   return { ...e, cx: r4(e.cx + dx), cy: r4(e.cy + dy) };
 }
@@ -93,6 +106,8 @@ export function symetrie(e, a, b) {
     return [r4(2 * hx - p[0]), r4(2 * hy - p[1])];
   };
   if (e.t === 'q') return symetrieCote(e, refl, (Math.atan2(dy, dx) * 180) / Math.PI);
+  if (e.t === 'h') return { ...e, pts: e.pts.map(refl).reverse(), ...(e.trous ? { trous: e.trous.map((t) => t.map(refl).reverse()) } : {}), ang: r4(2 * ((Math.atan2(dy, dx) * 180) / Math.PI) - (e.ang ?? 45)) };
+  if (e.t === 'x') { const [x, y] = refl([e.x, e.y]); return { ...e, x, y }; }
   if (e.t === 'l') { const [x1, y1] = refl([e.x1, e.y1]); const [x2, y2] = refl([e.x2, e.y2]); return { ...e, x1, y1, x2, y2 }; }
   const [cx, cy] = refl([e.cx, e.cy]);
   if (e.t === 'c') return { ...e, cx, cy };
