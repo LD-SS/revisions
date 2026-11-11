@@ -195,11 +195,11 @@ export function corrigerCotes(pc, exo, es, tol = TOL) {
    vides (trous) non ; un trou hachuré fait perdre la part de ce trou.
    Score = 70 % traits + 30 % hachures.
    ===================================================================== */
-import { coupeA } from './pieces.js';
+import { coupeA, coupeLocale } from './pieces.js';
 import { dansPolygone } from './hachures.js';
 
 export function corrigerCoupe(pc, exo, es, tol = TOL) {
-  const sol = coupeA(pc, exo.o, exo.ecart, { demi: exo.mode === 'demi' }), cf = sol.cadres.face, M = 6;
+  const sol = exo.mode === 'locale' ? coupeLocale(pc, exo.o, exo.ecart) : coupeA(pc, exo.o, exo.ecart, { demi: exo.mode === 'demi' }), cf = sol.cadres.face, M = 6;
   const b = boitePiece(pc), [ox, oy] = exo.o;
   const pres = (x, y) => x >= cf.x - M && x <= cf.x + cf.w + M && y >= cf.y - M && y <= cf.y + cf.h + M;
   const zoneFace = es.filter((e) => (e.t === 'l' && pres((e.x1 + e.x2) / 2, (e.y1 + e.y2) / 2)) || ((e.t === 'c' || e.t === 'a') && pres(e.cx, e.cy)));
