@@ -3,7 +3,7 @@
    ---------------------------------------------------------------------
    Feuille blanche A4/A3 avec cadre et cartouche, échelle au choix,
    grille d'aide masquable, zoom et déplacement (souris, stylet, doigts).
-   Les outils de tracé arrivent avec le moteur (morceaux suivants).
+   Outils de tracé : js/dao/trace.js (ligne, rectangle, cercle, arc, accroches).
    La planche est gardée sur l'appareil (clé « dao.planche »).
    ===================================================================== */
 
@@ -12,6 +12,7 @@ import { icone } from '../icones.js';
 import { styleMatiere } from '../matieres.js';
 import { matiere } from '../store.js';
 import { monterFeuille, nouvellePlanche, ECHELLES, FORMATS, pasGrille } from '../dao/feuille.js';
+import { creerTraceur, STYLES, OUTILS } from '../dao/trace.js';
 
 const CLE = 'dao.planche';
 
@@ -30,6 +31,14 @@ function lirePlanche() {
   };
 }
 
+const ICONES_OUTILS = {
+  main: '<svg viewBox="0 0 24 24" class="ic"><path d="M12 2v20M2 12h20M12 2l-3 3M12 2l3 3M12 22l-3-3M12 22l3-3M2 12l3-3M2 12l3 3M22 12l-3-3M22 12l-3 3" stroke="currentColor" stroke-width="1.8" fill="none"/></svg>',
+  ligne: '<svg viewBox="0 0 24 24" class="ic"><path d="M4 18 10 7l5 8 5-10" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/></svg>',
+  rect: '<svg viewBox="0 0 24 24" class="ic"><rect x="4" y="6" width="16" height="12" stroke="currentColor" stroke-width="2" fill="none"/></svg>',
+  cercle: '<svg viewBox="0 0 24 24" class="ic"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/></svg>',
+  arc: '<svg viewBox="0 0 24 24" class="ic"><path d="M5 18A9 9 0 0 1 19 9" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="12" cy="17" r="1.4" fill="currentColor"/></svg>',
+};
+
 const fmt = (v) => (Math.round(v * 10) / 10).toLocaleString('fr-BE', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 
 export function vuePlancheLibre(el) {
@@ -45,7 +54,7 @@ export function vuePlancheLibre(el) {
       <div class="atelier-retour">
         <a class="btn" href="#/dessin">${icone('fleche-g')} Atelier</a>
         <span class="badge">En construction</span>
-        <span class="muted">Feuille, échelle et cartouche sont prêts ; les outils de tracé arrivent à la prochaine mise à jour.</span>
+        <span class="muted">Tracé, accroches et saisie des longueurs au clavier sont prêts ; sélection, cotation et hachures arrivent ensuite.</span>
       </div>
       <div class="dao" data-plein="0">
         <div class="dao-barre" role="toolbar" aria-label="Réglages de la feuille">
@@ -62,6 +71,20 @@ export function vuePlancheLibre(el) {
           <button class="btn" type="button" data-act="ajuster" title="Voir toute la feuille">Feuille entière</button>
           <button class="btn primary" type="button" data-act="plein" title="Plein écran">⛶ <span>Plein écran</span></button>
         </div>
+        <div class="dao-barre dao-outils" role="toolbar" aria-label="Outils de dessin">
+          <div class="dao-groupe" role="group" aria-label="Outil">
+            ${Object.entries(OUTILS).map(([k, o]) => `<button class="btn dao-b" type="button" data-outil="${k}" title="${esc(o.nom)} (${o.touche.toUpperCase()})">${ICONES_OUTILS[k]}<span>${esc(o.nom)}</span></button>`).join('')}
+          </div>
+          <div class="dao-groupe" role="group" aria-label="Type de trait">
+            ${Object.entries(STYLES).map(([k, o]) => `<button class="btn dao-b" type="button" data-style="${k}" title="${esc(o.titre)}"><svg viewBox="0 0 34 10" class="dao-ech"><line class="dao-ech-${k}" x1="2" y1="5" x2="32" y2="5"/></svg><span>${esc(o.nom)}</span></button>`).join('')}
+          </div>
+          <div class="dao-groupe">
+            <button class="btn dao-b" type="button" data-act="ortho" title="Mode orthogonal : traits horizontaux ou verticaux seulement (F8, ou maintenir Maj)">⊾ <span>Ortho</span></button>
+            <button class="btn icon" type="button" data-act="annuler" title="Annuler (Ctrl+Z)">↶</button>
+            <button class="btn icon" type="button" data-act="retablir" title="Rétablir (Ctrl+Y)">↷</button>
+            <button class="btn" type="button" data-act="effacer" title="Effacer tout le dessin">${icone('croix')}<span>Tout effacer</span></button>
+          </div>
+        </div>
         <form class="panel dao-cartouche-f" hidden>
           <label>Titre <input class="field" name="titre" maxlength="40" value="${esc(p.cartouche.titre)}" placeholder="Ex. : Support en équerre"></label>
           <label>Dessiné par <input class="field" name="auteur" maxlength="30" value="${esc(p.cartouche.auteur)}" placeholder="Prénom Nom"></label>
@@ -72,8 +95,14 @@ export function vuePlancheLibre(el) {
         <div class="dao-cadre-ecran"></div>
         <div class="dao-etat muted">
           <span class="dao-pos">X — · Y —</span>
+          <span class="dao-mes"></span>
+          <span class="dao-acc-t"></span>
+          <span class="dao-saisie" hidden></span>
           <span class="dao-pas"></span>
-          <span class="dao-astuce">Molette : zoom · glisser : déplacer · tablette : 2 doigts pour zoomer</span>
+        </div>
+        <div class="dao-aide muted">
+          <span class="dao-aide-t"></span>
+          <span class="dao-astuce">Molette ou 2 doigts : zoom · clic du milieu ou Espace + glisser : déplacer</span>
         </div>
       </div>
     </div>`;
@@ -84,18 +113,63 @@ export function vuePlancheLibre(el) {
   const pasTxt = el.querySelector('.dao-pas');
   const majPas = () => { pasTxt.textContent = p.grille ? `grille : ${pasGrille(p)} mm (réels)` : ''; };
 
+  const etat = {
+    mes: el.querySelector('.dao-mes'), acc: el.querySelector('.dao-acc-t'), saisie: el.querySelector('.dao-saisie'),
+    aide: el.querySelector('.dao-aide-t'), ortho: el.querySelector('[data-act=ortho]'),
+    annuler: el.querySelector('[data-act=annuler]'), retablir: el.querySelector('[data-act=retablir]'),
+  };
+  let traceur = null;
   const feuille = monterFeuille(el.querySelector('.dao-cadre-ecran'), p, {
-    outil: () => 'main',
+    outil: () => traceur?.outil() || 'main',
+    surPointeur: (...a) => traceur?.surPointeur(...a),
     surZoom: (z) => { zoomTxt.textContent = `${z} %`; },
     surCurseur: (c) => { pos.textContent = c ? `X ${fmt(c[0])} · Y ${fmt(c[1])} mm` : 'X — · Y —'; },
   });
   majPas();
+
+  const marquer = (attr, v) => el.querySelectorAll(`[data-${attr}]`).forEach((b) => b.classList.toggle('on', b.dataset[attr] === v));
+  traceur = creerTraceur({
+    feuille,
+    planche: () => p,
+    enregistrer: (entites) => { p = { ...p, entites }; sauver(); },
+    surOutil: (t) => { marquer('outil', t); stockage.ecrire('dao.outil', t); },
+    surStyle: (s) => marquer('style', s),
+    surEtat: (i) => {
+      etat.aide.textContent = i.aide;
+      etat.mes.textContent = i.mesure;
+      etat.acc.textContent = i.accroche ? `accroche : ${i.accroche}` : '';
+      etat.saisie.hidden = !i.saisie; etat.saisie.textContent = i.saisie ? `saisie : ${i.saisie} ↵` : '';
+      etat.ortho.classList.toggle('on', i.ortho);
+      etat.annuler.disabled = !i.annuler; etat.retablir.disabled = !i.retablir;
+    },
+  });
+  const outilMemo = stockage.lire('dao.outil', 'ligne');
+  traceur.choisirOutil(OUTILS[outilMemo] ? outilMemo : 'ligne');
+  traceur.choisirStyle('v');
+  el.querySelector('.dao-outils').addEventListener('click', (ev) => {
+    const b = ev.target.closest('button'); if (!b) return;
+    if (b.dataset.outil) traceur.choisirOutil(b.dataset.outil);
+    else if (b.dataset.style) traceur.choisirStyle(b.dataset.style);
+    else if (b.dataset.act === 'ortho') traceur.basculerOrtho();
+    else if (b.dataset.act === 'annuler') traceur.annuler();
+    else if (b.dataset.act === 'retablir') traceur.retablir();
+    else if (b.dataset.act === 'effacer') {
+      if (b.dataset.sur === '1') { traceur.toutEffacer(); b.dataset.sur = ''; b.querySelector('span').textContent = 'Tout effacer'; }
+      else { b.dataset.sur = '1'; b.querySelector('span').textContent = 'Confirmer ?'; setTimeout(() => { if (b.isConnected) { b.dataset.sur = ''; b.querySelector('span').textContent = 'Tout effacer'; } }, 3000); }
+    }
+  });
+  const touches = (ev) => {
+    if (ev.target.closest?.('input, textarea, select, [contenteditable]')) return;
+    if (traceur.clavier(ev)) ev.preventDefault();
+  };
+  window.addEventListener('keydown', touches);
 
   el.querySelectorAll('[data-p]').forEach((c) => c.addEventListener('change', () => {
     const k = c.dataset.p;
     p = { ...p, [k]: c.type === 'checkbox' ? c.checked : c.value };
     sauver(); majPas();
     feuille.maj(p, { recadrer: k === 'format' || k === 'orientation' });
+    traceur.rafraichir();
   }));
 
   const form = el.querySelector('.dao-cartouche-f');
@@ -126,5 +200,5 @@ export function vuePlancheLibre(el) {
   });
 
   // appelé par le routeur avant de quitter la page
-  return () => { feuille.detruire(); window.removeEventListener('keydown', echap); document.body.classList.remove('pl-plein-ouvert'); };
+  return () => { feuille.detruire(); window.removeEventListener('keydown', echap); window.removeEventListener('keydown', touches); document.body.classList.remove('pl-plein-ouvert'); };
 }
