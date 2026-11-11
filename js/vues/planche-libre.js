@@ -344,7 +344,7 @@ function monterPage(el, remonter) {
     r.axes.y.pos.forEach((v, i) => { if (!r.axes.y.situees[i]) { const Y = yDessus + v; svg += L(ox - D, Y, ox + W + D, Y); } });
     svg += r.diam.manquants.map((t) => svgEntite(p, { t: 'c', cx: t.c[0], cy: t.c[1], r: t.d / 2 + 2, s: 'c' }, 'dao-cor-man')).join('');
     svg += [...r.fausses, ...r.surab].map((e) => svgEntite(p, e, 'dao-cor-trop')).join('');
-    svg += r.double.map((e) => svgEntite(p, e, 'dao-cor-type')).join('');
+    svg += [...r.double, ...r.regles.flatMap((x) => x.cotes)].map((e) => svgEntite(p, e, 'dao-cor-type')).join('');
     return svg;
   };
   let voirSolution = false, resultat = null;
@@ -391,7 +391,8 @@ function monterPage(el, remonter) {
           + (r.double.length ? ` · <span class="dao-l-type">${n(r.double.length, 'cote en double', 'cotes en double')}</span>` : '')
           + (r.surab.length ? ` · <span class="dao-l-trop">${n(r.surab.length, 'cote surabondante (chaîne fermée)', 'cotes surabondantes (chaînes fermées)')}</span>` : '')
           + (r.fausses.length ? ` · <span class="dao-l-trop">${n(r.fausses.length, 'cote mal placée', 'cotes mal placées')}</span>` : '')
-          + ` · meilleur : ${meilleur} %`;
+          + ` · meilleur : ${meilleur} %`
+          + (r.regles.length ? `<span class="dao-regles">Présentation (cotes en bleu) : ${r.regles.map((x) => `<span class="dao-l-type">${esc(x.txt)}${x.cotes.length > 1 ? ` ×${x.cotes.length}` : ''}</span>`).join(' · ')}</span>` : '');
         return;
       }
       const sol = vues(pc, p.exo.o, p.exo.ecart);
