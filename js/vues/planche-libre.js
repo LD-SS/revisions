@@ -13,7 +13,8 @@ import { esc, stockage } from '../utils.js';
 import { icone } from '../icones.js';
 import { styleMatiere } from '../matieres.js';
 import { matiere } from '../store.js';
-import { monterFeuille, nouvellePlanche, ECHELLES, FORMATS, pasGrille } from '../dao/feuille.js';
+import { monterFeuille, nouvellePlanche, ECHELLES, FORMATS, pasGrille, zone, facteur } from '../dao/feuille.js';
+import { PIECES, vues, boite as boitePiece } from '../dao/pieces.js';
 import { creerTraceur, STYLES, OUTILS, COTES } from '../dao/trace.js';
 
 const CLE = 'planches';
@@ -141,6 +142,10 @@ function monterPage(el, remonter) {
             <button class="btn icon" type="button" data-act="annuler" title="Annuler (Ctrl+Z)">↶</button>
             <button class="btn icon" type="button" data-act="retablir" title="Rétablir (Ctrl+Y)">↷</button>
             <button class="btn" type="button" data-act="effacer" title="Effacer tout le dessin">${icone('croix')}<span>Tout effacer</span></button>
+            <select class="field dao-exemple" title="Ajoute les 3 vues (face, dessus, gauche) d'une pièce d'exemple, pour observer la mise en page européenne">
+              <option value="">Exemple : 3 vues d'une pièce…</option>
+              ${PIECES.map((pc) => `<option value="${esc(pc.id)}">${esc(pc.nom)}</option>`).join('')}
+            </select>
           </div>
         </div>
         <form class="panel dao-cartouche-f" hidden>
@@ -265,6 +270,15 @@ function monterPage(el, remonter) {
   };
   window.addEventListener('keydown', touches);
 
+  el.querySelector('.dao-exemple').addEventListener('change', (ev) => {
+    const pc = PIECES.find((x) => x.id === ev.target.value); ev.target.value = '';
+    if (!pc) return;
+    const b = boitePiece(pc), z = zone(p), k = facteur(p.echelle);
+    const H = b.z1 - b.z0, ecart = 15, marge = 15;
+    const oy = Math.max(pc.prof + ecart + marge, z.h / k - marge - H);
+    const v = vues(pc, [marge, oy], ecart);
+    traceur.inserer([...v.face, ...v.dessus, ...v.gauche]);
+  });
   el.querySelector('[data-stylet]').addEventListener('change', (ev) => stockage.ecrire('dao.stylet', ev.target.checked));
   el.querySelectorAll('[data-p]').forEach((c) => c.addEventListener('change', () => {
     const k = c.dataset.p;
