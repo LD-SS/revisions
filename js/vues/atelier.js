@@ -19,7 +19,7 @@ import { lecteurExercices, noteExo, preparerDessin } from '../exercices.js';
 import { pieceAuHasard, CONSIGNES } from '../geometrie.js';
 import { monterPiece3D } from '../piece3d.js';
 import { niveauAide, AIDES } from '../planche.js';
-import { vuePlancheLibre, grainePiece } from './planche-libre.js';
+import { vuePlancheLibre, grainePiece, creerAncien } from './planche-libre.js';
 import { graineTrouVertical } from '../dao/pieces.js';
 
 const MID = 'dessin';
@@ -93,10 +93,12 @@ export async function vueAtelier(el, params = []) {
           <a class="btn" href="#/dessin">${icone('fleche-g')} Toutes les planches</a>
           <a class="btn primary" href="${lienHasard(e._type, e.niveau)}" title="Une autre pièce du même niveau">${icone('melanger')} Nouvelle pièce</a>
           <span class="muted">Note le n° ${esc(eid.split('-')[2])} pour la retrouver (même n° = même pièce).</span>
+          <button class="btn" type="button" data-mm title="Refaire cet exercice sur la planche du nouveau moteur (en mm, outils de DAO, impression)">${icone('regle')} Sur la planche (mm)</button>
         </div>
         <div id="atelier-lecteur"></div>
       </div>`;
     lecteurExercices(el.querySelector('#atelier-lecteur'), [e], { prefixe: MID });
+    el.querySelector('[data-mm]').addEventListener('click', () => { if (creerAncien(e)) location.hash = '#/dessin/libre'; });
     return null;
   }
 
@@ -104,10 +106,12 @@ export async function vueAtelier(el, params = []) {
     el.innerHTML = `
       <div class="mc" ${styleMatiere(m)}>
         <div class="crumb"><a href="#/">Accueil</a><span class="crumb-sep">›</span><a href="#/dessin">Atelier de dessin</a><span class="crumb-sep">›</span><span>Exercice</span></div>
-        <div class="atelier-retour"><a class="btn" href="#/dessin">${icone('fleche-g')} Toutes les planches</a></div>
+        <div class="atelier-retour"><a class="btn" href="#/dessin">${icone('fleche-g')} Toutes les planches</a>
+          ${exos.some((x) => x._cle === `${MID}/${cid}/${eid}` && x.planche) ? `<button class="btn" type="button" data-mm title="Refaire cet exercice sur la planche du nouveau moteur (en mm, outils de DAO, impression)">${icone('regle')} Sur la planche (mm)</button>` : ''}</div>
         <div id="atelier-lecteur"></div>
       </div>`;
     lecteurExercices(el.querySelector('#atelier-lecteur'), exos, { prefixe: MID, debut: `${MID}/${cid}/${eid}` });
+    el.querySelector('[data-mm]')?.addEventListener('click', () => { const e = exos.find((x) => x._cle === `${MID}/${cid}/${eid}`); if (creerAncien(e)) location.hash = '#/dessin/libre'; });
     return null;
   }
 
