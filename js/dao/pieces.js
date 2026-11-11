@@ -203,6 +203,9 @@ export function pieceAuHasard(niveau = 1, graine = 1) {
   return { id: `h${niv}-${graine}`, nom: `${NOMS_FORMES[forme]} n° ${graine}`, prof, profil, trous, hasard: niv };
 }
 
+/** Ajoute des pièces au catalogue (ex. js/dao/catalogue.js). */
+export function enregistrerPieces(liste) { for (const pc of liste) if (!PIECES.some((x) => x.id === pc.id)) PIECES.push(pc); }
+
 /** Pièce du catalogue ou pièce générée d'après son id. */
 export function trouverPiece(id) {
   const m = /^([hs])([123])-(\d{1,6})$/.exec(String(id || ''));
