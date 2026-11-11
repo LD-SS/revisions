@@ -1152,3 +1152,4 @@ label.cgu-ok input{margin-top:3px}
 .dao-mep-ok{display:block;color:var(--ok,#15803d);margin:2px 0}
 .dao-zone[data-bloque]>*:not(.dao-bloque-msg){pointer-events:none;opacity:.45;filter:grayscale(.6)}
 .dao-bloque-msg{position:absolute;z-index:5;top:40%;left:50%;transform:translate(-50%,-50%);background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:12px 16px;max-width:360px;text-align:center;box-shadow:0 4px 18px rgba(0,0,0,.15)}
+.dao-mep-form input[readonly]{background:var(--panel2);color:var(--muted,#555)}
