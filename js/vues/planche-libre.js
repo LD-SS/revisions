@@ -165,11 +165,60 @@ function coinsMep(pc, a) {
     .flatMap(([x, y, sx, sy]) => [[x, y, x + sx * Math.min(k, q.w / 3), y], [x, y, x, y + sy * Math.min(k, q.h / 3)]]))
     .map(([x1, y1, x2, y2]) => ({ t: 'l', x1: r3(x1), y1: r3(y1), x2: r3(x2), y2: r3(y2), s: 'n', mep: 1 }));
 }
+/** Énoncé structuré : un but en gras, puis les points à respecter en liste. */
+const enonce = (but, points, astuce = '', etapes = []) => `<b>À faire :</b> ${but}<ul>${points.map((x) => `<li>${x}</li>`).join('')}</ul>${etapes.length ? `<b>Étapes :</b><ol>${etapes.map((x) => `<li>${x}</li>`).join('')}</ol>` : ''}${astuce ? `<span class="muted">Astuce : ${astuce}</span>` : ''}`;
+function consigne(p) {
+  const e = p.exo, rep = 'Le coin inférieur gauche de la vue de face est au repère ✚.';
+  switch (e.mode) {
+    case 'ancien': return enonce(`${esc(e.consigne).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')}`, [`Ancien exercice repris en mm : 1 carreau = ${e.u || 10} mm.`, 'Dessine dans le cadre.']);
+    case 'iso': return enonce('dessiner la <b>perspective isométrique</b> de la pièce à partir de ses 3 vues.', [
+      'Échelle 1:1 : mêmes longueurs sur les 3 axes.',
+      'Largeur : axe à 30° vers la droite. Profondeur : axe à 30° vers la gauche (150°). Hauteurs : verticales.',
+      'Le coin avant-bas-gauche est au repère ✚.',
+      'Seulement les arêtes vues, en traits forts (pas de traits cachés).',
+      'Trous : seulement le bord de l\'entrée, en ellipse par la méthode des 4 centres (4 arcs).'], 'case Angle de l\'outil Ligne (Tab), ex. 40 puis 30°.');
+    case 'cav': return enonce('dessiner la <b>perspective cavalière</b> de la pièce à partir de ses 3 vues.', [
+      'Face avant en vraie grandeur (1:1).',
+      'Fuyantes à 45° vers la droite et vers le haut, réduites de moitié (k = 0,5).',
+      'Le coin avant-bas-gauche est au repère ✚.',
+      'Seulement les arêtes vues, en traits forts.',
+      'Trous de la face avant : leur cercle d\'entrée.'], 'case Angle de l\'outil Ligne (Tab), ex. 15 puis 45°.');
+    case 'locale': return enonce('dessiner la <b>vue de face avec une coupe locale</b> autour du trou vertical.', [
+      'Entre les deux traits ondulés (déjà tracés) : le trou en coupe (traits forts) et la matière coupée hachurée.',
+      'Ailleurs : la vue normale, traits cachés compris.', rep]);
+    case 'section': return enonce('dessiner la <b>section sortie B-B</b> à la place de la vue de gauche.', [
+      'Le plan B-B est tracé sur la vue de face ; regarde dans le sens des flèches.',
+      'Seulement la surface coupée, hachurée.',
+      'Les axes des trous coupés en trait mixte.',
+      'Son coin inférieur gauche est au repère ✚.']);
+    case 'demi': return enonce('dessiner la <b>vue de face en demi-coupe A-A</b> (la pièce est symétrique).', [
+      'À droite de l\'axe de symétrie (trait mixte) : la coupe, matière coupée hachurée.',
+      'À gauche : la vue extérieure, sans traits cachés.', rep]);
+    case 'coupe': return enonce('dessiner la <b>vue de face en coupe A-A</b>.', [
+      'Le plan A-A est tracé sur la vue de dessus ; les flèches donnent le sens d\'observation.',
+      'Matière coupée hachurée (outil Hachures).',
+      'Les trous restent vides ; pas de traits cachés.', rep]);
+    case 'cotes': return enonce('<b>coter les 3 vues</b> avec l\'outil Cote.', [
+      'Chaque arête et chaque axe de trou situé une seule fois (pas de chaîne fermée).',
+      'Les 3 cotes d\'encombrement : longueur, hauteur, profondeur.',
+      'Le Ø de chaque trou, sur son cercle.',
+      'Mesures sur la perspective (bouton Pièce).']);
+    default: return e.mep ? consigneMep(p) : enonce('dessiner la <b>vue de face</b>, la <b>vue de dessus</b> et la <b>vue de gauche</b>.', [
+      'Projection européenne : vue de dessus sous la face, vue de gauche à droite de la face.',
+      `Échelle 1:1, écart de ${e.ecart} mm entre les vues.`, rep, 'Arêtes vues en trait fort, cachées en trait interrompu, axes en trait mixte.']);
+  }
+}
 function consigneMep(p) {
   const pc = pieceDe(p.exo); const m = p.exo.mep;
-  if (!m.note) return 'dessine la vue de face, la vue de dessus et la vue de gauche (projection européenne, échelle 1:1) où tu veux sur la feuille : la correction retrouve tes vues. Garde-les alignées (lignes de rappel) ; la mise en page n\'est pas notée.';
+  const base = ['Projection européenne : vue de dessus <b>sous</b> la face, vue de gauche <b>à droite</b> de la face.', 'Échelle 1:1.', 'Arêtes vues en trait <b>fort</b>, cachées en trait <b>interrompu</b>, axes en trait <b>mixte</b>.'];
+  if (!m.note) return enonce('dessiner la <b>vue de face</b>, la <b>vue de dessus</b> et la <b>vue de gauche</b>.', [...base, 'Place les vues où tu veux : la correction les retrouve (mise en page non notée).', 'Garde-les alignées (lignes de rappel).']);
   const a = pc ? attendu(p, pc, m.zone) : null;
-  return `dessine la vue de face, la vue de dessus et la vue de gauche (projection européenne, échelle 1:1) et place-les toi-même par la <b>méthode des 3 intervalles égaux</b> dans le ${ZONES[m.zone]}${a ? ` : zone utile <b>${nombreFr(a.A)} × ${nombreFr(a.B)} mm</b>${m.zone === 'sans' ? `, son bas à ${nombreFr(a.zu.y0)} mm au-dessus du bas du cadre (cartouche)` : ''}` : ''}. Horizontalement e = (largeur de la zone − L − P) / 3, verticalement e' = (hauteur de la zone − H − P) / 3. Mise en page notée sur 20 %.`;
+  return enonce('dessiner la <b>vue de face</b>, la <b>vue de dessus</b> et la <b>vue de gauche</b>.', [
+    ...base, 'Note : 80 % le dessin des vues, 20 % la mise en page.'], '', [
+    `Mise en page : encode L, H et P (mesurés sur la perspective, bouton Pièce) ; e et e' se calculent seuls (méthode des 3 intervalles égaux, ${ZONES[m.zone]}${a ? ` : zone utile ${nombreFr(a.A)} × ${nombreFr(a.B)} mm` : ''}).`,
+    'Quand c\'est juste, la feuille se débloque et les 4 coins de chaque vue sont marqués.',
+    'Trace le contour de chaque vue en trait fort entre ses coins, puis les arêtes, traits cachés et axes.',
+    'Clique sur Corriger.']);
 }
 const pieceDe = (exo) => pourPersp(trouverPiece(exo?.piece), exo?.mode);   // après « Rendre la copie » : corriger dès que la page est remontée
 
@@ -339,24 +388,7 @@ function monterPage(el, remonter) {
           <p class="muted">La date, l'échelle et le format se remplissent tout seuls.</p>
         </form>
         ${p.exo ? `<div class="panel dao-exobar">
-          <b>Exercice :</b> <span>${p.exo.mode === 'ancien'
-            ? `${esc(p.exo.consigne).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')} (Ancien exercice de l'Atelier, repris en mm : 1 carreau = ${p.exo.u || 10} mm ; dessine dans le cadre en trait fin.)`
-            : p.exo.mode === 'iso'
-            ? 'dessine la perspective isométrique de la pièce à partir de ses 3 vues, à l\'échelle 1:1 (mêmes longueurs sur les 3 axes) : largeur selon l\'axe à 30° vers la droite, profondeur selon l\'axe à 30° vers la gauche, hauteurs verticales. Le coin avant-bas-gauche est au repère ✚. Seules les arêtes vues, en traits forts. Trous : seulement le bord de l\'entrée, en ellipse tracée par la méthode des 4 centres (4 arcs). Astuce : saisie « longueur&lt;angle », ex. 40&lt;30 ou 25&lt;150.'
-            : p.exo.mode === 'cav'
-            ? 'dessine la perspective cavalière de la pièce à partir de ses 3 vues : face avant en vraie grandeur (1:1), fuyantes à 45° vers la droite et vers le haut, réduites de moitié (k = 0,5). Le coin avant-bas-gauche est au repère ✚. Seules les arêtes vues, en traits forts. Trous de la face avant : leur cercle d\'entrée. Astuce : saisie « longueur&lt;angle », ex. 15&lt;45.'
-            : p.exo.mode === 'locale'
-            ? 'dessine la vue de face avec une coupe locale autour du trou vertical : entre les deux traits ondulés (fins, déjà tracés), le trou est vu en coupe (traits forts) et la matière coupée est hachurée ; ailleurs, la vue reste normale (traits cachés compris). Le coin inférieur gauche de la vue de face est au repère ✚.'
-            : p.exo.mode === 'section'
-            ? 'dessine la section sortie B-B (plan tracé sur la vue de face, vue dans le sens des flèches) à la place de la vue de gauche : seule la surface coupée est dessinée, hachurée, avec les axes des trous coupés. Son coin inférieur gauche est au repère ✚.'
-            : p.exo.mode === 'demi'
-            ? 'la pièce est symétrique : dessine la vue de face en demi-coupe A-A. À droite de l\'axe de symétrie (trait mixte) : la coupe, avec la matière coupée hachurée ; à gauche : la vue extérieure, sans traits cachés. Le coin inférieur gauche de la vue de face est au repère ✚.'
-            : p.exo.mode === 'coupe'
-            ? 'dessine la vue de face en coupe A-A (le plan est tracé sur la vue de dessus, les flèches montrent le sens d\'observation) : la matière coupée est hachurée (outil Hachures), les trous restent vides, pas de traits cachés. Le coin inférieur gauche de la vue de face est au repère ✚.'
-            : p.exo.mode === 'cotes'
-            ? 'cote les 3 vues avec l\'outil Cote : chaque arête et chaque axe de trou doit être situé une seule fois (pas de chaîne fermée), avec les 3 cotes d\'encombrement et le Ø de chaque trou (sur son cercle). Mesures sur la perspective (bouton Pièce).'
-            : p.exo.mep ? consigneMep(p)
-            : `dessine la vue de face, la vue de dessus et la vue de gauche (projection européenne, échelle 1:1, écart de ${p.exo.ecart} mm entre les vues). Le coin inférieur gauche de la vue de face est au repère ✚.`}</span>
+          <div class="dao-consigne">${consigne(p)}</div>
           <span class="dao-exo-btns">
             ${p.exo.mep && !p.exo.examen ? `<label class="dao-choix"><span>Mise en page</span><select class="field" data-mep>${[['sans', 'notée · cadre sans cartouche'], ['cadre', 'notée · cadre entier'], ['libre', 'libre (non notée)']].map(([v, l]) => `<option value="${v}" ${(p.exo.mep.note ? p.exo.mep.zone : 'libre') === v ? 'selected' : ''}>${l}</option>`).join('')}</select></label>` : ''}
             ${p.exo.examen && !p.exo.examen.fini
