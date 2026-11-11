@@ -80,6 +80,9 @@ export function corriger(solution, eleve, tol = TOL) {
      fausse       : point d'attache qui n'est pas une arête ou un axe
      Ø            : chaque trou porte une cote de diamètre (vue où il est
                     un cercle)
+   Règles de présentation (¼ de point par cote fautive) : ligne de cote
+   hors de la vue et à 6 mm au moins, pas d'attache sur un trait caché,
+   5 mm au moins entre deux lignes de cote parallèles du même côté.
    Les cotes alignées, de rayon et d'angle ne sont pas comptées.
    ===================================================================== */
 import { vues as vuesPiece, boite as boitePiece } from './pieces.js';
@@ -114,10 +117,10 @@ export function corrigerCotes(pc, exo, es, tol = TOL) {
   const lire = (e) => {
     for (const [nom, c] of Object.entries(C)) {
       if (!dans(c, e.x1, e.y1) || !dans(c, e.x2, e.y2)) continue;
-      if (nom === 'face') return e.k === 'h' ? ['x', e.x1 - ox + b.x0, e.x2 - ox + b.x0] : ['z', e.y1 - oy + b.z0, e.y2 - oy + b.z0];
-      if (nom === 'dessus') return e.k === 'h' ? ['x', e.x1 - ox + b.x0, e.x2 - ox + b.x0] : ['y', e.y1 - (oy - exo.ecart - P), e.y2 - (oy - exo.ecart - P)];
+      if (nom === 'face') return e.k === 'h' ? ['x', e.x1 - ox + b.x0, e.x2 - ox + b.x0, nom] : ['z', e.y1 - oy + b.z0, e.y2 - oy + b.z0, nom];
+      if (nom === 'dessus') return e.k === 'h' ? ['x', e.x1 - ox + b.x0, e.x2 - ox + b.x0, nom] : ['y', e.y1 - (oy - exo.ecart - P), e.y2 - (oy - exo.ecart - P), nom];
       const g = ox + W + exo.ecart + P;
-      return e.k === 'h' ? ['y', g - e.x1, g - e.x2] : ['z', e.y1 - oy + b.z0, e.y2 - oy + b.z0];
+      return e.k === 'h' ? ['y', g - e.x1, g - e.x2, nom] : ['z', e.y1 - oy + b.z0, e.y2 - oy + b.z0, nom];
     }
     return null;
   };
@@ -125,13 +128,34 @@ export function corrigerCotes(pc, exo, es, tol = TOL) {
   const parent = {}, liens = {};
   for (const a of Object.keys(pos)) { parent[a] = pos[a].map((_, i) => i); liens[a] = new Set(); }
   const racine = (a, i) => { while (parent[a][i] !== i) i = parent[a][i] = parent[a][parent[a][i]]; return i; };
-  const res = { justes: [], double: [], surab: [], fausses: [], diam: { ok: [], manquants: [] }, axes: {} };
+  const res = { justes: [], double: [], surab: [], fausses: [], diam: { ok: [], manquants: [] }, axes: {}, regles: [] };
+  // règles de présentation (cotes linéaires rattachées à une vue)
+  const regle = (e, txt) => { let r = res.regles.find((x) => x.txt === txt); if (!r) res.regles.push(r = { txt, cotes: [] }); if (!r.cotes.includes(e)) r.cotes.push(e); };
+  const placees = [];
+  const verifier = (e, nom) => {
+    const c = C[nom];
+    const lo = e.k === 'h' ? c.y : c.x, hi = e.k === 'h' ? c.y + c.h : c.x + c.w;
+    const ecartVue = e.d < lo ? lo - e.d : e.d > hi ? e.d - hi : -1;
+    if (ecartVue < 0) regle(e, 'ligne de cote dans la vue (place-la à l\'extérieur)');
+    else if (ecartVue < 6 - tol) regle(e, 'ligne de cote trop près de la vue (au moins 6 à 8 mm)');
+    const traits = v[nom];
+    for (const q of [[e.x1, e.y1], [e.x2, e.y2]]) {
+      // l'arête cotée : trait perpendiculaire à la direction mesurée qui passe par le point d'attache
+      const sur = traits.filter((t) => t.t === 'l' && (e.k === 'h' ? Math.abs(t.x1 - t.x2) < 1e-6 : Math.abs(t.y1 - t.y2) < 1e-6) && distanceA(t, q) <= tol);
+      if (sur.length && sur.every((t) => t.s === 'c')) { regle(e, 'cote sur un trait caché (cote dans la vue où l\'arête est vue)'); break; }
+    }
+    for (const f of placees) {
+      if (f.nom === nom && f.e.k === e.k && Math.abs(f.e.d - e.d) < 5 - tol && Math.sign(f.e.d - (lo + hi) / 2) === Math.sign(e.d - (lo + hi) / 2)) regle(e, 'lignes de cote trop serrées (au moins 5 à 7 mm entre elles)');
+    }
+    placees.push({ e, nom });
+  };
   const encombre = { x: false, y: false, z: false };
   for (const e of es) {
     if (e.t !== 'q' || (e.k !== 'h' && e.k !== 'v')) continue;
     const l = lire(e);
     if (!l) { res.fausses.push(e); continue; }
-    const [a, u, w] = l;
+    const [a, u, w, nom] = l;
+    verifier(e, nom);
     const i = pos[a].findIndex((p) => Math.abs(p - u) <= tol), j = pos[a].findIndex((p) => Math.abs(p - w) <= tol);
     if (i < 0 || j < 0 || i === j) { res.fausses.push(e); continue; }
     const cle = `${Math.min(i, j)}-${Math.max(i, j)}`;
@@ -158,7 +182,7 @@ export function corrigerCotes(pc, exo, es, tol = TOL) {
     (ok ? res.diam.ok : res.diam.manquants).push({ ...t, c });
     total += 1; if (ok) gagne += 1;
   }
-  const malus = 0.5 * (res.double.length + res.surab.length + res.fausses.length);
+  const malus = 0.5 * (res.double.length + res.surab.length + res.fausses.length) + 0.25 * res.regles.reduce((s, r) => s + r.cotes.length, 0);
   res.score = total ? Math.max(0, Math.round(((gagne - malus) / total) * 100)) : 0;
   return res;
 }
