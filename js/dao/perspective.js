@@ -17,6 +17,16 @@ const C30 = Math.cos(Math.PI / 6), S30 = 0.5;
 const f2 = (v) => Math.round(v * 100) / 100;
 const nb = (v) => String(Math.round(v * 10) / 10).replace('.', ',');
 
+/** Flèche d'observation de la vue de face (de s vers e, coordonnées écran) + étiquette. */
+export function flecheFace(s, e) {
+  const L = Math.hypot(e[0] - s[0], e[1] - s[1]) || 1, u = [(e[0] - s[0]) / L, (e[1] - s[1]) / L], n = [-u[1], u[0]];
+  const b1 = [e[0] - u[0] * 7 + n[0] * 3, e[1] - u[1] * 7 + n[1] * 3], b2 = [e[0] - u[0] * 7 - n[0] * 3, e[1] - u[1] * 7 - n[1] * 3];
+  const c = '#c2410c';
+  const svg = `<path d="M${f2(s[0])} ${f2(s[1])}L${f2(e[0] - u[0] * 6)} ${f2(e[1] - u[1] * 6)}" stroke="${c}" stroke-width="1.8" fill="none"/><path d="M${f2(e[0])} ${f2(e[1])}L${f2(b1[0])} ${f2(b1[1])}L${f2(b2[0])} ${f2(b2[1])}Z" fill="${c}"/>`
+    + `<text x="${f2(s[0] + 2)}" y="${f2(s[1] + 11)}" font-size="9.5" font-weight="700" font-family="Segoe UI,Arial,sans-serif" fill="${c}">Vue de face</text>`;
+  return { svg, pts: [s, e, [s[0] + 60, s[1] + 14]] };
+}
+
 export function svgPerspective(piece, { cotes = true, largeur = 420 } = {}) {
   if (piece.rev) return svgRevolution(piece, { cotes, largeur });
   const b = boite(piece), P = piece.prof;
@@ -61,6 +71,7 @@ export function svgPerspective(piece, { cotes = true, largeur = 420 } = {}) {
 
   // ----- cotes
   let cot = '';
+  const bornes = [];   // points des cotes et textes : pour que rien ne soit coupé au bord
   const fin = 'stroke="#1d5fd1" stroke-width="0.9"';
   const texteC = (p, ang, txt) => {
     let a = ang; if (a > 90) a -= 180; if (a < -90) a += 180;
@@ -78,10 +89,19 @@ export function svgPerspective(piece, { cotes = true, largeur = 420 } = {}) {
       const L = Math.hypot(Bo[0] - Ao[0], Bo[1] - Ao[1]); if (L < 1) continue;
       const u = [(Bo[0] - Ao[0]) / L, (Bo[1] - Ao[1]) / L];
       cot += `<path d="M${f2(Ao[0])} ${f2(Ao[1])}L${f2(Bo[0])} ${f2(Bo[1])}" ${fin} fill="none"/>` + fl(Ao, [-u[0], -u[1]]) + fl(Bo, u);
+      const txt = nb(vs[k + 1] - vs[k]);
+      bornes.push(A, B, Ao, Bo);
+      if (Math.abs(u[0]) < 0.15) {   // cote verticale : texte horizontal, à droite de la ligne de cote
+        const mm = [Math.max(Ao[0], Bo[0]) + 3, (Ao[1] + Bo[1]) / 2 + 3];
+        cot += `<text x="${f2(mm[0])}" y="${f2(mm[1])}" font-size="9" font-family="Segoe UI,Arial,sans-serif" fill="#1d5fd1">${txt}</text>`;
+        bornes.push([mm[0] + txt.length * 5.5 + 2, mm[1]]);
+        continue;
+      }
       const ang = (Math.atan2(u[1], u[0]) * 180) / Math.PI;
       const nrm = [u[1], -u[0]];   // côté du texte : vers le haut de l'écran
       const mm = nrm[1] < 0 ? [(Ao[0] + Bo[0]) / 2 + nrm[0] * 3, (Ao[1] + Bo[1]) / 2 + nrm[1] * 3] : [(Ao[0] + Bo[0]) / 2 - nrm[0] * 3, (Ao[1] + Bo[1]) / 2 - nrm[1] * 3];
-      cot += texteC(mm, ang, nb(vs[k + 1] - vs[k]));
+      bornes.push([mm[0] - 8, mm[1] - 10], [mm[0] + 8, mm[1] + 10]);
+      cot += texteC(mm, ang, txt);
     }
   };
   if (cotes) {
@@ -96,12 +116,19 @@ export function svgPerspective(piece, { cotes = true, largeur = 420 } = {}) {
       const c = t.axe === 'y' ? pr([t.x, 0, t.z]) : pr([t.x, t.y, Math.max(...intervallesZ(prof, t.x).map((v) => v[1]))]);
       const q = [c[0] + 22, c[1] - 22];
       cot += `<path d="M${f2(c[0])} ${f2(c[1])}L${f2(q[0])} ${f2(q[1])}h16" ${fin} fill="none"/><text x="${f2(q[0] + 2)}" y="${f2(q[1] - 2)}" font-size="9" font-family="Segoe UI,Arial,sans-serif" fill="#1d5fd1">Ø${nb(t.d)}</text>`;
+      bornes.push([q[0] + 20, q[1] - 12]);
     }
   }
+  // flèche « Vue de face » : regarde la face avant (y = 0)
+  if (cotes) {
+    const xm = (b.x0 + b.x1) / 2, zf = b.z0 + (b.z1 - b.z0) * 0.85;
+    const r = flecheFace(pr([xm, -30, zf]), pr([xm, -3, zf]));
+    cot += r.svg; bornes.push(...r.pts);
+  }
   // cadre de la figure
-  const tous = [...faces.flatMap((f) => f.pts), ...avant.pts];
+  const tous = [...faces.flatMap((f) => f.pts), ...avant.pts, ...bornes];
   const us = tous.map((p) => p[0]), vs = tous.map((p) => p[1]);
-  const m = cotes ? 34 : 8;
+  const m = cotes ? 12 : 8;
   const x0 = Math.min(...us) - m, y0 = Math.min(...vs) - m, w = Math.max(...us) - Math.min(...us) + 2 * m, h = Math.max(...vs) - Math.min(...vs) + 2 * m;
   return `<svg viewBox="${f2(x0)} ${f2(y0)} ${f2(w)} ${f2(h)}" width="${largeur}" role="img" aria-label="Perspective isométrique de la pièce ${String(piece.nom || '').replace(/"/g, '')}" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;background:#fff">${corps}${cot}</svg>`;
 }
