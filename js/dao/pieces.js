@@ -205,8 +205,9 @@ export function pieceAuHasard(niveau = 1, graine = 1) {
 
 /** Pièce du catalogue ou pièce générée d'après son id. */
 export function trouverPiece(id) {
-  const m = /^h([123])-(\d{1,6})$/.exec(String(id || ''));
-  return m ? pieceAuHasard(+m[1], +m[2]) : PIECES.find((x) => x.id === id) || null;
+  const m = /^([hs])([123])-(\d{1,6})$/.exec(String(id || ''));
+  if (m) return m[1] === 'h' ? pieceAuHasard(+m[2], +m[3]) : pieceSymetrique(+m[2], +m[3]);
+  return PIECES.find((x) => x.id === id) || null;
 }
 
 /* ----- coupe A-A : plan parallèle à la face avant (y = c), vue de face coupée ----- */
@@ -215,7 +216,8 @@ export function trouverPiece(id) {
  * @returns {{ c: number, face: object[] (vue de face coupée, sans hachures), dessus: object[] (vue de dessus + trace du plan A-A),
  *             hachure: object (entité t:'h' de la solution), matiere: (x, z) => boolean (coordonnées pièce), cadres: object }}
  */
-export function coupeA(piece, origine = [20, 90], ecart = 20) {
+export function coupeA(piece, origine = [20, 90], ecart = 20, { demi = false } = {}) {
+  // demi = true : demi-coupe d'une pièce symétrique (moitié droite coupée, moitié gauche en vue extérieure sans traits cachés)
   const v = vues(piece, origine, ecart);
   const b = boite(piece), P = piece.prof, [ox, oy] = origine;
   const F = (x, z) => [ox + x - b.x0, oy + z - b.z0];
@@ -231,9 +233,12 @@ export function coupeA(piece, origine = [20, 90], ecart = 20) {
     const [cx, cz] = F(t.x, t.z), r = t.d / 2;
     face.push({ t: 'c', cx: r3(cx), cy: r3(cz), r: r3(r), s: 'v' }, L(cx - r - DEB_AXE, cz, cx + r + DEB_AXE, cz, 'a'), L(cx, cz - r - DEB_AXE, cx, cz + r + DEB_AXE, 'a'));
   }
+  const xm = (b.x0 + b.x1) / 2;
+  const coupe = (x) => !demi || x >= xm - 1e-6;
+  if (demi) seg([xm, b.z0 - DEB_AXE], [xm, b.z1 + DEB_AXE], 'a');
   for (const t of coupes) {
     const iv = intervallesZ(piece.profil, t.x);
-    for (const [a, q] of iv) for (const dx of [-t.w, t.w]) seg([t.x + dx, a], [t.x + dx, q], 'v');
+    for (const [a, q] of iv) for (const dx of [-t.w, t.w]) if (coupe(t.x + dx)) seg([t.x + dx, a], [t.x + dx, q], 'v');
     seg([t.x, Math.min(...iv.map((u) => u[0])) - DEB_AXE], [t.x, Math.max(...iv.map((u) => u[1])) + DEB_AXE], 'a');
   }
   // trace du plan dans la vue de dessus : trait mixte fin, extrémités renforcées, flèches vers l'arrière (sens d'observation), lettres A
@@ -246,10 +251,61 @@ export function coupeA(piece, origine = [20, 90], ecart = 20) {
   }
   // matière coupée (coordonnées pièce)
   const dansP = (x, z) => { let d = false; const pr = piece.profil; for (let i = 0, j = pr.length - 1; i < pr.length; j = i++) { const [xi, zi] = pr[i], [xj, zj] = pr[j]; if ((zi > z) !== (zj > z) && x < ((xj - xi) * (z - zi)) / (zj - zi) + xi) d = !d; } return d; };
-  const matiere = (x, z) => dansP(x, z) && !ty.some((t) => Math.hypot(x - t.x, z - t.z) < t.d / 2) && !coupes.some((t) => Math.abs(x - t.x) < t.w);
+  const matiere = (x, z) => coupe(x) && dansP(x, z) && !ty.some((t) => Math.hypot(x - t.x, z - t.z) < t.d / 2) && !coupes.some((t) => Math.abs(x - t.x) < t.w);
   // hachure de la solution (contour du profil, trous = disques et bandes des trous coupés)
   const cercle = (t) => Array.from({ length: 48 }, (_, k) => F(t.x + (t.d / 2) * Math.cos((k / 48) * 2 * Math.PI), t.z + (t.d / 2) * Math.sin((k / 48) * 2 * Math.PI)));
   const bandes = coupes.flatMap((t) => intervallesZ(piece.profil, t.x).map(([a, q]) => [F(t.x - t.w, a), F(t.x + t.w, a), F(t.x + t.w, q), F(t.x - t.w, q)]));
-  const hachure = { t: 'h', pts: piece.profil.map((p) => F(...p)), trous: [...ty.map(cercle), ...bandes], ang: 45, pas: 3, s: 'n' };
+  // demi-coupe : on garde la partie à droite de l'axe (découpage de Sutherland-Hodgman)
+  const X = F(xm, 0)[0];
+  const garder = (poly) => {
+    if (!demi) return poly;
+    const out = [];
+    poly.forEach((A, i) => {
+      const B = poly[(i + 1) % poly.length], ia = A[0] >= X - 1e-9, ib = B[0] >= X - 1e-9;
+      if (ia) out.push(A);
+      if (ia !== ib) { const t = (X - A[0]) / (B[0] - A[0]); out.push([X, A[1] + (B[1] - A[1]) * t]); }
+    });
+    return out;
+  };
+  const hachure = { t: 'h', pts: garder(piece.profil.map((p) => F(...p))), trous: [...ty.map(cercle), ...bandes].map(garder).filter((q) => q.length > 2), ang: 45, pas: 3, s: 'n' };
   return { c, face: nettoyer(face), dessus: [...v.dessus, ...trace], hachure, matiere, cadres: v.cadres };
+}
+
+/* ----- pièces symétriques (pour la demi-coupe) ----- */
+/** Vrai si le profil et les trous sont symétriques par rapport à l'axe vertical du milieu. */
+export function estSymetrique(pc) {
+  const b = boite(pc), xm = (b.x0 + b.x1) / 2;
+  const cle = (x, z) => `${Math.round((2 * xm - x) * 1000)},${Math.round(z * 1000)}`;
+  const pts = new Set(pc.profil.map(([x, z]) => `${Math.round(x * 1000)},${Math.round(z * 1000)}`));
+  if (!pc.profil.every(([x, z]) => pts.has(cle(x, z)))) return false;
+  return (pc.trous || []).every((t) => (pc.trous || []).some((u) => u.axe === t.axe && u.d === t.d && Math.abs(u.x - (2 * xm - t.x)) < 1e-6 && (t.axe === 'y' ? u.z === t.z : u.y === t.y)));
+}
+const FORMES_SYM = {
+  chape: (n) => { const a = n(10, 15), W = 2 * a + n(25, 45), H = n(30, 45), e = n(10, 15); return [[0, 0], [W, 0], [W, H], [W - a, H], [W - a, e], [a, e], [a, H], [0, H]]; },
+  te: (n) => { const l = n(15, 25), W = l + 2 * n(20, 30), H = n(35, 50), e = n(10, 15), x1 = (W - l) / 2; return [[0, 0], [W, 0], [W, e], [x1 + l, e], [x1 + l, H], [x1, H], [x1, e], [0, e]]; },
+  rainure: (n) => { const l = n(15, 25), W = l + 2 * n(20, 30), H = n(25, 40), d = n(8, 12), x1 = (W - l) / 2; return [[0, 0], [W, 0], [W, H], [x1 + l, H], [x1 + l, H - d], [x1, H - d], [x1, H], [0, H]]; },
+  epaule: (n) => { const l = n(20, 35), W = l + 2 * n(15, 25), H = n(30, 45), h = n(10, H - 15), x1 = (W - l) / 2; return [[0, 0], [W, 0], [W, h], [x1 + l, h], [x1 + l, H], [x1, H], [x1, h], [0, h]]; },
+};
+const NOMS_SYM = { chape: 'Chape en U', te: 'Bloc en T', rainure: 'Semelle à rainure', epaule: 'Bloc épaulé' };
+
+/** Pièce symétrique générée (id « s<niveau>-<graine> ») : niveau 1 un trou sur l'axe, 2 deux trous symétriques, 3 les deux. */
+export function pieceSymetrique(niveau = 1, graine = 1) {
+  const niv = [1, 2, 3].includes(+niveau) ? +niveau : 1;
+  const r = aleatoire(graine * 104729 + niv);
+  const n = (a, b) => 5 * Math.floor(Math.ceil(a / 5) + r() * (Math.floor(b / 5) - Math.ceil(a / 5) + 1));
+  const formes = Object.keys(FORMES_SYM), forme = formes[Math.floor(r() * formes.length)];
+  const profil = FORMES_SYM[forme](n), prof = n(25, 40);
+  const W = Math.max(...profil.map((p) => p[0])), xm = W / 2;
+  const d = [6, 8, 10][Math.floor(r() * 3)], y = Math.round(prof / 2);
+  const trous = [];
+  const zOk = (x) => { const iv = intervallesZ(profil, x); return iv.length && [x - d / 2 - 3, x + d / 2 + 3].every((xx) => JSON.stringify(intervallesZ(profil, xx)) === JSON.stringify(iv)); };
+  if (niv !== 2 && zOk(xm)) trous.push({ axe: 'z', x: xm, y, d });
+  if (niv >= 2 || !trous.length) {
+    for (let k = 0; k < 30; k++) {
+      const x = n(d / 2 + 5, xm - d / 2 - 6);
+      if (zOk(x)) { trous.push({ axe: 'z', x, y, d }, { axe: 'z', x: W - x, y, d }); break; }
+    }
+  }
+  if (!trous.length && zOk(xm)) trous.push({ axe: 'z', x: xm, y, d });   // pièce trop étroite pour 2 trous
+  return { id: `s${niv}-${graine}`, nom: `${NOMS_SYM[forme]} n° ${graine}`, prof, profil, trous, hasard: niv, sym: true };
 }
