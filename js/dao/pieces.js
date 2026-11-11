@@ -370,3 +370,59 @@ export function sectionB(piece, origine = [20, 90], ecart = 20) {
   }
   return { c, donnees: [...v.face, ...v.dessus, ...trace], section: nettoyer(section), hachures, matiere, cadre: { x: gx, y: oy + zmin - b.z0, w: P, h: zmax - zmin }, repere: [gx, oy + zmin - b.z0] };
 }
+
+/* ----- coupe locale : zone autour du 1er trou vertical, limitée par deux traits ondulés (fins) ----- */
+/** Garde la partie d'un polygone comprise entre les verticales X0 et X1 (Sutherland-Hodgman, deux côtés). */
+function decoupeX(poly, X0, X1) {
+  const cote = (pts, X, garde) => {
+    const out = [];
+    pts.forEach((A, i) => {
+      const B = pts[(i + 1) % pts.length], ia = garde(A[0]), ib = garde(B[0]);
+      if (ia) out.push(A);
+      if (ia !== ib) { const t = (X - A[0]) / (B[0] - A[0]); out.push([X, A[1] + (B[1] - A[1]) * t]); }
+    });
+    return out;
+  };
+  const a = cote(poly, X0, (x) => x >= X0 - 1e-9);
+  return a.length ? cote(a, X1, (x) => x <= X1 + 1e-9) : [];
+}
+/** Vrai si la pièce a un trou vertical (axe z), nécessaire pour la coupe locale. */
+export const aTrouVertical = (pc) => (pc.trous || []).some((t) => t.axe === 'z');
+/** Graine d'une pièce au hasard de ce niveau qui a un trou vertical. */
+export function graineTrouVertical(niveau, depart = 1 + Math.floor(Math.random() * 99999)) {
+  for (let g = depart, k = 0; k < 200; k++, g = (g % 99999) + 1) if (aTrouVertical(pieceAuHasard(niveau, g))) return g;
+  return depart;
+}
+/**
+ * @returns {{ face, donnees (vues de dessus et de gauche + traits ondulés), hachure, matiere, cadres, zone: [X0, X1] }}
+ */
+export function coupeLocale(piece, origine = [20, 90], ecart = 20) {
+  const v = vues(piece, origine, ecart);
+  const b = boite(piece), [ox, oy] = origine;
+  const F = (x, z) => [ox + x - b.x0, oy + z - b.z0];
+  const t = (piece.trous || []).find((u) => u.axe === 'z');
+  if (!t) return null;
+  const r = t.d / 2, ty = (piece.trous || []).filter((u) => u.axe === 'y');
+  const xa = Math.max(b.x0, t.x - r - 7), xb = Math.min(b.x1, t.x + r + 7);
+  const [X0] = F(xa, 0), [X1] = F(xb, 0);
+  const iv = intervallesZ(piece.profil, t.x);
+  // face : traits cachés du trou devenus visibles dans la zone
+  const face = v.face.map((e) => (e.t === 'l' && e.s === 'c' && Math.abs(e.x1 - e.x2) < 1e-6 && e.x1 > X0 && e.x1 < X1 ? { ...e, s: 'v' } : e));
+  // traits ondulés (limites de la zone, dans la matière seulement)
+  const ondes = [];
+  for (const [X, x] of [[X0, xa], [X1, xb]]) {
+    if (x <= b.x0 + 1e-6 || x >= b.x1 - 1e-6) continue;
+    for (const [a, q] of intervallesZ(piece.profil, x)) {
+      const n = Math.max(4, Math.round((q - a) / 3));
+      const pts = Array.from({ length: n + 1 }, (_, k) => { const z = a + ((q - a) * k) / n; return [X + (k % 2 && k < n ? 1.2 : 0) * (k % 4 === 1 ? 1 : -1), F(0, z)[1]]; });
+      for (let k = 0; k < n; k++) ondes.push(L(pts[k][0], pts[k][1], pts[k + 1][0], pts[k + 1][1], 'n'));
+    }
+  }
+  const dansP = (x, z) => { let d = false; const pr = piece.profil; for (let i = 0, j = pr.length - 1; i < pr.length; j = i++) { const [xi, zi] = pr[i], [xj, zj] = pr[j]; if ((zi > z) !== (zj > z) && x < ((xj - xi) * (z - zi)) / (zj - zi) + xi) d = !d; } return d; };
+  const matiere = (x, z) => x > xa && x < xb && dansP(x, z) && Math.abs(x - t.x) >= r && !ty.some((u) => Math.hypot(x - u.x, z - u.z) < u.d / 2);
+  const pts = decoupeX(piece.profil.map((p) => F(...p)), X0, X1);
+  const bandes = iv.map(([a, q]) => [F(t.x - r, a), F(t.x + r, a), F(t.x + r, q), F(t.x - r, q)]);
+  const cercles = ty.map((u) => decoupeX(Array.from({ length: 48 }, (_, k) => F(u.x + (u.d / 2) * Math.cos((k / 48) * 2 * Math.PI), u.z + (u.d / 2) * Math.sin((k / 48) * 2 * Math.PI))), X0, X1));
+  const hachure = { t: 'h', pts, trous: [...bandes, ...cercles].filter((q) => q.length > 2), ang: 45, pas: 3, s: 'n' };
+  return { face: nettoyer(face), donnees: [...v.dessus, ...v.gauche, ...ondes], hachure, matiere, cadres: v.cadres, zone: [X0, X1] };
+}
