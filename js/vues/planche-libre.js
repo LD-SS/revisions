@@ -14,7 +14,7 @@ import { icone } from '../icones.js';
 import { styleMatiere } from '../matieres.js';
 import { matiere } from '../store.js';
 import { monterFeuille, nouvellePlanche, ECHELLES, FORMATS, pasGrille, zone, facteur, versPapier } from '../dao/feuille.js';
-import { PIECES, vues, boite as boitePiece } from '../dao/pieces.js';
+import { PIECES, vues, boite as boitePiece, trouverPiece } from '../dao/pieces.js';
 import { svgPerspective } from '../dao/perspective.js';
 import { creerTraceur, STYLES, OUTILS, COTES, svgEntite } from '../dao/trace.js';
 import { corriger } from '../dao/correction.js';
@@ -81,7 +81,13 @@ const ICONES_OUTILS = {
 };
 
 /** Rendu de la page ; se remonte elle-même quand on change de planche. */
-export function vuePlancheLibre(el) {
+export function vuePlancheLibre(el, piece = null) {
+  // #/dessin/libre/<id de pièce> : nouvel exercice, puis l'adresse redevient #/dessin/libre (un rechargement ne le recrée pas)
+  if (piece) {
+    const pc = trouverPiece(piece);
+    if (pc) creerExo(pc, normaliser(toutes()[idCourant()]));
+    history.replaceState(null, '', '#/dessin/libre');
+  }
   let stop = null;
   const monter = () => { stop?.(); stop = monterPage(el, monter); };
   monter();
@@ -91,6 +97,20 @@ export function vuePlancheLibre(el) {
 const boutonsOutils = (liste) => liste.map((k) => { const o = OUTILS[k]; return `<button class="btn dao-b" type="button" data-outil="${k}" title="${esc(o.nom)}${o.touche ? ` (${o.touche.toUpperCase()})` : ''}">${ICONES_OUTILS[k] || ''}<span>${esc(o.nom)}</span></button>`; }).join('');
 
 const fmt = (v) => (Math.round(v * 10) / 10).toLocaleString('fr-BE', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+
+/** Graine d'une nouvelle pièce au hasard (1 à 99 999). */
+export const grainePiece = () => 1 + Math.floor(Math.random() * 99999);
+
+/** Crée une planche d'exercice « dessine les 3 vues » pour la pièce pc et la rend courante. */
+function creerExo(pc, depuis = null) {
+  const t = toutes(); const n = nouvelId();
+  const np = nouvellePlanche();
+  const base = { ...np, format: 'A4', orientation: 'paysage', echelle: '1:1', cartouche: { ...np.cartouche, titre: `Vues : ${pc.nom}`.slice(0, 40), auteur: depuis?.cartouche?.auteur || np.cartouche.auteur, classe: depuis?.cartouche?.classe || np.cartouche.classe } };
+  const b = boitePiece(pc), z = zone(base), k = facteur(base.echelle);
+  const ecart = 15, marge = 15;
+  t[n] = { ...base, exo: { piece: pc.id, o: [marge, Math.round(Math.max(pc.prof + ecart + marge, z.h / k - marge - (b.z1 - b.z0)))], ecart }, maj: Date.now() };
+  stockage.ecrire(CLE, t); stockage.ecrire(CLE_COURANTE, n);
+}
 
 function monterPage(el, remonter) {
   const m = matiere('dessin');
@@ -146,6 +166,7 @@ function monterPage(el, remonter) {
             <button class="btn" type="button" data-act="effacer" title="Effacer tout le dessin">${icone('croix')}<span>Tout effacer</span></button>
             <select class="field dao-exo-choix" title="Nouvel exercice : dessine les 3 vues d'une pièce à partir de sa perspective cotée, puis fais corriger">
               <option value="">Exercice : dessine les 3 vues…</option>
+              ${[1, 2, 3].map((n) => `<option value="h${n}">Pièce au hasard ${'★'.repeat(n)}</option>`).join('')}
               ${PIECES.map((pc) => `<option value="${esc(pc.id)}">${esc(pc.nom)}</option>`).join('')}
             </select>
             <select class="field dao-exemple" title="Ajoute les 3 vues (face, dessus, gauche) d'une pièce d'exemple, pour observer la mise en page européenne">
@@ -299,15 +320,10 @@ function monterPage(el, remonter) {
     pan.querySelector('.dao-piece-fig').innerHTML = svgPerspective(pc, { largeur: 300 });
     pan.hidden = false;
   };
-  const placement = (pc, pl = p) => {
-    const b = boitePiece(pc), z = zone(pl), k = facteur(pl.echelle);
-    const H = b.z1 - b.z0, ecart = 15, marge = 15;
-    return { o: [marge, Math.round(Math.max(pc.prof + ecart + marge, z.h / k - marge - H))], ecart };
-  };
   let voirSolution = false, resultat = null;
   function dessinerExo(res) {
     resultat = res;
-    const pc = PIECES.find((x) => x.id === p.exo?.piece);
+    const pc = trouverPiece(p.exo?.piece);
     if (!pc) return;
     const [x, y] = versPapier(p, ...p.exo.o);
     let svg = `<path class="dao-repere" d="M${x - 4} ${y}H${x + 4}M${x} ${y - 4}V${y + 4}"/>`;
@@ -322,7 +338,7 @@ function monterPage(el, remonter) {
     feuille.calque('correction').innerHTML = svg;
   }
   if (p.exo) {
-    const pc = PIECES.find((x) => x.id === p.exo.piece);
+    const pc = trouverPiece(p.exo.piece);
     if (pc) { montrerPiece(pc); dessinerExo(null); }
     const resTxt = el.querySelector('.dao-exo-res');
     el.querySelector('.dao-exobar').addEventListener('click', (ev) => {
@@ -346,12 +362,9 @@ function monterPage(el, remonter) {
     });
   }
   el.querySelector('.dao-exo-choix').addEventListener('change', (ev) => {
-    const pc = PIECES.find((x) => x.id === ev.target.value); ev.target.value = '';
-    if (!pc) return;
-    const t = toutes(); const n = nouvelId();
-    const base = { ...nouvellePlanche(), format: 'A4', orientation: 'paysage', echelle: '1:1', cartouche: { ...nouvellePlanche().cartouche, titre: `Vues : ${pc.nom}`, auteur: p.cartouche.auteur, classe: p.cartouche.classe } };
-    t[n] = { ...base, exo: { piece: pc.id, ...placement(pc, base) }, maj: Date.now() };
-    stockage.ecrire(CLE, t); stockage.ecrire(CLE_COURANTE, n); remonter();
+    const v = ev.target.value; ev.target.value = '';
+    const pc = /^h[123]$/.test(v) ? trouverPiece(`${v}-${grainePiece()}`) : trouverPiece(v);
+    if (pc) { creerExo(pc, p); remonter(); }
   });
 
   el.querySelector('.dao-exemple').addEventListener('change', (ev) => {
