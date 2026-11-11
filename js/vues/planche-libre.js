@@ -14,10 +14,10 @@ import { icone } from '../icones.js';
 import { styleMatiere } from '../matieres.js';
 import { matiere } from '../store.js';
 import { monterFeuille, nouvellePlanche, ECHELLES, FORMATS, pasGrille, zone, facteur, versPapier } from '../dao/feuille.js';
-import { PIECES, vues, boite as boitePiece, trouverPiece } from '../dao/pieces.js';
+import { PIECES, vues, boite as boitePiece, trouverPiece, coupeA } from '../dao/pieces.js';
 import { svgPerspective } from '../dao/perspective.js';
 import { creerTraceur, STYLES, OUTILS, COTES, svgEntite } from '../dao/trace.js';
-import { corriger, corrigerCotes } from '../dao/correction.js';
+import { corriger, corrigerCotes, corrigerCoupe } from '../dao/correction.js';
 
 const CLE = 'planches';
 const CLE_COURANTE = 'dao.courante';
@@ -84,9 +84,9 @@ const ICONES_OUTILS = {
 export function vuePlancheLibre(el, piece = null) {
   // #/dessin/libre/<id de pièce> : nouvel exercice, puis l'adresse redevient #/dessin/libre (un rechargement ne le recrée pas)
   if (piece) {
-    const cotes = String(piece).startsWith('cotes-');
-    const pc = trouverPiece(cotes ? piece.slice(6) : piece);
-    if (pc) creerExo(pc, normaliser(toutes()[idCourant()]), cotes ? 'cotes' : 'vues');
+    const m = /^(cotes|coupe)-(.+)$/.exec(String(piece));
+    const pc = trouverPiece(m ? m[2] : piece);
+    if (pc) creerExo(pc, normaliser(toutes()[idCourant()]), m ? m[1] : 'vues');
     history.replaceState(null, '', '#/dessin/libre');
   }
   let stop = null;
@@ -109,14 +109,15 @@ export const grainePiece = () => 1 + Math.floor(Math.random() * 99999);
 function creerExo(pc, depuis = null, mode = 'vues') {
   const t = toutes(); const n = nouvelId();
   const np = nouvellePlanche();
-  const titre = `${mode === 'cotes' ? 'Cotation' : 'Vues'} : ${pc.nom}`.slice(0, 40);
+  const titre = `${{ cotes: 'Cotation', coupe: 'Coupe A-A' }[mode] || 'Vues'} : ${pc.nom}`.slice(0, 40);
   const base = { ...np, format: 'A4', orientation: 'paysage', echelle: '1:1', cartouche: { ...np.cartouche, titre, auteur: depuis?.cartouche?.auteur || np.cartouche.auteur, classe: depuis?.cartouche?.classe || np.cartouche.classe } };
   const b = boitePiece(pc), z = zone(base), k = facteur(base.echelle);
   const [ecart, marge] = mode === 'cotes' ? [30, 25] : [15, 15];
   const o = [marge, Math.round(Math.max(pc.prof + ecart + marge, z.h / k - marge - (b.z1 - b.z0)))];
-  const exo = { piece: pc.id, o, ecart, ...(mode === 'cotes' ? { mode } : {}) };
+  const exo = { piece: pc.id, o, ecart, ...(mode !== 'vues' ? { mode } : {}) };
   let entites = [];
   if (mode === 'cotes') { const v = vues(pc, o, ecart); entites = [...v.face, ...v.dessus, ...v.gauche]; }
+  if (mode === 'coupe') entites = coupeA(pc, o, ecart).dessus;
   t[n] = { ...base, entites, exo, maj: Date.now() };
   stockage.ecrire(CLE, t); stockage.ecrire(CLE_COURANTE, n);
 }
@@ -175,7 +176,7 @@ function monterPage(el, remonter) {
             <button class="btn" type="button" data-act="effacer" title="Effacer tout le dessin">${icone('croix')}<span>Tout effacer</span></button>
             <select class="field dao-exo-choix" title="Nouvel exercice sur une pièce vue en perspective cotée, corrigé automatiquement">
               <option value="">Exercice…</option>
-              ${[['vues', 'Dessine les 3 vues'], ['cotes', 'Cote les 3 vues']].map(([m, l]) => `<optgroup label="${l}">
+              ${[['vues', 'Dessine les 3 vues'], ['cotes', 'Cote les 3 vues'], ['coupe', 'Coupe A-A']].map(([m, l]) => `<optgroup label="${l}">
                 ${[1, 2, 3].map((n) => `<option value="${m}:h${n}">${l.split(' ')[0]} · pièce au hasard ${'★'.repeat(n)}</option>`).join('')}
                 ${PIECES.map((pc) => `<option value="${m}:${esc(pc.id)}">${l.split(' ')[0]} · ${esc(pc.nom)}</option>`).join('')}
               </optgroup>`).join('')}
@@ -214,7 +215,9 @@ function monterPage(el, remonter) {
           <span class="muted">Un type de trait choisi ci-dessus s'applique à la sélection.</span>
         </div>
         ${p.exo ? `<div class="panel dao-exobar">
-          <b>Exercice :</b> <span>${p.exo.mode === 'cotes'
+          <b>Exercice :</b> <span>${p.exo.mode === 'coupe'
+            ? 'dessine la vue de face en coupe A-A (le plan est tracé sur la vue de dessus, les flèches montrent le sens d\'observation) : la matière coupée est hachurée (outil Hachures), les trous restent vides, pas de traits cachés. Le coin inférieur gauche de la vue de face est au repère ✚.'
+            : p.exo.mode === 'cotes'
             ? 'cote les 3 vues avec l\'outil Cote : chaque arête et chaque axe de trou doit être situé une seule fois (pas de chaîne fermée), avec les 3 cotes d\'encombrement et le Ø de chaque trou (sur son cercle). Mesures sur la perspective (bouton Pièce).'
             : `dessine la vue de face, la vue de dessus et la vue de gauche (projection européenne, échelle 1:1, écart de ${p.exo.ecart} mm entre les vues). Le coin inférieur gauche de la vue de face est au repère ✚.`}</span>
           <span class="dao-exo-btns">
@@ -355,9 +358,17 @@ function monterPage(el, remonter) {
     if (p.exo.mode === 'cotes') { feuille.calque('correction').innerHTML = res ? svgCorrCotes(pc, res) : ''; return; }
     const [x, y] = versPapier(p, ...p.exo.o);
     let svg = `<path class="dao-repere" d="M${x - 4} ${y}H${x + 4}M${x} ${y - 4}V${y + 4}"/>`;
-    const sol = vues(pc, p.exo.o, p.exo.ecart);
-    const tout = [...sol.face, ...sol.dessus, ...sol.gauche];
-    if (voirSolution) svg += tout.map((e) => svgEntite(p, e, 'dao-cor-sol')).join('');
+    if (p.exo.mode === 'coupe') {
+      const cp = coupeA(pc, p.exo.o, p.exo.ecart);
+      if (voirSolution) svg += [...cp.face, cp.hachure].map((e) => svgEntite(p, e, 'dao-cor-sol')).join('');
+      if (res) {
+        const pt = (q, cls) => { const [a, c] = versPapier(p, q[0], q[1]); return `<circle class="${cls}" cx="${a}" cy="${c}" r="0.7"/>`; };
+        svg += res.hach.manque.map((q) => pt(q, 'dao-pt-man')).join('') + res.hach.trop.map((q) => pt(q, 'dao-pt-trop')).join('');
+      }
+    } else {
+      const sol = vues(pc, p.exo.o, p.exo.ecart);
+      if (voirSolution) svg += [...sol.face, ...sol.dessus, ...sol.gauche].map((e) => svgEntite(p, e, 'dao-cor-sol')).join('');
+    }
     if (res) {
       svg += res.manquants.map((e) => svgEntite(p, e, 'dao-cor-man')).join('');
       svg += res.type.map((e) => svgEntite(p, e, 'dao-cor-type')).join('');
@@ -392,11 +403,12 @@ function monterPage(el, remonter) {
           + (r.surab.length ? ` · <span class="dao-l-trop">${n(r.surab.length, 'cote surabondante (chaîne fermée)', 'cotes surabondantes (chaînes fermées)')}</span>` : '')
           + (r.fausses.length ? ` · <span class="dao-l-trop">${n(r.fausses.length, 'cote mal placée', 'cotes mal placées')}</span>` : '')
           + ` · meilleur : ${meilleur} %`
-          + (r.regles.length ? `<span class="dao-regles">Présentation (cotes en bleu) : ${r.regles.map((x) => `<span class="dao-l-type">${esc(x.txt)}${x.cotes.length > 1 ? ` ×${x.cotes.length}` : ''}</span>`).join(' · ')}</span>` : '');
+          + (r.regles.length ? `<span class="dao-regles">Présentation (cotes en violet) : ${r.regles.map((x) => `<span class="dao-l-type">${esc(x.txt)}${x.cotes.length > 1 ? ` ×${x.cotes.length}` : ''}</span>`).join(' · ')}</span>` : '');
         return;
       }
-      const sol = vues(pc, p.exo.o, p.exo.ecart);
-      const r = corriger([...sol.face, ...sol.dessus, ...sol.gauche], p.entites || []);
+      let r;
+      if (p.exo.mode === 'coupe') r = corrigerCoupe(pc, p.exo, p.entites || []);
+      else { const sol = vues(pc, p.exo.o, p.exo.ecart); r = corriger([...sol.face, ...sol.dessus, ...sol.gauche], p.entites || []); }
       const meilleur = Math.max(r.score, p.exo.score ?? 0);
       p = { ...p, exo: { ...p.exo, score: meilleur } }; sauver();
       dessinerExo(r);
@@ -404,6 +416,7 @@ function monterPage(el, remonter) {
         + (r.manquants.length ? ` · <span class="dao-l-man">${n(r.manquants.length, 'manquant', 'manquants')}</span>` : '')
         + (r.type.length ? ` · <span class="dao-l-type">${n(r.type.length, 'mauvais type de trait', 'mauvais types de trait')}</span>` : '')
         + (r.trop.length ? ` · <span class="dao-l-trop">${n(r.trop.length, 'trait en trop', 'traits en trop')}</span>` : '')
+        + (r.hach ? ` · hachures : <b>${r.hach.score} %</b>${r.hach.manque.length ? ' <span class="dao-l-man">(points rouges : matière non hachurée)</span>' : ''}${r.hach.trop.length ? ' <span class="dao-l-trop">(points orange : hachures dans un vide)</span>' : ''}` : '')
         + ` · meilleur : ${meilleur} %`;
     });
   }
