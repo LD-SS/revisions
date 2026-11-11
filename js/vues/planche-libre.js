@@ -689,10 +689,23 @@ function monterPage(el, remonter) {
       } else if (p.exo.mode === 'section') r = corrigerSection(pc, p.exo, p.entites || []);
       else if (['coupe', 'demi', 'locale'].includes(p.exo.mode)) r = corrigerCoupe(pc, p.exo, p.entites || []);
       else {
-        const pl = (p.exo.mep && detecter(pc, p.entites || [])) || placementVues(p, pc);   // le dessin est jugé là où l'élève l'a placé
-        const sol = vues(pc, pl.o, pl.ecart); r = corriger([...sol.face, ...sol.dessus, ...sol.gauche], p.entites || []);
+        // placement des vues : là où l'élève les a dessinées (boîte de ses traits forts) ou l'emplacement attendu,
+        // on garde celui qui donne le meilleur score (un contour oublié ne doit pas décaler toute une vue)
+        const es = p.entites || [];
+        const att = p.exo.mep ? attendu(p, pc, p.exo.mep.zone) : null, det = p.exo.mep ? detecter(pc, es) : null;
+        const cands = [...(att ? [att] : []), ...(det ? [det] : []), ...(!p.exo.mep ? [placementVues(p, pc)] : [])];
+        let iBest = 0;
+        cands.forEach((pl, i) => {
+          const sol = vues(pc, pl.o, pl.ecart), ri = corriger([...sol.face, ...sol.dessus, ...sol.gauche], es);
+          if (!r || ri.score > r.score) { r = ri; iBest = i; }
+        });
+        // traits oubliés là où il n'y a que le cadre de construction (trait fin) : à repasser en trait fort
+        const cadres = es.filter((e) => e.mep).map((e) => ({ ...e, s: 'v' }));
+        r.aRepasser = cadres.length ? r.manquants.filter((s) => s.s === 'v' && corriger([s], cadres).ok.length === 1).length : 0;
         if (p.exo.mep?.note) {   // 80 % le dessin des vues, 20 % la mise en page
-          r.mep = controler(p, pc, p.entites || [], p.exo.mep.zone);
+          r.mep = att && cands[iBest] === att && r.score >= 50
+            ? { a: att, d: att, ok: 4, items: [['marge gauche', att.ex], ['écart face – gauche', att.ex], ['marge du bas', att.ey], ['écart face – dessus', att.ey]].map(([nom, v]) => ({ nom, v: Math.round(v * 10) / 10, att: Math.round(v * 10) / 10, ok: true })) }
+            : controler(p, pc, es, p.exo.mep.zone);
           r.scoreVues = r.score;
           r.score = Math.round(r.score * 0.8 + r.mep.ok * 5);
         }
@@ -706,6 +719,7 @@ function monterPage(el, remonter) {
         + (r.trop.length ? ` · <span class="dao-l-trop">${n(r.trop.length, 'trait en trop', 'traits en trop')}</span>` : '')
         + (r.hach ? ` · hachures : <b>${r.hach.score} %</b>${r.hach.manque.length ? ' <span class="dao-l-man">(points rouges : matière non hachurée)</span>' : ''}${r.hach.trop.length ? ' <span class="dao-l-trop">(points orange : hachures dans un vide)</span>' : ''}` : '')
         + ` · meilleur : ${meilleur} %`
+        + (r.aRepasser ? `<span class="dao-regles"><span class="dao-l-man">${n(r.aRepasser, 'trait', 'traits')} du contour manque${r.aRepasser > 1 ? 'nt' : ''} sur le cadre de construction</span> : le cadre est en trait fin (aide), il faut repasser le contour de la vue en trait fort.</span>` : '')
         + (r.mep ? `<span class="dao-regles">Vues : <b>${r.scoreVues} %</b> · mise en page : <b>${r.mep.ok}/4</b>${r.mep.d ? ` (${r.mep.items.map((i) => `<span class="${i.ok ? '' : 'dao-l-man'}">${i.nom} ${nombreFr(i.v)}${i.ok ? ' ✓' : ` au lieu de ${nombreFr(i.att)}`}</span>`).join(' · ')})` : ''}${r.mep.ok < 4 ? ' — emplacement attendu en tirets rouges' : ''}. Calcul : ${texteCalcul(r.mep.a)}.</span>` : '');
     });
     el.querySelector('.dao-mep-form')?.addEventListener('input', (ev) => {
