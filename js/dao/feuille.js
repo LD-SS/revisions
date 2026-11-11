@@ -180,21 +180,30 @@ export function monterFeuille(el, planche, opts = {}) {
     return [vb.x + ((ev.clientX - b.left) / b.width) * vb.w, vb.y + ((ev.clientY - b.top) / b.height) * vb.h];
   }
 
-  function majCurseur(ev) {
-    if (!ev) { calque('curseur').innerHTML = ''; opts.surCurseur?.(null); return; }
-    const [xp, yp] = versPapierEcran(ev);
+  /** Réticule au point papier pt (ou caché), position réelle transmise à surCurseur. */
+  function curseur(pt) {
     const z = zone(p);
-    const dedans = xp >= z.x && xp <= z.x + z.w && yp >= z.y && yp <= z.y + z.h;
-    if (!dedans) { calque('curseur').innerHTML = ''; opts.surCurseur?.(null); return; }
+    if (!pt || pt[0] < z.x - 0.01 || pt[0] > z.x + z.w + 0.01 || pt[1] < z.y - 0.01 || pt[1] > z.y + z.h + 0.01) {
+      calque('curseur').innerHTML = ''; opts.surCurseur?.(null); return;
+    }
+    const [xp, yp] = pt;
     const t = 6 / echelleEcran();   // réticule de ±6 px
     calque('curseur').innerHTML = `<path class="dao-reticule" d="M${r(xp - t)} ${r(yp)}H${r(xp + t)}M${r(xp)} ${r(yp - t)}V${r(yp + t)}"/>`;
     opts.surCurseur?.(versReel(p, xp, yp));
+  }
+  /** Transmet un geste de tracé à l'outil ; l'outil peut renvoyer le point (accroché) du réticule. */
+  function versOutil(type, ev) {
+    const pt = ev ? versPapierEcran(ev) : null;
+    const res = opts.surPointeur?.(type, ev, pt);
+    if (type !== 'haut') curseur(Array.isArray(res) ? res : pt);
   }
 
   /* ----- pointeurs : souris, stylet, doigts ----- */
   const doigts = new Map();      // pointerId → {x, y}
   let pan = null;                // {x, y} dernier point du glisser
   let pince = null;              // {d, cx, cy} distance et centre précédents
+  let traceDoigt = null;         // pointerId du doigt qui trace (outil actif)
+  const outilActif = () => (opts.outil?.() || 'main') !== 'main';
 
   const centreDoigts = () => {
     const [a, b] = [...doigts.values()];
@@ -205,19 +214,25 @@ export function monterFeuille(el, planche, opts = {}) {
     if (ev.pointerType === 'touch') {
       doigts.set(ev.pointerId, { x: ev.clientX, y: ev.clientY });
       svg.setPointerCapture(ev.pointerId);
-      if (doigts.size === 2) { pan = null; pince = centreDoigts(); }
-      else if (doigts.size === 1) pan = { x: ev.clientX, y: ev.clientY };
+      if (doigts.size === 2) {
+        if (traceDoigt != null) { versOutil('annule', null); traceDoigt = null; }
+        pan = null; pince = centreDoigts();
+      } else if (doigts.size === 1) {
+        if (outilActif()) { traceDoigt = ev.pointerId; versOutil('bas', ev); } else pan = { x: ev.clientX, y: ev.clientY };
+      }
       ev.preventDefault();
       return;
     }
     // souris / stylet : déplacer avec le clic du milieu, espace + clic, ou l'outil « main »
-    const outil = opts.outil?.() || 'main';
-    if (ev.button === 1 || (ev.button === 0 && (espace || outil === 'main'))) {
+    if (ev.button === 1 || (ev.button === 0 && (espace || !outilActif()))) {
       pan = { x: ev.clientX, y: ev.clientY };
       svg.setPointerCapture(ev.pointerId);
       svg.classList.add('dao-pan-actif');
       ev.preventDefault();
+      return;
     }
+    if (ev.button === 2) { ev.preventDefault(); versOutil('droit', ev); return; }
+    if (ev.button === 0) { svg.setPointerCapture(ev.pointerId); versOutil('bas', ev); ev.preventDefault(); }
   });
 
   svg.addEventListener('pointermove', (ev) => {
@@ -228,25 +243,29 @@ export function monterFeuille(el, planche, opts = {}) {
         if (pince.d > 0 && n.d > 0) zoomer(n.d / pince.d, n.cx - b.left, n.cy - b.top);
         deplacer(n.cx - pince.cx, n.cy - pince.cy);
         pince = n;
-      } else if (pan) { deplacer(ev.clientX - pan.x, ev.clientY - pan.y); pan = { x: ev.clientX, y: ev.clientY }; }
+      } else if (traceDoigt === ev.pointerId) versOutil('bouge', ev);
+      else if (pan) { deplacer(ev.clientX - pan.x, ev.clientY - pan.y); pan = { x: ev.clientX, y: ev.clientY }; }
       return;
     }
-    if (pan) { deplacer(ev.clientX - pan.x, ev.clientY - pan.y); pan = { x: ev.clientX, y: ev.clientY }; }
-    majCurseur(ev);
+    if (pan) { deplacer(ev.clientX - pan.x, ev.clientY - pan.y); pan = { x: ev.clientX, y: ev.clientY }; curseur(versPapierEcran(ev)); return; }
+    if (outilActif()) versOutil('bouge', ev); else curseur(versPapierEcran(ev));
   });
 
   const fin = (ev) => {
     if (ev.pointerType === 'touch') {
+      if (traceDoigt === ev.pointerId) { traceDoigt = null; if (ev.type === 'pointerup') versOutil('haut', ev); else versOutil('annule', null); }
       doigts.delete(ev.pointerId);
       pince = null;
-      pan = doigts.size === 1 ? (() => { const [d] = doigts.values(); return { x: d.x, y: d.y }; })() : null;
+      pan = doigts.size === 1 && !outilActif() ? (() => { const [d] = doigts.values(); return { x: d.x, y: d.y }; })() : null;
       return;
     }
-    pan = null; svg.classList.remove('dao-pan-actif');
+    if (pan) { pan = null; svg.classList.remove('dao-pan-actif'); return; }
+    if (ev.type === 'pointerup' && ev.button === 0 && outilActif()) versOutil('haut', ev);
   };
   svg.addEventListener('pointerup', fin);
   svg.addEventListener('pointercancel', fin);
-  svg.addEventListener('pointerleave', (ev) => { if (ev.pointerType !== 'touch' && !pan) majCurseur(null); });
+  svg.addEventListener('pointerleave', (ev) => { if (ev.pointerType !== 'touch' && !pan) curseur(null); });
+  svg.addEventListener('contextmenu', (ev) => ev.preventDefault());
 
   svg.addEventListener('wheel', (ev) => {
     ev.preventDefault();
@@ -290,6 +309,10 @@ export function monterFeuille(el, planche, opts = {}) {
     zoomer,
     zoomPct,
     versPapierEcran,
+    curseur,
+    /** Pixels écran par mm papier (pour les tolérances d'accrochage). */
+    pxParMm: echelleEcran,
+    planche: () => p,
     detruire() { ro.disconnect(); window.removeEventListener('keydown', clavier); window.removeEventListener('keyup', clavier); },
   };
 }
