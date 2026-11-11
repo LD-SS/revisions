@@ -1157,3 +1157,6 @@ label.cgu-ok input{margin-top:3px}
 .dao-svg .dao-angle .dao-angle-ref{stroke-dasharray:4 3;stroke-width:1}
 .dao-svg .dao-angle text{fill:#7c3aed;font-family:"Segoe UI",Arial,sans-serif;font-weight:700;paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round}
 .dao-svg .dao-repere-pt{stroke:#7c3aed}
+.dao-saisie-ang{display:flex;align-items:center;gap:6px}
+.dao-saisie-ang[hidden]{display:none}
+.dao-saisie-f input[name=ang]{width:6.5em}
