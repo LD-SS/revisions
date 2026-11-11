@@ -134,6 +134,21 @@ function placementVues(p, pc) {
   if (m.note) return a;
   return detecter(pc, p.entites || []) || a;
 }
+/** La mise en page notée doit-elle encore être calculée (avant de pouvoir dessiner) ? */
+function mepAFaire(p) {
+  const m = p.exo?.mep;
+  return !!(m && m.note && !m.ok && !(p.entites || []).some((e) => e.s !== 'n'));
+}
+const CASES_MEP = [['L', 'Largeur L'], ['H', 'Hauteur H'], ['P', 'Profondeur P'], ['ex', 'e (horizontal)'], ['ey', 'e\' (vertical)']];
+function formMep(p) {
+  const m = p.exo.mep, n = m.essais || 0;
+  return `<form class="dao-mep-form" autocomplete="off">
+    <b>Mise en page</b> <span class="muted">(mesures sur la perspective, bouton Pièce ; résultats au 0,1 mm)</span>
+    ${CASES_MEP.map(([k, l]) => `<label class="dao-choix"><span>${l}</span><input class="field" name="${k}" inputmode="decimal" style="width:76px" value="${esc(m.saisie?.[k] ?? '')}"> mm</label>`).join('')}
+    <button class="btn primary" type="submit">Valider</button>
+    <span class="dao-mep-msg">${n ? `<span class="dao-l-man">${esc(m.msg || '')}</span>` : ''}</span>
+  </form>`;
+}
 function consigneMep(p) {
   const pc = pieceDe(p.exo); const m = p.exo.mep;
   if (!m.note) return 'dessine la vue de face, la vue de dessus et la vue de gauche (projection européenne, échelle 1:1) où tu veux sur la feuille : la correction retrouve tes vues. Garde-les alignées (lignes de rappel) ; la mise en page n\'est pas notée.';
@@ -329,10 +344,12 @@ function monterPage(el, remonter) {
             ${p.exo.mode === 'cotes' ? '' : '<button class="btn" type="button" data-exo="solution" aria-pressed="false">Voir la solution</button>'}`}
             ${PERSP.includes(p.exo.mode) || (p.exo.mode === 'ancien' && !p.exo.vox && !p.exo.persp) ? '' : '<button class="btn" type="button" data-exo="piece">Pièce</button>'}
           </span>
+          ${mepAFaire(p) ? formMep(p) : p.exo.mep?.note && p.exo.mep.ok ? `<span class="dao-mep-ok">Mise en page validée${p.exo.mep.essais > 1 ? ` en ${p.exo.mep.essais} essais` : ' du premier coup'} : cadres de construction tracés en trait fin, dessine dedans.</span>` : ''}
           <span class="dao-exo-res">${p.exo.examen && !p.exo.examen.fini ? '<b>Mode examen</b> : pas de correction ni de solution avant d\'avoir rendu la copie.' : p.exo.score != null ? `Meilleur score : <b>${p.exo.score} %</b>` : ''}</span>
           ${p.exo.examen?.note != null ? `<span class="dao-exam-note">Note d'examen : <b>${p.exo.examen.note} %</b> · rendu en ${p.exo.examen.temps} min sur ${p.exo.examen.duree}</span>` : ''}
         </div>` : ''}
-        <div class="dao-zone">
+        <div class="dao-zone" ${p.exo && mepAFaire(p) ? 'data-bloque' : ''}>
+        ${p.exo && mepAFaire(p) ? '<div class="dao-bloque-msg">Calcule d\'abord la mise en page (cases au-dessus) : la feuille se débloque quand elle est juste.</div>' : ''}
         <div class="dao-guide" aria-live="polite"><span class="dao-guide-t"></span><button class="btn" type="button" data-fin hidden title="Terminer le tracé en cours (comme Échap ou le clic droit)">Terminer</button></div>
         <form class="dao-saisie-f" hidden autocomplete="off" title="Tape une valeur puis Entrée (ou ✓). Au clavier, tu peux aussi taper directement sans cliquer ici.">
           <span class="dao-saisie-t"></span>
@@ -665,9 +682,32 @@ function monterPage(el, remonter) {
         + ` · meilleur : ${meilleur} %`
         + (r.mep ? `<span class="dao-regles">Vues : <b>${r.scoreVues} %</b> · mise en page : <b>${r.mep.ok}/4</b>${r.mep.d ? ` (${r.mep.items.map((i) => `<span class="${i.ok ? '' : 'dao-l-man'}">${i.nom} ${nombreFr(i.v)}${i.ok ? ' ✓' : ` au lieu de ${nombreFr(i.att)}`}</span>`).join(' · ')})` : ''}${r.mep.ok < 4 ? ' — emplacement attendu en tirets rouges' : ''}. Calcul : ${texteCalcul(r.mep.a)}.</span>` : '');
     });
+    el.querySelector('.dao-mep-form')?.addEventListener('submit', (ev) => {
+      ev.preventDefault();
+      const pc2 = pieceDe(p.exo); if (!pc2) return;
+      const a = attendu(p, pc2, p.exo.mep.zone);
+      const f = new FormData(ev.target), saisie = {}, faux = [];
+      for (const [k, l] of CASES_MEP) {
+        const v = parseFloat(String(f.get(k) || '').replace(',', '.')); saisie[k] = f.get(k);
+        const tol = k === 'ex' || k === 'ey' ? 0.6 : 0.05;
+        if (!(Math.abs(v - a[k === 'L' ? 'W' : k]) <= tol)) faux.push(l);
+      }
+      const essais = (p.exo.mep.essais || 0) + 1;
+      if (faux.length) {
+        let msg = `À revoir : ${faux.join(', ')}.`;
+        if (essais >= 2 && faux.some((x) => x.startsWith('e'))) msg += ` Rappel : zone utile ${nombreFr(a.A)} × ${nombreFr(a.B)} mm ; e = (${nombreFr(a.A)} − L − P) / 3, e' = (${nombreFr(a.B)} − H − P) / 3.`;
+        if (essais >= 4) msg += ` Réponse : ${texteCalcul(a)}.`;
+        p = { ...p, exo: { ...p.exo, mep: { ...p.exo.mep, essais, saisie, msg } } }; sauver(); remonter(); return;
+      }
+      // juste : cadres de construction des 3 vues en trait fin (points d'accroche)
+      const c = vues(pc2, a.o, a.ecart).cadres, r3 = (v) => Math.round(v * 1000) / 1000;
+      const cadres = Object.values(c).flatMap((q) => [[q.x, q.y, q.x + q.w, q.y], [q.x + q.w, q.y, q.x + q.w, q.y + q.h], [q.x + q.w, q.y + q.h, q.x, q.y + q.h], [q.x, q.y + q.h, q.x, q.y]])
+        .map(([x1, y1, x2, y2]) => ({ t: 'l', x1: r3(x1), y1: r3(y1), x2: r3(x2), y2: r3(y2), s: 'n', mep: 1 }));
+      p = { ...p, entites: [...(p.entites || []).filter((e) => !e.mep), ...cadres], exo: { ...p.exo, mep: { ...p.exo.mep, ok: true, essais, saisie, msg: '' } } }; sauver(); remonter();
+    });
     el.querySelector('[data-mep]')?.addEventListener('change', (ev) => {
       const v = ev.target.value;
-      p = { ...p, exo: { ...p.exo, mep: v === 'libre' ? { note: false, zone: p.exo.mep.zone } : { note: true, zone: v } } };
+      p = { ...p, entites: (p.entites || []).filter((e) => !e.mep), exo: { ...p.exo, mep: v === 'libre' ? { note: false, zone: p.exo.mep.zone } : { note: true, zone: v } } };
       sauver(); remonter();
     });
   }
