@@ -1,67 +1,49 @@
 /* =====================================================================
-   VUE ATELIER DE DESSIN — tous les exercices « à dessiner » réunis
+   VUE ATELIER DE DESSIN — tout se dessine dans le nouveau logiciel (js/dao/)
    ---------------------------------------------------------------------
-   #/dessin                       galerie (filtres, progression)
-   #/dessin/<chapitre>/<exercice> planche de l'exercice (lecteur commun)
-   #/dessin/hasard/<type>-<niveau>-<graine>  pièce générée au hasard (vue ou coupe)
-   #/dessin/libre                 planche libre (nouveau moteur en mm, js/dao/)
-   Les notes sont les mêmes que dans l'onglet Exercices du chapitre.
+   #/dessin              catalogue : séries d'exercices (js/dao/catalogue.js),
+                         pièces au hasard, planche libre, mode examen
+   #/dessin/libre[/…]    planche (js/vues/planche-libre.js)
+   L'ancien dessin sur grille (lecteur, pièces en cubes) a été retiré le 11/11/2026.
    ===================================================================== */
 
 import { ongletsMatiere } from './schemas.js';
 import { esc, stockage } from '../utils.js';
 import { icone } from '../icones.js';
 import { styleMatiere } from '../matieres.js';
-import { matiere, chargerChapitre } from '../store.js';
-import { sourcesDe } from '../synthese.js';
-import { svgSur } from '../rendu.js';
-import { lecteurExercices, noteExo, preparerDessin } from '../exercices.js';
-import { pieceAuHasard, CONSIGNES } from '../geometrie.js';
-import { monterPiece3D } from '../piece3d.js';
-import { niveauAide, AIDES } from '../planche.js';
-import { vuePlancheLibre, grainePiece, creerAncien } from './planche-libre.js';
-import { graineTrouVertical } from '../dao/pieces.js';
+import { matiere } from '../store.js';
+import { vuePlancheLibre, grainePiece } from './planche-libre.js';
+import { graineTrouVertical, vues } from '../dao/pieces.js';
+import { svgPerspective } from '../dao/perspective.js';
+import { SERIES, EXERCICES, NOMS_MODES } from '../dao/catalogue.js';
 
 const MID = 'dessin';
-const NOTES = { ok: ['Réussi', 'ok'], mid: ['Presque', 'mid'], ko: ['À refaire', 'ko'] };
+const REUSSI = 80;   // score à partir duquel un exercice est « réussi »
 
-/** Tous les exercices de dessin de la matière, dans l'ordre des chapitres. */
-async function tousLesExercices() {
-  const m = matiere(MID);
-  if (!m) return { m: null, exos: [] };
-  const exos = [];
-  for (const c of m.chapitres) {
-    if (!c.nb?.exercices) continue;
-    let ch;
-    try { ch = await chargerChapitre(MID, c.id); } catch { continue; }
-    const docs = sourcesDe(ch);
-    for (const e of ch.exercices) {
-      if (e.type !== 'dessin') continue;
-      exos.push({ ...preparerDessin(e), _cle: `${MID}/${c.id}/${e.id}`, _docs: docs, _chap: c, _num: m.chapitres.indexOf(c) + 1 });
-    }
-  }
-  return { m, exos };
+/** Remise à zéro des résultats de l'ancien dessin (une seule fois, demandée par Logan le 11/11/2026). */
+function razAncien() {
+  if (stockage.lire('dessin.raz', 0) >= 1) return;
+  const ex = stockage.lire('exos', {}) || {};
+  const garde = Object.fromEntries(Object.entries(ex).filter(([k]) => !k.startsWith(`${MID}/`)));
+  if (Object.keys(garde).length !== Object.keys(ex).length) stockage.ecrire('exos', garde);
+  stockage.ecrire('dessin.raz', 1);
 }
 
-const NOM_TACHE = { face: 'Vue de face', gauche: 'Vue de gauche', dessus: 'Vue de dessus', caches: 'Arêtes cachées', coupe: 'Coupe A-A' };
-const tacheDe = (e) => NOM_TACHE[e.tache ? (e.tache.type === 'vue' ? e.tache.vue : e.tache.type) : (e.piece?.vue || 'caches')];
-const nouvelleGraine = () => 1 + Math.floor(Math.random() * 99999);
-const lienHasard = (type, niv, g = nouvelleGraine()) => `#/dessin/hasard/${type}-${niv}-${g}`;
+/** Planche (et meilleur score) d'un exercice du catalogue. */
+function etatExo(id) {
+  const t = stockage.lire('planches', {}) || {};
+  const pl = Object.values(t).find((x) => x?.exo?.cat === id);
+  return pl ? { score: pl.exo.score ?? null } : null;
+}
 
-/** Exercice construit à partir d'une graine (toujours la même pièce pour une même graine). */
-function exerciceAuHasard(code) {
-  const [, type, niv, g] = /^(vue|coupe)-([123])-(\d{1,6})$/.exec(code || '') || [];
-  if (!type) return null;
-  const r = pieceAuHasard(+g, +niv, type);
-  if (!r) return null;
-  const nomT = r.tache.type === 'vue' ? r.tache.vue : r.tache.type;
-  return preparerDessin({
-    id: `h-${code}`, _cle: `${MID}/hasard/${code}`, type: 'dessin', niveau: +niv, complement: true,
-    titre: `Pièce n° ${g} · ${NOM_TACHE[nomT]}`, consigne: CONSIGNES[nomT],
-    indice: type === 'coupe' ? 'Le plan A-A (vue de dessus) passe par l\'axe du trou. On enlève la partie **avant** de la pièce, on dessine ce qu\'on voit **derrière** le plan et on **hachure** la matière coupée.'
-      : 'Repère d\'abord les formes (entailles, marches, rainures, trous) sur la pièce 3D, puis reporte hauteurs et profondeurs avec les lignes de rappel et la ligne à 45°.',
-    piece: r.piece, tache: r.tache, _type: type,
-  });
+/** Vignette : la perspective de la pièce, ou ses 3 vues pour les exercices de perspective (sinon on verrait la réponse). */
+function vignette(e) {
+  if (e.mode !== 'iso' && e.mode !== 'cav') return svgPerspective(e.piece, { cotes: false, largeur: 180 });
+  const v = vues(e.piece, [0, 0], 10), ls = [...v.face, ...v.dessus, ...v.gauche].filter((x) => x.t === 'l' || x.t === 'c');
+  const xs = ls.flatMap((x) => (x.t === 'l' ? [x.x1, x.x2] : [x.cx - x.r, x.cx + x.r])), ys = ls.flatMap((x) => (x.t === 'l' ? [x.y1, x.y2] : [x.cy - x.r, x.cy + x.r]));
+  const x0 = Math.min(...xs) - 4, x1 = Math.max(...xs) + 4, y0 = Math.min(...ys) - 4, y1 = Math.max(...ys) + 4;
+  const trait = (x) => (x.s === 'c' ? 'stroke-dasharray="3 1.5" stroke-width="0.8"' : x.s === 'a' ? 'stroke-dasharray="6 1.5 1 1.5" stroke-width="0.5"' : 'stroke-width="1.4"');
+  return `<svg viewBox="${x0} ${-y1} ${x1 - x0} ${y1 - y0}" width="180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="3 vues">${ls.map((x) => (x.t === 'l' ? `<line x1="${x.x1}" y1="${-x.y1}" x2="${x.x2}" y2="${-x.y2}" stroke="#111" ${trait(x)}/>` : `<circle cx="${x.cx}" cy="${-x.cy}" r="${x.r}" fill="none" stroke="#111" ${trait(x)}/>`)).join('')}</svg>`;
 }
 
 /** Examens rendus (planche libre), du plus récent au plus ancien. */
@@ -73,112 +55,57 @@ function examensFaits() {
 /** Exercices corrigés dans la planche libre (mode 'vues' ou 'cotes') : nombre et moyenne des meilleurs scores. */
 function statsVues(mode = 'vues') {
   const t = stockage.lire('planches', {}) || {};
-  const s = Object.values(t).filter((pl) => pl?.exo && (pl.exo.mode || 'vues') === mode).map((pl) => pl.exo.score).filter((v) => typeof v === 'number');
+  const s = Object.values(t).filter((pl) => pl?.exo && !pl.exo.cat && (pl.exo.mode || 'vues') === mode).map((pl) => pl.exo.score).filter((v) => typeof v === 'number');
   return { n: s.length, moy: s.length ? Math.round(s.reduce((a, b) => a + b, 0) / s.length) : 0 };
 }
 
 export async function vueAtelier(el, params = []) {
-  const { m, exos } = await tousLesExercices();
+  const m = matiere(MID);
   if (!m) throw new Error('Matière « dessin » introuvable.');
   const [cid, eid] = params;
   if (cid === 'libre') return vuePlancheLibre(el, eid);
+  if (cid) { location.replace('#/dessin'); return null; }   // anciennes adresses (ancien dessin sur grille)
+  razAncien();
 
-  if (cid === 'hasard') {   // ---------- pièce au hasard
-    const e = exerciceAuHasard(eid);
-    if (!e) { location.hash = '#/dessin'; return null; }
-    el.innerHTML = `
-      <div class="mc" ${styleMatiere(m)}>
-        <div class="crumb"><a href="#/">Accueil</a><span class="crumb-sep">›</span><a href="#/dessin">Atelier de dessin</a><span class="crumb-sep">›</span><span>Pièce au hasard</span></div>
-        <div class="atelier-retour">
-          <a class="btn" href="#/dessin">${icone('fleche-g')} Toutes les planches</a>
-          <a class="btn primary" href="${lienHasard(e._type, e.niveau)}" title="Une autre pièce du même niveau">${icone('melanger')} Nouvelle pièce</a>
-          <span class="muted">Note le n° ${esc(eid.split('-')[2])} pour la retrouver (même n° = même pièce).</span>
-          <button class="btn" type="button" data-mm title="Refaire cet exercice sur la planche du nouveau moteur (en mm, outils de DAO, impression)">${icone('regle')} Sur la planche (mm)</button>
-        </div>
-        <div id="atelier-lecteur"></div>
-      </div>`;
-    lecteurExercices(el.querySelector('#atelier-lecteur'), [e], { prefixe: MID });
-    el.querySelector('[data-mm]').addEventListener('click', () => { if (creerAncien(e)) location.hash = '#/dessin/libre'; });
-    return null;
-  }
-
-  if (cid && eid) {   // ---------- planche d'un exercice
-    el.innerHTML = `
-      <div class="mc" ${styleMatiere(m)}>
-        <div class="crumb"><a href="#/">Accueil</a><span class="crumb-sep">›</span><a href="#/dessin">Atelier de dessin</a><span class="crumb-sep">›</span><span>Exercice</span></div>
-        <div class="atelier-retour"><a class="btn" href="#/dessin">${icone('fleche-g')} Toutes les planches</a>
-          ${exos.some((x) => x._cle === `${MID}/${cid}/${eid}` && x.planche) ? `<button class="btn" type="button" data-mm title="Refaire cet exercice sur la planche du nouveau moteur (en mm, outils de DAO, impression)">${icone('regle')} Sur la planche (mm)</button>` : ''}</div>
-        <div id="atelier-lecteur"></div>
-      </div>`;
-    lecteurExercices(el.querySelector('#atelier-lecteur'), exos, { prefixe: MID, debut: `${MID}/${cid}/${eid}` });
-    el.querySelector('[data-mm]')?.addEventListener('click', () => { const e = exos.find((x) => x._cle === `${MID}/${cid}/${eid}`); if (creerAncien(e)) location.hash = '#/dessin/libre'; });
-    return null;
-  }
-
-  // ---------- galerie
-  const filtre = stockage.lire('atelier.filtre', 'tous');
-  const notes = exos.map((e) => noteExo(e._cle));
-  const faits = notes.filter(Boolean);
-  const reussis = faits.filter((n) => n.r === 'ok').length;
-  const moyenne = faits.length ? Math.round(faits.reduce((s, n) => s + (n.pct ?? { ok: 100, mid: 50, ko: 0 }[n.r]), 0) / faits.length) : null;
-  const FILTRES = [['tous', 'Toutes'], ['afaire', 'Pas encore faites'], ['refaire', 'À refaire'], ['reussi', 'Réussies'], ['n1', '★'], ['n2', '★★'], ['n3', '★★★']];
-  const garde = (e, n) => ({
-    afaire: !n, refaire: n && n.r !== 'ok', reussi: n?.r === 'ok',
-    n1: (e.niveau || 1) === 1, n2: e.niveau === 2, n3: e.niveau === 3,
-  }[filtre] ?? true);
-
-  const carte = (e, i) => {
-    const n = notes[i];
-    const etoiles = '★'.repeat(e.niveau || 1) + '☆'.repeat(3 - (e.niveau || 1));
-    const tache = tacheDe(e);
-    return `<a class="panel at-carte" href="#/dessin/${esc(e._chap.id)}/${esc(e.id)}">
-      <div class="at-img fig" ${e.piece ? `data-mini="${i}"` : ''}>${!e.piece && e.perspective ? svgSur(e.perspective) : ''}</div>
+  const etats = EXERCICES.map((e) => etatExo(e.id));
+  const faits = etats.filter((x) => x?.score != null);
+  const reussis = faits.filter((x) => x.score >= REUSSI).length;
+  const moyenne = faits.length ? Math.round(faits.reduce((a, x) => a + x.score, 0) / faits.length) : null;
+  const prochaine = EXERCICES.find((e, i) => !(etats[i]?.score >= REUSSI));
+  const carte = (e) => {
+    const st = etats[EXERCICES.indexOf(e)];
+    const badge = st?.score != null ? `<span class="badge ex-${st.score >= REUSSI ? 'ok' : st.score >= 50 ? 'mid' : 'ko'}">${st.score >= REUSSI ? 'Réussi' : 'À reprendre'} · ${st.score} %</span>` : st ? '<span class="badge">Commencé</span>' : '<span class="badge">À faire</span>';
+    return `<a class="panel at-carte" href="#/dessin/libre/cat-${esc(e.id)}">
+      <div class="at-img fig">${vignette(e)}</div>
       <div class="at-txt">
-        <div class="at-l1"><span class="ex-niv">${etoiles}</span>${n ? `<span class="badge ex-${NOTES[n.r][1]}">${NOTES[n.r][0]}${n.pct != null ? ` · ${n.pct} %` : ''}</span>` : '<span class="badge">À faire</span>'}</div>
+        <div class="at-l1"><span class="ex-niv">${'★'.repeat(e.niveau)}${'☆'.repeat(3 - e.niveau)}</span>${badge}</div>
         <b>${esc(e.titre)}</b>
-        <span class="muted">${tache} · ch. ${e._num}</span>
-        ${n?.aide ? `<span class="muted at-aide">aides : ${esc(AIDES[n.aide]?.nom || n.aide)}</span>` : ''}
+        <span class="muted">${esc(NOMS_MODES[e.mode])}</span>
       </div></a>`;
   };
-  const nbHasard = Object.keys(stockage.lire('exos', {})).filter((k) => k.startsWith(`${MID}/hasard/`)).length;
-  const visibles = exos.map((e, i) => [e, i]).filter(([e, i]) => garde(e, notes[i]));
 
   el.innerHTML = `
     <div class="mc" ${styleMatiere(m)}>
       <div class="crumb"><a href="#/">Accueil</a><span class="crumb-sep">›</span><a href="#/m/${esc(m.id)}">${esc(m.nom)}</a><span class="crumb-sep">›</span><span>Atelier de dessin</span></div>
       <div class="page-head">
         <span class="m-ic">${icone('crayon')}</span>
-        <div><h2>Atelier de dessin</h2><p class="muted">Dessine les vues directement dans l'appli : correction automatique et expliquée.</p></div>
+        <div><h2>Atelier de dessin</h2><p class="muted">Dessine sur une vraie planche en mm (logiciel de DAO de l'appli) : correction automatique, solution, impression à l'échelle.</p></div>
       </div>
       ${ongletsMatiere(m, 'atelier')}
       <div class="at-stats">
-        <div class="panel"><div class="big">${exos.length}</div>planches</div>
-        <div class="panel"><div class="big">${faits.length}</div>faites</div>
-        <div class="panel"><div class="big ok">${reussis}</div>réussies</div>
+        <div class="panel"><div class="big">${EXERCICES.length}</div>exercices</div>
+        <div class="panel"><div class="big">${faits.length}</div>corrigés</div>
+        <div class="panel"><div class="big ok">${reussis}</div>réussis (≥ ${REUSSI} %)</div>
         <div class="panel"><div class="big">${moyenne == null ? '–' : `${moyenne} %`}</div>score moyen</div>
       </div>
-      <div class="at-barre">
-        <div class="at-filtres" role="radiogroup" aria-label="Filtrer">
-          ${FILTRES.map(([v, l]) => `<label class="chip"><input type="radio" name="atf" value="${v}" ${v === filtre ? 'checked' : ''}><span>${l}</span></label>`).join('')}
-        </div>
-        <span class="muted">Niveau d'aide actuel : <b>${AIDES[niveauAide()].nom}</b> (modifiable dans chaque planche)</span>
-      </div>
-      ${(() => {
-        const prochaine = exos.find((e, i) => !notes[i]) || exos.find((e, i) => notes[i]?.r !== 'ok');
-        return prochaine ? `<a class="btn primary at-go" href="#/dessin/${esc(prochaine._chap.id)}/${esc(prochaine.id)}">${icone('crayon')} ${faits.length ? 'Continuer' : 'Commencer'} : ${esc(prochaine.titre)}</a>` : '<p class="notice info">Toutes les planches sont réussies, bravo ! Essaie-les en aides « Difficile ».</p>';
-      })()}
+      ${prochaine ? `<a class="btn primary at-go" href="#/dessin/libre/cat-${esc(prochaine.id)}">${icone('crayon')} ${faits.length ? 'Continuer' : 'Commencer'} : ${esc(prochaine.titre)}</a>` : '<p class="notice info">Tous les exercices sont réussis, bravo ! Entraîne-toi avec les pièces au hasard ou le mode examen.</p>'}
+      ${SERIES.map((sr, n) => `<section class="at-serie">
+        <h3>${n + 1}. ${esc(sr.titre)}</h3>
+        <p class="muted">${esc(sr.intro)}</p>
+        <div class="at-grille">${sr.exos.map(carte).join('')}</div>
+      </section>`).join('')}
       <section class="panel at-hasard">
-        <div><h3>${icone('melanger')} Pièces au hasard</h3>
-          <p class="muted">Une nouvelle pièce à chaque fois, corrigée automatiquement : pour s'entraîner sans fin.${nbHasard ? ` Tu en as déjà fait <b>${nbHasard}</b>.` : ''}</p></div>
-        <div class="at-hasard-b">
-          <span class="at-hl">Vues</span>
-          ${[1, 2, 3].map((n) => `<a class="btn" href="${lienHasard('vue', n)}">${'★'.repeat(n)}</a>`).join('')}
-          <span class="at-hl">Coupes</span>
-          ${[1, 2, 3].map((n) => `<a class="btn" href="${lienHasard('coupe', n)}">${'★'.repeat(n)}</a>`).join('')}
-        </div>
-      </section>
-      <section class="panel at-hasard">
-        <div><h3>${icone('regle')} Planche libre (mini-DAO)</h3>
+        <div><h3>${icone('melanger')} Pièces au hasard et planche libre</h3>
           <p class="muted">Feuille A4 ou A3 en mm, avec cadre, cartouche, cotes, hachures… Exercices corrigés automatiquement : dessiner les 3 vues d'une pièce vue en perspective (au ½ mm près), les coter, dessiner une coupe (entière, demi, locale), une section ou une perspective.${(() => { const t = [['vues', 'vues'], ['cotes', 'cotation'], ['coupe', 'coupe'], ['demi', 'demi-coupe'], ['section', 'section'], ['locale', 'coupe locale'], ['iso', 'isométrique'], ['cav', 'cavalière']].map(([m, l]) => { const r = statsVues(m); return r.n ? `${l} : <b>${r.n}</b> exercice${r.n > 1 ? 's' : ''}, moyenne <b>${r.moy} %</b>` : ''; }).filter(Boolean); return t.length ? ` Tes scores — ${t.join(' · ')}.` : ''; })()}</p></div>
         <div class="at-hasard-b">
           <a class="btn primary" href="#/dessin/libre">${icone('crayon')} Ouvrir la planche</a>
@@ -213,10 +140,7 @@ export async function vueAtelier(el, params = []) {
           <button class="btn primary" type="submit">Commencer</button>
         </form>
       </section>
-      <div class="at-grille">${visibles.length ? visibles.map(([e, i]) => carte(e, i)).join('') : '<p class="muted">Aucune planche pour ce filtre.</p>'}</div>
-      <p class="muted at-note">D'autres planches (plans inclinés, cylindres, cotation) viendront s'ajouter ici.</p>
     </div>`;
-  el.querySelectorAll('[data-mini]').forEach((z) => { const e = exos[+z.dataset.mini]; if (e?.piece) monterPiece3D(z, e.piece, { rotation: false }); });
   el.querySelector('.at-exam-f')?.addEventListener('submit', (ev) => {
     ev.preventDefault();
     const f = new FormData(ev.target), n = +f.get('niv');
@@ -225,6 +149,5 @@ export async function vueAtelier(el, params = []) {
     const id = type === 'demi' ? `s${n}-${grainePiece()}` : type === 'locale' ? `h${n}-${graineTrouVertical(n)}` : `h${n}-${grainePiece()}`;
     location.hash = `#/dessin/libre/exam-${f.get('duree')}-${type}-${id}`;
   });
-  el.querySelectorAll('input[name=atf]').forEach((r) => r.addEventListener('change', () => { stockage.ecrire('atelier.filtre', r.value); vueAtelier(el, params); }));
   return null;
 }
