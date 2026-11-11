@@ -1143,3 +1143,6 @@ label.cgu-ok input{margin-top:3px}
 /* barres contextuelles (cote, sélection, chanfrein, texte) : dans la zone de dessin, en haut au centre */
 .dao-zone>.dao-selbar{top:8px;left:50%;transform:translateX(-50%);margin:0;width:max-content;max-width:calc(100% - 320px);padding:4px 8px;gap:4px}
 .dao-zone>.dao-selbar .dao-b{padding:4px 9px}
+.at-serie{margin:18px 0 6px}
+.at-serie h3{margin:0 0 2px}
+.at-serie>p{margin:0 0 10px;font-size:13.5px}
