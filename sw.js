@@ -7,7 +7,7 @@
    Quand on ajoute un fichier JS / CSS : l'ajouter dans FICHIERS_APP.
    ===================================================================== */
 
-const CACHE = 'revisions-v39';
+const CACHE = 'revisions-v40';
 
 const FICHIERS_APP = [
   './',
@@ -53,6 +53,8 @@ const FICHIERS_APP = [
   'js/vues/atelier.js',
   'js/vues/planche-libre.js',
   'js/dao/feuille.js',
+  'js/dao/geom.js',
+  'js/dao/trace.js',
   'js/geometrie.js',
   'lib/katex/katex.min.js',
   'lib/katex/katex.min.css',
