@@ -70,15 +70,16 @@ function aretesVues(piece, sens) {
  */
 export function vues(piece, origine = [20, 90], ecart = 20) {
   if (piece.rev) return vuesRevolution(piece, origine, ecart);
+  const [ex, ey] = Array.isArray(ecart) ? ecart : [ecart, ecart];   // écart horizontal (face-gauche), vertical (face-dessus)
   const b = boite(piece);
   const W = b.x1 - b.x0, H = b.z1 - b.z0, P = piece.prof;
   const [ox, oy] = origine;
   // vue de face : (x, z) → (ox + x - x0, oy + z - z0)
   const F = (x, z) => [ox + x - b.x0, oy + z - b.z0];
-  // vue de dessus (en dessous) : (x, y) → (ox + x - x0, oy - ecart - P + y)  (arrière contre la vue de face)
-  const D = (x, y) => [ox + x - b.x0, oy - ecart - P + y];
-  // vue de gauche (à droite) : (y, z) → (ox + W + ecart + P - y, oy + z - z0)  (arrière contre la vue de face)
-  const G = (y, z) => [ox + W + ecart + P - y, oy + z - b.z0];
+  // vue de dessus (en dessous) : (x, y) → (ox + x - x0, oy - ey - P + y)  (arrière contre la vue de face)
+  const D = (x, y) => [ox + x - b.x0, oy - ey - P + y];
+  // vue de gauche (à droite) : (y, z) → (ox + W + ex + P - y, oy + z - z0)  (arrière contre la vue de face)
+  const G = (y, z) => [ox + W + ex + P - y, oy + z - b.z0];
   const face = [], dessus = [], gauche = [];
   const seg = (arr, f, a, c, s) => { const p = f(...a), q = f(...c); arr.push(L(p[0], p[1], q[0], q[1], s)); };
 
@@ -118,8 +119,8 @@ export function vues(piece, origine = [20, 90], ecart = 20) {
   }
   const cadres = {
     face: { x: ox, y: oy, w: W, h: H },
-    dessus: { x: ox, y: oy - ecart - P, w: W, h: P },
-    gauche: { x: ox + W + ecart, y: oy, w: P, h: H },
+    dessus: { x: ox, y: oy - ey - P, w: W, h: P },
+    gauche: { x: ox + W + ex, y: oy, w: P, h: H },
   };
   return { face: nettoyer(face), dessus: nettoyer(dessus), gauche: nettoyer(gauche), cadres };
 }
