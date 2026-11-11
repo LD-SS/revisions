@@ -17,6 +17,8 @@
 const r3 = (v) => Math.round(v * 1000) / 1000;
 const DEB = 3;   // dépassement des axes (mm)
 const INF = 1e9;
+import { flecheFace } from './perspective.js';
+
 const L = (x1, y1, x2, y2, s) => ({ t: 'l', x1: r3(x1), y1: r3(y1), x2: r3(x2), y2: r3(y2), s });
 
 /** Construit une pièce de révolution (prof et profil = boîte englobante, pour le reste du logiciel). */
@@ -286,6 +288,7 @@ export function svgRevolution(pc, { cotes = true, largeur = 420 } = {}) {
       for (let k = 0; k + 1 < vs.length; k++) {
         const A = pr([vs[k], -R, -R]), B = pr([vs[k + 1], -R, -R]), Ao = pr([vs[k], -R, -R - D]), Bo = pr([vs[k + 1], -R, -R - D]);
         cot += `<path d="M${f2(A[0])} ${f2(A[1])}L${f2(Ao[0])} ${f2(Ao[1])}M${f2(B[0])} ${f2(B[1])}L${f2(Bo[0])} ${f2(Bo[1])}" ${fin} stroke-dasharray="2 2" fill="none"/>`;
+        tous.push(Ao, Bo, [Ao[0], Ao[1] + 12], [Bo[0], Bo[1] + 12]);
         const Lg = Math.hypot(Bo[0] - Ao[0], Bo[1] - Ao[1]); if (Lg < 1) continue;
         const u = [(Bo[0] - Ao[0]) / Lg, (Bo[1] - Ao[1]) / Lg];
         cot += `<path d="M${f2(Ao[0])} ${f2(Ao[1])}L${f2(Bo[0])} ${f2(Bo[1])}" ${fin} fill="none"/>` + fl(Ao, [-u[0], -u[1]]) + fl(Bo, u);
@@ -311,7 +314,8 @@ export function svgRevolution(pc, { cotes = true, largeur = 420 } = {}) {
       tous.push([q[0] - 80, q[1] - 10]);
     }
   }
-  const m = cotes ? 40 : 8;
+  if (cotes) { const r = flecheFace(pr([W / 2, -R - 34, R * 0.3]), pr([W / 2, -R - 3, R * 0.3])); cot += r.svg; tous.push(...r.pts); }
+  const m = cotes ? 14 : 8;
   const us = tous.map((p) => p[0]), vs = tous.map((p) => p[1]);
   const x0 = Math.min(...us) - m, y0 = Math.min(...vs) - m, w = Math.max(...us) - Math.min(...us) + 2 * m, h = Math.max(...vs) - Math.min(...vs) + 2 * m;
   return `<svg viewBox="${f2(x0)} ${f2(y0)} ${f2(w)} ${f2(h)}" width="${largeur}" role="img" aria-label="Perspective isométrique de la pièce ${String(pc.nom || '').replace(/"/g, '')}" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;background:#fff">${corps}${cot}</svg>`;
