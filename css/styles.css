@@ -1075,3 +1075,12 @@ label.cgu-ok input{margin-top:3px}
   .dao-b .ic{width:22px;height:22px}
   .dao-choix .field{min-height:46px}
 }
+
+/* DAO : panneau de la pièce (perspective) */
+.dao-zone{position:relative}
+.dao.dao-plein .dao-zone{flex:1;display:flex;flex-direction:column;min-height:0}
+.dao.dao-plein .dao-zone .dao-cadre-ecran{flex:1}
+.dao-piece{position:absolute;top:8px;right:8px;z-index:7;width:min(330px,calc(100% - 16px));padding:8px 10px;box-shadow:var(--shadow)}
+.dao-piece-t{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px}
+.dao-piece-fig svg{display:block;width:100%;height:auto;border-radius:6px}
+.dao-piece p{margin:4px 0 0;font-size:12px}
