@@ -68,6 +68,8 @@ const ICONES_OUTILS = {
   prolonger: '<svg viewBox="0 0 24 24" class="ic"><path d="M3 12h10" stroke="currentColor" stroke-width="2"/><path d="M13 12h5" stroke="currentColor" stroke-width="2" stroke-dasharray="2 2"/><path d="M21 4v16" stroke="currentColor" stroke-width="2"/></svg>',
   chanfrein: '<svg viewBox="0 0 24 24" class="ic"><path d="M4 20V10l6-6h10" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/></svg>',
   conge: '<svg viewBox="0 0 24 24" class="ic"><path d="M4 20v-8a8 8 0 0 1 8-8h8" stroke="currentColor" stroke-width="2" fill="none"/></svg>',
+  hachures: '<svg viewBox="0 0 24 24" class="ic"><rect x="4" y="4" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"/><path d="M4 12 12 4M4 20 20 4M12 20l8-8" stroke="currentColor" stroke-width="1.3"/></svg>',
+  texte: '<svg viewBox="0 0 24 24" class="ic"><path d="M5 6V4h14v2M12 4v16M9 20h6" stroke="currentColor" stroke-width="2" fill="none"/></svg>',
   gomme: '<svg viewBox="0 0 24 24" class="ic"><path d="M7 21h10M5 15l9-11 6 5-9 11H8z" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/></svg>',
   ligne: '<svg viewBox="0 0 24 24" class="ic"><path d="M4 18 10 7l5 8 5-10" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/></svg>',
   rect: '<svg viewBox="0 0 24 24" class="ic"><rect x="4" y="6" width="16" height="12" stroke="currentColor" stroke-width="2" fill="none"/></svg>',
@@ -125,7 +127,7 @@ function monterPage(el, remonter) {
         </div>
         <div class="dao-barre dao-outils" role="toolbar" aria-label="Outils de dessin">
           <div class="dao-groupe" role="group" aria-label="Outil">
-            ${boutonsOutils(['main', 'selection', 'ligne', 'rect', 'cercle', 'arc', 'cote', 'gomme'])}
+            ${boutonsOutils(['main', 'selection', 'ligne', 'rect', 'cercle', 'arc', 'cote', 'hachures', 'texte', 'gomme'])}
           </div>
           <div class="dao-groupe" role="group" aria-label="Construction">
             ${boutonsOutils(['rappel', 'l45', 'ajuster', 'prolonger', 'chanfrein', 'conge'])}
@@ -150,6 +152,10 @@ function monterPage(el, remonter) {
         <div class="dao-barre dao-selbar dao-parambar" hidden>
           <label class="dao-choix"><span class="dao-param-nom">Distance</span>
             <input class="field dao-param" type="number" min="0.5" step="0.5" value="5" style="width:80px"> mm</label>
+        </div>
+        <div class="dao-barre dao-selbar dao-textebar" hidden>
+          <label class="dao-choix"><span>Texte</span><input class="field dao-texte-in" type="text" maxlength="60" placeholder="Ex. : VUE DE FACE" style="width:200px"></label>
+          <label class="dao-choix"><span>Hauteur</span><select class="field dao-texte-h">${[2.5, 3.5, 5, 7, 10].map((h) => `<option value="${h}" ${h === 3.5 ? 'selected' : ''}>${String(h).replace('.', ',')} mm</option>`).join('')}</select></label>
         </div>
         <div class="dao-barre dao-selbar dao-cotebar" hidden>
           <b>Cote :</b>
@@ -190,7 +196,10 @@ function monterPage(el, remonter) {
     annuler: el.querySelector('[data-act=annuler]'), retablir: el.querySelector('[data-act=retablir]'),
   };
   let traceur = null;
-  const selbar = el.querySelector('.dao-selbar:not(.dao-cotebar):not(.dao-parambar)'), selN = el.querySelector('.dao-sel-n');
+  const selbar = el.querySelector('.dao-selbar:not(.dao-cotebar):not(.dao-parambar):not(.dao-textebar)'), selN = el.querySelector('.dao-sel-n');
+  const textebar = el.querySelector('.dao-textebar');
+  textebar.querySelector('.dao-texte-in').addEventListener('input', (ev) => traceur.reglerParam('texte', ev.target.value));
+  textebar.querySelector('.dao-texte-h').addEventListener('change', (ev) => traceur.reglerParam('h', parseFloat(ev.target.value)));
   const parambar = el.querySelector('.dao-parambar'), paramIn = el.querySelector('.dao-param');
   paramIn.addEventListener('input', () => { const o = traceur.outil(); traceur.reglerParam(o, parseFloat(String(paramIn.value).replace(',', '.'))); });
   const cotebar = el.querySelector('.dao-cotebar');
@@ -218,6 +227,7 @@ function monterPage(el, remonter) {
       etat.ortho.classList.toggle('on', i.ortho);
       etat.annuler.disabled = !i.annuler; etat.retablir.disabled = !i.retablir;
       cotebar.hidden = traceur?.outil() !== 'cote';
+      textebar.hidden = traceur?.outil() !== 'texte';
       const po = traceur?.outil();
       const avecParam = po === 'chanfrein' || po === 'conge';
       parambar.hidden = !avecParam;
