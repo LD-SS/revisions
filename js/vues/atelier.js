@@ -175,7 +175,7 @@ export async function vueAtelier(el, params = []) {
       </section>
       <section class="panel at-hasard">
         <div><h3>${icone('regle')} Planche libre (mini-DAO)</h3>
-          <p class="muted">Feuille A4 ou A3 en mm, avec cadre, cartouche, cotes, hachures… Exercices corrigés automatiquement : dessiner les 3 vues d'une pièce vue en perspective (au ½ mm près), les coter, dessiner une coupe (entière, demi, locale) ou une section.${(() => { const t = [['vues', 'vues'], ['cotes', 'cotation'], ['coupe', 'coupe'], ['demi', 'demi-coupe'], ['section', 'section'], ['locale', 'coupe locale']].map(([m, l]) => { const r = statsVues(m); return r.n ? `${l} : <b>${r.n}</b> exercice${r.n > 1 ? 's' : ''}, moyenne <b>${r.moy} %</b>` : ''; }).filter(Boolean); return t.length ? ` Tes scores — ${t.join(' · ')}.` : ''; })()}</p></div>
+          <p class="muted">Feuille A4 ou A3 en mm, avec cadre, cartouche, cotes, hachures… Exercices corrigés automatiquement : dessiner les 3 vues d'une pièce vue en perspective (au ½ mm près), les coter, dessiner une coupe (entière, demi, locale), une section ou une perspective.${(() => { const t = [['vues', 'vues'], ['cotes', 'cotation'], ['coupe', 'coupe'], ['demi', 'demi-coupe'], ['section', 'section'], ['locale', 'coupe locale'], ['iso', 'isométrique'], ['cav', 'cavalière']].map(([m, l]) => { const r = statsVues(m); return r.n ? `${l} : <b>${r.n}</b> exercice${r.n > 1 ? 's' : ''}, moyenne <b>${r.moy} %</b>` : ''; }).filter(Boolean); return t.length ? ` Tes scores — ${t.join(' · ')}.` : ''; })()}</p></div>
         <div class="at-hasard-b">
           <a class="btn primary" href="#/dessin/libre">${icone('crayon')} Ouvrir la planche</a>
           <span class="at-hl">3 vues</span>
@@ -188,6 +188,10 @@ export async function vueAtelier(el, params = []) {
           ${[1, 2, 3].map((n) => `<a class="btn" href="#/dessin/libre/demi-s${n}-${grainePiece()}" title="Demi-coupe A-A d'une pièce symétrique au hasard, niveau ${n}">${'★'.repeat(n)}</a>`).join('')}
           <span class="at-hl">Section</span>
           ${[1, 2, 3].map((n) => `<a class="btn" href="#/dessin/libre/section-h${n}-${grainePiece()}" title="Section sortie B-B d'une pièce au hasard, niveau ${n}">${'★'.repeat(n)}</a>`).join('')}
+          <span class="at-hl">Isométrique</span>
+          ${[1, 2, 3].map((n) => `<a class="btn" href="#/dessin/libre/iso-h${n}-${grainePiece()}" title="Perspective isométrique d'une pièce au hasard (sans trous), niveau ${n}">${'★'.repeat(n)}</a>`).join('')}
+          <span class="at-hl">Cavalière</span>
+          ${[1, 2, 3].map((n) => `<a class="btn" href="#/dessin/libre/cav-h${n}-${grainePiece()}" title="Perspective cavalière d'une pièce au hasard (sans trous), niveau ${n}">${'★'.repeat(n)}</a>`).join('')}
           <span class="at-hl">Coupe locale</span>
           ${[1, 2, 3].map((n) => `<a class="btn" href="#/dessin/libre/locale-h${n}-${graineTrouVertical(n)}" title="Coupe locale autour d'un trou, pièce au hasard, niveau ${n}">${'★'.repeat(n)}</a>`).join('')}
         </div>
@@ -198,7 +202,7 @@ export async function vueAtelier(el, params = []) {
           ${(() => { const h = examensFaits(); return h.length ? `<ul class="at-exam-h">${h.slice(0, 5).map((pl) => `<li>${esc(pl.cartouche?.titre || '')} — <b>${pl.exo.examen.note ?? '?'} %</b> · ${pl.exo.examen.temps} / ${pl.exo.examen.duree} min · ${new Date(pl.exo.examen.fin).toLocaleDateString('fr-BE')}</li>`).join('')}</ul>` : ''; })()}</div>
         <form class="at-hasard-b at-exam-f">
           <select class="field" name="type" aria-label="Type d'exercice">
-            <option value="hasard">Type au hasard</option><option value="vues">3 vues</option><option value="cotes">Cotation</option><option value="coupe">Coupe A-A</option><option value="demi">Demi-coupe</option><option value="section">Section</option><option value="locale">Coupe locale</option>
+            <option value="hasard">Type au hasard</option><option value="vues">3 vues</option><option value="cotes">Cotation</option><option value="coupe">Coupe A-A</option><option value="demi">Demi-coupe</option><option value="section">Section</option><option value="locale">Coupe locale</option><option value="iso">Isométrique</option><option value="cav">Cavalière</option>
           </select>
           <select class="field" name="niv" aria-label="Niveau"><option value="1">★</option><option value="2" selected>★★</option><option value="3">★★★</option></select>
           <select class="field" name="duree" aria-label="Durée"><option value="20">20 min</option><option value="30" selected>30 min</option><option value="45">45 min</option><option value="60">60 min</option></select>
@@ -213,7 +217,7 @@ export async function vueAtelier(el, params = []) {
     ev.preventDefault();
     const f = new FormData(ev.target), n = +f.get('niv');
     let type = f.get('type');
-    if (type === 'hasard') { const t = ['vues', 'cotes', 'coupe', 'demi', 'section', 'locale']; type = t[Math.floor(Math.random() * t.length)]; }
+    if (type === 'hasard') { const t = ['vues', 'cotes', 'coupe', 'demi', 'section', 'locale', 'iso', 'cav']; type = t[Math.floor(Math.random() * t.length)]; }
     const id = type === 'demi' ? `s${n}-${grainePiece()}` : type === 'locale' ? `h${n}-${graineTrouVertical(n)}` : `h${n}-${grainePiece()}`;
     location.hash = `#/dessin/libre/exam-${f.get('duree')}-${type}-${id}`;
   });
