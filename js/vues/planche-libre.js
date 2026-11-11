@@ -17,7 +17,7 @@ import { monterFeuille, nouvellePlanche, ECHELLES, FORMATS, pasGrille, zone, fac
 import { PIECES, vues, boite as boitePiece, trouverPiece, coupeA, estSymetrique, sectionB, coupeLocale, aTrouVertical, graineTrouVertical } from '../dao/pieces.js';
 import { svgPerspective, perspectiveEntites } from '../dao/perspective.js';
 import { EXERCICES } from '../dao/catalogue.js';
-import { ZONES, attendu, detecter, controler, texteCalcul, nombreFr } from '../dao/miseenpage.js';
+import { ZONES, attendu, detecter, controler, texteCalcul, nombreFr, zoneUtile } from '../dao/miseenpage.js';
 import { monterPiece3D } from '../piece3d.js';
 import { svgSur } from '../rendu.js';
 import { creerTraceur, STYLES, OUTILS, COTES, svgEntite } from '../dao/trace.js';
@@ -140,11 +140,19 @@ function mepAFaire(p) {
   return !!(m && m.note && !m.ok && !(p.entites || []).some((e) => e.s !== 'n'));
 }
 const CASES_MEP = [['L', 'Largeur L'], ['H', 'Hauteur H'], ['P', 'Profondeur P'], ['ex', 'e (horizontal)'], ['ey', 'e\' (vertical)']];
+/** e = (A − L − P) / 3, e' = (B − H − P) / 3 à partir des cases encodées ('' si incomplet). */
+function calculE(s, zu, k) {
+  const n = (x) => parseFloat(String(x ?? '').replace(',', '.'));
+  const L = n(s?.L), H = n(s?.H), P = n(s?.P);
+  const v = k === 'ex' ? (zu.w - L - P) / 3 : (zu.h - H - P) / 3;
+  return Number.isFinite(v) ? String(Math.round(v * 10) / 10).replace('.', ',') : '';
+}
 function formMep(p) {
   const m = p.exo.mep, n = m.essais || 0;
-  return `<form class="dao-mep-form" autocomplete="off">
-    <b>Mise en page</b> <span class="muted">(mesures sur la perspective, bouton Pièce ; résultats au 0,1 mm)</span>
-    ${CASES_MEP.map(([k, l]) => `<label class="dao-choix"><span>${l}</span><input class="field" name="${k}" inputmode="decimal" style="width:76px" value="${esc(m.saisie?.[k] ?? '')}"> mm</label>`).join('')}
+  const zu = zoneUtile(p, m.zone);
+  return `<form class="dao-mep-form" autocomplete="off" data-a="${zu.w}" data-b="${zu.h}">
+    <b>Mise en page</b> <span class="muted">(encode L, H et P mesurés sur la perspective, bouton Pièce : e et e' se calculent tout seuls)</span>
+    ${CASES_MEP.map(([k, l]) => { const auto = k === 'ex' || k === 'ey'; return `<label class="dao-choix"><span>${l}</span><input class="field" name="${k}" inputmode="decimal" style="width:76px" ${auto ? 'readonly tabindex="-1" title="Calculé automatiquement"' : ''} value="${esc(auto ? calculE(m.saisie, zu, k) : m.saisie?.[k] ?? '')}"> mm</label>`; }).join('')}
     <button class="btn primary" type="submit">Valider</button>
     <span class="dao-mep-msg">${n ? `<span class="dao-l-man">${esc(m.msg || '')}</span>` : ''}</span>
   </form>`;
@@ -682,21 +690,27 @@ function monterPage(el, remonter) {
         + ` · meilleur : ${meilleur} %`
         + (r.mep ? `<span class="dao-regles">Vues : <b>${r.scoreVues} %</b> · mise en page : <b>${r.mep.ok}/4</b>${r.mep.d ? ` (${r.mep.items.map((i) => `<span class="${i.ok ? '' : 'dao-l-man'}">${i.nom} ${nombreFr(i.v)}${i.ok ? ' ✓' : ` au lieu de ${nombreFr(i.att)}`}</span>`).join(' · ')})` : ''}${r.mep.ok < 4 ? ' — emplacement attendu en tirets rouges' : ''}. Calcul : ${texteCalcul(r.mep.a)}.</span>` : '');
     });
+    el.querySelector('.dao-mep-form')?.addEventListener('input', (ev) => {
+      const fm = ev.currentTarget, zu = { w: +fm.dataset.a, h: +fm.dataset.b };
+      const s = Object.fromEntries(['L', 'H', 'P'].map((k) => [k, fm.elements[k].value]));
+      fm.elements.ex.value = calculE(s, zu, 'ex'); fm.elements.ey.value = calculE(s, zu, 'ey');
+    });
     el.querySelector('.dao-mep-form')?.addEventListener('submit', (ev) => {
       ev.preventDefault();
       const pc2 = pieceDe(p.exo); if (!pc2) return;
       const a = attendu(p, pc2, p.exo.mep.zone);
       const f = new FormData(ev.target), saisie = {}, faux = [];
       for (const [k, l] of CASES_MEP) {
-        const v = parseFloat(String(f.get(k) || '').replace(',', '.')); saisie[k] = f.get(k);
-        const tol = k === 'ex' || k === 'ey' ? 0.6 : 0.05;
-        if (!(Math.abs(v - a[k === 'L' ? 'W' : k]) <= tol)) faux.push(l);
+        saisie[k] = f.get(k);
+        if (k === 'ex' || k === 'ey') continue;   // calculés à partir de L, H, P
+        const v = parseFloat(String(f.get(k) || '').replace(',', '.'));
+        if (!(Math.abs(v - a[k === 'L' ? 'W' : k]) <= 0.05)) faux.push(l);
       }
       const essais = (p.exo.mep.essais || 0) + 1;
       if (faux.length) {
         let msg = `À revoir : ${faux.join(', ')}.`;
-        if (essais >= 2 && faux.some((x) => x.startsWith('e'))) msg += ` Rappel : zone utile ${nombreFr(a.A)} × ${nombreFr(a.B)} mm ; e = (${nombreFr(a.A)} − L − P) / 3, e' = (${nombreFr(a.B)} − H − P) / 3.`;
-        if (essais >= 4) msg += ` Réponse : ${texteCalcul(a)}.`;
+        if (essais >= 2) msg += ' Rappel : L = longueur totale (de gauche à droite), H = hauteur totale, P = profondeur totale (de l\'avant à l\'arrière) ; additionne les cotes de chaque chaîne.';
+        if (essais >= 4) msg += ` Réponse : L = ${nombreFr(a.W)}, H = ${nombreFr(a.H)}, P = ${nombreFr(a.P)} ; ${texteCalcul(a)}.`;
         p = { ...p, exo: { ...p.exo, mep: { ...p.exo.mep, essais, saisie, msg } } }; sauver(); remonter(); return;
       }
       // juste : cadres de construction des 3 vues en trait fin (points d'accroche)
