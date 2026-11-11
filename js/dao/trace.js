@@ -52,7 +52,7 @@ export const OUTILS = {
   gomme: { nom: 'Gomme', touche: 'e', aide: 'Gomme : touche un trait pour l\'effacer (Ctrl+Z pour le récupérer).' },
 };
 export const COTES = {
-  lin: { nom: 'Linéaire', aide: ['Cote linéaire : clique le 1er point mesuré.', 'Cote : clique le 2e point mesuré.', 'Cote : place la ligne de cote (horizontale ou verticale selon la souris).'] },
+  lin: { nom: 'Linéaire', aide: ['Cote linéaire : clique le 1er point mesuré.', 'Cote : clique le 2e point mesuré.', 'Cote : place la ligne de cote (aimantée à 8 mm, puis tous les 7 mm) ou tape son écart, ex. 8 ↵.'] },
   al: { nom: 'Alignée', aide: ['Cote alignée : clique le 1er point.', 'Cote alignée : clique le 2e point.', 'Cote alignée : place la ligne de cote.'] },
   d: { nom: 'Diamètre', aide: ['Cote de diamètre : touche un cercle.', 'Cote de diamètre : choisis la direction de la ligne de cote.'] },
   r: { nom: 'Rayon', aide: ['Cote de rayon : touche un arc ou un cercle.', 'Cote de rayon : choisis la direction de la ligne de cote.'] },
@@ -116,6 +116,7 @@ export function creerTraceur(o) {
     cache: null,                  // points d'accroche du dessin
     sel: new Set(), op: null,     // sélection (indices) et opération en cours
     coteK: 'lin', cible: null,    // type de cote, cercle visé (Ø, R)
+    ecartCote: null,              // écart tapé pour la ligne de cote (mm papier)
     param: { chanfrein: 5, conge: 5, texte: '', h: 3.5, pas: 3 }, choix: null,   // chanfrein, congé, texte, hachures
     cadre: null, survol: -1,      // cadre de sélection, trait sous la gomme
   };
@@ -193,6 +194,27 @@ export function creerTraceur(o) {
     apercu();
   }
 
+  /** Position de la ligne de cote à « ecart » mm (papier) des points mesurés, du côté de la souris. */
+  function ecartVersD(a, b, h, q, ecart) {
+    const e = ecart / facteur(P().echelle);
+    const lo = h ? Math.min(a[1], b[1]) : Math.min(a[0], b[0]), hi = h ? Math.max(a[1], b[1]) : Math.max(a[0], b[0]);
+    const v = q ? (h ? q[1] : q[0]) : hi + 1;
+    return v < (lo + hi) / 2 ? lo - e : hi + e;
+  }
+  /**
+   * Aimant de la ligne de cote : à 8 mm (papier) des points mesurés, puis tous les 7 mm au-delà
+   * (lignes de cote parallèles bien espacées), si la souris en est à moins de 2,5 mm.
+   */
+  function aimanterCote(a, b, h, v) {
+    const k = facteur(P().echelle), tol = 2.5 / k;
+    const lo = h ? Math.min(a[1], b[1]) : Math.min(a[0], b[0]), hi = h ? Math.max(a[1], b[1]) : Math.max(a[0], b[0]);
+    const cands = [];
+    for (let n = 0; n < 6; n++) { cands.push(hi + (8 + 7 * n) / k, lo - (8 + 7 * n) / k); }
+    let best = v, bd = tol;
+    for (const c of cands) if (Math.abs(c - v) < bd) { bd = Math.abs(c - v); best = c; }
+    return best;
+  }
+
   /** Cote en cours d'après les points posés et le point visé q (ou null). */
   function coteAvec(q) {
     const [a, b, c] = st.pts;
@@ -204,7 +226,8 @@ export function creerTraceur(o) {
       }
       const mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2;
       const h = Math.abs(a[0] - b[0]) < EPS ? false : Math.abs(a[1] - b[1]) < EPS ? true : Math.abs(q[1] - my) >= Math.abs(q[0] - mx);
-      return h ? { t: 'q', k: 'h', x1: a[0], y1: a[1], x2: b[0], y2: b[1], d: arrondi(q[1], 3), s: 'n' } : { t: 'q', k: 'v', x1: a[0], y1: a[1], x2: b[0], y2: b[1], d: arrondi(q[0], 3), s: 'n' };
+      const d = st.ecartCote != null ? ecartVersD(a, b, h, q, st.ecartCote) : aimanterCote(a, b, h, h ? q[1] : q[0]);
+      return h ? { t: 'q', k: 'h', x1: a[0], y1: a[1], x2: b[0], y2: b[1], d: arrondi(d, 3), s: 'n' } : { t: 'q', k: 'v', x1: a[0], y1: a[1], x2: b[0], y2: b[1], d: arrondi(d, 3), s: 'n' };
     }
     if (st.coteK === 'd' || st.coteK === 'r') {
       if (!st.cible || !q) return null;
@@ -289,6 +312,19 @@ export function creerTraceur(o) {
     const v = lireSaisie(st.saisie);
     st.saisie = '';
     if (!v) { apercu('Saisie non comprise : exemples 50 · 50<30 · 20;-10 · Ø30'); return; }
+    if (st.outil === 'cote') {                      // cote : écart de la ligne de cote (mm papier), du côté de la souris
+      if ((st.coteK === 'lin' || st.coteK === 'al') && st.pts.length === 2 && v.lg != null && v.lg > 0) {
+        const [a, b] = st.pts;
+        let e;
+        if (st.coteK === 'al') {
+          const L = dist(a, b), nx = -(b[1] - a[1]) / L, ny = (b[0] - a[0]) / L, q = st.cur || [a[0] + nx, a[1] + ny];
+          const sgn = (q[0] - a[0]) * nx + (q[1] - a[1]) * ny < 0 ? -1 : 1;
+          e = { t: 'q', k: 'al', x1: a[0], y1: a[1], x2: b[0], y2: b[1], d: arrondi(sgn * v.lg / facteur(P().echelle), 3), s: 'n' };
+        } else { st.ecartCote = v.lg; e = coteAvec(st.cur || [b[0] + 1, b[1] + 1]); st.ecartCote = null; }
+        st.pts = []; if (e) ajouter(e); apercu(); return;
+      }
+      apercu('Cote : après les 2 points, tape l\'écart de la ligne de cote (ex. 8) puis Entrée.'); return;
+    }
     const der = st.pts[st.pts.length - 1];
     const cur = st.cur || der;
     if (!der) {                                     // 1er point : x;y
@@ -361,6 +397,24 @@ export function creerTraceur(o) {
     return null;
   }
 
+  /**
+   * Valeur qu'on peut taper maintenant (pour la case de saisie) : null si rien,
+   * sinon { titre, exemple }.
+   */
+  function attente() {
+    if (st.op) return st.pts.length ? { titre: 'Déplacement', exemple: '20;0 ou 15<90' } : null;
+    const n = st.pts.length;
+    switch (st.outil) {
+      case 'ligne': case 'rappel': return n ? { titre: 'Longueur', exemple: '15 · 40<30 · 20;-10' } : { titre: '1er point x;y', exemple: '20;30', premier: true };
+      case 'l45': return n ? { titre: 'Longueur', exemple: '25' } : null;
+      case 'rect': return n ? { titre: 'Côtés', exemple: '40;25 ou 30' } : { titre: '1er coin x;y', exemple: '20;30', premier: true };
+      case 'cercle': return n ? { titre: 'Rayon (ou Ø)', exemple: '10 ou Ø20' } : { titre: 'Centre x;y', exemple: '50;40', premier: true };
+      case 'arc': return n === 1 ? { titre: 'Rayon', exemple: '15 ou 15<90' } : n === 2 ? { titre: 'Angle (°)', exemple: '90 ou -90' } : { titre: 'Centre x;y', exemple: '50;40', premier: true };
+      case 'cote': return (st.coteK === 'lin' || st.coteK === 'al') && n === 2 ? { titre: 'Écart de la ligne de cote', exemple: '8' } : null;
+      default: return null;
+    }
+  }
+
   function apercu(message) {
     const p = P();
     const t = 5 / Math.max(o.feuille.pxParMm(), 1e-6);    // ±5 px en mm papier
@@ -399,7 +453,16 @@ export function creerTraceur(o) {
       svg += `<rect class="dao-cadre-sel${fen ? '' : ' dao-cadre-tch'}" x="${f2(Math.min(a[0], b[0]))}" y="${f2(Math.min(a[1], b[1]))}" width="${f2(Math.abs(b[0] - a[0]))}" height="${f2(Math.abs(b[1] - a[1]))}"/>`;
     }
     for (const q of st.pts) { const [x, y] = versPapier(p, q[0], q[1]); svg += `<circle class="dao-pt" cx="${f2(x)}" cy="${f2(y)}" r="${f2(t * 0.45)}"/>`; }
-    if (st.acc) svg += svgAccroche(p, st.acc, t);
+    if (st.acc) {   // accroche : symbole + son nom à côté
+      svg += svgAccroche(p, st.acc, t * 1.4);
+      const [x, y] = versPapier(p, st.acc[0], st.acc[1]);
+      svg += `<text class="dao-acc-t" x="${f2(x + t * 2.2)}" y="${f2(y - t * 1.8)}" style="font-size:${f2(t * 2.4)}px">${NOM_ACC[st.acc[2]] || ''}</text>`;
+    }
+    if (info && st.cur && e && !e.aide) {   // mesure en direct, à côté du curseur
+      const [x, y] = versPapier(p, st.cur[0], st.cur[1]);
+      const h = t * 2.4;    // ≈ 12 px à l'écran
+      svg += `<g class="dao-bulle"><rect x="${f2(x + t * 3)}" y="${f2(y + t * 2.4)}" width="${f2(info.length * h * 0.56 + h)}" height="${f2(h * 1.55)}" rx="${f2(h * 0.35)}"/><text x="${f2(x + t * 3 + h * 0.5)}" y="${f2(y + t * 2.4 + h * 1.12)}" style="font-size:${f2(h)}px">${info.replace(/</g, '&lt;')}</text></g>`;
+    }
     o.feuille.calque('apercu').innerHTML = svg;
     const aide = st.op ? OPERATIONS[st.op].aide : st.outil === 'cote' ? COTES[st.coteK].aide : OUTILS[st.outil].aide;
     const etape = (st.outil === 'cote' && st.cible) || st.choix ? 1 : st.pts.length;
@@ -409,6 +472,8 @@ export function creerTraceur(o) {
       saisie: st.saisie, mesure: info, accroche: st.acc ? NOM_ACC[st.acc[2]] : '', ortho: st.ortho,
       annuler: st.hist.length > 0 || st.pts.length > 0, retablir: st.refaire.length > 0,
       sel: st.sel.size, op: st.op, coteK: st.coteK, param: st.param,
+      attente: attente(),
+      enCours: st.pts.length > 0 || !!st.cible || !!st.op,
     });
   }
 
@@ -510,7 +575,7 @@ export function creerTraceur(o) {
     if (ev.key === 'Backspace' && st.saisie) { st.saisie = st.saisie.slice(0, -1); apercu(); return true; }
     const enSaisie = st.saisie.length > 0;
     if (/^[0-9.,;<\-]$/.test(ev.key) || (/^[dDøØ]$/.test(ev.key) && !enSaisie && st.outil === 'cercle' && st.pts.length)) {
-      if (['main', 'gomme', 'cote', 'ajuster', 'prolonger', 'chanfrein', 'conge', 'hachures', 'texte'].includes(st.outil) || (st.outil === 'selection' && !st.op)) return false;
+      if (!attente()) return false;
       st.saisie += ev.key; apercu(); return true;
     }
     if (enSaisie) return false;
@@ -543,7 +608,11 @@ export function creerTraceur(o) {
     inserer(es) { if (es.length) changer([...entites(), ...es]); },
     supprimerSelection, lancerOp,
     reglerParam(nom, v) { if (nom === 'texte') st.param.texte = v; else if (v > 0) st.param[nom] = v; },
-    choisirCote(k) { st.coteK = k; st.pts = []; st.cible = null; if (st.outil !== 'cote') choisirOutil('cote'); else apercu(); },
+    /** Saisie venant de la case à l'écran (tablette) : comme taper la valeur puis Entrée. */
+    /** Termine le tracé en cours (comme Échap ou le clic droit) : utile au stylet. */
+    terminer() { finir(); },
+        saisir(txt) { st.saisie = String(txt || ''); if (st.saisie) appliquerSaisie(); else apercu(); },
+        choisirCote(k) { st.coteK = k; st.pts = []; st.cible = null; if (st.outil !== 'cote') choisirOutil('cote'); else apercu(); },
     /** À appeler quand l'échelle ou le format change (les entités restent en mm réels). */
     rafraichir() { st.cache = null; redessiner(); },
   };
