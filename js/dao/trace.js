@@ -41,6 +41,7 @@ export const OUTILS = {
   cercle: { nom: 'Cercle', touche: 'o', aide: ['Cercle : clique le centre (ou tape x;y).', 'Cercle : clique un point du cercle, ou tape le rayon (15) ou le diamètre (Ø30).'] },
   arc: { nom: 'Arc', touche: 'k', aide: ['Arc : clique le centre.', 'Arc : clique le point de départ (ou tape rayon<angle, ex. 20<0).', 'Arc : clique le point d\'arrivée (sens anti-horloger) ou tape l\'angle balayé (90).'] },
   cote: { nom: 'Cote', touche: 'q', aide: '' },
+  point: { nom: 'Point de repère', touche: 'p', aide: ['Point de repère : clique le point de départ de la mesure (une accroche), ou tape x;y.', 'Point de repère : clique où le poser, ou tape le décalage dx;dy (30;15) ou distance<angle (25<45), puis Entrée. Il servira d\'accroche.'] },
   rappel: { nom: 'Rappel', touche: 'h', aide: ['Ligne de rappel : clique le point de départ.', 'Ligne de rappel : clique le point d\'arrivée (horizontal ou vertical, trait fin).'] },
   l45: { nom: '45°', touche: '', aide: ['Ligne à 45° : clique le point de départ.', 'Ligne à 45° : clique le point d\'arrivée (trait fin).'] },
   ajuster: { nom: 'Ajuster', touche: 't', aide: 'Ajuster : touche le morceau de trait à enlever (il est coupé aux intersections).' },
@@ -73,6 +74,10 @@ export function svgEntite(p, e, cls = '') {
   if (e.t === 'x') return svgTexte(p, e, cls);
   const k = facteur(p.echelle);
   const c = `dao-t dao-t-${e.s || 'v'}${cls ? ` ${cls}` : ''}`;
+  if (e.t === 'p') {   // point de repère : petite croix (1,5 mm sur le papier)
+    const [x, y] = versPapier(p, e.cx, e.cy), s = 1.5;
+    return `<path class="${c} dao-repere-pt" d="M${f2(x - s)} ${f2(y)}H${f2(x + s)}M${f2(x)} ${f2(y - s)}V${f2(y + s)}"/>`;
+  }
   if (e.t === 'l') {
     const [a, b] = [versPapier(p, e.x1, e.y1), versPapier(p, e.x2, e.y2)];
     return `<path class="${c}" d="M${f2(a[0])} ${f2(a[1])}L${f2(b[0])} ${f2(b[1])}"/>`;
@@ -83,6 +88,29 @@ export function svgEntite(p, e, cls = '') {
   const grand = e.a1 - e.a0 > 180 ? 1 : 0;
   if (e.a1 - e.a0 >= 359.999) return `<circle class="${c}" cx="${f2(cx)}" cy="${f2(cy)}" r="${f2(e.r * k)}"/>`;
   return `<path class="${c}" d="M${f2(a[0])} ${f2(a[1])}A${f2(e.r * k)} ${f2(e.r * k)} 0 ${grand} 0 ${f2(b[0])} ${f2(b[1])}"/>`;
+}
+
+/**
+ * Angle de la ligne en cours : horizontale de référence (tirets) + arc de 0° à l'angle + valeur.
+ * t = 5 px écran en mm papier.
+ */
+function svgAngle(p, e, t) {
+  const a = versPapier(p, e.x1, e.y1), b = versPapier(p, e.x2, e.y2);
+  const Lp = Math.hypot(b[0] - a[0], b[1] - a[1]);
+  if (Lp < t * 2) return '';
+  const ang = angleDe([e.x1, e.y1], [e.x2, e.y2]), rad = (ang * Math.PI) / 180;
+  const r = Math.min(Lp * 0.6, t * 9);
+  const ref = `M${f2(a[0])} ${f2(a[1])}H${f2(a[0] + Math.max(r * 1.5, Math.min(Lp, t * 12)))}`;
+  let arc = '';
+  if (ang > 0.05 && ang < 359.95) {
+    const ex = a[0] + r * Math.cos(rad), ey = a[1] - r * Math.sin(rad);
+    arc = `M${f2(a[0] + r)} ${f2(a[1])}A${f2(r)} ${f2(r)} 0 ${ang > 180 ? 1 : 0} 0 ${f2(ex)} ${f2(ey)}`;
+  }
+  const m = (ang / 2) * (Math.PI / 180), rt = r + t * 1.2;
+  const tx = a[0] + rt * Math.cos(m), ty = a[1] - rt * Math.sin(m) + t * 0.8 * (1 - Math.sin(m));
+  const anc = Math.cos(m) > 0.3 ? 'start' : Math.cos(m) < -0.3 ? 'end' : 'middle';
+  const v = Math.round(ang * 10) / 10;
+  return `<g class="dao-angle"><path class="dao-angle-ref" d="${ref}"/>${arc ? `<path d="${arc}"/>` : ''}<text x="${f2(tx)}" y="${f2(ty)}" text-anchor="${anc}" style="font-size:${f2(t * 2.4)}px">${String(v).replace('.', ',')}°</text></g>`;
 }
 
 /** Symbole d'accroche (taille constante à l'écran). */
@@ -134,8 +162,8 @@ export function creerTraceur(o) {
     const p = P();
     let q = versReel(p, pp[0], pp[1]);
     const tol = toleranceReel(12);
-    const origine = ['ligne', 'rect', 'rappel', 'l45'].includes(st.outil) || st.op ? st.pts[st.pts.length - 1] : null;
-    const orth = origine && (st.outil === 'rappel' || ((st.ortho || st.maj) && (st.outil === 'ligne' || st.op)));
+    const origine = ['ligne', 'rect', 'rappel', 'l45', 'point'].includes(st.outil) || st.op ? st.pts[st.pts.length - 1] : null;
+    const orth = origine && (st.outil === 'rappel' || ((st.ortho || st.maj) && (st.outil === 'ligne' || st.outil === 'point' || st.op)));
     if (origine && st.outil === 'l45') {      // ligne à 45° : projection sur la diagonale la plus proche
       const dx = q[0] - origine[0], dy = q[1] - origine[1];
       const s = Math.sign(dx) === Math.sign(dy) ? 1 : -1;
@@ -271,6 +299,10 @@ export function creerTraceur(o) {
       ajouter({ t: 'x', x: arrondi(q[0], 3), y: arrondi(q[1], 3), txt, h: st.param.h, hr: arrondi(st.param.h / facteur(P().echelle), 3), s: 'n' });
       return;
     }
+    if (st.outil === 'point') {
+      if (!st.pts.length) st.pts.push(q); else { ajouter({ t: 'p', cx: arrondi(q[0], 4), cy: arrondi(q[1], 4), s: 'n' }); st.pts = []; }
+      apercu(); return;
+    }
     if (st.outil === 'rappel' || st.outil === 'l45') {
       const der0 = st.pts[0];
       if (!der0) { st.pts.push(q); } else { if (dist(der0, q) > EPS) ajouter({ t: 'l', x1: der0[0], y1: der0[1], x2: q[0], y2: q[1], s: 'n' }); st.pts = []; }
@@ -342,7 +374,7 @@ export function creerTraceur(o) {
       const c = cur || [der[0] + 1, der[1] + 1]; const sx = Math.sign(c[0] - der[0]) || 1, sy = Math.sign(c[1] - der[1]) || 1;
       const m = v.lg / Math.SQRT2; poser([der[0] + sx * m, der[1] + sy * m]); return;
     }
-    if (st.outil === 'ligne' || st.outil === 'rappel' || st.op) {
+    if (st.outil === 'ligne' || st.outil === 'rappel' || st.outil === 'point' || st.op) {
       if (v.dx != null) poser([der[0] + v.dx, der[1] + v.dy]);
       else if (v.lg != null) poser(v.ang != null ? polaire(v.lg, v.ang) : dirVers(v.lg));
     } else if (st.outil === 'rect') {
@@ -384,6 +416,7 @@ export function creerTraceur(o) {
     if (!der || !q) return null;
     if (st.op) return { t: 'l', x1: der[0], y1: der[1], x2: q[0], y2: q[1], s: 'n', aide: true };
     if (st.outil === 'rappel' || st.outil === 'l45') return { t: 'l', x1: der[0], y1: der[1], x2: q[0], y2: q[1], s: 'n' };
+    if (st.outil === 'point') return { t: 'l', x1: der[0], y1: der[1], x2: q[0], y2: q[1], s: 'n', aide: true, pt: true };
     if (st.outil === 'cote') return coteAvec(q) || { t: 'l', x1: der[0], y1: der[1], x2: q[0], y2: q[1], s: 'n', aide: true };
     if (st.outil === 'ligne') return { t: 'l', x1: der[0], y1: der[1], x2: q[0], y2: q[1], s: st.style };
     if (st.outil === 'rect') return { t: 'r', a: der, b: q };
@@ -407,6 +440,7 @@ export function creerTraceur(o) {
     switch (st.outil) {
       case 'ligne': case 'rappel': return n ? { titre: 'Longueur', exemple: '15 · 40<30 · 20;-10' } : { titre: '1er point x;y', exemple: '20;30', premier: true };
       case 'l45': return n ? { titre: 'Longueur', exemple: '25' } : null;
+      case 'point': return n ? { titre: 'Décalage', exemple: '30;15 · 25<45' } : { titre: 'Départ x;y', exemple: '20;30', premier: true };
       case 'rect': return n ? { titre: 'Côtés', exemple: '40;25 ou 30' } : { titre: '1er coin x;y', exemple: '20;30', premier: true };
       case 'cercle': return n ? { titre: 'Rayon (ou Ø)', exemple: '10 ou Ø20' } : { titre: 'Centre x;y', exemple: '50;40', premier: true };
       case 'arc': return n === 1 ? { titre: 'Rayon', exemple: '15 ou 15<90' } : n === 2 ? { titre: 'Angle (°)', exemple: '90 ou -90' } : { titre: 'Centre x;y', exemple: '50;40', premier: true };
@@ -431,7 +465,12 @@ export function creerTraceur(o) {
       if (e.t === 'q') info = '';
       else if (e.t === 'l' && !e.aide) {
         const ang = arrondi(angleDe([e.x1, e.y1], [e.x2, e.y2]), 1);
-        info = `${mesure(e)} · ${ang}°`;
+        info = `${mesure(e)} · ${ang}°${ang > 180 ? ` (−${arrondi(360 - ang, 1)}°)` : ''}`;
+        svg += svgAngle(p, e, t);
+      } else if (e.pt) {
+        const dx = arrondi(e.x2 - e.x1, 2), dy = arrondi(e.y2 - e.y1, 2);
+        info = `dx ${dx} · dy ${dy} · ${arrondi(dist([e.x1, e.y1], [e.x2, e.y2]), 2)} mm`;
+        svg += svgEntite(p, { t: 'p', cx: e.x2, cy: e.y2, s: 'n' }, 'dao-ap');
       } else if (e.t === 'l') info = `R ${arrondi(dist([e.x1, e.y1], [e.x2, e.y2]), 2)} mm`;
       else info = mesure(e);
     }
@@ -458,7 +497,7 @@ export function creerTraceur(o) {
       const [x, y] = versPapier(p, st.acc[0], st.acc[1]);
       svg += `<text class="dao-acc-t" x="${f2(x + t * 2.2)}" y="${f2(y - t * 1.8)}" style="font-size:${f2(t * 2.4)}px">${NOM_ACC[st.acc[2]] || ''}</text>`;
     }
-    if (info && st.cur && e && !e.aide) {   // mesure en direct, à côté du curseur
+    if (info && st.cur && e && (!e.aide || e.pt)) {   // mesure en direct, à côté du curseur
       const [x, y] = versPapier(p, st.cur[0], st.cur[1]);
       const h = t * 2.4;    // ≈ 12 px à l'écran
       svg += `<g class="dao-bulle"><rect x="${f2(x + t * 3)}" y="${f2(y + t * 2.4)}" width="${f2(info.length * h * 0.56 + h)}" height="${f2(h * 1.55)}" rx="${f2(h * 0.35)}"/><text x="${f2(x + t * 3 + h * 0.5)}" y="${f2(y + t * 2.4 + h * 1.12)}" style="font-size:${f2(h)}px">${info.replace(/</g, '&lt;')}</text></g>`;
