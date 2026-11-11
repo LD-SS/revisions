@@ -14,7 +14,7 @@ import { icone } from '../icones.js';
 import { styleMatiere } from '../matieres.js';
 import { matiere } from '../store.js';
 import { monterFeuille, nouvellePlanche, ECHELLES, FORMATS, pasGrille, zone, facteur, versPapier } from '../dao/feuille.js';
-import { PIECES, vues, boite as boitePiece, trouverPiece, coupeA, estSymetrique, sectionB } from '../dao/pieces.js';
+import { PIECES, vues, boite as boitePiece, trouverPiece, coupeA, estSymetrique, sectionB, coupeLocale, aTrouVertical, graineTrouVertical } from '../dao/pieces.js';
 import { svgPerspective } from '../dao/perspective.js';
 import { creerTraceur, STYLES, OUTILS, COTES, svgEntite } from '../dao/trace.js';
 import { corriger, corrigerCotes, corrigerCoupe, corrigerSection } from '../dao/correction.js';
@@ -84,7 +84,7 @@ const ICONES_OUTILS = {
 export function vuePlancheLibre(el, piece = null) {
   // #/dessin/libre/<id de pièce> : nouvel exercice, puis l'adresse redevient #/dessin/libre (un rechargement ne le recrée pas)
   if (piece) {
-    const m = /^(cotes|coupe|demi|section)-(.+)$/.exec(String(piece));
+    const m = /^(cotes|coupe|demi|section|locale)-(.+)$/.exec(String(piece));
     const pc = trouverPiece(m ? m[2] : piece);
     if (pc) creerExo(pc, normaliser(toutes()[idCourant()]), m ? m[1] : 'vues');
     history.replaceState(null, '', '#/dessin/libre');
@@ -109,7 +109,7 @@ export const grainePiece = () => 1 + Math.floor(Math.random() * 99999);
 function creerExo(pc, depuis = null, mode = 'vues') {
   const t = toutes(); const n = nouvelId();
   const np = nouvellePlanche();
-  const titre = `${{ cotes: 'Cotation', coupe: 'Coupe A-A', demi: 'Demi-coupe', section: 'Section B-B' }[mode] || 'Vues'} : ${pc.nom}`.slice(0, 40);
+  const titre = `${{ cotes: 'Cotation', coupe: 'Coupe A-A', demi: 'Demi-coupe', section: 'Section B-B', locale: 'Coupe locale' }[mode] || 'Vues'} : ${pc.nom}`.slice(0, 34);
   const base = { ...np, format: 'A4', orientation: 'paysage', echelle: '1:1', cartouche: { ...np.cartouche, titre, auteur: depuis?.cartouche?.auteur || np.cartouche.auteur, classe: depuis?.cartouche?.classe || np.cartouche.classe } };
   const b = boitePiece(pc), z = zone(base), k = facteur(base.echelle);
   const [ecart, marge] = mode === 'cotes' ? [30, 25] : [15, 15];
@@ -119,6 +119,7 @@ function creerExo(pc, depuis = null, mode = 'vues') {
   if (mode === 'cotes') { const v = vues(pc, o, ecart); entites = [...v.face, ...v.dessus, ...v.gauche]; }
   if (mode === 'coupe' || mode === 'demi') entites = coupeA(pc, o, ecart, { demi: mode === 'demi' }).dessus;
   if (mode === 'section') entites = sectionB(pc, o, ecart).donnees;
+  if (mode === 'locale') entites = coupeLocale(pc, o, ecart)?.donnees || [];
   t[n] = { ...base, entites, exo, maj: Date.now() };
   stockage.ecrire(CLE, t); stockage.ecrire(CLE_COURANTE, n);
 }
@@ -177,9 +178,9 @@ function monterPage(el, remonter) {
             <button class="btn" type="button" data-act="effacer" title="Effacer tout le dessin">${icone('croix')}<span>Tout effacer</span></button>
             <select class="field dao-exo-choix" title="Nouvel exercice sur une pièce vue en perspective cotée, corrigé automatiquement">
               <option value="">Exercice…</option>
-              ${[['vues', 'Dessine les 3 vues'], ['cotes', 'Cote les 3 vues'], ['coupe', 'Coupe A-A'], ['demi', 'Demi-coupe A-A'], ['section', 'Section sortie B-B']].map(([m, l]) => `<optgroup label="${l}">
+              ${[['vues', 'Dessine les 3 vues'], ['cotes', 'Cote les 3 vues'], ['coupe', 'Coupe A-A'], ['demi', 'Demi-coupe A-A'], ['section', 'Section sortie B-B'], ['locale', 'Coupe locale']].map(([m, l]) => `<optgroup label="${l}">
                 ${[1, 2, 3].map((n) => `<option value="${m}:${m === 'demi' ? 's' : 'h'}${n}">${l.split(' ')[0]} · pièce au hasard ${'★'.repeat(n)}</option>`).join('')}
-                ${PIECES.filter((pc) => m !== 'demi' || estSymetrique(pc)).map((pc) => `<option value="${m}:${esc(pc.id)}">${l.split(' ')[0]} · ${esc(pc.nom)}</option>`).join('')}
+                ${PIECES.filter((pc) => (m !== 'demi' || estSymetrique(pc)) && (m !== 'locale' || aTrouVertical(pc))).map((pc) => `<option value="${m}:${esc(pc.id)}">${l.split(' ')[0]} · ${esc(pc.nom)}</option>`).join('')}
               </optgroup>`).join('')}
             </select>
             <select class="field dao-exemple" title="Ajoute les 3 vues (face, dessus, gauche) d'une pièce d'exemple, pour observer la mise en page européenne">
@@ -216,7 +217,9 @@ function monterPage(el, remonter) {
           <span class="muted">Un type de trait choisi ci-dessus s'applique à la sélection.</span>
         </div>
         ${p.exo ? `<div class="panel dao-exobar">
-          <b>Exercice :</b> <span>${p.exo.mode === 'section'
+          <b>Exercice :</b> <span>${p.exo.mode === 'locale'
+            ? 'dessine la vue de face avec une coupe locale autour du trou vertical : entre les deux traits ondulés (fins, déjà tracés), le trou est vu en coupe (traits forts) et la matière coupée est hachurée ; ailleurs, la vue reste normale (traits cachés compris). Le coin inférieur gauche de la vue de face est au repère ✚.'
+            : p.exo.mode === 'section'
             ? 'dessine la section sortie B-B (plan tracé sur la vue de face, vue dans le sens des flèches) à la place de la vue de gauche : seule la surface coupée est dessinée, hachurée, avec les axes des trous coupés. Son coin inférieur gauche est au repère ✚.'
             : p.exo.mode === 'demi'
             ? 'la pièce est symétrique : dessine la vue de face en demi-coupe A-A. À droite de l\'axe de symétrie (trait mixte) : la coupe, avec la matière coupée hachurée ; à gauche : la vue extérieure, sans traits cachés. Le coin inférieur gauche de la vue de face est au repère ✚.'
@@ -371,8 +374,8 @@ function monterPage(el, remonter) {
     if (sb) {
       if (voirSolution) svg += [...sb.section, ...sb.hachures].map((e) => svgEntite(p, e, 'dao-cor-sol')).join('');
       if (res) svg += points(res);
-    } else if (p.exo.mode === 'coupe' || p.exo.mode === 'demi') {
-      const cp = coupeA(pc, p.exo.o, p.exo.ecart, { demi: p.exo.mode === 'demi' });
+    } else if (['coupe', 'demi', 'locale'].includes(p.exo.mode)) {
+      const cp = p.exo.mode === 'locale' ? coupeLocale(pc, p.exo.o, p.exo.ecart) : coupeA(pc, p.exo.o, p.exo.ecart, { demi: p.exo.mode === 'demi' });
       if (voirSolution) svg += [...cp.face, cp.hachure].map((e) => svgEntite(p, e, 'dao-cor-sol')).join('');
       if (res) svg += points(res);
     } else {
@@ -418,7 +421,7 @@ function monterPage(el, remonter) {
       }
       let r;
       if (p.exo.mode === 'section') r = corrigerSection(pc, p.exo, p.entites || []);
-      else if (p.exo.mode === 'coupe' || p.exo.mode === 'demi') r = corrigerCoupe(pc, p.exo, p.entites || []);
+      else if (['coupe', 'demi', 'locale'].includes(p.exo.mode)) r = corrigerCoupe(pc, p.exo, p.entites || []);
       else { const sol = vues(pc, p.exo.o, p.exo.ecart); r = corriger([...sol.face, ...sol.dessus, ...sol.gauche], p.entites || []); }
       const meilleur = Math.max(r.score, p.exo.score ?? 0);
       p = { ...p, exo: { ...p.exo, score: meilleur } }; sauver();
@@ -433,7 +436,7 @@ function monterPage(el, remonter) {
   }
   el.querySelector('.dao-exo-choix').addEventListener('change', (ev) => {
     const [mode, v] = ev.target.value.split(':'); ev.target.value = '';
-    const pc = /^[hs][123]$/.test(v) ? trouverPiece(`${v}-${grainePiece()}`) : trouverPiece(v);
+    const pc = /^[hs][123]$/.test(v) ? trouverPiece(`${v}-${mode === 'locale' ? graineTrouVertical(+v[1]) : grainePiece()}`) : trouverPiece(v);
     if (pc) { creerExo(pc, p, mode); remonter(); }
   });
 
