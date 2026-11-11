@@ -24,6 +24,7 @@ import { versReel, versPapier, facteur, pasGrille } from './feuille.js';
 import { toucher, dansRectangle, translater, symetrie, distanceA } from './edition.js';
 import { svgCote } from './cotes.js';
 import { ajuster, prolonger, chanfrein, conge } from './construction.js';
+import { regionAutour, svgHachure, svgTexte } from './hachures.js';
 import { tousLesPoints, accrocher, ortho, lireSaisie, angleDe, surCercle, arcNormal, dist, arrondi, mesure, EPS } from './geom.js';
 
 export const STYLES = {
@@ -46,6 +47,8 @@ export const OUTILS = {
   prolonger: { nom: 'Prolonger', touche: 'x', aide: 'Prolonger : touche une ligne près du bout à allonger jusqu\'au trait suivant.' },
   chanfrein: { nom: 'Chanfrein', touche: '', aide: ['Chanfrein : touche la 1re ligne, du côté à garder.', 'Chanfrein : touche la 2e ligne, du côté à garder.'] },
   conge: { nom: 'Congé', touche: '', aide: ['Congé : touche la 1re ligne, du côté à garder.', 'Congé : touche la 2e ligne, du côté à garder.'] },
+  hachures: { nom: 'Hachures', touche: 'w', aide: 'Hachures : touche l\'intérieur d\'une zone fermée par des traits.' },
+  texte: { nom: 'Texte', touche: 'g', aide: 'Texte : écris le texte dans la barre, puis clique où le poser (point en bas à gauche du texte).' },
   gomme: { nom: 'Gomme', touche: 'e', aide: 'Gomme : touche un trait pour l\'effacer (Ctrl+Z pour le récupérer).' },
 };
 export const COTES = {
@@ -66,6 +69,8 @@ const f2 = (v) => Math.round(v * 100) / 100;
 /** SVG (en mm papier) d'une entité. */
 export function svgEntite(p, e, cls = '') {
   if (e.t === 'q') return svgCote(p, e, cls);
+  if (e.t === 'h') return svgHachure(p, e, cls);
+  if (e.t === 'x') return svgTexte(p, e, cls);
   const k = facteur(p.echelle);
   const c = `dao-t dao-t-${e.s || 'v'}${cls ? ` ${cls}` : ''}`;
   if (e.t === 'l') {
@@ -111,7 +116,7 @@ export function creerTraceur(o) {
     cache: null,                  // points d'accroche du dessin
     sel: new Set(), op: null,     // sélection (indices) et opération en cours
     coteK: 'lin', cible: null,    // type de cote, cercle visé (Ø, R)
-    param: { chanfrein: 5, conge: 5 }, choix: null,   // chanfrein / congé
+    param: { chanfrein: 5, conge: 5, texte: '', h: 3.5, pas: 3 }, choix: null,   // chanfrein, congé, texte, hachures
     cadre: null, survol: -1,      // cadre de sélection, trait sous la gomme
   };
   const P = () => o.planche();
@@ -237,6 +242,12 @@ export function creerTraceur(o) {
   function poser(q) {
     if (st.op) { poserOp(q); return; }
     if (st.outil === 'cote') { poserCote(q); return; }
+    if (st.outil === 'texte') {
+      const txt = String(st.param.texte || '').trim();
+      if (!txt) { apercu('Écris d\'abord le texte dans la barre au-dessus de la feuille.'); return; }
+      ajouter({ t: 'x', x: arrondi(q[0], 3), y: arrondi(q[1], 3), txt, h: st.param.h, hr: arrondi(st.param.h / facteur(P().echelle), 3), s: 'n' });
+      return;
+    }
     if (st.outil === 'rappel' || st.outil === 'l45') {
       const der0 = st.pts[0];
       if (!der0) { st.pts.push(q); } else { if (dist(der0, q) > EPS) ajouter({ t: 'l', x1: der0[0], y1: der0[1], x2: q[0], y2: q[1], s: 'n' }); st.pts = []; }
@@ -325,7 +336,8 @@ export function creerTraceur(o) {
   /* ----- affichage ----- */
   function redessiner() {
     const p = P();
-    o.feuille.calque('dessin').innerHTML = entites().map((e) => svgEntite(p, e)).join('');
+    const es = entites();   // hachures dessous, puis le reste
+    o.feuille.calque('dessin').innerHTML = es.filter((e) => e.t === 'h').map((e) => svgEntite(p, e)).join('') + es.filter((e) => e.t !== 'h').map((e) => svgEntite(p, e)).join('');
     apercu();
   }
 
@@ -406,7 +418,7 @@ export function creerTraceur(o) {
     if (type === 'annule') { st.bas = null; st.cadre = null; apercu(); return null; }
     if (type === 'droit') { finir(); return pp; }
     st.maj = !!ev?.shiftKey;
-    if (['gomme', 'ajuster', 'prolonger', 'chanfrein', 'conge'].includes(st.outil) || (st.outil === 'selection' && !st.op)) return pointerSansAccroche(type, ev, pp);
+    if (['gomme', 'ajuster', 'prolonger', 'chanfrein', 'conge', 'hachures'].includes(st.outil) || (st.outil === 'selection' && !st.op)) return pointerSansAccroche(type, ev, pp);
     const q = viser(pp);
     st.cur = q;
     if (type === 'bas') st.bas = { x: ev.clientX, y: ev.clientY, q };
@@ -432,8 +444,16 @@ export function creerTraceur(o) {
       if (type === 'haut' && st.survol >= 0) { const i = st.survol; st.survol = -1; changer(es.filter((_, k) => k !== i)); return pp; }
       apercu(); return pp;
     }
+    if (st.outil === 'hachures') {
+      if (type === 'haut') {
+        const z = regionAutour(es, q);
+        if (!z) apercu('Pas de zone fermée ici : vérifie que le contour est bien fermé (traits qui se touchent).');
+        else changer([...es, { t: 'h', pts: z.pts, ...(z.trous.length ? { trous: z.trous } : {}), ang: 45, pas: st.param.pas, s: 'n' }]);
+      } else apercu();
+      return pp;
+    }
     if (st.outil !== 'selection') {           // ajuster, prolonger, chanfrein, congé
-      const traits = es.map((e, k) => (e.t === 'q' ? null : k)).filter((k) => k != null);
+      const traits = es.map((e, k) => (e.t === 'l' || e.t === 'c' || e.t === 'a' ? k : null)).filter((k) => k != null);
       const k = toucher(traits.map((x) => es[x]), q, tol);
       st.survol = k >= 0 ? traits[k] : -1;
       if (type !== 'haut' || st.survol < 0) { apercu(); return pp; }
@@ -490,7 +510,7 @@ export function creerTraceur(o) {
     if (ev.key === 'Backspace' && st.saisie) { st.saisie = st.saisie.slice(0, -1); apercu(); return true; }
     const enSaisie = st.saisie.length > 0;
     if (/^[0-9.,;<\-]$/.test(ev.key) || (/^[dDøØ]$/.test(ev.key) && !enSaisie && st.outil === 'cercle' && st.pts.length)) {
-      if (['main', 'gomme', 'cote', 'ajuster', 'prolonger', 'chanfrein', 'conge'].includes(st.outil) || (st.outil === 'selection' && !st.op)) return false;
+      if (['main', 'gomme', 'cote', 'ajuster', 'prolonger', 'chanfrein', 'conge', 'hachures', 'texte'].includes(st.outil) || (st.outil === 'selection' && !st.op)) return false;
       st.saisie += ev.key; apercu(); return true;
     }
     if (enSaisie) return false;
@@ -520,7 +540,7 @@ export function creerTraceur(o) {
     basculerOrtho() { st.ortho = !st.ortho; apercu(); return st.ortho; },
     toutEffacer() { st.sel.clear(); st.op = null; if (entites().length) changer([]); },
     supprimerSelection, lancerOp,
-    reglerParam(nom, v) { if (v > 0) st.param[nom] = v; },
+    reglerParam(nom, v) { if (nom === 'texte') st.param.texte = v; else if (v > 0) st.param[nom] = v; },
     choisirCote(k) { st.coteK = k; st.pts = []; st.cible = null; if (st.outil !== 'cote') choisirOutil('cote'); else apercu(); },
     /** À appeler quand l'échelle ou le format change (les entités restent en mm réels). */
     rafraichir() { st.cache = null; redessiner(); },
