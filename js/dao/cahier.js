@@ -35,7 +35,8 @@ function textes(ex) {
   const complets = Object.keys(d).filter((k) => d[k] === 'complet').map((k) => vue[k]);
   const contours = Object.keys(d).filter((k) => d[k] === 'contour').map((k) => vue[k]);
   const manque = Object.keys(d).filter((k) => d[k] === 'rien').map((k) => vue[k]);
-  const liste = (a) => (a.length > 1 ? `${a.slice(0, -1).join(', ')} et ${a[a.length - 1]}` : a[0]);
+  const liste0 = (a) => (a.length > 1 ? `${a.slice(0, -1).join(', ')} et ${a[a.length - 1]}` : a[0]);
+  const liste = (a) => liste0(a.map((v, i) => (i ? `la ${v}` : v)));   // « la vue de face et la vue de gauche »
   if (ex.type === 'geometrie') return { donnees: ex.donneesTxt, exercice: ex.exerciceTxt };
   if (ex.type === 'perspective') return {
     donnees: ['les trois vues de la pièce ;', `le coin avant-bas-gauche de la perspective, au repère ✚.`],
@@ -51,7 +52,7 @@ function textes(ex) {
   };
   const donnees = [];
   if (complets.length) donnees.push(`la ${liste(complets)} complète${complets.length > 1 ? 's' : ''} ;`);
-  if (contours.length) donnees.push(`le contour de la ${liste(contours)} (vue${contours.length > 1 ? 's' : ''} incomplète${contours.length > 1 ? 's' : ''}) d'un${/^(bride|butée|chape|semelle|équerre)/.test(nom) ? 'e' : ''} ${nom} ;`);
+  if (contours.length) donnees.push(`le contour de la ${liste0(contours.map((v, i) => (i ? `de la ${v}` : v)))} (vue${contours.length > 1 ? 's' : ''} incomplète${contours.length > 1 ? 's' : ''}) d'un${/^(bride|butée|chape|semelle|équerre|extrémité|coulisse)/.test(nom) ? 'e' : ''} ${nom} ;`);
   if (manque.length) donnees.push(`la perspective cotée de la pièce.`);
   else donnees.push('la perspective cotée de la pièce.');
   const exercice = [];
@@ -135,13 +136,40 @@ const EX = [
     piece: { id: 'cah-34', nom: 'Tangentes à deux cercles' }, donneesTxt: ['deux cercles Ø56 et Ø32.'], exerciceTxt: ['Tracer les deux tangentes extérieures communes aux deux cercles, en trait fort, entre leurs points de contact.'] },
   { n: 16, titre: 'COULISSEAU DE MORS', type: 'terminer', matiere: 'Fonte EN-GJMW-350', echelle: '1:1', donne: { face: 'complet', dessus: 'contour', gauche: 'contour' },
     piece: P('16', 'Coulisseau de mors', { L: 75, P: 45, H: 30, fyz: [[0, 0], [45, 0], [45, 18], [38, 18], [42, 30], [3, 30], [7, 18], [0, 18]], trous: [{ axe: 'z', x: 20, y: 22.5, d: 10 }] }) },
+  // ----- lot 3 (cahier 2, 1re partie) : plans inclinés, queues d'aronde, rainures en T, vés ; coupes de pièces percées -----
+  { n: 35, titre: 'PLANS INCLINÉS', type: 'terminer', matiere: 'Acier C22', echelle: '1:1', donne: { face: 'contour', dessus: 'complet', gauche: 'contour' },
+    piece: P('35', 'Bloc à plans inclinés', { L: 70, P: 40, H: 45, fxz: [[0, 0], [70, 0], [70, 20], [50, 45], [0, 45]], fyz: [[0, 0], [40, 0], [40, 30], [25, 45], [0, 45]], arete: [[50, 0, 45], [50, 25, 45]] }) },
+  { n: 36, titre: 'RAINURE EN QUEUE D\'ARONDE', type: 'rectangle', matiere: 'Acier C22', echelle: '1:1', donne: { face: 'complet', dessus: 'complet', gauche: 'rien' },
+    piece: P('36', 'Bloc à queue d\'aronde', { L: 60, P: 50, H: 35, fxz: [[0, 0], [60, 0], [60, 35], [20, 35], [0, 20]], fyz: [[0, 0], [50, 0], [50, 35], [35, 35], [40, 20], [10, 20], [15, 35], [0, 35]], arete: [[20, 10, 20], [60, 10, 20]] }) },
+  { n: 37, titre: 'RAINURE EN T ET PLAN INCLINÉ', type: 'terminer', matiere: 'Acier GE295', echelle: '1:1', donne: { face: 'contour', dessus: 'contour', gauche: 'complet' },
+    piece: P('37', 'Bloc à rainure en T', { L: 70, P: 60, H: 40, fxz: [[0, 0], [70, 0], [70, 40], [25, 40], [0, 15]], fyz: [[0, 0], [60, 0], [60, 40], [38, 40], [38, 26], [46, 26], [46, 14], [14, 14], [14, 26], [22, 26], [22, 40], [0, 40]] }) },
+  { n: 38, titre: 'MORS MOBILE', type: 'terminer', matiere: 'Fonte EN-GJL-250', echelle: '1:1', donne: { face: 'complet', dessus: 'contour', gauche: 'contour' },
+    piece: P('38', 'Mors mobile', { L: 60, P: 50, H: 50, fxz: [[0, 0], [60, 0], [60, 30], [40, 50], [0, 50]], fyz: [[0, 0], [15, 0], [15, 10], [35, 10], [35, 0], [50, 0], [50, 50], [0, 50]], trous: [{ axe: 'z', x: 15, y: 25, d: 10 }], arete: [[60, 0, 30], [60, 50, 30]] }) },
+  { n: 39, titre: 'SOCLE À VÉ', type: 'rectangle', matiere: 'Fonte EN-GJL-200', echelle: '1:1', donne: { face: 'complet', dessus: 'rien', gauche: 'complet' },
+    piece: P('39', 'Socle à vé', { L: 80, P: 45, H: 40, fxz: [[0, 0], [80, 0], [80, 40], [55, 40], [40, 22], [25, 40], [0, 40]], fxy: [[0, 0], [80, 0], [80, 45], [10, 45], [0, 35]], arete: [[40, 0, 22], [40, 45, 22]] }) },
+  { n: 40, titre: 'ÉLÉMENT DE VÉ RÉGLABLE', type: 'terminer', matiere: 'Fonte EN-GJS-500', echelle: '1:1', donne: { face: 'contour', dessus: 'contour', gauche: 'complet' },
+    piece: P('40', 'Élément de vé réglable', { L: 70, P: 40, H: 45, fxz: [[0, 10], [70, 0], [70, 45], [0, 45]], fyz: [[0, 0], [40, 0], [40, 45], [30, 45], [20, 32], [10, 45], [0, 45]] }) },
+  { n: 41, titre: 'BRIDE À LUMIÈRE', type: 'rectangle', matiere: 'Acier C35', echelle: '1:1', donne: { face: 'complet', dessus: 'complet', gauche: 'rien' },
+    piece: P('41', 'Bride à lumière', { L: 90, P: 40, H: 25, fxz: [[0, 0], [90, 0], [90, 25], [30, 25], [0, 15]], fxy: [[0, 0], [90, 0], [90, 40], [0, 40], [0, 26], [45, 26], [45, 14], [0, 14]], trous: [{ axe: 'z', x: 72, y: 20, d: 10 }], arete: [[30, 0, 25], [30, 14, 25]] }) },
+  { n: 42, titre: 'EXTRÉMITÉ DE SOCLE', type: 'terminer', matiere: 'Fonte EN-GJMB-350', echelle: '1:1', donne: { face: 'contour', dessus: 'complet', gauche: 'contour' },
+    piece: P('42', 'Extrémité de socle', { L: 60, P: 50, H: 40, fxz: [[0, 0], [60, 0], [60, 25], [40, 40], [0, 40]], fxy: [[0, 0], [60, 0], [60, 15], [45, 25], [60, 35], [60, 50], [0, 50]] }) },
+  { n: 43, titre: 'COULISSE À QUEUE D\'ARONDE', type: 'rectangle', matiere: 'Fonte EN-GJL-250', echelle: '1:1', donne: { face: 'complet', dessus: 'rien', gauche: 'complet' },
+    piece: P('43', 'Coulisse à queue d\'aronde', { L: 70, P: 50, H: 40, fxz: [[0, 0], [70, 0], [70, 20], [50, 40], [0, 40]], fyz: [[0, 0], [50, 0], [50, 20], [40, 20], [45, 40], [5, 40], [10, 20], [0, 20]], arete: [[50, 5, 40], [50, 45, 40]] }) },
+  { n: 44, titre: 'GUIDE PERCÉ', type: 'coupe', mode: 'coupe', matiere: 'Acier S235', echelle: '1:1', donne: {},
+    piece: P('44', 'Guide percé', { L: 80, P: 40, H: 35, fxz: [[0, 0], [80, 0], [80, 35], [60, 35], [60, 20], [20, 20], [20, 35], [0, 35]], trous: [{ axe: 'z', x: 10, y: 20, d: 8 }, { axe: 'z', x: 70, y: 20, d: 8 }, { axe: 'y', x: 40, z: 10, d: 10 }] }) },
+  { n: 45, titre: 'PORTE-OUTIL PERCÉ', type: 'coupe', mode: 'coupe', matiere: 'Acier 30NiCrMo16', echelle: '1:1', donne: {},
+    piece: P('45', 'Porte-outil percé', { L: 70, P: 50, H: 40, fyz: [[0, 0], [50, 0], [50, 40], [35, 40], [35, 25], [15, 25], [15, 40], [0, 40]], trous: [{ axe: 'z', x: 20, y: 25, d: 10 }, { axe: 'z', x: 50, y: 25, d: 10 }, { axe: 'x', y: 25, z: 12, d: 8 }] }) },
+  { n: 46, titre: 'DOIGT RAINURÉ', type: 'coupe', mode: 'coupe', matiere: 'Acier X30Cr13', echelle: '1:1', donne: {},
+    piece: P('46', 'Doigt rainuré', { L: 60, P: 40, H: 50, fyz: [[0, 0], [40, 0], [40, 50], [28, 50], [28, 30], [12, 30], [12, 50], [0, 50]], trous: [{ axe: 'z', x: 30, y: 20, d: 8 }, { axe: 'y', x: 30, z: 15, d: 12 }] }) },
+  { n: 47, titre: 'CHAPE PERCÉE', type: 'coupe', mode: 'coupe', matiere: 'Bronze CuSn7Zn4Pb7', echelle: '1:1', donne: {},
+    piece: P('47', 'Chape percée', { L: 70, P: 40, H: 45, fxz: [[0, 0], [70, 0], [70, 45], [55, 45], [55, 15], [15, 15], [15, 45], [0, 45]], trous: [{ axe: 'x', y: 20, z: 32, d: 10 }, { axe: 'z', x: 35, y: 20, d: 10 }] }) },
 ];
 
 EX.sort((a, b) => a.n - b.n);
 for (const ex of EX) {
   const pre = ARETES[ex.piece.id];   // arêtes précalculées : l'Atelier s'affiche tout de suite
   if (pre) ex.piece._a = pre.map((r) => ({ a: r.slice(0, 3), b: r.slice(3, 6), vis: [...r[6]].map((c) => c === '1') }));
-  const t = textes(ex); ex.donnees = t.donnees; ex.exercice = t.exercice; ex.id = `c${ex.n}`; ex.mode = ex.mode || 'completer'; ex.niveau = ex.type === 'rectangle' ? 2 : 1; ex.titreCourt = ex.titre.charAt(0) + ex.titre.slice(1).toLowerCase(); }
+  const t = textes(ex); ex.donnees = t.donnees; ex.exercice = t.exercice; ex.id = `c${ex.n}`; ex.mode = ex.mode || 'completer'; ex.niveau = ex.type === 'rectangle' ? 2 : 1; ex.titreCourt = (ex.titre.charAt(0) + ex.titre.slice(1).toLowerCase()).replace(/ en t /, ' en T '); }
 export const CAHIER = EX;
 
 /** Séries de l'Atelier (exercices regroupés par type). */
