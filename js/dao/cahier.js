@@ -10,14 +10,23 @@
    ===================================================================== */
 
 import { prisme } from './prisme.js';
+import { revolution } from './revolution.js';
+import { CONSTRUCTIONS } from './constructions.js';
 import { ARETES } from './cahier-aretes.js';
 
 export const TYPES = {
   terminer: { titre: 'Vues incomplètes à terminer', intro: 'La vue de face est complète, les autres vues sont seulement esquissées (leur contour). Termine-les : arêtes vues en trait fort, cachées en interrompu, axes en mixte.' },
   rectangle: { titre: 'Rectangle capable', intro: 'Une vue manque entièrement : esquisse son rectangle capable (encombrement, avec les lignes de rappel), puis les détails, puis fais la mise au net.' },
+  coupe: { titre: 'Coupes', intro: 'Le plan de coupe A-A est tracé sur la vue de dessus. Dessine la vue de face en coupe : on enlève la partie avant, la matière coupée est hachurée, les trous restent vides, pas de traits cachés.' },
+  cylindre: { titre: 'Cylindres, plats et perçages', intro: 'Pièces tournées : un cylindre se voit en rectangle d\'un côté et en cercle de l\'autre, toujours avec son axe ; un plat donne une droite dans une vue et une corde dans l\'autre.' },
+  perspective: { titre: 'Perspectives', intro: 'À partir des 3 vues, dessine la perspective (cavalière : face en vraie grandeur, fuyantes à 45° réduites de moitié ; isométrique : axes à 30°, longueurs vraies). Seulement les arêtes vues.' },
+  filetage: { titre: 'Filetages et taraudages', intro: 'Représentation normalisée : fond de filet en trait fin, sommet en trait fort ; vue de bout : 3/4 de cercle fin.' },
+  geometrie: { titre: 'Constructions géométriques', intro: 'Perpendiculaires, parallèles, raccordements et tangentes : trace avec précision (centres et points de raccordement), en trait fin pour les constructions.' },
 };
 
 const P = (id, nom, def) => prisme({ id: `cah-${id}`, nom, ...def });
+const PO = (id, nom, prof, profil, trous = []) => ({ id: `cah-${id}`, nom, prof, profil, trous });
+const R = (id, nom, etages, trous = []) => revolution({ id: `cah-${id}`, nom, etages, trous });
 const vue = { face: 'vue de face', dessus: 'vue de dessus', gauche: 'vue de gauche' };
 
 /** Textes types (données / exercice) selon ce qui est donné. */
@@ -27,6 +36,19 @@ function textes(ex) {
   const contours = Object.keys(d).filter((k) => d[k] === 'contour').map((k) => vue[k]);
   const manque = Object.keys(d).filter((k) => d[k] === 'rien').map((k) => vue[k]);
   const liste = (a) => (a.length > 1 ? `${a.slice(0, -1).join(', ')} et ${a[a.length - 1]}` : a[0]);
+  if (ex.type === 'geometrie') return { donnees: ex.donneesTxt, exercice: ex.exerciceTxt };
+  if (ex.type === 'perspective') return {
+    donnees: ['les trois vues de la pièce ;', `le coin avant-bas-gauche de la perspective, au repère ✚.`],
+    exercice: [ex.mode === 'cav' ? 'Dessiner la perspective cavalière (fuyantes à 45°, k = 0,5).' : 'Dessiner la perspective isométrique (axes à 30°, k = 1).', 'Ne représenter que les arêtes vues, en trait fort.', 'Les trous : bord de l\'entrée (cercle ou ellipse).'],
+  };
+  if (ex.type === 'filetage') return {
+    donnees: ['les contours des trois vues de la pièce ;', 'la perspective cotée (M = diamètre nominal).'],
+    exercice: ex.exerciceTxt,
+  };
+  if (ex.type === 'coupe') return {
+    donnees: ['la vue de dessus de la pièce, avec le plan de coupe A-A ;', 'la perspective cotée de la pièce.'],
+    exercice: ['Dessiner la vue de face en coupe A-A (on regarde dans le sens des flèches).', 'Hachurer la matière coupée (hachures fines à 45°).', 'Ne pas dessiner de traits cachés ; les trous coupés restent vides.', 'Indiquer la désignation « A-A » de la vue en coupe.'],
+  };
   const donnees = [];
   if (complets.length) donnees.push(`la ${liste(complets)} complète${complets.length > 1 ? 's' : ''} ;`);
   if (contours.length) donnees.push(`le contour de la ${liste(contours)} (vue${contours.length > 1 ? 's' : ''} incomplète${contours.length > 1 ? 's' : ''}) d'un${/^(bride|butée|chape|semelle|équerre)/.test(nom) ? 'e' : ''} ${nom} ;`);
@@ -71,14 +93,55 @@ const EX = [
     piece: P('13', 'Élément d\'étau', { L: 80, P: 40, H: 40, fxz: [[0, 0], [80, 0], [80, 15], [60, 15], [60, 40], [20, 40], [20, 15], [0, 15]], fyz: [[0, 0], [40, 0], [40, 40], [15, 40], [0, 25]], fxy: [[0, 0], [30, 0], [30, 8], [50, 8], [50, 0], [80, 0], [80, 40], [0, 40]] }) },
   { n: 14, titre: 'BRIDE COUDÉE', type: 'terminer', matiere: 'Acier C35', echelle: '1:1', donne: { face: 'complet', dessus: 'contour', gauche: 'contour' },
     piece: P('14', 'Bride coudée', { L: 80, P: 30, H: 35, fxz: [[0, 0], [45, 0], [45, 23], [80, 23], [80, 35], [33, 35], [33, 12], [0, 12]], trous: [{ axe: 'z', x: 15, y: 15, d: 8 }, { axe: 'z', x: 65, y: 15, d: 8 }], arete: [[45, 0, 23], [45, 30, 23]] }) },
+  { n: 15, titre: 'ÉTRIER', type: 'coupe', mode: 'coupe', matiere: 'Acier X6CrMoTi17-12', echelle: '1:1', donne: {},
+    piece: P('15', 'Étrier', { L: 70, P: 40, H: 45, fxz: [[0, 0], [70, 0], [70, 45], [56, 45], [56, 12], [14, 12], [14, 45], [0, 45]], trous: [{ axe: 'z', x: 35, y: 20, d: 12 }, { axe: 'x', y: 20, z: 32, d: 10 }] }) },
+  { n: 17, titre: 'ÉQUERRE PORTE-BUTÉE', type: 'coupe', mode: 'coupe', matiere: 'Acier GE295', echelle: '1:1', donne: {},
+    piece: P('17', 'Équerre porte-butée', { L: 70, P: 40, H: 50, fxz: [[0, 0], [70, 0], [70, 14], [16, 14], [16, 50], [0, 50]], trous: [{ axe: 'z', x: 45, y: 20, d: 10 }, { axe: 'x', y: 20, z: 36, d: 10 }] }) },
+  { n: 18, titre: 'PALIER', type: 'coupe', mode: 'coupe', matiere: 'Fonte EN-GJL-200', echelle: '1:1', donne: {},
+    piece: P('18', 'Palier', { L: 80, P: 36, H: 40, fxz: [[0, 0], [80, 0], [80, 12], [60, 12], [60, 40], [20, 40], [20, 12], [0, 12]], trous: [{ axe: 'z', x: 10, y: 18, d: 8 }, { axe: 'z', x: 70, y: 18, d: 8 }, { axe: 'y', x: 40, z: 26, d: 16 }] }) },
+  { n: 19, titre: 'SOCLE DE CHARNIÈRE', type: 'coupe', mode: 'coupe', matiere: 'Acier 30CrNiMo8', echelle: '1:1', donne: {},
+    piece: P('19', 'Socle de charnière', { L: 80, P: 40, H: 30, fxz: [[0, 0], [80, 0], [80, 10], [60, 10], [60, 30], [20, 30], [20, 10], [0, 10]], fyz: [[0, 0], [40, 0], [40, 30], [30, 30], [30, 22], [10, 22], [10, 30], [0, 30]], trous: [{ axe: 'z', x: 10, y: 20, d: 8 }, { axe: 'z', x: 70, y: 20, d: 8 }, { axe: 'x', y: 20, z: 16, d: 8 }] }) },
+  { n: 20, titre: 'PLATS SUR CYLINDRE', type: 'cylindre', matiere: 'Acier C45', echelle: '1:1', donne: { face: 'contour', dessus: 'contour', gauche: 'complet' },
+    piece: R('20', 'Axe à plats', [{ l: 30, d: 30 }, { l: 25, d: 30, plats: 20 }, { l: 20, d: 30, plat: 24 }]) },
+  { n: 21, titre: 'ÉCROU CYLINDRIQUE', type: 'cylindre', matiere: 'Acier S355', echelle: '1:1', donne: { face: 'complet', dessus: 'contour', gauche: 'contour' },
+    piece: R('21', 'Écrou cylindrique', [{ l: 12, d: 40 }, { l: 22, d: 28 }], [{ axe: 'y', x: 24, d: 8 }]) },
+  { n: 22, titre: 'PIÈCE TOURNÉE ET FRAISÉE', type: 'cylindre', matiere: 'Acier 42CrMo4', echelle: '1:1', donne: { face: 'complet', dessus: 'contour', gauche: 'contour' },
+    piece: R('22', 'Pièce tournée et fraisée', [{ l: 20, d: 24, platsY: 16 }, { l: 30, d: 36 }, { l: 25, d: 24 }], [{ axe: 'z', x: 62, d: 6 }]) },
+  { n: 23, titre: 'SUPPORT ORIENTABLE', type: 'terminer', matiere: 'Acier S235', echelle: '1:1', donne: { face: 'complet', dessus: 'contour', gauche: 'contour' },
+    piece: P('23', 'Support orientable', { L: 70, P: 40, H: 45, fxz: [[0, 0], [70, 0], [70, 12], [40, 12], [40, 45], [24, 45], [24, 12], [0, 12]], fyz: [[0, 0], [40, 0], [40, 12], [32, 12], [28, 45], [12, 45], [8, 12], [0, 12]], trous: [{ axe: 'x', y: 20, z: 34, d: 8 }, { axe: 'z', x: 10, y: 20, d: 6 }, { axe: 'z', x: 60, y: 20, d: 6 }] }) },
+  { n: 24, titre: 'PERSPECTIVE CAVALIÈRE', type: 'perspective', mode: 'cav', matiere: 'Acier S235', echelle: '1:1', donne: {},
+    piece: PO('24', 'Bloc chanfreiné entaillé', 30, [[0, 0], [60, 0], [60, 22], [48, 34], [24, 34], [24, 26], [0, 26]]) },
+  { n: 25, titre: 'PERSPECTIVE ISOMÉTRIQUE. MAQUETTE', type: 'perspective', mode: 'iso', matiere: 'Bois (maquette)', echelle: '1:1', donne: {},
+    piece: PO('25', 'Maquette à gradins', 30, [[0, 0], [50, 0], [50, 12], [34, 12], [34, 24], [16, 24], [16, 36], [0, 36]]) },
+  { n: 26, titre: 'PERSPECTIVE ISOMÉTRIQUE. SUPPORT', type: 'perspective', mode: 'iso', matiere: 'Acier S275', echelle: '1:1', donne: {},
+    piece: PO('26', 'Support à rainure', 35, [[0, 0], [60, 0], [60, 18], [52, 26], [38, 26], [38, 16], [22, 16], [22, 26], [8, 26], [0, 18]]) },
+  { n: 27, titre: 'TROU TARAUDÉ DÉBOUCHANT', type: 'filetage', matiere: 'Acier C35', echelle: '1:1', donne: { face: 'contour', dessus: 'contour', gauche: 'contour' },
+    piece: P('27', 'Bloc taraudé', { L: 60, P: 30, H: 25, trous: [{ axe: 'z', x: 30, y: 15, d: 8.5, M: 10 }] }),
+    exerciceTxt: ['Représenter sur les trois vues le trou taraudé M10 débouchant (perçage Ø8,5).', 'Vue de dessus : cercle du perçage en trait fort, 3/4 de cercle Ø10 en trait fin.', 'Autres vues : traits cachés du perçage et du filet, axe.'] },
+  { n: 28, titre: 'TIGE FILETÉE', type: 'filetage', matiere: 'Acier 8.8', echelle: '1:1', donne: { face: 'contour', dessus: 'contour', gauche: 'contour' },
+    piece: R('28', 'Tige filetée', [{ l: 35, d: 16, filet: 13.8 }, { l: 25, d: 24 }]),
+    exerciceTxt: ['Terminer la représentation de la tige filetée M16 (fond de filet Ø13,8).', 'Sommet du filet en trait fort, fond de filet en trait fin sur toute la longueur filetée.', 'Vue de gauche : cercle Ø16 en trait fort, 3/4 de cercle Ø13,8 en trait fin.'] },
+  { n: 29, titre: 'PERPENDICULAIRES', type: 'geometrie', mode: 'construction', matiere: 'Tracé', echelle: '1:1', donne: {}, cons: CONSTRUCTIONS.mediatrices(),
+    piece: { id: 'cah-29', nom: 'Perpendiculaires' }, donneesTxt: ['le triangle ABC.'], exerciceTxt: ['Tracer en trait fin les trois médiatrices du triangle ABC (perpendiculaires au milieu de chaque côté).', 'Vérifier qu\'elles se coupent en un même point M (centre du cercle passant par A, B et C).'] },
+  { n: 30, titre: 'PARALLÈLES', type: 'geometrie', mode: 'construction', matiere: 'Tracé', echelle: '1:1', donne: {}, cons: CONSTRUCTIONS.paralleles(),
+    piece: { id: 'cah-30', nom: 'Parallèles' }, donneesTxt: ['les droites (D1) et (D2) ;', 'la distance R = 20 mm.'], exerciceTxt: ['Tracer en trait fin, à la distance R = 20, une parallèle à (D1) et une parallèle à (D2), du côté intérieur (entre les deux droites).'] },
+  { n: 31, titre: 'RACCORDEMENT DE DEUX DROITES', type: 'geometrie', mode: 'construction', matiere: 'Tracé', echelle: '1:1', donne: {}, cons: CONSTRUCTIONS.raccordDroites(),
+    piece: { id: 'cah-31', nom: 'Raccordement de deux droites' }, donneesTxt: ['deux droites qui forment un angle ;', 'le rayon de raccordement R = 15 mm.'], exerciceTxt: ['Chercher le centre du raccordement (à 15 mm des deux droites).', 'Chercher les deux points de raccordement.', 'Tracer l\'arc de raccordement en trait fort (outil Arc ou Congé).'] },
+  { n: 32, titre: 'RACCORDEMENT DROITE ET CERCLE', type: 'geometrie', mode: 'construction', matiere: 'Tracé', echelle: '1:1', donne: {}, cons: CONSTRUCTIONS.raccordDroiteCercle(),
+    piece: { id: 'cah-32', nom: 'Raccordement droite et cercle' }, donneesTxt: ['une droite et un cercle Ø50 ;', 'le rayon de raccordement R = 20 mm, à gauche du cercle.'], exerciceTxt: ['Chercher le centre : à 20 mm de la droite et à 25 + 20 = 45 mm du centre du cercle.', 'Chercher les points de raccordement sur la droite et sur le cercle.', 'Tracer l\'arc de raccordement en trait fort.'] },
+  { n: 33, titre: 'RACCORDEMENT DE DEUX CERCLES', type: 'geometrie', mode: 'construction', matiere: 'Tracé', echelle: '1:1', donne: {}, cons: CONSTRUCTIONS.raccordCercles(),
+    piece: { id: 'cah-33', nom: 'Raccordement de deux cercles' }, donneesTxt: ['deux cercles Ø40 et Ø50 ;', 'le rayon de raccordement R = 30 mm, au-dessus des cercles.'], exerciceTxt: ['Chercher le centre : à 20 + 30 mm du 1er centre et à 25 + 30 mm du 2e.', 'Chercher les deux points de raccordement (sur les droites des centres).', 'Tracer l\'arc de raccordement en trait fort.'] },
+  { n: 34, titre: 'TANGENTES À DEUX CERCLES', type: 'geometrie', mode: 'construction', matiere: 'Tracé', echelle: '1:1', donne: {}, cons: CONSTRUCTIONS.tangentes(),
+    piece: { id: 'cah-34', nom: 'Tangentes à deux cercles' }, donneesTxt: ['deux cercles Ø56 et Ø32.'], exerciceTxt: ['Tracer les deux tangentes extérieures communes aux deux cercles, en trait fort, entre leurs points de contact.'] },
   { n: 16, titre: 'COULISSEAU DE MORS', type: 'terminer', matiere: 'Fonte EN-GJMW-350', echelle: '1:1', donne: { face: 'complet', dessus: 'contour', gauche: 'contour' },
     piece: P('16', 'Coulisseau de mors', { L: 75, P: 45, H: 30, fyz: [[0, 0], [45, 0], [45, 18], [38, 18], [42, 30], [3, 30], [7, 18], [0, 18]], trous: [{ axe: 'z', x: 20, y: 22.5, d: 10 }] }) },
 ];
 
+EX.sort((a, b) => a.n - b.n);
 for (const ex of EX) {
   const pre = ARETES[ex.piece.id];   // arêtes précalculées : l'Atelier s'affiche tout de suite
   if (pre) ex.piece._a = pre.map((r) => ({ a: r.slice(0, 3), b: r.slice(3, 6), vis: [...r[6]].map((c) => c === '1') }));
-  const t = textes(ex); ex.donnees = t.donnees; ex.exercice = t.exercice; ex.id = `c${ex.n}`; ex.mode = 'completer'; ex.niveau = ex.type === 'rectangle' ? 2 : 1; ex.titreCourt = ex.titre.charAt(0) + ex.titre.slice(1).toLowerCase(); }
+  const t = textes(ex); ex.donnees = t.donnees; ex.exercice = t.exercice; ex.id = `c${ex.n}`; ex.mode = ex.mode || 'completer'; ex.niveau = ex.type === 'rectangle' ? 2 : 1; ex.titreCourt = ex.titre.charAt(0) + ex.titre.slice(1).toLowerCase(); }
 export const CAHIER = EX;
 
 /** Séries de l'Atelier (exercices regroupés par type). */
