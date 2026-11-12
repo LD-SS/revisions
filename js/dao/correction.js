@@ -35,7 +35,9 @@ const proche = (p, es, tol) => es.some((e) => distanceA(e, p) <= tol);
  */
 export function corriger(solution, eleve, tol = TOL) {
   const traits = eleve.filter((e) => (e.t === 'l' || e.t === 'c' || e.t === 'a') && e.s !== 'n');
-  const parType = { v: traits.filter((e) => e.s === 'v'), c: traits.filter((e) => e.s === 'c'), a: traits.filter((e) => e.s === 'a') };
+  // traits fins (s = 'n') : comptés seulement pour les solutions en trait fin (filetages, constructions) et jamais « en trop »
+  const fins = eleve.filter((e) => (e.t === 'l' || e.t === 'c' || e.t === 'a') && e.s === 'n' && !e.mep && !e.don);
+  const parType = { v: traits.filter((e) => e.s === 'v'), c: traits.filter((e) => e.s === 'c'), a: traits.filter((e) => e.s === 'a'), n: fins };
   const res = { ok: [], type: [], manquants: [], trop: [] };
   let total = 0, gagne = 0;
   for (const s of solution) {
@@ -44,7 +46,7 @@ export function corriger(solution, eleve, tol = TOL) {
     if (axe) pts = pts.slice(Math.floor(pts.length * 0.15), Math.ceil(pts.length * 0.85));   // le milieu de l'axe suffit
     const t = axe ? tol * 2 : s.tol || tol;   // s.tol : tolérance propre (ex. ellipses par 4 arcs)
     const memeType = pts.filter((p) => proche(p, parType[s.s] || [], t)).length / pts.length;
-    const nimporte = memeType >= 0.9 ? memeType : pts.filter((p) => proche(p, traits, t)).length / pts.length;
+    const nimporte = memeType >= 0.9 ? memeType : pts.filter((p) => proche(p, s.s === 'n' ? [...traits, ...fins] : traits, t)).length / pts.length;
     const poids = longueur(s) * (axe ? 0.5 : 1);
     total += poids;
     const seuil = axe ? 0.8 : 0.9;
