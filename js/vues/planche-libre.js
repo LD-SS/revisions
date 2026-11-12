@@ -146,13 +146,13 @@ function calculE(s, zu, k) {
   const n = (x) => parseFloat(String(x ?? '').replace(',', '.'));
   const L = n(s?.L), H = n(s?.H), P = n(s?.P);
   const v = k === 'ex' ? (zu.w - L - P) / 3 : (zu.h - H - P) / 3;
-  return Number.isFinite(v) ? String(Math.round(v * 10) / 10).replace('.', ',') : '';
+  return Number.isFinite(v) ? String(Math.floor(v + 1e-9)) : '';   // arrondi au mm inférieur
 }
 function formMep(p) {
   const m = p.exo.mep, n = m.essais || 0;
   const zu = zoneUtile(p, m.zone);
   return `<form class="dao-mep-form" autocomplete="off" data-a="${zu.w}" data-b="${zu.h}">
-    <b>Mise en page</b> <span class="muted">(encode L, H et P mesurés sur la perspective, bouton Pièce : e et e' se calculent tout seuls)</span>
+    <b>Mise en page</b> <span class="muted">(encode L, H et P mesurés sur la perspective, bouton Pièce : e et e' se calculent tout seuls, arrondis au mm inférieur)</span>
     ${CASES_MEP.map(([k, l]) => { const auto = k === 'ex' || k === 'ey'; return `<label class="dao-choix"><span>${l}</span><input class="field" name="${k}" inputmode="decimal" style="width:76px" ${auto ? 'readonly tabindex="-1" title="Calculé automatiquement"' : ''} value="${esc(auto ? calculE(m.saisie, zu, k) : m.saisie?.[k] ?? '')}"> mm</label>`; }).join('')}
     <button class="btn primary" type="submit">Valider</button>
     <span class="dao-mep-msg">${n ? `<span class="dao-l-man">${esc(m.msg || '')}</span>` : ''}</span>
@@ -215,7 +215,7 @@ function consigneMep(p) {
   const a = pc ? attendu(p, pc, m.zone) : null;
   return enonce('dessiner la <b>vue de face</b>, la <b>vue de dessus</b> et la <b>vue de gauche</b>.', [
     ...base, 'Note : 80 % le dessin des vues, 20 % la mise en page.'], '', [
-    `Mise en page : encode L, H et P (mesurés sur la perspective, bouton Pièce) ; e et e' se calculent seuls (méthode des 3 intervalles égaux, ${ZONES[m.zone]}${a ? ` : zone utile ${nombreFr(a.A)} × ${nombreFr(a.B)} mm` : ''}).`,
+    `Mise en page : encode L, H et P (mesurés sur la perspective, bouton Pièce) ; e et e' se calculent seuls, arrondis au mm inférieur pour tomber sur la grille (méthode des 3 intervalles égaux, ${ZONES[m.zone]}${a ? ` : zone utile ${nombreFr(a.A)} × ${nombreFr(a.B)} mm` : ''}).`,
     'Quand c\'est juste, la feuille se débloque et les 4 coins de chaque vue sont marqués.',
     'Trace le contour de chaque vue en trait fort entre ses coins, puis les arêtes, traits cachés et axes.',
     'Clique sur Corriger.']);
@@ -302,8 +302,8 @@ function monterPage(el, remonter) {
   const sauver = () => { const t = toutes(); t[id] = { ...p, maj: Date.now() }; stockage.ecrire(CLE, t); };
   // anciennes planches « 3 vues » (repère imposé) : mise en page ajoutée ; notée seulement si rien n'est encore dessiné
   if (p.exo && !p.exo.mode && !p.exo.mep && p.exo.piece && !p.exo.examen) { const vide = !(p.entites || []).length; p = { ...p, exo: { ...p.exo, mep: { note: vide, zone: 'sans' } } }; sauver(); }
-  // anciens cadres de construction complets (v1.35) → seulement les coins
-  if (p.exo?.mep?.ok && (p.entites || []).some((e) => e.mep && e.t === 'l' && Math.hypot(e.x2 - e.x1, e.y2 - e.y1) > 6)) {
+  // anciens cadres complets (v1.35) ou coins à e non arrondi (avant v1.36.6) → coins recalculés
+  if (p.exo?.mep?.ok && (p.entites || []).some((e) => e.mep && e.t === 'l' && (Math.hypot(e.x2 - e.x1, e.y2 - e.y1) > 6 || (!p.entites.some((f) => f.s !== 'n') && (Math.abs(e.x1 - Math.round(e.x1)) > 1e-6 || Math.abs(e.y1 - Math.round(e.y1)) > 1e-6))))) {
     const pc0 = pieceDe(p.exo);
     if (pc0) { p = { ...p, entites: [...p.entites.filter((e) => !e.mep), ...coinsMep(pc0, attendu(p, pc0, p.exo.mep.zone))] }; sauver(); }
   }
@@ -737,7 +737,7 @@ function monterPage(el, remonter) {
         // on garde celui qui donne le meilleur score (un contour oublié ne doit pas décaler toute une vue)
         const es = p.entites || [];
         const att = p.exo.mep ? attendu(p, pc, p.exo.mep.zone) : null, det = p.exo.mep ? detecter(pc, es) : null;
-        const cands = [...(att ? [att] : []), ...(det ? [det] : []), ...(!p.exo.mep ? [placementVues(p, pc)] : [])];
+        const cands = [...(att ? [att, att.exact] : []), ...(det ? [det] : []), ...(!p.exo.mep ? [placementVues(p, pc)] : [])];
         let iBest = 0;
         cands.forEach((pl, i) => {
           const sol = vues(pc, pl.o, pl.ecart), ri = corriger([...sol.face, ...sol.dessus, ...sol.gauche], es);
@@ -747,7 +747,7 @@ function monterPage(el, remonter) {
         const cadres = es.filter((e) => e.mep).map((e) => ({ ...e, s: 'v' }));
         r.aRepasser = cadres.length ? r.manquants.filter((s) => s.s === 'v' && corriger([s], cadres).ok.length === 1).length : 0;
         if (p.exo.mep?.note) {   // 80 % le dessin des vues, 20 % la mise en page
-          r.mep = att && cands[iBest] === att && r.score >= 50
+          r.mep = att && (cands[iBest] === att || cands[iBest] === att.exact) && r.score >= 50
             ? { a: att, d: att, ok: 4, items: [['marge gauche', att.ex], ['écart face – gauche', att.ex], ['marge du bas', att.ey], ['écart face – dessus', att.ey]].map(([nom, v]) => ({ nom, v: Math.round(v * 10) / 10, att: Math.round(v * 10) / 10, ok: true })) }
             : controler(p, pc, es, p.exo.mep.zone);
           r.scoreVues = r.score;
