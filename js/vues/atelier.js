@@ -16,6 +16,8 @@ import { vuePlancheLibre, grainePiece } from './planche-libre.js';
 import { graineTrouVertical, vues } from '../dao/pieces.js';
 import { svgPerspective } from '../dao/perspective.js';
 import { SERIES, EXERCICES, NOMS_MODES } from '../dao/catalogue.js';
+import { imprimerCahier } from '../dao/cahier-impr.js';
+import { CAHIER } from '../dao/cahier.js';
 
 const MID = 'dessin';
 const REUSSI = 80;   // score à partir duquel un exercice est « réussi »
@@ -104,6 +106,14 @@ export async function vueAtelier(el, params = []) {
         <p class="muted">${esc(sr.intro)}</p>
         <div class="at-grille">${sr.exos.map(carte).join('')}</div>
       </section>`).join('')}
+      <section class="panel at-cahier">
+        <div><h3>Cahier imprimable</h3>
+          <p class="muted">Les ${CAHIER.length} exercices ci-dessus en version papier (A4, un exercice par page, écriture normalisée au début), pour toi ou pour la classe. À l'impression, choisis <b>« Taille réelle » / « 100 % »</b> (pas « Ajuster à la page ») : les cotes mesurent alors leur vraie longueur. Choisis « Enregistrer en PDF » pour obtenir le fichier.</p></div>
+        <div class="at-hasard-b">
+          <button class="btn primary" type="button" data-cahier="ex">Imprimer le cahier</button>
+          <button class="btn" type="button" data-cahier="cor">Imprimer les corrigés</button>
+        </div>
+      </section>
       <section class="panel at-hasard">
         <div><h3>${icone('melanger')} Pièces au hasard et planche libre</h3>
           <p class="muted">Feuille A4 ou A3 en mm, avec cadre, cartouche, cotes, hachures… Exercices corrigés automatiquement : dessiner les 3 vues d'une pièce vue en perspective (au ½ mm près), les coter, dessiner une coupe (entière, demi, locale), une section ou une perspective.${(() => { const t = [['vues', 'vues'], ['cotes', 'cotation'], ['coupe', 'coupe'], ['demi', 'demi-coupe'], ['section', 'section'], ['locale', 'coupe locale'], ['iso', 'isométrique'], ['cav', 'cavalière']].map(([m, l]) => { const r = statsVues(m); return r.n ? `${l} : <b>${r.n}</b> exercice${r.n > 1 ? 's' : ''}, moyenne <b>${r.moy} %</b>` : ''; }).filter(Boolean); return t.length ? ` Tes scores — ${t.join(' · ')}.` : ''; })()}</p></div>
@@ -141,6 +151,7 @@ export async function vueAtelier(el, params = []) {
         </form>
       </section>
     </div>`;
+  el.querySelectorAll('[data-cahier]').forEach((b) => b.addEventListener('click', () => imprimerCahier({ corriges: b.dataset.cahier === 'cor' })));
   el.querySelector('.at-exam-f')?.addEventListener('submit', (ev) => {
     ev.preventDefault();
     const f = new FormData(ev.target), n = +f.get('niv');
