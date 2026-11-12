@@ -1,16 +1,20 @@
 /* =====================================================================
    DAO — PIÈCES « SOLIDES » : réunion de prismes à profils quelconques
-   (droites + arcs : cylindres, congés, bossages, nervures…) moins des
-   creux (perçages, rainures, alésages).
+   (droites + arcs : cylindres, congés, bossages, nervures…) et de solides
+   de révolution (arbres, chanfreins, gorges), moins des creux.
    ---------------------------------------------------------------------
    Pièce = { id, nom, cs: true, L, P, H,
-             corps: [prim], creux: [prim], coupe?: y du plan A-A,
-             cotes?: [{ a:[x,y,z], b:[x,y,z], off:[dx,dy,dz], txt? }],
-             reperes?: [{ p:[x,y,z], txt }]  (Ø, R… sur la perspective) }
-   prim = { ax: 'x' | 'y' | 'z', a: [a0, a1], f: profil, nerv?: true }
-     profil dans le plan perpendiculaire à l'axe, coordonnées (u, v) :
-       ax 'y' → (x, z) ; ax 'z' → (x, y) ; ax 'x' → (y, z)
-     les arcs sont donnés par des suites de points (arc(), disque()).
+             corps: [prim], creux: [prim],
+             coupe?: y du plan A-A, ou plans parallèles [[x0, x1, y], …],
+             section?: x du plan de la section sortie B-B,
+             aux?: { n: [nx, 0, nz], d0, s }  vue auxiliaire partielle,
+             persp?: 'cav' (perspective cavalière à calculer),
+             filets?: [{ ax, c:[u,v], w:[w0,w1], d, D, int, fin }],
+             cotes?, reperes? (perspective cotée de l'énoncé) }
+   prim extrudé = { ax, a: [a0, a1], f: profil (u, v), nerv? }
+   prim de révolution = { k: 'rev', ax, c: [u, v], prof: [[w, r], …] }
+     ax : 'x' | 'y' | 'z' (u, v) = (y, z) | (x, z) | (x, y),
+          ou { w: [dx, dy, dz], o: [x, y, z] } (axe quelconque, extrudé seulement).
    Calcul : toutes les faces sont planes (arcs découpés tous les 3°) ; les
    arêtes candidates sont les intersections de faces ; on garde celles
    qui sont de vraies arêtes (motif de matière autour du point, les
@@ -24,6 +28,7 @@
 const r3 = (v) => Math.round(v * 1000) / 1000;
 const DEB = 3;
 const AXES = { y: [0, 2, 1], z: [0, 1, 2], x: [1, 2, 0] };   // indices monde de (u, v, w)
+const NREV = 120;
 
 /* ---------- profils ---------- */
 export function arc(cu, cv, r, d0, d1) {
@@ -33,22 +38,49 @@ export function arc(cu, cv, r, d0, d1) {
 export const disque = (cu, cv, r) => ({ pts: arc(cu, cv, r, 0, 360).slice(0, -1), cyl: { c: [cu, cv], r } });
 export const rect = (u0, v0, u1, v1) => [[u0, v0], [u1, v0], [u1, v1], [u0, v1]];
 export const E = (ax, a0, a1, f, opt = {}) => ({ ax, a: [a0, a1], ...(Array.isArray(f) ? { f } : { f: f.pts, cyl: f.cyl }), ...opt });
+/** Solide de révolution : prof = [[w, r], …] (w croissant ; deux points de même w = épaulement). */
+export const Rv = (ax, cu, cv, prof, opt = {}) => ({ k: 'rev', ax, c: [cu, cv], prof, ...opt });
 
+const croix = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+const ps = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+const unit = (a) => { const L = Math.hypot(...a); return a.map((v) => v / L); };
+const add = (a, b, k = 1) => a.map((v, i) => v + k * b[i]);
+
+function repere(ax) {
+  if (typeof ax === 'string') {
+    const I = AXES[ax], e = (i) => [0, 1, 2].map((k) => (k === i ? 1 : 0));
+    return { I, U: e(I[0]), V: e(I[1]), W: e(I[2]), O: [0, 0, 0] };
+  }
+  const W = unit(ax.w), U = unit(Math.abs(W[1]) < 0.9 ? croix([0, 1, 0], W) : croix([1, 0, 0], W)), V = croix(W, U);
+  return { I: null, U, V, W, O: ax.o || [0, 0, 0] };
+}
 function compiler(pr) {
   if (pr._k) return pr;
+  const R = repere(pr.ax);
+  const toW = ([u, v, w]) => [0, 1, 2].map((k) => R.O[k] + u * R.U[k] + v * R.V[k] + w * R.W[k]);
+  const toL = (p) => { const d = [p[0] - R.O[0], p[1] - R.O[1], p[2] - R.O[2]]; return [ps(d, R.U), ps(d, R.V), ps(d, R.W)]; };
+  if (pr.k === 'rev') {
+    const prof = pr.prof, [cu, cv] = pr.c;
+    pr.a = [prof[0][0], prof[prof.length - 1][0]];
+    const rmax = Math.max(...prof.map((q) => q[1]));
+    pr.cyl = { c: [cu, cv], r: rmax };
+    const rAt = (w) => { let r = 0; for (let i = 0; i + 1 < prof.length; i++) { const [w1, r1] = prof[i], [w2, r2] = prof[i + 1]; if (w >= w1 - 1e-12 && w <= w2 + 1e-12) r = Math.max(r, w2 - w1 < 1e-12 ? Math.max(r1, r2) : r1 + ((r2 - r1) * (w - w1)) / (w2 - w1)); } return r; };
+    const coins = [[cu - rmax, cv - rmax, pr.a[0]], [cu + rmax, cv + rmax, pr.a[1]]].map(toW);
+    pr._k = { rev: true, I: R.I, toW, toL, prof, rAt, cu, cv, bmin: [0, 1, 2].map((k) => Math.min(coins[0][k], coins[1][k])), bmax: [0, 1, 2].map((k) => Math.max(coins[0][k], coins[1][k])) };
+    return pr;
+  }
   const pts = [];
   for (const p of pr.f) { const q = pts[pts.length - 1]; if (!q || Math.hypot(p[0] - q[0], p[1] - q[1]) > 1e-6) pts.push(p); }
   if (Math.hypot(pts[0][0] - pts[pts.length - 1][0], pts[0][1] - pts[pts.length - 1][1]) < 1e-6) pts.pop();
-  const n = pts.length, I = AXES[pr.ax];
+  const n = pts.length;
   let aire = 0; for (let i = 0; i < n; i++) { const p = pts[i], q = pts[(i + 1) % n]; aire += p[0] * q[1] - q[0] * p[1]; }
   const sens = aire > 0 ? 1 : -1;
   const nrm = pts.map((p, i) => { const q = pts[(i + 1) % n], L = Math.hypot(q[0] - p[0], q[1] - p[1]); return [(sens * (q[1] - p[1])) / L, (-sens * (q[0] - p[0])) / L]; });   // normale sortante du côté i
   const vif = pts.map((_, i) => { const a = nrm[(i - 1 + n) % n], b = nrm[i]; return a[0] * b[0] + a[1] * b[1] < Math.cos((12 * Math.PI) / 180); });
-  const toW = ([u, v, w]) => { const r = [0, 0, 0]; r[I[0]] = u; r[I[1]] = v; r[I[2]] = w; return r; };
-  const toL = (p) => [p[I[0]], p[I[1]], p[I[2]]];
   const us = pts.map((p) => p[0]), vs = pts.map((p) => p[1]);
-  const bl = [Math.min(...us), Math.min(...vs), pr.a[0]], bh = [Math.max(...us), Math.max(...vs), pr.a[1]];
-  pr._k = { pts, n, nrm, vif, toW, toL, I, bmin: toW(bl), bmax: toW(bh), sw: pts.map(([a, b]) => [b, a]) };
+  const coins = [];
+  for (const u of [Math.min(...us), Math.max(...us)]) for (const v of [Math.min(...vs), Math.max(...vs)]) for (const w of pr.a) coins.push(toW([u, v, w]));
+  pr._k = { pts, n, nrm, vif, toW, toL, I: R.I, bmin: [0, 1, 2].map((k) => Math.min(...coins.map((c) => c[k]))), bmax: [0, 1, 2].map((k) => Math.max(...coins.map((c) => c[k]))) };
   return pr;
 }
 
@@ -60,48 +92,80 @@ function dansPoly(poly, a, b) {
   }
   return c;
 }
-function intervalles(poly, a) {
-  const vs = [];
-  for (let i = 0; i < poly.length; i++) {
-    const [a1, b1] = poly[i], [a2, b2] = poly[(i + 1) % poly.length];
-    if ((a1 <= a && a < a2) || (a2 <= a && a < a1)) vs.push(b1 + ((a - a1) * (b2 - b1)) / (a2 - a1));
-  }
-  vs.sort((p, q) => p - q);
-  const out = []; for (let k = 0; k + 1 < vs.length; k += 2) out.push([vs[k], vs[k + 1]]);
-  return out;
-}
 const union = (iv) => { const s = [...iv].sort((a, b) => a[0] - b[0]), o = []; for (const [a, b] of s) { if (o.length && a <= o[o.length - 1][1] + 1e-9) o[o.length - 1][1] = Math.max(o[o.length - 1][1], b); else o.push([a, b]); } return o; };
 const moins = (A, B) => { let r = A; for (const [c, d] of B) { const n = []; for (const [a, b] of r) { if (d <= a || c >= b) n.push([a, b]); else { if (c > a) n.push([a, c]); if (d < b) n.push([d, b]); } } r = n; } return r; };
 const inter = (A, B) => { const out = []; for (const [a, b] of A) for (const [c, d] of B) { const lo = Math.max(a, c), hi = Math.min(b, d); if (hi > lo + 1e-9) out.push([lo, hi]); } return out; };
-const croix = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
-const ps = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
-const unit = (a) => { const L = Math.hypot(...a); return a.map((v) => v / L); };
+/** Intervalles du paramètre t où la droite 2D l0 + t·d est dans le(s) polygone(s). */
+function dansPolys2D(loops, l0, d) {
+  if (Math.hypot(d[0], d[1]) < 1e-12) return loops.reduce((c, lp) => c !== dansPoly(lp, l0[0], l0[1]), false) ? [[-1e6, 1e6]] : [];
+  const ts = [];
+  for (const lp of loops) for (let i = 0; i < lp.length; i++) {
+    const A = lp[i], B = lp[(i + 1) % lp.length], ex = B[0] - A[0], ey = B[1] - A[1];
+    const den = d[0] * ey - d[1] * ex; if (Math.abs(den) < 1e-12) continue;
+    const t = ((A[0] - l0[0]) * ey - (A[1] - l0[1]) * ex) / den, s = ((A[0] - l0[0]) * d[1] - (A[1] - l0[1]) * d[0]) / den;
+    if (s >= 0 && s < 1) ts.push(t);
+  }
+  ts.sort((a, b) => a - b);
+  const out = []; for (let k = 0; k + 1 < ts.length; k += 2) out.push([ts[k], ts[k + 1]]);
+  return out;
+}
 
 /* ---------- le solide ---------- */
-function dansPrim(pr, p) { const k = pr._k, l = k.toL(p); return l[2] >= pr.a[0] && l[2] <= pr.a[1] && dansPoly(k.pts, l[0], l[1]); }
+function rPoly(K, l) {   // rayon du polygone inscrit (révolution découpée en NREV facettes) dans la direction du point
+  const ph = Math.atan2(l[1] - K.cv, l[0] - K.cu), st = (2 * Math.PI) / NREV, m = ((ph % st) + st) % st;
+  return Math.cos(st / 2) / Math.cos(m - st / 2);
+}
+function dansPrim(pr, p) {
+  const K = pr._k, l = K.toL(p);
+  if (l[2] < pr.a[0] || l[2] > pr.a[1]) return false;
+  if (K.rev) return Math.hypot(l[0] - K.cu, l[1] - K.cv) <= K.rAt(l[2]) * rPoly(K, l);
+  return dansPoly(K.pts, l[0], l[1]);
+}
+/** Fonction y du plan de coupe (nombre, ou plans parallèles [[x0, x1, y], …]). */
+function planCoupe(clip) {
+  if (clip == null) return null;
+  if (typeof clip === 'number') return () => clip;
+  return (x) => { for (const [x0, x1, y] of clip) if (x >= x0 && x < x1) return y; return clip[x < clip[0][0] ? 0 : clip.length - 1][2]; };
+}
 function outils(pc, clip) {
-  const corps = pc.corps.map(compiler), creux = (pc.creux || []).map(compiler);
-  const dedans = (p) => (clip == null || p[1] >= clip) && corps.some((q) => dansPrim(q, p)) && !creux.some((q) => dansPrim(q, p));
-  /* intervalles de matière le long de l'axe monde k (autres coordonnées fixées par p) */
+  const corps = pc.corps.map(compiler), creux = (pc.creux || []).map(compiler), cy = planCoupe(clip);
+  const dedans = (p) => (!cy || p[1] >= cy(p[0])) && corps.some((q) => dansPrim(q, p)) && !creux.some((q) => dansPrim(q, p));
+  /* intervalles de la coordonnée monde k le long de la droite parallèle à l'axe k passant par p */
   const ivPrim = (pr, p, k) => {
-    const K = pr._k, l = K.toL(p), j = K.I.indexOf(k);
-    if (j === 2) return dansPoly(K.pts, l[0], l[1]) ? [[pr.a[0], pr.a[1]]] : [];
-    if (l[2] <= pr.a[0] || l[2] >= pr.a[1]) return [];
-    return j === 0 ? intervalles(K.sw, l[1]) : intervalles(K.pts, l[0]);
+    const K = pr._k, q = [...p]; q[k] = 0;
+    const l0 = K.toL(q), dk = [0, 0, 0]; dk[k] = 1; const d = K.toL(dk).map((v, i) => v - K.toL([0, 0, 0])[i]);
+    if (K.rev) {   // axe parallèle (d = ±w) ou perpendiculaire
+      if (Math.abs(d[2]) > 0.5) {
+        const r = Math.hypot(l0[0] - K.cu, l0[1] - K.cv), out = [];
+        for (let i = 0; i + 1 < K.prof.length; i++) {
+          const [w1, r1] = K.prof[i], [w2, r2] = K.prof[i + 1]; if (w2 - w1 < 1e-12) continue;
+          let a = w1, b = w2;
+          if (Math.abs(r2 - r1) < 1e-12) { if (r1 < r) continue; } else { const wr = w1 + ((r - r1) * (w2 - w1)) / (r2 - r1); if (r2 > r1) a = Math.max(a, wr); else b = Math.min(b, wr); }
+          if (b > a) out.push([a, b]);
+        }
+        const s = d[2]; const w0 = l0[2];
+        return union(out).map(([a, b]) => { const ta = (a - w0) / s, tb = (b - w0) / s; return [Math.min(ta, tb), Math.max(ta, tb)]; });
+      }
+      const w = l0[2]; if (w < pr.a[0] || w > pr.a[1]) return [];
+      const R = K.rAt(w), j = Math.abs(d[0]) > 0.5 ? 0 : 1, e = j === 0 ? l0[1] - K.cv : l0[0] - K.cu;
+      if (Math.abs(e) >= R) return [];
+      const h = Math.sqrt(R * R - e * e), c0 = (j === 0 ? K.cu : K.cv) - l0[j], s = d[j];
+      const ta = (c0 - h) / s, tb = (c0 + h) / s; return [[Math.min(ta, tb), Math.max(ta, tb)]];
+    }
+    let slab;
+    if (Math.abs(d[2]) < 1e-12) slab = l0[2] >= pr.a[0] && l0[2] <= pr.a[1] ? [[-1e6, 1e6]] : [];
+    else { const ta = (pr.a[0] - l0[2]) / d[2], tb = (pr.a[1] - l0[2]) / d[2]; slab = [[Math.min(ta, tb), Math.max(ta, tb)]]; }
+    if (!slab.length) return [];
+    return inter(slab, dansPolys2D([K.pts], l0, d));
   };
-  const selon = (p, k) => {
-    let iv = moins(union(corps.flatMap((q) => ivPrim(q, p, k))), union(creux.flatMap((q) => ivPrim(q, p, k))));
-    if (clip != null && k === 1) iv = inter(iv, [[clip, 1e9]]);
-    else if (clip != null && p[1] < clip) iv = [];
-    return iv;
+  const borne = (iv, p, k) => {
+    if (!cy) return iv;
+    if (k === 1) return inter(iv, [[cy(p[0]), 1e9]]);
+    return p[1] < cy(p[0]) ? [] : iv;
   };
-  const selonCorps = (p, k) => {
-    let iv = union(corps.flatMap((q) => ivPrim(q, p, k)));
-    if (clip != null && k === 1) iv = inter(iv, [[clip, 1e9]]);
-    else if (clip != null && p[1] < clip) iv = [];
-    return iv;
-  };
-  return { corps, creux, dedans, selon, selonCorps };
+  const selon = (p, k) => borne(moins(union(corps.flatMap((q) => ivPrim(q, p, k))), union(creux.flatMap((q) => ivPrim(q, p, k)))), p, k);
+  const selonCorps = (p, k) => borne(union(corps.flatMap((q) => ivPrim(q, p, k))), p, k);
+  return { corps, creux, dedans, selon, selonCorps, cy };
 }
 
 /** Arête au point p (direction u) : la matière autour n'est pas un demi-plan. */
@@ -117,12 +181,24 @@ function estArete(o, p, u) {
   return true;
 }
 
-const VUES = [{ k: 1, s: -1 }, { k: 2, s: 1 }, { k: 0, s: -1 }];   // face (vers −y), dessus (+z), gauche (−x)
+/* ---------- directions d'observation ---------- */
+const C30 = Math.cos(Math.PI / 6), S30 = 0.5, C45 = Math.SQRT1_2, KCAV = 0.5;
 const ISO = [-1, -1, 1].map((v) => v / Math.sqrt(3));
-const DIRS = [[0, -1, 0], [0, 0, 1], [-1, 0, 0], ISO];   // vers l'observateur
-function visible(o, p, v, tmax) {
-  if (v === 3) { for (let t = 0.08; t < tmax; t += 0.4) if (o.dedans([p[0] + ISO[0] * t, p[1] + ISO[1] * t, p[2] + ISO[2] * t])) return false; return true; }
-  const { k, s } = VUES[v], d = 0.03, a1 = (k + 1) % 3, a2 = (k + 2) % 3;
+const CAV = unit([KCAV * C45, -1, KCAV * C45]);
+function directions(pc) {
+  const ds = [
+    { nom: 'face', D: [0, -1, 0], k: 1, s: -1, P: (p) => [p[0], p[2]] },
+    { nom: 'dessus', D: [0, 0, 1], k: 2, s: 1, P: (p) => [p[0], p[1]] },
+    { nom: 'gauche', D: [-1, 0, 0], k: 0, s: -1, P: (p) => [p[1], p[2]] },
+    { nom: 'iso', D: ISO, P: (p) => [(p[0] - p[1]) * C30, -((p[0] + p[1]) * S30 + p[2])] },
+  ];
+  if (pc.persp === 'cav') ds.push({ nom: 'cav', D: CAV, P: (p) => [p[0] + KCAV * C45 * p[1], p[2] + KCAV * C45 * p[1]] });
+  if (pc.aux) { const n = unit(pc.aux.n), e1 = [n[2], 0, -n[0]]; ds.push({ nom: 'aux', D: n, P: (p) => [ps(e1, p), p[1]], garde: (p) => ps(n, p) >= pc.aux.d0 - 0.01 }); }
+  return ds;
+}
+function visible(o, p, dir, tmax) {
+  if (dir.k == null) { for (let t = 0.08; t < tmax; t += 0.35) if (o.dedans([p[0] + dir.D[0] * t, p[1] + dir.D[1] * t, p[2] + dir.D[2] * t])) return false; return true; }
+  const { k, s } = dir, d = 0.03, a1 = (k + 1) % 3, a2 = (k + 2) % 3;
   return [[-d, -d], [-d, d], [d, -d], [d, d]].some(([da, db]) => {
     const q = [...p]; q[a1] += da; q[a2] += db;
     return !o.selon(q, k).some(([a, b]) => (s < 0 ? a < p[k] - 1e-4 : b > p[k] + 1e-4));
@@ -130,28 +206,55 @@ function visible(o, p, v, tmax) {
 }
 
 /* ---------- faces planes et arêtes candidates ---------- */
+function boiteFace(f) { const pts = f.q || f.pts3; f.min = [0, 1, 2].map((k) => Math.min(...pts.map((c) => c[k]))); f.max = [0, 1, 2].map((k) => Math.max(...pts.map((c) => c[k]))); return f; }
 function faces(pr, idx) {
   const K = pr._k, out = [];
+  if (K.rev) {
+    const P = (w, r, k) => { const t = (2 * Math.PI * k) / NREV; return K.toW([K.cu + r * Math.cos(t), K.cv + r * Math.sin(t), w]); };
+    for (let i = 0; i + 1 < K.prof.length; i++) {
+      const [w1, r1] = K.prof[i], [w2, r2] = K.prof[i + 1];
+      if (r1 < 1e-9 && r2 < 1e-9) continue;
+      if (w2 - w1 < 1e-12) {   // épaulement : couronne plane
+        const n = K.toW([0, 0, r2 > r1 ? -1 : 1]).map((v, k) => v - K.toW([0, 0, 0])[k]);
+        const ext = Array.from({ length: NREV }, (_, k) => { const t = (2 * Math.PI * k) / NREV; return [K.cu + Math.max(r1, r2) * Math.cos(t), K.cv + Math.max(r1, r2) * Math.sin(t)]; });
+        const int = Math.min(r1, r2) > 1e-9 ? Array.from({ length: NREV }, (_, k) => { const t = (2 * Math.PI * k) / NREV; return [K.cu + Math.min(r1, r2) * Math.cos(t), K.cv + Math.min(r1, r2) * Math.sin(t)]; }) : null;
+        out.push(boiteFace({ cap: true, K, w: w1, loops: int ? [ext, int] : [ext], n, d: ps(n, K.toW([K.cu, K.cv, w1])), prim: idx, pts3: ext.map(([u, v]) => K.toW([u, v, w1])) }));
+        continue;
+      }
+      for (let k = 0; k < NREV; k++) {
+        const q = [P(w1, r1, k), P(w1, r1, k + 1), P(w2, r2, k + 1), P(w2, r2, k)];
+        const g = [0, 1, 2].map((j) => (q[0][j] + q[1][j] + q[2][j] + q[3][j]) / 4);
+        let n = [0, 0, 0]; for (let a = 0; a < 4; a++) { const A = q[a], B = q[(a + 1) % 4]; n = add(n, [(A[1] - B[1]) * (A[2] + B[2]), (A[2] - B[2]) * (A[0] + B[0]), (A[0] - B[0]) * (A[1] + B[1])]); }
+        if (Math.hypot(...n) < 1e-12) continue;
+        n = unit(n); const ax = K.toW([K.cu, K.cv, K.toL(g)[2]]); if (ps(n, add(g, ax, -1)) < 0) n = n.map((v) => -v);
+        out.push(boiteFace({ q, n, d: ps(n, g), prim: idx }));
+      }
+    }
+    for (const [w, r, sg] of [[K.prof[0][0], K.prof[0][1], -1], [K.prof[K.prof.length - 1][0], K.prof[K.prof.length - 1][1], 1]]) {
+      if (r < 1e-9) continue;
+      const lp = Array.from({ length: NREV }, (_, k) => { const t = (2 * Math.PI * k) / NREV; return [K.cu + r * Math.cos(t), K.cv + r * Math.sin(t)]; });
+      const n = K.toW([0, 0, sg]).map((v, k) => v - K.toW([0, 0, 0])[k]);
+      out.push(boiteFace({ cap: true, K, w, loops: [lp], n, d: ps(n, K.toW([K.cu, K.cv, w])), prim: idx, pts3: lp.map(([u, v]) => K.toW([u, v, w])) }));
+    }
+    return out;
+  }
   for (let i = 0; i < K.n; i++) {
     const p = K.pts[i], q = K.pts[(i + 1) % K.n];
     const c = [K.toW([p[0], p[1], pr.a[0]]), K.toW([q[0], q[1], pr.a[0]]), K.toW([q[0], q[1], pr.a[1]]), K.toW([p[0], p[1], pr.a[1]])];
-    const nl = K.nrm[i], n = K.toW([nl[0], nl[1], 0]);
-    out.push({ q: c, n, d: ps(n, c[0]), prim: idx });
+    const nl = K.nrm[i], n = add(K.toW([nl[0], nl[1], 0]), K.toW([0, 0, 0]), -1);
+    out.push(boiteFace({ q: c, n, d: ps(n, c[0]), prim: idx }));
   }
-  for (const w of pr.a) { const n = K.toW([0, 0, 1]); out.push({ cap: true, pr, w, n, d: w, prim: idx }); }
-  for (const f of out) {
-    if (f.q) { f.min = [0, 1, 2].map((k) => Math.min(...f.q.map((c) => c[k]))); f.max = [0, 1, 2].map((k) => Math.max(...f.q.map((c) => c[k]))); }
-    else { f.min = K.bmin.map((v, k) => (K.I[2] === k ? f.w : v)); f.max = K.bmax.map((v, k) => (K.I[2] === k ? f.w : v)); }
-  }
+  for (const w of pr.a) { const n = add(K.toW([0, 0, 1]), K.toW([0, 0, 0]), -1); out.push(boiteFace({ cap: true, K, w, loops: [K.pts], n, d: ps(n, K.toW([0, 0, w])), prim: idx, pts3: K.pts.map(([u, v]) => K.toW([u, v, w])) })); }
   return out;
 }
 /** Intervalle(s) du paramètre t de la droite P0 + tU contenu(s) dans la face. */
 function dansFace(f, P0, U) {
   if (f.q) {
     let t0 = -1e9, t1 = 1e9;
-    const g = [0, 1, 2].map((k) => (f.q[0][k] + f.q[2][k]) / 2);
+    const g = [0, 1, 2].map((k) => (f.q[0][k] + f.q[1][k] + f.q[2][k] + f.q[3][k]) / 4);
     for (let i = 0; i < 4; i++) {
       const A = f.q[i], B = f.q[(i + 1) % 4], e = B.map((v, k) => v - A[k]);
+      if (Math.hypot(...e) < 1e-12) continue;
       let m = croix(f.n, e); if (ps(m, g.map((v, k) => v - A[k])) < 0) m = m.map((v) => -v);
       const a = ps(m, P0.map((v, k) => v - A[k])), b = ps(m, U);
       if (Math.abs(b) < 1e-12) { if (a < -1e-9) return []; continue; }
@@ -159,24 +262,27 @@ function dansFace(f, P0, U) {
     }
     return t1 > t0 + 1e-7 ? [[t0, t1]] : [];
   }
-  const K = f.pr._k, l0 = K.toL(P0), lu = K.toL(U), ts = [];
-  for (let i = 0; i < K.n; i++) {
-    const A = K.pts[i], B = K.pts[(i + 1) % K.n], ex = B[0] - A[0], ey = B[1] - A[1];
-    const den = lu[0] * ey - lu[1] * ex; if (Math.abs(den) < 1e-12) continue;
-    const t = ((A[0] - l0[0]) * ey - (A[1] - l0[1]) * ex) / den, s = ((A[0] - l0[0]) * lu[1] - (A[1] - l0[1]) * lu[0]) / den;
-    if (s >= 0 && s < 1) ts.push(t);
-  }
-  ts.sort((a, b) => a - b);
-  const out = []; for (let k = 0; k + 1 < ts.length; k += 2) out.push([ts[k], ts[k + 1]]);
-  return out;
+  const l0 = f.K.toL(P0), lu = add(f.K.toL(U), f.K.toL([0, 0, 0]), -1);
+  return dansPolys2D(f.loops, l0, lu);
 }
 function candidats(prims) {
   const out = [];
   const seg = (a, b, sil) => { if (Math.hypot(b[0] - a[0], b[1] - a[1], b[2] - a[2]) > 1e-5) out.push({ a, b, sil }); };
   const F = prims.flatMap((pr, i) => faces(pr, i));
   prims.forEach((pr) => {   // arêtes propres
-    if (pr.pseudo) return;   // génératrices vives, contours des bases
+    if (pr.pseudo) return;
     const K = pr._k;
+    if (K.rev) {   // cercles aux changements de pente du profil et aux extrémités
+      const pf = K.prof;
+      for (let i = 0; i < pf.length; i++) {
+        const r = pf[i][1]; if (r < 1e-9) continue;
+        let vif = i === 0 || i === pf.length - 1;
+        if (!vif) { const a = unit([pf[i][0] - pf[i - 1][0], pf[i][1] - pf[i - 1][1], 0]), b = unit([pf[i + 1][0] - pf[i][0], pf[i + 1][1] - pf[i][1], 0]); vif = ps(a, b) < Math.cos((12 * Math.PI) / 180); }
+        if (!vif) continue;
+        for (let k = 0; k < NREV; k++) { const t0 = (2 * Math.PI * k) / NREV, t1 = (2 * Math.PI * (k + 1)) / NREV; seg(K.toW([K.cu + r * Math.cos(t0), K.cv + r * Math.sin(t0), pf[i][0]]), K.toW([K.cu + r * Math.cos(t1), K.cv + r * Math.sin(t1), pf[i][0]])); }
+      }
+      return;
+    }
     for (let i = 0; i < K.n; i++) {
       const p = K.pts[i], q = K.pts[(i + 1) % K.n];
       if (K.vif[i]) seg(K.toW([p[0], p[1], pr.a[0]]), K.toW([p[0], p[1], pr.a[1]]));
@@ -196,18 +302,34 @@ function candidats(prims) {
   return out;
 }
 /** Génératrices de contour apparent (surfaces courbes), pour chaque direction d'observation. */
-function silhouettes(prims, creux = []) {
+function silhouettes(prims, creux, dirs) {
   const out = [];
   prims.forEach((pr) => {
-    const K = pr._k;
-    DIRS.forEach((D, v) => {
-      const wl = K.toL(D); if (Math.hypot(wl[0], wl[1]) < 1e-6) return;
+    const K = pr._k, sg = creux.includes(pr) ? -1 : 1, O = K.toW([0, 0, 0]);
+    dirs.forEach((dir, v) => {
+      const wl = add(K.toL(add(dir.D, O)), [0, 0, 0]);   // direction dans le repère local
+      if (K.rev) {
+        const A0 = Math.hypot(wl[0], wl[1]); if (A0 < 1e-6) return;
+        const ph = Math.atan2(wl[1], wl[0]);
+        for (let i = 0; i + 1 < K.prof.length; i++) {
+          const [w1, r1] = K.prof[i], [w2, r2] = K.prof[i + 1], L = Math.hypot(w2 - w1, r2 - r1);
+          if (w2 - w1 < 1e-9 || (r1 < 1e-9 && r2 < 1e-9)) continue;
+          const nr = (w2 - w1) / L, na = -(r2 - r1) / L, c = (-na * wl[2]) / (nr * A0);
+          if (Math.abs(c) > 1) continue;
+          for (const t of [ph + Math.acos(c), ph - Math.acos(c)]) {
+            const e = [Math.cos(t), Math.sin(t)], n = unit(add(add(K.toW([sg * nr * e[0], sg * nr * e[1], sg * na]), O, -1), [0, 0, 0]));
+            out.push({ a: K.toW([K.cu + r1 * e[0], K.cv + r1 * e[1], w1]), b: K.toW([K.cu + r2 * e[0], K.cv + r2 * e[1], w2]), sil: v, n });
+          }
+        }
+        return;
+      }
+      if (Math.hypot(wl[0], wl[1]) < 1e-6) return;
       for (let i = 0; i < K.n; i++) {
         if (K.vif[i]) continue;
         const a = K.nrm[(i - 1 + K.n) % K.n], b = K.nrm[i];
         const sa = a[0] * wl[0] + a[1] * wl[1], sb = b[0] * wl[0] + b[1] * wl[1];
         if (sa * sb > 0) continue;
-        const p = K.pts[i], sg = creux.includes(pr) ? -1 : 1, nn = unit(K.toW([sg * (a[0] + b[0]), sg * (a[1] + b[1]), 0]));
+        const p = K.pts[i], nn = unit(add(K.toW([sg * (a[0] + b[0]), sg * (a[1] + b[1]), 0]), O, -1));
         out.push({ a: K.toW([p[0], p[1], pr.a[0]]), b: K.toW([p[0], p[1], pr.a[1]]), sil: v, n: nn });
       }
     });
@@ -215,27 +337,31 @@ function silhouettes(prims, creux = []) {
   return out;
 }
 
-/* ---------- classement des candidats : morceaux 3D { a, b, vis[4] } ---------- */
-function aretes(pc, clip = null, extra = []) {
+/* ---------- classement des candidats : morceaux 3D { a, b, vis[] } (1 vu, 0 caché, 2 sans objet) ---------- */
+function pseudos(clip) {
+  if (clip == null) return [];
+  const segs = typeof clip === 'number' ? [[-1e3, 1e3, clip]] : clip.map(([x0, x1, y], i) => [i === 0 ? -1e3 : x0, i === clip.length - 1 ? 1e3 : x1, y]);
+  return segs.map(([x0, x1, y]) => compiler({ ax: 'y', a: [y, y + 1e4], f: rect(x0, -1e3, x1, 1e3), pseudo: true }));
+}
+function aretes(pc, clip = null, extra = [], dirs = directions(pc)) {
   const o = outils(pc, clip), tmax = pc.L + pc.P + pc.H;
-  const prims = [...o.corps, ...o.creux];
-  if (clip != null) prims.push(compiler({ ax: 'y', a: [clip, clip + 1e4], f: rect(-1e3, -1e3, 1e3, 1e3), pseudo: true }));
-  const cands = [...candidats(prims), ...silhouettes([...o.corps, ...o.creux], o.creux), ...extra];
+  const prims = [...o.corps, ...o.creux, ...pseudos(clip)];
+  const cands = [...candidats(prims), ...silhouettes([...o.corps, ...o.creux], o.creux, dirs), ...extra];
   const out = [];
   for (const c of cands) {
     const U = unit(c.b.map((v, k) => v - c.a[k])), Lg = Math.hypot(...c.b.map((v, k) => v - c.a[k]));
     const P = (t) => c.a.map((v, k) => v + t * U[k]);
     const cl = (t) => {
       const q = P(t);
-      if (c.force) return c.force(q) ? 'e1000' : '';
+      if (c.force) return c.force(q) ? 'e1' + '2'.repeat(dirs.length - 1) : '';
       if (c.sil != null) {
         const e = 0.02, ext = o.dedans(q.map((v, k) => v + e * c.n[k])), int = o.dedans(q.map((v, k) => v - e * c.n[k]));
         if (ext || !int) return '';
-        if (clip != null && q[1] < clip + 1e-6) return '';
-        return 'e' + [0, 1, 2, 3].map((v) => (v === c.sil ? (visible(o, q, v, tmax) ? 1 : 0) : 2)).join('');
+        if (o.cy && q[1] < o.cy(q[0]) + 1e-6) return '';
+        return 'e' + dirs.map((d, v) => (v === c.sil ? (visible(o, q, d, tmax) ? 1 : 0) : 2)).join('');
       }
       if (!estArete(o, q, U)) return '';
-      return 'e' + [0, 1, 2, 3].map((v) => (visible(o, q, v, tmax) ? 1 : 0)).join('');
+      return 'e' + dirs.map((d) => (visible(o, q, d, tmax) ? 1 : 0)).join('');
     };
     const n = Math.max(1, Math.ceil(Lg / 0.6));
     const affiner = (a, b, ca) => { for (let i = 0; i < 14; i++) { const m = (a + b) / 2; if (cl(m) === ca) a = m; else b = m; } return (a + b) / 2; };
@@ -343,69 +469,135 @@ function ajuster(pts, s) {
   return out;
 }
 
-/* ---------- axes des cylindres ---------- */
-function axesCyl(pc, o, v) {   // v : 0 face, 1 dessus, 2 gauche → entités dans les coordonnées de la vue (u, v)
-  const out = [], vk = VUES[v].k, plan = [[0, 2], [0, 1], [1, 2]][v];
+/* ---------- axes des cylindres et des solides de révolution ---------- */
+function axesCyl(pc, o, dir) {   // entités dans les coordonnées 2D de la direction d'observation
+  const out = [];
   const L = (a, b) => out.push({ t: 'l', x1: r3(a[0]), y1: r3(a[1]), x2: r3(b[0]), y2: r3(b[1]), s: 'a' });
   for (const pr of [...o.corps, ...o.creux]) {
-    if (!pr.cyl) continue;
-    const K = pr._k, ak = K.I[2], c3 = K.toW([pr.cyl.c[0], pr.cyl.c[1], (pr.a[0] + pr.a[1]) / 2]);
-    const iv = inter(o.selonCorps(c3, ak), [[pr.a[0] - 1e-6, pr.a[1] + 1e-6]]);
-    if (!iv.length) continue;
-    const lo = Math.min(...iv.map((q) => q[0])), hi = Math.max(...iv.map((q) => q[1]));
-    const P2 = (p) => [p[plan[0]], p[plan[1]]];
-    if (ak === vk) { const c = P2(c3), r = pr.cyl.r + DEB; L([c[0] - r, c[1]], [c[0] + r, c[1]]); L([c[0], c[1] - r], [c[0], c[1] + r]); }
-    else { const A = [...c3], B = [...c3]; A[ak] = lo - DEB; B[ak] = hi + DEB; L(P2(A), P2(B)); }
+    if (!pr.cyl || pr.sansAxe) continue;
+    const K = pr._k, O = K.toW([0, 0, 0]), W = add(K.toW([0, 0, 1]), O, -1);
+    const c3 = K.toW([pr.cyl.c[0], pr.cyl.c[1], (pr.a[0] + pr.a[1]) / 2]);
+    let lo = pr.a[0], hi = pr.a[1];
+    if (K.I) {
+      const ak = K.I[2], iv = inter(o.selonCorps(c3, ak), [[Math.min(pr.a[0], pr.a[1]) - 1e-6, Math.max(pr.a[0], pr.a[1]) + 1e-6]]);
+      if (!iv.length) continue;
+      lo = Math.min(...iv.map((q) => q[0])); hi = Math.max(...iv.map((q) => q[1]));
+      const s = W[ak]; if (s < 0) { const t = -hi; hi = -lo; lo = t; }   // toujours en coordonnée w
+    }
+    if (dir.garde && !dir.garde(c3) && !dir.garde(K.toW([pr.cyl.c[0], pr.cyl.c[1], hi]))) continue;
+    if (Math.abs(ps(W, dir.D)) > 0.999) {
+      const c = dir.P(c3), r = pr.cyl.r + DEB;
+      const eu = dir.P(add(c3, add(K.toW([1, 0, 0]), O, -1))), ev = dir.P(add(c3, add(K.toW([0, 1, 0]), O, -1)));
+      const du = unit([eu[0] - c[0], eu[1] - c[1], 0]), dv = unit([ev[0] - c[0], ev[1] - c[1], 0]);
+      L([c[0] - r * du[0], c[1] - r * du[1]], [c[0] + r * du[0], c[1] + r * du[1]]); L([c[0] - r * dv[0], c[1] - r * dv[1]], [c[0] + r * dv[0], c[1] + r * dv[1]]);
+    } else {
+      L(dir.P(K.toW([pr.cyl.c[0], pr.cyl.c[1], lo - DEB])), dir.P(K.toW([pr.cyl.c[0], pr.cyl.c[1], hi + DEB])));
+    }
   }
   return out;
 }
 
+/* ---------- filetages (représentation normalisée) ---------- */
+function filets(pc, dir, coupe = null) {
+  const out = [];
+  for (const f of pc.filets || []) {
+    const R = repere(f.ax), O = R.O, toW = ([u, v, w]) => [0, 1, 2].map((k) => O[k] + u * R.U[k] + v * R.V[k] + w * R.W[k]);
+    const [cu, cv] = f.c, ax = Math.abs(ps(R.W, dir.D)) > 0.999;
+    if (ax) {   // vue de bout : 3/4 de cercle fin (fond de filet ext., nominal int.), seulement du côté où le filetage débouche
+      if (Math.sign(ps(R.W, dir.D)) !== (f.bout ?? 1)) continue;
+      const c = dir.P(toW([cu, cv, 0]));
+      if (coupe != null && f.int && R.W[1] === 0) continue;
+      out.push({ t: 'a', cx: r3(c[0]), cy: r3(c[1]), r: r3(f.d / 2), a0: 90, a1: 360, s: 'n' });
+      continue;
+    }
+    // vue de côté : deux traits fins le long du filetage, limite en trait fort
+    let s = f.int ? 'c' : 'n', sf = f.int ? 'c' : 'v';
+    if (coupe != null) {
+      const ey = Math.abs(ps(R.W, [0, 1, 0])) < 1e-6 ? toW([cu, cv, 0])[1] : null;
+      if (ey == null || Math.abs(ey - coupe) > 1e-6) { if (f.int) continue; } else if (f.int) { s = 'n'; sf = 'v'; }
+    }
+    const perp = unit(croix(R.W, dir.D)), e = ps(perp, R.U), g = ps(perp, R.V);
+    for (const sg of [-1, 1]) {
+      const off = (sg * f.d) / 2;
+      out.push({ p: dir.P(toW([cu + off * e, cv + off * g, f.w[0]])), q: dir.P(toW([cu + off * e, cv + off * g, f.w[1]])), s });
+    }
+    if (f.fin != null) { const D2 = f.D / 2; out.push({ p: dir.P(toW([cu - D2 * e, cv - D2 * g, f.fin])), q: dir.P(toW([cu + D2 * e, cv + D2 * g, f.fin])), s: sf }); }
+  }
+  const arcs = out.filter((e) => e.t), segs = out.filter((e) => !e.t);
+  return { arcs, segs };
+}
+
 /* ---------- calcul complet (mis en cache) ---------- */
-const PLANS = [[0, 2], [0, 1], [1, 2]];
 export function calculSolide(pc) {
-  const ar = aretes(pc);
-  const o = outils(pc);
-  const res = {};
-  ['face', 'dessus', 'gauche'].forEach((nom, v) => {
-    const m = [];
-    for (const { a, b, vis } of ar) { if (vis[v] === 2) continue; const [i, j] = PLANS[v]; m.push({ p: [a[i], a[j]], q: [b[i], b[j]], s: vis[v] ? 'v' : 'c' }); }
-    res[nom] = [...vers2D(m), ...axesCyl(pc, o, v)];
+  const dirs = directions(pc), ar = aretes(pc, null, [], dirs), o = outils(pc), res = {};
+  dirs.forEach((dir, v) => {
+    const persp = v >= 3, m = [];
+    for (const { a, b, vis } of ar) {
+      if (vis[v] === 2 || (persp && vis[v] !== 1)) continue;
+      if (dir.garde && !(dir.garde(a) && dir.garde(b))) continue;
+      m.push({ p: dir.P(a), q: dir.P(b), s: vis[v] ? 'v' : 'c' });
+    }
+    if (persp && dir.nom !== 'aux') { res[dir.nom] = vers2D(m); return; }
+    const fl = dir.nom === 'aux' ? { arcs: [], segs: [] } : filets(pc, dir);
+    res[dir.nom] = [...vers2D([...m, ...fl.segs]), ...fl.arcs, ...axesCyl(pc, o, dir)];
   });
-  const pr = ([x, y, z]) => [(x - y) * C30, -((x + y) * S30 + z)];
-  res.iso = vers2D(ar.filter((s) => s.vis[3] === 1).map(({ a, b }) => ({ p: pr(a), q: pr(b), s: 'v' })));
-  if (pc.coupe != null) Object.assign(res, calculCoupe(pc));
+  if (pc.coupe != null) Object.assign(res, calculCoupe(pc, dirs[0]));
+  if (pc.section != null) res.sect = calculSection(pc);
   return res;
 }
-function calculCoupe(pc) {
-  const c = pc.coupe, o = outils(pc, c), o0 = outils(pc);
+function calculCoupe(pc, dirFace) {
+  const c = pc.coupe, o = outils(pc, c), o0 = outils(pc), cy = o.cy;
   const nerv = o.corps.filter((q) => q.nerv), pleins = o.corps.filter((q) => !q.nerv);
   // catégories dans le plan de coupe : 0 vide, 1 matière hachurée, 2 nervure (non hachurée)
-  const cat = (x, z) => { const p = [x, c + 1e-3, z]; if (!o.dedans(p)) return 0; return nerv.length && nerv.some((q) => dansPrim(q, p)) && !pleins.some((q) => dansPrim(q, p)) ? 2 : 1; };
+  const cat = (x, z) => { const p = [x, cy(x) + 1e-3, z]; if (!o.dedans(p)) return 0; return nerv.length && nerv.some((q) => dansPrim(q, p)) && !pleins.some((q) => dansPrim(q, p)) ? 2 : 1; };
   const extra = [];
   for (const pr of nerv) {   // contour de la nervure dans le plan : trait fort là où les catégories changent
-    const K = pr._k;
-    for (const s of candidats([pr, compiler({ ax: 'y', a: [c, c + 1e4], f: rect(-1e3, -1e3, 1e3, 1e3), pseudo: true })])) {
-      if (Math.abs(s.a[1] - c) > 1e-6 || Math.abs(s.b[1] - c) > 1e-6) continue;
+    for (const s of candidats([pr, ...pseudos(c)])) {
+      if (Math.abs(s.a[1] - cy(s.a[0])) > 1e-6 || Math.abs(s.b[1] - cy(s.b[0])) > 1e-6) continue;
       extra.push({ ...s, force: (q) => { const d = unit([s.b[0] - s.a[0], 0, s.b[2] - s.a[2]]), nx = -d[2], nz = d[0], e = 0.05; return cat(q[0] + nx * e, q[2] + nz * e) !== cat(q[0] - nx * e, q[2] - nz * e); } });
     }
-    void K;
   }
-  const ar = aretes(pc, c, extra);
+  const ar = aretes(pc, c, extra, [dirFace]);
+  const marches = typeof c === 'number' ? [] : c.slice(1).map((q) => q[0]);   // pas de trait aux changements de plan
   const m = [];
-  for (const { a, b, vis } of ar) if (vis[0] === 1) m.push({ p: [a[0], a[2]], q: [b[0], b[2]], s: 'v' });
-  const faceCoupe = [...vers2D(m), ...axesCyl(pc, o, 0)];
-  // vue extérieure sans traits cachés (pour la demi-coupe)
-  const ext = [];
-  for (const { a, b, vis } of aretes(pc)) if (vis[0] === 1) ext.push({ p: [a[0], a[2]], q: [b[0], b[2]], s: 'v' });
-  const xm = pc.L / 2;
-  const coupeX = (arr, garderDroite) => arr.flatMap((s) => {
-    const ga = garderDroite ? s.p[0] >= xm - 1e-9 : s.p[0] <= xm + 1e-9, gb = garderDroite ? s.q[0] >= xm - 1e-9 : s.q[0] <= xm + 1e-9;
-    if (ga && gb) return [s]; if (!ga && !gb) return [];
-    const t = (xm - s.p[0]) / (s.q[0] - s.p[0]), P = [xm, s.p[1] + t * (s.q[1] - s.p[1])];
-    return [ga ? { ...s, q: P } : { ...s, p: P }];
-  });
-  const faceDemi = [...vers2D([...coupeX(m, true), ...coupeX(ext, false)]), ...axesCyl(pc, o0, 0)];
-  return { faceCoupe, faceDemi, hach: contours((x, z) => cat(x, z) === 1, pc), hachDemi: contours((x, z) => x >= xm && cat(x, z) === 1, pc) };
+  for (const { a, b, vis } of ar) {
+    if (vis[0] !== 1) continue;
+    if (marches.some((x) => Math.abs(a[0] - x) < 1e-3 && Math.abs(b[0] - x) < 1e-3)) continue;
+    m.push({ p: [a[0], a[2]], q: [b[0], b[2]], s: 'v' });
+  }
+  const yc = typeof c === 'number' ? c : null;
+  const fl = filets(pc, dirFace, yc);
+  const faceCoupe = [...vers2D([...m, ...fl.segs]), ...fl.arcs, ...axesCyl(pc, o, dirFace)];
+  const res = { faceCoupe, hach: contours((x, z) => cat(x, z) === 1, pc) };
+  if (yc != null) {   // vue extérieure sans traits cachés (pour la demi-coupe)
+    const ext = [];
+    for (const { a, b, vis } of aretes(pc, null, [], [dirFace])) if (vis[0] === 1) ext.push({ p: [a[0], a[2]], q: [b[0], b[2]], s: 'v' });
+    const xm = pc.L / 2;
+    const coupeX = (arr, garderDroite) => arr.flatMap((s) => {
+      const ga = garderDroite ? s.p[0] >= xm - 1e-9 : s.p[0] <= xm + 1e-9, gb = garderDroite ? s.q[0] >= xm - 1e-9 : s.q[0] <= xm + 1e-9;
+      if (ga && gb) return [s]; if (!ga && !gb) return [];
+      const t = (xm - s.p[0]) / (s.q[0] - s.p[0]), P = [xm, s.p[1] + t * (s.q[1] - s.p[1])];
+      return [ga ? { ...s, q: P } : { ...s, p: P }];
+    });
+    res.faceDemi = [...vers2D([...coupeX([...m, ...fl.segs], true), ...coupeX(ext, false)]), ...axesCyl(pc, o0, dirFace)];
+    res.hachDemi = contours((x, z) => x >= xm && cat(x, z) === 1, pc);
+  }
+  return res;
+}
+/** Section sortie B-B (plan x = pc.section) : contour, axes et régions de matière, en coordonnées (y, z). */
+function calculSection(pc) {
+  const o = outils(pc), c = pc.section;
+  const f = (y, z) => o.dedans([c, y, z]);
+  const regions = contours(f, { L: pc.P, H: pc.H });
+  const m = [];
+  for (const g of regions) for (const b of [g.pts, ...g.trous]) b.forEach((p, i) => { const q = b[(i + 1) % b.length]; m.push({ p, q, s: 'v' }); });
+  const axes = [];
+  for (const pr of [...o.corps, ...o.creux]) {
+    if (!pr.cyl || pr._k.I?.[2] !== 0 || c < Math.min(...pr.a) || c > Math.max(...pr.a)) continue;
+    const [y, z] = pr.cyl.c, r = pr.cyl.r + DEB;
+    axes.push({ t: 'l', x1: r3(y - r), y1: r3(z), x2: r3(y + r), y2: r3(z), s: 'a' }, { t: 'l', x1: r3(y), y1: r3(z - r), x2: r3(y), y2: r3(z + r), s: 'a' });
+  }
+  return { lignes: [...vers2D(m), ...axes], regions };
 }
 /** Contours (boucles) de la région { f(x, z) } : carrés marchants affinés par dichotomie. */
 function contours(f, pc) {
@@ -481,24 +673,73 @@ export function coupeSolide(pc, origine = [20, 90], ecart = 20, { demi = false }
   const F = (x, z) => [ox + x, oy + z], D = (x, y) => [ox + x, oy - ey - P + y];
   const face = placer(demi ? r.faceDemi : r.faceCoupe, F);
   if (demi) { const a = F(pc.L / 2, -DEB), b = F(pc.L / 2, pc.H + DEB); face.push({ t: 'l', x1: r3(a[0]), y1: r3(a[1]), x2: r3(b[0]), y2: r3(b[1]), s: 'a' }); }
+  // trace du plan (ou des plans parallèles) sur la vue de dessus
   const trace = [];
-  const [xa, ya] = D(demi ? pc.L / 2 : -9, c), [xb] = D(pc.L + 9, c);
   const Lt = (x1, y1, x2, y2, s) => trace.push({ t: 'l', x1: r3(x1), y1: r3(y1), x2: r3(x2), y2: r3(y2), s });
-  Lt(xa, ya, xb, ya, 'a'); if (!demi) Lt(xa, ya, xa + 5, ya, 'v'); Lt(xb - 5, ya, xb, ya, 'v');
-  for (const x of demi ? [xb - 1.5] : [xa + 1.5, xb - 1.5]) {
-    Lt(x, ya, x, ya + 8, 'n'); Lt(x, ya + 8, x - 1.2, ya + 4.5, 'n'); Lt(x, ya + 8, x + 1.2, ya + 4.5, 'n');
-    trace.push({ t: 'x', x: r3(x + (x < ox ? -5 : 2)), y: r3(ya + 3), txt: 'A', h: 5, s: 'n' });
+  const segs = typeof c === 'number' ? [[demi ? pc.L / 2 : -9, pc.L + 9, c]] : c.map(([x0, x1, y], i) => [i === 0 ? -9 : x0, i === c.length - 1 ? pc.L + 9 : x1, y]);
+  segs.forEach(([x0, x1, y], i) => {
+    const [a, ya] = D(x0, y), [b] = D(x1, y); Lt(a, ya, b, ya, 'a');
+    if (i > 0) { const yp = D(0, segs[i - 1][2])[1]; Lt(a, yp, a, ya, 'v'); Lt(a - 3, yp, a, yp, 'v'); Lt(a, ya, a + 3, ya, 'v'); }
+  });
+  const [xa, ya] = D(segs[0][0], segs[0][2]), [xb, yb] = D(segs[segs.length - 1][1], segs[segs.length - 1][2]);
+  if (!demi) Lt(xa, ya, xa + 5, ya, 'v'); Lt(xb - 5, yb, xb, yb, 'v');
+  for (const [x, y] of demi ? [[xb - 1.5, yb]] : [[xa + 1.5, ya], [xb - 1.5, yb]]) {
+    Lt(x, y, x, y + 8, 'n'); Lt(x, y + 8, x - 1.2, y + 4.5, 'n'); Lt(x, y + 8, x + 1.2, y + 4.5, 'n');
+    trace.push({ t: 'x', x: r3(x + (x < ox ? -5 : 2)), y: r3(y + 3), txt: 'A', h: 5, s: 'n' });
   }
   if (demi) { Lt(xa, ya, xa, ya + 4, 'v'); }
   const o = outils(pc, c), xm = pc.L / 2;
   const nerv = o.corps.filter((q) => q.nerv), pleins = o.corps.filter((q) => !q.nerv);
-  const matiere = (x, z) => { if (demi && x < xm) return false; const p = [x, c + 1e-3, z]; if (!o.dedans(p)) return false; return !(nerv.length && nerv.some((q) => dansPrim(q, p)) && !pleins.some((q) => dansPrim(q, p))); };
+  const matiere = (x, z) => { if (demi && x < xm) return false; const p = [x, o.cy(x) + 1e-3, z]; if (!o.dedans(p)) return false; return !(nerv.length && nerv.some((q) => dansPrim(q, p)) && !pleins.some((q) => dansPrim(q, p))); };
   const M = (b) => b.map(([x, z]) => F(x, z));
   const hachures = (demi ? r.hachDemi : r.hach).map((g) => ({ t: 'h', pts: M(g.pts), trous: g.trous.map(M), ang: 45, pas: 3, s: 'n' }));
-  return { c, face, dessus: [...v.dessus, ...trace], hachure: hachures[0] || { t: 'h', pts: [], trous: [], ang: 45, pas: 3, s: 'n' }, hachures, matiere, cadres: v.cadres };
+  return { c: typeof c === 'number' ? c : c[0][2], face, dessus: [...v.dessus, ...trace], hachure: hachures[0] || { t: 'h', pts: [], trous: [], ang: 45, pas: 3, s: 'n' }, hachures, matiere, cadres: v.cadres };
 }
 
-const C30 = Math.cos(Math.PI / 6), S30 = 0.5;
+/** Section sortie B-B : même format que sectionB() de pieces.js (placée à la place de la vue de gauche). */
+export function sectionSolide(pc, origine = [20, 90], ecart = 20) {
+  const [ex] = Array.isArray(ecart) ? ecart : [ecart, ecart];
+  const v = vuesSolide(pc, origine, ecart), [ox, oy] = origine, P = pc.P, c = pc.section, r = donnees(pc).sect;
+  const gx = ox + pc.L + ex, G = (y, z) => [gx + P - y, oy + z];
+  const o = outils(pc), matiere = (y, z) => o.dedans([c, y, z]);
+  const zs = r.regions.flatMap((g) => g.pts.map((q) => q[1])), zmin = Math.min(...zs), zmax = Math.max(...zs);
+  const M = (b) => b.map(([y, z]) => G(y, z));
+  const hachures = r.regions.map((g) => ({ t: 'h', pts: M(g.pts), trous: g.trous.map(M), ang: 45, pas: 3, s: 'n' }));
+  const trace = [];
+  const L = (x1, y1, x2, y2, s) => trace.push({ t: 'l', x1: r3(x1), y1: r3(y1), x2: r3(x2), y2: r3(y2), s });
+  const xc = ox + c, ya = oy - 9, yb = oy + pc.H + 9;
+  L(xc, ya, xc, yb, 'a'); L(xc, ya, xc, ya + 5, 'v'); L(xc, yb - 5, xc, yb, 'v');
+  for (const y of [ya + 1.5, yb - 1.5]) {
+    L(xc, y, xc + 8, y, 'n'); L(xc + 8, y, xc + 4.5, y + 1.2, 'n'); L(xc + 8, y, xc + 4.5, y - 1.2, 'n');
+    trace.push({ t: 'x', x: r3(xc + 3), y: r3(y < oy ? y - 6 : y + 2), txt: 'B', h: 5, s: 'n' });
+  }
+  return { c, donnees: [...v.face, ...v.dessus, ...trace], section: placer(r.lignes, G, true), hachures, matiere, cadre: { x: gx, y: oy + zmin, w: P, h: zmax - zmin }, repere: [gx, oy + zmin] };
+}
+
+/** Vue auxiliaire partielle : origine de la vue de face (ox, oy) ; la vue est placée du côté de l'observateur, à la distance s. */
+export function auxSolide(pc, origine = [20, 90]) {
+  const [ox, oy] = origine, n = unit(pc.aux.n), e1 = [n[2], 0, -n[0]], s = pc.aux.s;
+  const A = (t, y) => [ox + t * e1[0] + (s + y) * n[0], oy + t * e1[2] + (s + y) * n[2]];
+  const th = (Math.atan2(e1[2], e1[0]) * 180) / Math.PI;   // rotation (repère direct : pas de symétrie)
+  const traits = placer(donnees(pc).aux, A).map((e) => (e.t === 'a' ? { ...e, a0: r3(e.a0 + th), a1: r3(e.a1 + th) } : e));
+  const xs = traits.flatMap((e) => (e.t === 'l' ? [e.x1, e.x2] : [e.cx - e.r, e.cx + e.r])), ys = traits.flatMap((e) => (e.t === 'l' ? [e.y1, e.y2] : [e.cy - e.r, e.cy + e.r]));
+  const cadre = { x: Math.min(...xs), y: Math.min(...ys), w: Math.max(...xs) - Math.min(...xs), h: Math.max(...ys) - Math.min(...ys) };
+  // ligne de référence (face avant y = 0), donnée à l'élève
+  const ts = (donnees(pc).aux || []).flatMap((e) => (e.t === 'l' ? [e.x1, e.x2] : [e.cx - e.r, e.cx + e.r]));
+  const t0 = Math.min(...ts) - 8, t1 = Math.max(...ts) + 8, p = A(t0, 0), q = A(t1, 0);
+  const ref = { t: 'l', x1: r3(p[0]), y1: r3(p[1]), x2: r3(q[0]), y2: r3(q[1]), s: 'n' };
+  const dans = (x, y) => { const d = [x - ox, y - oy], tt = d[0] * e1[0] + d[1] * e1[2], yy = d[0] * n[0] + d[1] * n[2] - s; return tt >= t0 + 5 && tt <= t1 - 5 && yy >= -4 && yy <= pc.P + 4; };
+  return { traits, cadre, ref, dans };
+}
+
+/** Perspective (exercice) : entités en mm, repère = coin avant-bas-gauche (x = y = z = 0). */
+export function perspSolide(pc, origine, type = 'iso') {
+  const [Ox, Oy] = origine, r = donnees(pc);
+  const traits = type === 'cav' ? placer(r.cav, (u, v) => [Ox + u, Oy + v]) : placer(r.iso, (u, v) => [Ox + u, Oy - v]).map((e) => { if (e.t !== 'a') return e; let a0 = -e.a1; while (a0 < 0) a0 += 360; return { ...e, a0: r3(a0), a1: r3(a0 + (e.a1 - e.a0)) }; });
+  const xs = traits.flatMap((e) => (e.t === 'l' ? [e.x1, e.x2] : [e.cx - e.r, e.cx + e.r])), ys = traits.flatMap((e) => (e.t === 'l' ? [e.y1, e.y2] : [e.cy - e.r, e.cy + e.r]));
+  return { traits, cadre: { x: Math.min(...xs), y: Math.min(...ys), w: Math.max(...xs) - Math.min(...xs), h: Math.max(...ys) - Math.min(...ys) } };
+}
+
 const f2 = (v) => Math.round(v * 100) / 100;
 const nb = (v) => String(Math.round(v * 10) / 10).replace('.', ',');
 export function svgSolide(pc, { cotes = true, largeur = 420, fleche = null } = {}) {
