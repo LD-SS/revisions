@@ -27,8 +27,11 @@ export function zoneUtile(p, z = 'sans') {
 export function attendu(p, pc, z = 'sans') {
   const b = boite(pc), W = b.x1 - b.x0, H = b.z1 - b.z0, P = pc.prof;
   const zu = zoneUtile(p, z);
-  const ex = (zu.w - W - P) / 3, ey = (zu.h - H - P) / 3;
-  return { o: [ex, zu.y0 + ey + P + ey], ecart: [ex, ey], ex, ey, A: r1(zu.w), B: r1(zu.h), W, H, P, zu };
+  // e et e' arrondis au mm inférieur (comme sur papier) : les vues tombent sur la grille de 1 mm ; le reste va à droite / en haut
+  const exx = (zu.w - W - P) / 3, eyx = (zu.h - H - P) / 3;
+  const ex = Math.floor(exx + 1e-9), ey = Math.floor(eyx + 1e-9);
+  const exact = { o: [exx, zu.y0 + 2 * eyx + P], ecart: [exx, eyx] };   // placement non arrondi (planches faites avant v1.36.6)
+  return { o: [ex, zu.y0 + ey + P + ey], ecart: [ex, ey], ex, ey, exx, eyx, exact, A: r1(zu.w), B: r1(zu.h), W, H, P, zu };
 }
 
 /** Retrouve le placement des vues dessinées par l'élève (null si rien de dessiné). */
@@ -64,6 +67,7 @@ export function controler(p, pc, entites, z = 'sans') {
 const nb = (v) => String(r1(v)).replace('.', ',');
 /** Texte du calcul attendu. */
 export function texteCalcul(a) {
-  return `e = (${nb(a.A)} − ${nb(a.W)} − ${nb(a.P)}) / 3 = ${nb(a.ex)} mm ; e' = (${nb(a.B)} − ${nb(a.H)} − ${nb(a.P)}) / 3 = ${nb(a.ey)} mm`;
+  const fl = (x, v) => (Math.abs(x - v) < 1e-6 ? `${nb(v)} mm` : `${nb(x)} → ${nb(v)} mm (arrondi au mm inférieur)`);
+  return `e = (${nb(a.A)} − ${nb(a.W)} − ${nb(a.P)}) / 3 = ${fl(a.exx, a.ex)} ; e' = (${nb(a.B)} − ${nb(a.H)} − ${nb(a.P)}) / 3 = ${fl(a.eyx, a.ey)}`;
 }
 export { nb as nombreFr };
