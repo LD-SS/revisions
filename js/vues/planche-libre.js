@@ -93,7 +93,12 @@ export function vuePlancheLibre(el, piece = null) {
     if (ex) {
       const t = toutes(); const deja = Object.entries(t).find(([, pl]) => pl?.exo?.cat === ex.id);
       if (deja) stockage.ecrire(CLE_COURANTE, deja[0]);
-      else creerExo(ex.piece, normaliser(toutes()[idCourant()]), ex.mode, 0, { cat: ex.id, titre: ex.titre, donne: ex.donne });
+      else if (ex.mode === 'construction') {   // construction géométrique : données + solution calculée
+        const np = nouvellePlanche(), tt = toutes(), n = nouvelId(), dep = normaliser(toutes()[idCourant()]);
+        tt[n] = { ...np, format: 'A4', orientation: 'paysage', echelle: '1:1', cartouche: { ...np.cartouche, titre: String(ex.titre).slice(0, 31), auteur: dep?.cartouche?.auteur || np.cartouche.auteur, classe: dep?.cartouche?.classe || np.cartouche.classe },
+          entites: ex.cons.donnees.map((e) => ({ ...e, don: 1 })), exo: { mode: 'ancien', piece: '', cat: ex.id, sol: ex.cons.solution, donRef: ex.cons.donnees.filter((e) => e.t === 'l'), consigne: '' }, maj: Date.now() };
+        stockage.ecrire(CLE, tt); stockage.ecrire(CLE_COURANTE, n);
+      } else creerExo(ex.piece, normaliser(toutes()[idCourant()]), ex.mode, 0, { cat: ex.id, titre: ex.titre, donne: ex.donne });
     }
     history.replaceState(null, '', '#/dessin/libre');
   } else if (piece) {
@@ -188,7 +193,11 @@ const enonce = (but, points, astuce = '', etapes = []) => `<b>À faire :</b> ${b
 function consigne(p) {
   const e = p.exo, rep = 'Le coin inférieur gauche de la vue de face est au repère ✚.';
   switch (e.mode) {
-    case 'ancien': return enonce(`${esc(e.consigne).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')}`, [`Ancien exercice repris en mm : 1 carreau = ${e.u || 10} mm.`, 'Dessine dans le cadre.']);
+    case 'ancien': if (e.cat) {
+      const ex = EXERCICES.find((x) => x.id === e.cat);
+      if (ex) return enonce(`${esc(ex.titre)}.`, [`<b>Données :</b> ${ex.donnees.map(esc).join(' ')}`, 'Constructions en trait fin, résultat en trait fort (sauf indication contraire).'], '', [...ex.exercice.map(esc), 'Clique sur Corriger.']);
+    }
+    return enonce(`${esc(e.consigne).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')}`, [`Ancien exercice repris en mm : 1 carreau = ${e.u || 10} mm.`, 'Dessine dans le cadre.']);
     case 'iso': return enonce('dessiner la <b>perspective isométrique</b> de la pièce à partir de ses 3 vues.', [
       'Échelle 1:1 : mêmes longueurs sur les 3 axes.',
       'Largeur : axe à 30° vers la droite. Profondeur : axe à 30° vers la gauche (150°). Hauteurs : verticales.',
@@ -753,7 +762,11 @@ function monterPage(el, remonter) {
         return;
       }
       let r;
-      if (p.exo.mode === 'ancien') r = corrigerAncien(p.exo, p.entites || []);
+      if (p.exo.mode === 'ancien' && p.exo.cat) {   // construction : sans les données, ni les morceaux de données recoupés (congé)
+        const ref = p.exo.donRef || [];
+        const es = (p.entites || []).filter((e) => !e.don && !(e.t === 'l' && ref.length && corriger([{ ...e }], ref.map((g) => ({ ...g, s: e.s }))).ok.length === 1));
+        r = corrigerAncien(p.exo, es);
+      } else if (p.exo.mode === 'ancien') r = corrigerAncien(p.exo, p.entites || []);
       else if (PERSP.includes(p.exo.mode)) {
         const sol = perspectiveEntites(pc, p.exo.r, p.exo.mode), c = sol.cadre, M = 6;
         const dans = (x, y) => x >= c.x - M && x <= c.x + c.w + M && y >= c.y - M && y <= c.y + c.h + M;
