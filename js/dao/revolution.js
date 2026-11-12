@@ -176,6 +176,14 @@ export function vuesRevolution(pc, origine = [20, 90], ecart = 20) {
     for (const [a, b, st] of morceaux(f, -R, R, 800, secs)) seg(gauche, G, f(a), f(b), st);
   }
 
+  // filetages extérieurs : diamètre à fond de filet (d3) en trait fin sur la longueur de l'étage ; vue de gauche : 3/4 de cercle fin si l'étage est vu
+  ets.forEach((e, i) => {
+    if (!e.filet) return;
+    const r3f = e.filet / 2;
+    for (const Z of [-r3f, r3f]) seg(face, F, [e.xa, Z], [e.xb, Z], 'n');
+    for (const Y of [-r3f, r3f]) seg(dessus, D, [e.xa, Y], [e.xb, Y], 'n');
+    if (ets.slice(0, i).every((q) => q.sec.r < e.sec.r - 1e-9)) gauche.push({ t: 'a', cx: r3(gx0), cy: r3(gy0), r: r3(r3f), a0: 90, a1: 360, s: 'n' });
+  });
   // trous passant par l'axe
   for (const t of pc.trous || []) {
     const e = ets.find((q) => t.x > q.xa && t.x < q.xb); if (!e) continue;
