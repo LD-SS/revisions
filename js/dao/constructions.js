@@ -82,4 +82,20 @@ function tangentes() {
   return { donnees: [C(...A, ra), C(...B, rb), ...ax(A, ra), ...ax(B, rb)], solution: sol };
 }
 
-export const CONSTRUCTIONS = { mediatrices, paralleles, raccordDroites, raccordDroiteCercle, raccordCercles, tangentes };
+/* 74 — calibre : raccordement intérieur (arc qui enveloppe deux cercles) + raccordement extérieur */
+function raccordInterieur() {
+  const A = [60, 70], ra = 22, B = [130, 70], rb = 16, R = 60, r2 = 20;
+  const dd = Math.hypot(B[0] - A[0], B[1] - A[1]), u = [(B[0] - A[0]) / dd, (B[1] - A[1]) / dd], n = [-u[1], u[0]];
+  // arc intérieur R (au-dessus) : centre à R − ra de A et R − rb de B, sous les centres
+  const da = R - ra, db = R - rb, a = (da * da - db * db + dd * dd) / (2 * dd), h = Math.sqrt(da * da - a * a);
+  const O = [A[0] + u[0] * a - n[0] * h, A[1] + u[1] * a - n[1] * h];
+  const Ta = [O[0] + ((A[0] - O[0]) * R) / da, O[1] + ((A[1] - O[1]) * R) / da], Tb = [O[0] + ((B[0] - O[0]) * R) / db, O[1] + ((B[1] - O[1]) * R) / db];
+  // arc extérieur r2 (en dessous) : centre à ra + r2 de A et rb + r2 de B
+  const ea = ra + r2, eb = rb + r2, a2 = (ea * ea - eb * eb + dd * dd) / (2 * dd), h2 = Math.sqrt(ea * ea - a2 * a2);
+  const O2 = [A[0] + u[0] * a2 - n[0] * h2, A[1] + u[1] * a2 - n[1] * h2];
+  const Ua = [A[0] + ((O2[0] - A[0]) * ra) / ea, A[1] + ((O2[1] - A[1]) * ra) / ea], Ub = [B[0] + ((O2[0] - B[0]) * rb) / eb, B[1] + ((O2[1] - B[1]) * rb) / eb];
+  const ax = (c, r) => [L(c[0] - r - 3, c[1], c[0] + r + 3, c[1], 'a'), L(c[0], c[1] - r - 3, c[0], c[1] + r + 3, 'a')];
+  return { donnees: [C(...A, ra), C(...B, rb), ...ax(A, ra), ...ax(B, rb), T(70, 145, 'R = 60 (dessus)'), T(80, 12, 'R = 20 (dessous)')], solution: [arc(O, R, Tb, Ta), arc(O2, r2, Ub, Ua)] };
+}
+
+export const CONSTRUCTIONS = { mediatrices, paralleles, raccordDroites, raccordDroiteCercle, raccordCercles, tangentes, raccordInterieur };
