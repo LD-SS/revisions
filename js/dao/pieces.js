@@ -17,6 +17,7 @@
 
 import { vuesRevolution } from './revolution.js';
 import { vuesPrisme, coupePrisme } from './prisme.js';
+import { vuesSolide, coupeSolide } from './solide.js';
 
 const EPS = 1e-6;
 const r3 = (v) => Math.round(v * 1000) / 1000;
@@ -72,6 +73,7 @@ function aretesVues(piece, sens) {
 export function vues(piece, origine = [20, 90], ecart = 20) {
   if (piece.rev) return vuesRevolution(piece, origine, ecart);
   if (piece.p3) return vuesPrisme(piece, origine, ecart);
+  if (piece.cs) return vuesSolide(piece, origine, ecart);
   const [ex, ey] = Array.isArray(ecart) ? ecart : [ecart, ecart];   // écart horizontal (face-gauche), vertical (face-dessus)
   const b = boite(piece);
   const W = b.x1 - b.x0, H = b.z1 - b.z0, P = piece.prof;
@@ -227,6 +229,7 @@ export function trouverPiece(id) {
  */
 export function coupeA(piece, origine = [20, 90], ecart = 20, { demi = false } = {}) {
   if (piece.p3) return coupePrisme(piece, origine, ecart);
+  if (piece.cs) return coupeSolide(piece, origine, ecart, { demi });
   // demi = true : demi-coupe d'une pièce symétrique (moitié droite coupée, moitié gauche en vue extérieure sans traits cachés)
   const v = vues(piece, origine, ecart);
   const b = boite(piece), P = piece.prof, [ox, oy] = origine;
