@@ -11,35 +11,12 @@
 
 import { enregistrerPieces } from './pieces.js';
 import { revolution } from './revolution.js';
+import { SERIES_CAHIER } from './cahier.js';
 
 const P = (id, nom, prof, profil, trous = []) => ({ id: `cat-${id}`, nom, prof, profil, trous });
 const RV = (id, nom, etages, trous = []) => revolution({ id: `cat-${id}`, nom, etages, trous });
 
 export const SERIES = [
-  {
-    id: 'lecture', titre: 'Lecture de dessin : entailles, chanfreins, trous',
-    intro: 'Dessine les 3 vues (face, dessus, gauche) à partir de la perspective cotée. Les arêtes cachées en traits interrompus.',
-    exos: [
-      { titre: 'Bloc entaillé', niveau: 1, mode: 'vues', piece: P('bloc-entaille', 'Bloc entaillé', 30, [[0, 0], [60, 0], [60, 20], [35, 20], [35, 40], [0, 40]]) },
-      { titre: 'Rainure en U', niveau: 1, mode: 'vues', piece: P('rainure-u', 'Rainure en U', 35, [[0, 0], [70, 0], [70, 30], [45, 30], [45, 18], [25, 18], [25, 30], [0, 30]]) },
-      { titre: 'Chanfrein simple', niveau: 1, mode: 'vues', piece: P('chanfrein', 'Chanfrein simple', 30, [[0, 0], [70, 0], [70, 25], [55, 40], [0, 40]]) },
-      { titre: 'Bloc percé vertical', niveau: 1, mode: 'vues', piece: P('perce-z', 'Bloc percé vertical', 40, [[0, 0], [60, 0], [60, 25], [0, 25]], [{ axe: 'z', x: 18, y: 20, d: 10 }, { axe: 'z', x: 44, y: 20, d: 8 }]) },
-      { titre: 'Bloc percé horizontal', niveau: 1, mode: 'vues', piece: P('perce-y', 'Bloc percé horizontal', 30, [[0, 0], [50, 0], [50, 40], [0, 40]], [{ axe: 'y', x: 25, z: 20, d: 14 }]) },
-      { titre: 'Double chanfrein percé', niveau: 2, mode: 'vues', piece: P('double-chanfrein', 'Double chanfrein percé', 30, [[0, 0], [70, 0], [70, 25], [58, 35], [12, 35], [0, 25]], [{ axe: 'y', x: 35, z: 15, d: 10 }]) },
-      { titre: 'Équerre entaillée percée', niveau: 2, mode: 'vues', piece: P('entaille-percee', 'Équerre entaillée percée', 30, [[0, 0], [80, 0], [80, 15], [55, 15], [55, 35], [0, 35]], [{ axe: 'y', x: 25, z: 20, d: 10 }, { axe: 'z', x: 68, y: 15, d: 8 }]) },
-      { titre: 'Support en T percé', niveau: 3, mode: 'vues', piece: P('te-perce', 'Support en T percé', 30, [[0, 0], [80, 0], [80, 12], [50, 12], [50, 45], [30, 45], [30, 12], [0, 12]], [{ axe: 'z', x: 12, y: 15, d: 8 }, { axe: 'z', x: 68, y: 15, d: 8 }, { axe: 'y', x: 40, z: 32, d: 10 }]) },
-    ],
-  },
-  {
-    id: 'plans', titre: 'Intersections de plans (faces inclinées)',
-    intro: 'Une face inclinée se voit en vraie grandeur dans aucune vue : repère ses arêtes avec les lignes de rappel.',
-    exos: [
-      { titre: 'Bloc à pente', niveau: 2, mode: 'vues', piece: P('pente', 'Bloc à pente', 35, [[0, 0], [70, 0], [70, 15], [30, 40], [0, 40]]) },
-      { titre: 'Bloc en toit', niveau: 2, mode: 'vues', piece: P('toit', 'Bloc en toit', 40, [[0, 0], [60, 0], [60, 25], [30, 40], [0, 25]]) },
-      { titre: 'Pente et marche percées', niveau: 3, mode: 'vues', piece: P('pente-marche', 'Pente et marche percées', 30, [[0, 0], [80, 0], [80, 15], [60, 15], [40, 35], [0, 35]], [{ axe: 'z', x: 20, y: 15, d: 8 }]) },
-      { titre: 'Glissière en queue d\'aronde', niveau: 3, mode: 'vues', piece: P('aronde', 'Glissière en queue d\'aronde', 40, [[0, 0], [70, 0], [70, 30], [55, 30], [50, 18], [20, 18], [15, 30], [0, 30]]) },
-    ],
-  },
   {
     id: 'cylindres', titre: 'Cylindres et intersections cylindre / plan',
     intro: 'Un cylindre se voit en rectangle d\'un côté et en cercle de l\'autre, toujours avec son axe. Un méplat (plan qui coupe le cylindre) donne une ligne droite dans une vue et une corde dans la vue de gauche. « méplat à 24 » : hauteur restante depuis le dessous ; « plats 14 » : distance entre les deux plats.',
@@ -93,9 +70,11 @@ export const SERIES = [
   },
 ];
 
-// ids d'exercice : <série>-<n°>
+// ids d'exercice : <série>-<n°> ; les séries du cahier (exercices par type) passent en premier
 for (const s of SERIES) s.exos.forEach((e, i) => { e.id = `${s.id}-${i + 1}`; e.serie = s.id; });
+for (const s of SERIES_CAHIER) for (const e of s.exos) e.serie = s.id;
+SERIES.unshift(...SERIES_CAHIER);
 export const EXERCICES = SERIES.flatMap((s) => s.exos);
 enregistrerPieces(EXERCICES.map((e) => e.piece));
 
-export const NOMS_MODES = { vues: '3 vues', cotes: 'Cotation', coupe: 'Coupe A-A', demi: 'Demi-coupe', section: 'Section B-B', locale: 'Coupe locale', iso: 'Isométrique', cav: 'Cavalière' };
+export const NOMS_MODES = { completer: 'Vues à compléter', vues: '3 vues', cotes: 'Cotation', coupe: 'Coupe A-A', demi: 'Demi-coupe', section: 'Section B-B', locale: 'Coupe locale', iso: 'Isométrique', cav: 'Cavalière' };
