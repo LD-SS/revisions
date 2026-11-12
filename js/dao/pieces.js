@@ -16,7 +16,7 @@
    ===================================================================== */
 
 import { vuesRevolution } from './revolution.js';
-import { vuesPrisme } from './prisme.js';
+import { vuesPrisme, coupePrisme } from './prisme.js';
 
 const EPS = 1e-6;
 const r3 = (v) => Math.round(v * 1000) / 1000;
@@ -226,6 +226,7 @@ export function trouverPiece(id) {
  *             hachure: object (entité t:'h' de la solution), matiere: (x, z) => boolean (coordonnées pièce), cadres: object }}
  */
 export function coupeA(piece, origine = [20, 90], ecart = 20, { demi = false } = {}) {
+  if (piece.p3) return coupePrisme(piece, origine, ecart);
   // demi = true : demi-coupe d'une pièce symétrique (moitié droite coupée, moitié gauche en vue extérieure sans traits cachés)
   const v = vues(piece, origine, ecart);
   const b = boite(piece), P = piece.prof, [ox, oy] = origine;
