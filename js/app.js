@@ -28,7 +28,7 @@ import { majBoutonProposer, viderAttente } from './proposer.js';
 import { demarrerSynchro, adopterCompte } from './synchro.js';
 import { exigerAcces, ecranPerte } from './vues/acces.js';
 
-const VERSION = '1.39.0 (cahier de dessin, lot 3 : plans inclinés, queues d\'aronde, rainures en T, coupes de pièces percées)';
+const VERSION = '1.40.0 (cahier de dessin, lot 4 : intersections de cylindres, congés, nervures, demi-coupes)';
 const vue = document.getElementById('vue');
 let nettoyer = null; // fonction fournie par la page affichée, appelée avant d'en changer
 
