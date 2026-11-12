@@ -40,6 +40,11 @@ function etatExo(id) {
 
 /** Vignette : la perspective de la pièce, ou ses 3 vues pour les exercices de perspective (sinon on verrait la réponse). */
 function vignette(e) {
+  if (e.mode === 'construction') {   // figure de construction : les données
+    const es = e.cons.donnees.filter((x) => x.t === 'l' || x.t === 'c');
+    const trait = (x) => (x.s === 'a' ? 'stroke-dasharray="6 1.5 1 1.5" stroke-width="0.6"' : 'stroke-width="1.4"');
+    return `<svg viewBox="0 -160 190 160" width="180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Figure">${es.map((x) => (x.t === 'l' ? `<line x1="${x.x1}" y1="${-x.y1}" x2="${x.x2}" y2="${-x.y2}" stroke="#111" ${trait(x)}/>` : `<circle cx="${x.cx}" cy="${-x.cy}" r="${x.r}" fill="none" stroke="#111" ${trait(x)}/>`)).join('')}</svg>`;
+  }
   if (e.mode !== 'iso' && e.mode !== 'cav') return svgPerspective(e.piece, { cotes: false, largeur: 180 });
   const v = vues(e.piece, [0, 0], 10), ls = [...v.face, ...v.dessus, ...v.gauche].filter((x) => x.t === 'l' || x.t === 'c');
   const xs = ls.flatMap((x) => (x.t === 'l' ? [x.x1, x.x2] : [x.cx - x.r, x.cx + x.r])), ys = ls.flatMap((x) => (x.t === 'l' ? [x.y1, x.y2] : [x.cy - x.r, x.cy + x.r]));
