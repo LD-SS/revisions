@@ -17,7 +17,7 @@
 
 import { vuesRevolution } from './revolution.js';
 import { vuesPrisme, coupePrisme } from './prisme.js';
-import { vuesSolide, coupeSolide } from './solide.js';
+import { vuesSolide, coupeSolide, sectionSolide } from './solide.js';
 
 const EPS = 1e-6;
 const r3 = (v) => Math.round(v * 1000) / 1000;
@@ -331,6 +331,7 @@ export function pieceSymetrique(niveau = 1, graine = 1) {
  *             hachures: object[], matiere: (y, z) => boolean, cadre: { x, y, w, h }, repere: [x, y] }}
  */
 export function sectionB(piece, origine = [20, 90], ecart = 20) {
+  if (piece.cs) return sectionSolide(piece, origine, ecart);
   const v = vues(piece, origine, ecart);
   const b = boite(piece), P = piece.prof, [ox, oy] = origine, W = b.x1 - b.x0;
   const F = (x, z) => [ox + x - b.x0, oy + z - b.z0];
