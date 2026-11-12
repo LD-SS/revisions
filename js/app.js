@@ -28,7 +28,7 @@ import { majBoutonProposer, viderAttente } from './proposer.js';
 import { demarrerSynchro, adopterCompte } from './synchro.js';
 import { exigerAcces, ecranPerte } from './vues/acces.js';
 
-const VERSION = '1.36.6 (mise en page : e et e’ arrondis au mm inférieur, vues calées sur la grille)';
+const VERSION = '1.36.7 (accroche à la grille tous les 1 mm, sous-grille de 1 mm)';
 const vue = document.getElementById('vue');
 let nettoyer = null; // fonction fournie par la page affichée, appelée avant d'en changer
 
