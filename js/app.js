@@ -28,7 +28,7 @@ import { majBoutonProposer, viderAttente } from './proposer.js';
 import { demarrerSynchro, adopterCompte } from './synchro.js';
 import { exigerAcces, ecranPerte } from './vues/acces.js';
 
-const VERSION = '1.36.7 (accroche à la grille tous les 1 mm, sous-grille de 1 mm)';
+const VERSION = '1.37.0 (cahier de dessin, lot 1 : 15 exercices à compléter + cahier imprimable)';
 const vue = document.getElementById('vue');
 let nettoyer = null; // fonction fournie par la page affichée, appelée avant d'en changer
 
