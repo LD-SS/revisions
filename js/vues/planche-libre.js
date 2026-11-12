@@ -93,7 +93,7 @@ export function vuePlancheLibre(el, piece = null) {
     if (ex) {
       const t = toutes(); const deja = Object.entries(t).find(([, pl]) => pl?.exo?.cat === ex.id);
       if (deja) stockage.ecrire(CLE_COURANTE, deja[0]);
-      else creerExo(ex.piece, normaliser(toutes()[idCourant()]), ex.mode, 0, { cat: ex.id, titre: ex.titre });
+      else creerExo(ex.piece, normaliser(toutes()[idCourant()]), ex.mode, 0, { cat: ex.id, titre: ex.titre, donne: ex.donne });
     }
     history.replaceState(null, '', '#/dessin/libre');
   } else if (piece) {
@@ -158,6 +158,24 @@ function formMep(p) {
     <span class="dao-mep-msg">${n ? `<span class="dao-l-man">${esc(m.msg || '')}</span>` : ''}</span>
   </form>`;
 }
+/** Vues à compléter : ce qui est donné (vue complète ou seulement son contour), marqué don:1. */
+function donneesCompleter(pc, exo) {
+  const v = vues(pc, exo.o, exo.ecart), d = exo.donne || { face: 'complet', dessus: 'contour', gauche: 'contour' }, out = [];
+  for (const k of ['face', 'dessus', 'gauche']) {
+    if (d[k] === 'complet') out.push(...v[k].map((e) => ({ ...e, don: 1 })));
+    else if (d[k] === 'contour') { const q = v.cadres[k]; out.push(...[[q.x, q.y, q.x + q.w, q.y], [q.x + q.w, q.y, q.x + q.w, q.y + q.h], [q.x + q.w, q.y + q.h, q.x, q.y + q.h], [q.x, q.y + q.h, q.x, q.y]].map(([x1, y1, x2, y2]) => ({ t: 'l', x1, y1, x2, y2, s: 'v', don: 1 }))); }
+  }
+  return out;
+}
+/** Correction « vues à compléter » : seulement ce qui n'était pas donné ; un trait redessiné sur une donnée n'est pas « en trop ». */
+function corrigerCompleter(pc, exo, es) {
+  const sol = (() => { const v = vues(pc, exo.o, exo.ecart); return [...v.face, ...v.dessus, ...v.gauche]; })();
+  const don = es.filter((e) => e.don);
+  const couvert = (e) => don.length && corriger([{ ...e, tol: undefined }], don.map((g) => ({ ...g, s: e.s }))).ok.length === 1;
+  const reste = sol.filter((s) => !couvert(s));
+  const eleve = es.filter((e) => !e.don && !((e.t === 'l' || e.t === 'c' || e.t === 'a') && couvert(e)));
+  return corriger(reste, eleve);
+}
 /** Coins des 3 vues (petites équerres de 4 mm en trait fin, marquées mep). */
 function coinsMep(pc, a) {
   const c = vues(pc, a.o, a.ecart).cadres, r3 = (v) => Math.round(v * 1000) / 1000, k = 4;
@@ -198,6 +216,15 @@ function consigne(p) {
       'Le plan A-A est tracé sur la vue de dessus ; les flèches donnent le sens d\'observation.',
       'Matière coupée hachurée (outil Hachures).',
       'Les trous restent vides ; pas de traits cachés.', rep]);
+    case 'completer': {
+      const ex = EXERCICES.find((x) => x.id === e.cat);
+      if (!ex) return enonce('compléter les vues.', ['Arêtes vues en trait fort, cachées en interrompu, axes en mixte.']);
+      return enonce(`${esc(ex.titre)} — ${esc(ex.matiere)}, échelle ${esc(ex.echelle)}.`, [
+        `<b>Données :</b> ${ex.donnees.map(esc).join(' ')}`,
+        'Projection européenne : vue de dessus sous la face, vue de gauche à droite de la face.',
+        'Arêtes vues en trait <b>fort</b>, cachées en trait <b>interrompu</b>, axes en trait <b>mixte</b>.',
+        ...(ex.piece.arete ? ['L\'arête repérée en rouge sur la perspective (bouton Pièce) : repère-la sur les vues (pas corrigé dans l\'appli).'] : [])], '', [...ex.exercice.map(esc), 'Clique sur Corriger.']);
+    }
     case 'cotes': return enonce('<b>coter les 3 vues</b> avec l\'outil Cote.', [
       'Chaque arête et chaque axe de trou situé une seule fois (pas de chaîne fermée).',
       'Les 3 cotes d\'encombrement : longueur, hauteur, profondeur.',
@@ -283,9 +310,10 @@ function creerExo(pc, depuis = null, mode = 'vues', examen = 0, cat = null) {
     r0 = [Math.round(o[0] + W + ecart + P + 35 + (mode === 'iso' ? P * 0.866 : 0)), Math.round(Math.max(55, o[1] + H - haut))];
   }
   const mep = mode === 'vues' ? { note: true, zone: 'sans' } : null;
-  const pl = mep ? attendu(base, pc, mep.zone) : null;
-  const exo = { piece: pc.id, o: pl ? pl.o : o, ecart: pl ? pl.ecart : ecart, ...(mep ? { mep } : {}), ...(r0 ? { r: r0 } : {}), ...(mode !== 'vues' ? { mode } : {}), ...(examen ? { examen: { duree: examen, debut: Date.now() } } : {}), ...(cat ? { cat: cat.cat } : {}) };
+  const pl = mep || mode === 'completer' ? attendu(base, pc, 'sans') : null;
+  const exo = { piece: pc.id, o: pl ? pl.o : o, ecart: pl ? pl.ecart : ecart, ...(mep ? { mep } : {}), ...(r0 ? { r: r0 } : {}), ...(mode !== 'vues' ? { mode } : {}), ...(examen ? { examen: { duree: examen, debut: Date.now() } } : {}), ...(cat ? { cat: cat.cat } : {}), ...(cat?.donne ? { donne: cat.donne } : {}) };
   let entites = [];
+  if (mode === 'completer') entites = donneesCompleter(pc, exo);
   if (mode === 'cotes') { const v = vues(pc, o, ecart); entites = [...v.face, ...v.dessus, ...v.gauche]; }
   if (mode === 'coupe' || mode === 'demi') entites = coupeA(pc, o, ecart, { demi: mode === 'demi' }).dessus;
   if (mode === 'section') entites = sectionB(pc, o, ecart).donnees;
@@ -638,7 +666,7 @@ function monterPage(el, remonter) {
     if (p.exo.mode === 'cotes') { feuille.calque('correction').innerHTML = res ? svgCorrCotes(pc, res) : ''; return; }
     const sb = p.exo.mode === 'section' ? sectionB(pc, p.exo.o, p.exo.ecart) : null;
     const [x, y] = versPapier(p, ...(sb ? sb.repere : p.exo.r || p.exo.o));
-    let svg = p.exo.mep ? '' : `<path class="dao-repere" d="M${x - 4} ${y}H${x + 4}M${x} ${y - 4}V${y + 4}"/>`;
+    let svg = p.exo.mep || p.exo.mode === 'completer' ? '' : `<path class="dao-repere" d="M${x - 4} ${y}H${x + 4}M${x} ${y - 4}V${y + 4}"/>`;
     const points = (r) => {
       const pt = (q, cls) => { const [a, c] = versPapier(p, q[0], q[1]); return `<circle class="${cls}" cx="${a}" cy="${c}" r="0.7"/>`; };
       return r.hach.manque.map((q) => pt(q, 'dao-pt-man')).join('') + r.hach.trop.map((q) => pt(q, 'dao-pt-trop')).join('');
@@ -732,6 +760,7 @@ function monterPage(el, remonter) {
         r = corriger(sol.traits, (p.entites || []).filter((e) => (e.t === 'l' && dans((e.x1 + e.x2) / 2, (e.y1 + e.y2) / 2)) || ((e.t === 'c' || e.t === 'a') && dans(e.cx, e.cy))));
       } else if (p.exo.mode === 'section') r = corrigerSection(pc, p.exo, p.entites || []);
       else if (['coupe', 'demi', 'locale'].includes(p.exo.mode)) r = corrigerCoupe(pc, p.exo, p.entites || []);
+      else if (p.exo.mode === 'completer') r = corrigerCompleter(pc, p.exo, p.entites || []);
       else {
         // placement des vues : là où l'élève les a dessinées (boîte de ses traits forts) ou l'emplacement attendu,
         // on garde celui qui donne le meilleur score (un contour oublié ne doit pas décaler toute une vue)
