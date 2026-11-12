@@ -12,12 +12,15 @@
 import { prisme } from './prisme.js';
 import { revolution } from './revolution.js';
 import { CONSTRUCTIONS } from './constructions.js';
+import { solide, E as Es, disque as Dq, rect as Rc, arc as Ar } from './solide.js';
 import { ARETES } from './cahier-aretes.js';
 
 export const TYPES = {
   terminer: { titre: 'Vues incomplètes à terminer', intro: 'La vue de face est complète, les autres vues sont seulement esquissées (leur contour). Termine-les : arêtes vues en trait fort, cachées en interrompu, axes en mixte.' },
   rectangle: { titre: 'Rectangle capable', intro: 'Une vue manque entièrement : esquisse son rectangle capable (encombrement, avec les lignes de rappel), puis les détails, puis fais la mise au net.' },
+  intersection: { titre: 'Intersections, congés et raccordements', intro: 'Cylindres qui se coupent, rainures de clavetage, congés, nervures : repère les points particuliers (extrêmes, de tangence) sur les vues données, puis trace les courbes. Un raccordement tangent ne donne pas d\'arête.' },
   coupe: { titre: 'Coupes', intro: 'Le plan de coupe A-A est tracé sur la vue de dessus. Dessine la vue de face en coupe : on enlève la partie avant, la matière coupée est hachurée, les trous restent vides, pas de traits cachés.' },
+  demicoupe: { titre: 'Demi-coupes', intro: 'Pièce symétrique : à droite de l\'axe, la moitié en coupe (hachures) ; à gauche, la moitié en vue extérieure, sans traits cachés. L\'axe de symétrie sépare les deux moitiés.' },
   cylindre: { titre: 'Cylindres, plats et perçages', intro: 'Pièces tournées : un cylindre se voit en rectangle d\'un côté et en cercle de l\'autre, toujours avec son axe ; un plat donne une droite dans une vue et une corde dans l\'autre.' },
   perspective: { titre: 'Perspectives', intro: 'À partir des 3 vues, dessine la perspective (cavalière : face en vraie grandeur, fuyantes à 45° réduites de moitié ; isométrique : axes à 30°, longueurs vraies). Seulement les arêtes vues.' },
   filetage: { titre: 'Filetages et taraudages', intro: 'Représentation normalisée : fond de filet en trait fin, sommet en trait fort ; vue de bout : 3/4 de cercle fin.' },
@@ -27,6 +30,17 @@ export const TYPES = {
 const P = (id, nom, def) => prisme({ id: `cah-${id}`, nom, ...def });
 const PO = (id, nom, prof, profil, trous = []) => ({ id: `cah-${id}`, nom, prof, profil, trous });
 const R = (id, nom, etages, trous = []) => revolution({ id: `cah-${id}`, nom, etages, trous });
+const S = (id, nom, def) => solide({ id: `cah-${id}`, nom, ...def });
+/** Contour de deux cercles reliés par leurs tangentes extérieures (levier, bielle). */
+function levier(c1, r1, c2, r2) {
+  const d = Math.hypot(c2[0] - c1[0], c2[1] - c1[1]), b = (Math.atan2(c2[1] - c1[1], c2[0] - c1[0]) * 180) / Math.PI, a = (Math.acos((r1 - r2) / d) * 180) / Math.PI;
+  return [...Ar(c1[0], c1[1], r1, b + a, b + 360 - a), ...Ar(c2[0], c2[1], r2, b - a, b + a)];
+}
+/** Points de tangence des droites issues de p vers le cercle (c, r). */
+function tangentes(p, c, r) {
+  const d = Math.hypot(c[0] - p[0], c[1] - p[1]), b = Math.atan2(p[1] - c[1], p[0] - c[0]), a = Math.acos(r / d);
+  return [b + a, b - a].map((x) => [c[0] + r * Math.cos(x), c[1] + r * Math.sin(x)]);
+}
 const vue = { face: 'vue de face', dessus: 'vue de dessus', gauche: 'vue de gauche' };
 
 /** Textes types (données / exercice) selon ce qui est donné. */
@@ -45,6 +59,10 @@ function textes(ex) {
   if (ex.type === 'filetage') return {
     donnees: ['les contours des trois vues de la pièce ;', 'la perspective cotée (M = diamètre nominal).'],
     exercice: ex.exerciceTxt,
+  };
+  if (ex.type === 'demicoupe') return {
+    donnees: ['la vue de dessus de la pièce, avec le plan de coupe A-A ;', 'la perspective cotée de la pièce.'],
+    exercice: ['Dessiner la vue de face en demi-vue, demi-coupe A-A : moitié droite en coupe, moitié gauche en vue extérieure.', 'Séparer les deux moitiés par l\'axe de symétrie (trait mixte fin).', 'Hachurer la matière coupée ; pas de traits cachés.'],
   };
   if (ex.type === 'coupe') return {
     donnees: ['la vue de dessus de la pièce, avec le plan de coupe A-A ;', 'la perspective cotée de la pièce.'],
@@ -163,13 +181,64 @@ const EX = [
     piece: P('46', 'Doigt rainuré', { L: 60, P: 40, H: 50, fyz: [[0, 0], [40, 0], [40, 50], [28, 50], [28, 30], [12, 30], [12, 50], [0, 50]], trous: [{ axe: 'z', x: 30, y: 20, d: 8 }, { axe: 'y', x: 30, z: 15, d: 12 }] }) },
   { n: 47, titre: 'CHAPE PERCÉE', type: 'coupe', mode: 'coupe', matiere: 'Bronze CuSn7Zn4Pb7', echelle: '1:1', donne: {},
     piece: P('47', 'Chape percée', { L: 70, P: 40, H: 45, fxz: [[0, 0], [70, 0], [70, 45], [55, 45], [55, 15], [15, 15], [15, 45], [0, 45]], trous: [{ axe: 'x', y: 20, z: 32, d: 10 }, { axe: 'z', x: 35, y: 20, d: 10 }] }) },
+  // ----- lot 4 (cahier 2, 2e partie) : pièces « solides » (cylindres qui se coupent, congés, nervures, demi-coupes) -----
+  { n: 48, titre: 'INTERSECTION DE CYLINDRES', type: 'intersection', matiere: 'Acier C35', echelle: '1:1', donne: { face: 'contour', dessus: 'complet', gauche: 'complet' },
+    plusTxt: ['Vue de face : chercher les points extrêmes puis quelques points intermédiaires de la courbe d\'intersection des deux cylindres.'],
+    piece: S('48', 'Té de cylindres', { L: 80, P: 40, H: 50, corps: [Es('x', 0, 80, Dq(20, 20, 20)), Es('z', 20, 50, Dq(40, 20, 12))], creux: [Es('z', 12, 51, Dq(40, 20, 6))],
+      reperes: [{ p: [0, 5.86, 34.14], txt: 'Ø40', dx: -20 }, { p: [40, 8, 50], txt: 'Ø24' }, { p: [40, 20, 50], txt: 'Ø12 prof. 38', dx: 26, dy: 40 }] }) },
+  { n: 49, titre: 'RACCORD EN TÉ', type: 'coupe', mode: 'coupe', matiere: 'Fonte EN-GJL-250', echelle: '1:1', donne: {},
+    plusTxt: ['Tracer la courbe d\'intersection des deux alésages, vue derrière le plan de coupe.'],
+    piece: S('49', 'Raccord en té', { L: 80, P: 40, H: 55, coupe: 20, corps: [Es('x', 0, 80, Dq(20, 20, 20)), Es('z', 20, 55, Dq(40, 20, 14))], creux: [Es('x', -1, 81, Dq(20, 20, 12)), Es('z', 20, 56, Dq(40, 20, 8))],
+      reperes: [{ p: [0, 5.86, 34.14], txt: 'Ø40 / Ø24', dx: -20 }, { p: [40, 6, 55], txt: 'Ø28 / Ø16' }] }) },
+  { n: 50, titre: 'PLATEAU À BOSSAGES', type: 'coupe', mode: 'coupe', matiere: 'Fonte EN-GJS-400', echelle: '1:1', donne: {},
+    piece: S('50', 'Plateau à bossages', { L: 90, P: 60, H: 30, coupe: 30, corps: [Es('z', 0, 12, Rc(0, 0, 90, 60)), Es('z', 12, 30, Dq(20, 30, 12)), Es('z', 12, 30, Dq(70, 30, 12))], creux: [Es('z', -1, 31, Dq(20, 30, 6)), Es('z', -1, 31, Dq(70, 30, 6)), Es('y', -1, 61, Rc(38, -1, 52, 5))],
+      cotes: [{ a: [38, 0, 0], b: [52, 0, 0], off: [0, 0, -24] }, { a: [0, 0, 12], b: [0, 0, 30], off: [-10, 0, 0], txt: '18' }],
+      reperes: [{ p: [20, 18, 30], txt: 'Ø24 / Ø12', dx: -20 }, { p: [70, 18, 30], txt: 'Ø24 / Ø12' }] }) },
+  { n: 51, titre: 'CHAPEAU DE PALIER', type: 'intersection', matiere: 'Fonte EN-GJL-200', echelle: '1:1', donne: { face: 'complet', dessus: 'contour', gauche: 'contour' },
+    plusTxt: ['Vue de gauche : intersection du trou de graissage Ø6 avec l\'alésage Ø40 (traits cachés).'],
+    piece: S('51', 'Chapeau de palier', { L: 80, P: 40, H: 42, corps: [Es('y', 0, 40, Rc(0, 0, 80, 35)), Es('z', 35, 42, Dq(40, 20, 8))], creux: [Es('y', -1, 41, Dq(40, 0, 20)), Es('z', -1, 36, Dq(10, 20, 5)), Es('z', -1, 36, Dq(70, 20, 5)), Es('z', 10, 43, Dq(40, 20, 3))],
+      reperes: [{ p: [54.14, 0, 14.14], txt: 'R20', dx: 22, dy: 18 }, { p: [40, 12, 42], txt: 'Ø16 / Ø6', dx: -20 }, { p: [10, 20, 35], txt: '2 × Ø10', dx: -20 }] }) },
+  { n: 52, titre: 'CLAVETAGE (FRAISE 2 TAILLES)', type: 'intersection', matiere: 'Acier C45', echelle: '1:1', donne: { face: 'contour', dessus: 'complet', gauche: 'contour' },
+    plusTxt: ['La rainure (largeur 8, profondeur 4) est faite avec une fraise deux tailles : extrémités arrondies.'],
+    piece: S('52', 'Arbre claveté', { L: 80, P: 30, H: 30, corps: [Es('x', 0, 80, Dq(15, 15, 15))], creux: [Es('z', 26, 31, [...Ar(29, 15, 4, 90, 270), ...Ar(51, 15, 4, -90, 90)])],
+      cotes: [{ a: [25, 0, 30], b: [55, 0, 30], off: [0, 0, 10], txt: '30' }], reperes: [{ p: [0, 4.39, 25.61], txt: 'Ø30', dx: -20 }, { p: [40, 11, 30], txt: 'rainure 8 × 4' }] }) },
+  { n: 53, titre: 'CLAVETAGE (FRAISE DISQUE)', type: 'intersection', matiere: 'Acier C45', echelle: '1:1', donne: { face: 'complet', dessus: 'contour', gauche: 'contour' },
+    plusTxt: ['La rainure (largeur 8, profondeur 4) est faite avec une fraise disque Ø50 : fond en arc de cercle.'],
+    piece: S('53', 'Arbre à rainure disque', { L: 80, P: 30, H: 30, corps: [Es('x', 0, 80, Dq(15, 15, 15))], creux: [Es('y', 11, 19, Dq(40, 51, 25))],
+      reperes: [{ p: [0, 4.39, 25.61], txt: 'Ø30', dx: -20 }, { p: [40, 11, 26], txt: 'fraise Ø50, rainure 8 × 4' }] }) },
+  { n: 54, titre: 'INTERSECTION DE CONGÉS', type: 'intersection', matiere: 'Acier S235', echelle: '1:1', donne: { face: 'complet', dessus: 'contour', gauche: 'contour' },
+    plusTxt: ['Les deux congés R8 se rencontrent dans l\'angle : tracer leur intersection sur la vue de dessus.'],
+    piece: S('54', 'Équerre à congés', { L: 70, P: 50, H: 45, corps: [Es('y', 0, 50, Rc(0, 0, 70, 10)), Es('y', 40, 50, Rc(0, 0, 70, 45)), Es('x', 0, 10, Rc(0, 0, 50, 45)), Es('x', 10, 70, [[32, 10], [40, 10], [40, 18], ...Ar(32, 18, 8, 0, -90)]), Es('y', 0, 40, [[10, 10], [18, 10], ...Ar(18, 18, 8, -90, -180), [10, 18]])],
+      cotes: [{ a: [0, 0, 0], b: [10, 0, 0], off: [0, 0, -24] }, { a: [70, 0, 0], b: [70, 0, 10], off: [14, 0, 0], txt: '10' }], reperes: [{ p: [40, 34.3, 12.3], txt: 'congés R8' }] }) },
+  { n: 55, titre: 'NERVURE TANGENTE', type: 'intersection', matiere: 'Fonte EN-GJL-250', echelle: '1:1', donne: { face: 'complet', dessus: 'contour', gauche: 'contour' },
+    plusTxt: ['Les faces de la nervure sont tangentes au moyeu : pas d\'arête au raccordement ; chercher sur la vue de dessus où s\'arrêtent les traits de la nervure.'],
+    piece: S('55', 'Palier à nervure', { L: 90, P: 40, H: 58, corps: [Es('y', 0, 40, Rc(0, 0, 90, 10)), Es('y', 0, 40, Dq(45, 40, 18)), Es('y', 15, 25, [[12, 10], [78, 10], tangentes([78, 10], [45, 40], 18)[0], [45, 40], tangentes([12, 10], [45, 40], 18)[1]])], creux: [Es('y', -1, 41, Dq(45, 40, 9))],
+      reperes: [{ p: [45, 0, 58], txt: 'Ø36 / Ø18' }, { p: [30, 15, 15], txt: 'nervure ép. 10', dx: -20, dy: -10 }] }) },
+  { n: 56, titre: 'PORTE-GALET', type: 'intersection', matiere: 'Acier 42CrMo4', echelle: '1:1', donne: { face: 'contour', dessus: 'contour', gauche: 'complet' },
+    piece: S('56', 'Porte-galet', { L: 60, P: 40, H: 60, corps: [Es('y', 0, 40, Rc(0, 0, 60, 15)), Es('x', 0, 12, [[0, 15], [40, 15], [40, 40], ...Ar(20, 40, 20, 0, 180)]), Es('x', 48, 60, [[0, 15], [40, 15], [40, 40], ...Ar(20, 40, 20, 0, 180)])], creux: [Es('x', -1, 61, Dq(20, 40, 6)), Es('z', -1, 16, Dq(30, 20, 5))],
+      cotes: [{ a: [0, 0, 60], b: [12, 0, 60], off: [0, 0, 10] }], reperes: [{ p: [0, 20, 60], txt: 'R20, Ø12', dx: -20 }, { p: [30, 20, 15], txt: 'Ø10' }] }) },
+  { n: 57, titre: 'RONDELLE PIVOTANTE', type: 'intersection', matiere: 'Acier S355', echelle: '1:1', donne: { face: 'contour', dessus: 'complet', gauche: 'contour' },
+    plusTxt: ['Les droites sont tangentes aux arcs : les traits s\'arrêtent aux points de tangence (contours apparents).'],
+    piece: S('57', 'Rondelle pivotante', { L: 87, P: 44, H: 18, corps: [Es('z', 0, 8, levier([22, 22], 22, [75, 22], 12)), Es('z', 8, 18, Dq(22, 22, 15))], creux: [Es('z', -1, 19, Dq(22, 22, 8)), Es('z', -1, 9, Dq(75, 22, 4))],
+      reperes: [{ p: [22, 7, 18], txt: 'Ø30 / Ø16', dx: -20 }, { p: [75, 22, 8], txt: 'R12, Ø8' }] }) },
+  { n: 58, titre: 'BRIDE : DEMI-VUE, DEMI-COUPE', type: 'demicoupe', mode: 'demi', matiere: 'Fonte EN-GJL-200', echelle: '1:1', donne: {},
+    piece: S('58', 'Bride ronde', { L: 80, P: 80, H: 30, coupe: 40, corps: [Es('z', 0, 10, Dq(40, 40, 40)), Es('z', 10, 30, Dq(40, 40, 20))], creux: [Es('z', -1, 31, Dq(40, 40, 10)), Es('z', 24, 31, Dq(40, 40, 14)), ...[[12, 40], [68, 40], [40, 12], [40, 68]].map(([x, y]) => Es('z', -1, 11, Dq(x, y, 4)))],
+      cotes: [{ a: [40, 40, 24], b: [40, 40, 30], off: [0, -50, 0], txt: '6' }], reperes: [{ p: [40, 20, 30], txt: 'Ø40, lamage Ø28, alésage Ø20', dx: 24, dy: 34 }, { p: [12, 40, 10], txt: '4 × Ø8 sur Ø56', dx: -20 }] }) },
+  { n: 59, titre: 'SUPPORT : NERVURES EN COUPE', type: 'coupe', mode: 'coupe', matiere: 'Fonte EN-GJMB-350', echelle: '1:1', donne: {},
+    plusTxt: ['Les nervures coupées dans leur longueur ne sont pas hachurées (on trace seulement leur contour).'],
+    piece: S('59', 'Support à nervures', { L: 80, P: 50, H: 50, coupe: 25, corps: [Es('y', 0, 50, Rc(0, 0, 80, 10)), Es('z', 10, 50, Dq(40, 25, 15)), Es('y', 22, 28, [[8, 10], [30, 10], [30, 45]], { nerv: true }), Es('y', 22, 28, [[50, 10], [72, 10], [50, 45]], { nerv: true })], creux: [Es('z', -1, 51, Dq(40, 25, 8)), ...[[10, 10], [70, 10], [10, 40], [70, 40]].map(([x, y]) => Es('z', -1, 11, Dq(x, y, 4)))],
+      reperes: [{ p: [40, 10, 50], txt: 'Ø30 / Ø16' }, { p: [10, 10, 10], txt: '4 × Ø8', dx: -20 }, { p: [18, 22, 20], txt: 'nervures ép. 6', dx: -20, dy: 40 }] }) },
+  { n: 60, titre: 'LEVIER À BOSSAGES', type: 'intersection', matiere: 'Acier C35', echelle: '1:1', donne: { face: 'contour', dessus: 'complet', gauche: 'contour' },
+    plusTxt: ['Le bras (épaisseur 10) est tangent aux deux bossages : chercher où s\'arrêtent ses arêtes sur la vue de face.'],
+    piece: S('60', 'Levier à bossages', { L: 100, P: 30, H: 20, corps: [Es('z', 0, 10, levier([15, 15], 15, [90, 15], 10)), Es('z', 0, 20, Dq(15, 15, 15)), Es('z', 0, 16, Dq(90, 15, 10))], creux: [Es('z', -1, 21, Dq(15, 15, 6)), Es('z', -1, 17, Dq(90, 15, 4))],
+      cotes: [{ a: [15, 0, 0], b: [90, 0, 0], off: [0, 0, -24], txt: '75' }], reperes: [{ p: [15, 4, 20], txt: 'Ø30 / Ø12', dx: -20 }, { p: [90, 8, 16], txt: 'Ø20 / Ø8' }] }) },
 ];
 
 EX.sort((a, b) => a.n - b.n);
 for (const ex of EX) {
   const pre = ARETES[ex.piece.id];   // arêtes précalculées : l'Atelier s'affiche tout de suite
   if (pre) ex.piece._a = pre.map((r) => ({ a: r.slice(0, 3), b: r.slice(3, 6), vis: [...r[6]].map((c) => c === '1') }));
-  const t = textes(ex); ex.donnees = t.donnees; ex.exercice = t.exercice; ex.id = `c${ex.n}`; ex.mode = ex.mode || 'completer'; ex.niveau = ex.type === 'rectangle' ? 2 : 1; ex.titreCourt = (ex.titre.charAt(0) + ex.titre.slice(1).toLowerCase()).replace(/ en t /, ' en T '); }
+  const t = textes(ex); ex.donnees = t.donnees; ex.exercice = [...t.exercice, ...(ex.plusTxt || [])]; ex.id = `c${ex.n}`; ex.mode = ex.mode || 'completer'; ex.niveau = ex.type === 'rectangle' ? 2 : 1; ex.titreCourt = (ex.titre.charAt(0) + ex.titre.slice(1).toLowerCase()).replace(/ en t /, ' en T '); }
 export const CAHIER = EX;
 
 /** Séries de l'Atelier (exercices regroupés par type). */
