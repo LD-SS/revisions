@@ -215,7 +215,7 @@ export function corrigerCoupe(pc, exo, es, tol = TOL) {
     for (let z = b.z0 + 1; z < b.z1; z += 2) {
       if (!loinBord(x, z)) continue;
       const m = sol.matiere(x, z), X = ox + x - b.x0, Y = oy + z - b.z0, h = hachure(X, Y);
-      const trou = !m && dansPolygone([X, Y], sol.hachure.pts);
+      const trou = !m && (sol.hachures || [sol.hachure]).some((g) => dansPolygone([X, Y], g.pts));
       if (trou) { vides++; if (h) videsH++; }
       if (m && h) ok.push([X, Y]); else if (m) manque.push([X, Y]); else if (h) trop.push([X, Y]);
     }
