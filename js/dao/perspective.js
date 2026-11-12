@@ -12,6 +12,7 @@
 
 import { boite, intervallesZ } from './pieces.js';
 import { svgRevolution } from './revolution.js';
+import { svgPrisme } from './prisme.js';
 
 const C30 = Math.cos(Math.PI / 6), S30 = 0.5;
 const f2 = (v) => Math.round(v * 100) / 100;
@@ -29,6 +30,7 @@ export function flecheFace(s, e) {
 
 export function svgPerspective(piece, { cotes = true, largeur = 420 } = {}) {
   if (piece.rev) return svgRevolution(piece, { cotes, largeur });
+  if (piece.p3) return svgPrisme(piece, { cotes, largeur, fleche: cotes ? flecheFace : null });
   const b = boite(piece), P = piece.prof;
   const pr = ([x, y, z]) => [(x - y) * C30, -((x + y) * S30 + z)];   // y écran vers le bas
   const prof = piece.profil;
