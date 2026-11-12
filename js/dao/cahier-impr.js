@@ -8,8 +8,8 @@
    ===================================================================== */
 
 import { CAHIER } from './cahier.js';
-import { vues } from './pieces.js';
-import { svgPerspective } from './perspective.js';
+import { vues, coupeA } from './pieces.js';
+import { svgPerspective, perspectiveEntites } from './perspective.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const f2 = (v) => Math.round(v * 100) / 100;
@@ -27,14 +27,33 @@ function svgEnt(e) {
     const [x0, y0] = p(e.a0), [x1, y1] = p(e.a1);
     return `<path d="M${f2(x0)} ${Y(y0)}A${f2(e.r)} ${f2(e.r)} 0 ${e.a1 - e.a0 > 180 ? 1 : 0} 0 ${f2(x1)} ${Y(y1)}" fill="none" stroke="#000" ${st}/>`;
   }
+  if (e.t === 'x') return `<text x="${f2(e.x)}" y="${Y(e.y)}" font-size="${f2(e.h || 3.5)}" font-family="Segoe UI,Arial,sans-serif">${esc(e.txt)}</text>`;
+  if (e.t === 'h') {   // hachures fines à 45° (contour moins les trous, règle pair-impair)
+    const ring = (q) => `M${q.map(([x, y]) => `${f2(x)} ${Y(y)}`).join('L')}Z`;
+    const id = `h${Math.random().toString(36).slice(2, 8)}`, xs = e.pts.map((q) => q[0]), ys = e.pts.map((q) => q[1]);
+    const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+    let d = ''; for (let k = x0 - (y1 - y0); k < x1; k += 3) d += `M${f2(k)} ${Y(y0)}L${f2(k + (y1 - y0))} ${Y(y1)}`;
+    return `<clipPath id="${id}"><path clip-rule="evenodd" d="${[e.pts, ...(e.trous || [])].map(ring).join('')}"/></clipPath><path d="${d}" stroke="#000" stroke-width="0.25" clip-path="url(#${id})"/>`;
+  }
   return '';
 }
 
 /** Entités de la page : données (exercice) ou solution complète (corrigé). */
 function entitesPage(ex, corrige) {
   const pc = ex.piece;
-  const ex1 = Math.floor((ZW - pc.L - pc.P) / 3), ey = Math.floor((ZH - pc.H - pc.P) / 3);
-  const v = vues(pc, [ex1, ey + pc.P + ey], [ex1, ey]);
+  if (ex.mode === 'construction') return corrige ? [...ex.cons.donnees, ...ex.cons.solution.map((e) => ({ ...e, s: e.s === 'n' ? 'v' : e.s }))] : ex.cons.donnees;
+  if (ex.mode === 'iso' || ex.mode === 'cav') {   // 3 vues en haut à gauche, perspective à droite (repère ✚)
+    const H = pc.profil.reduce((m, q) => Math.max(m, q[1]), 0), W = pc.profil.reduce((m, q) => Math.max(m, q[0]), 0), P = pc.prof;
+    const o = [4, ZH - 4 - H], v = vues(pc, o, 10);
+    const r = ex.mode === 'iso' ? [ZW - 6 - W * 0.866, 8 + P * 0.5] : [ZW - 8 - W - P * 0.354, 8];
+    const croix = [{ t: 'l', x1: r[0] - 4, y1: r[1], x2: r[0] + 4, y2: r[1], s: 'n' }, { t: 'l', x1: r[0], y1: r[1] - 4, x2: r[0], y2: r[1] + 4, s: 'n' }];
+    const base = [...v.face, ...v.dessus, ...v.gauche, ...croix];
+    return corrige ? [...base, ...perspectiveEntites(pc, r, ex.mode).traits] : base;
+  }
+  const cd = vues(pc, [0, 0], 0).cadres, L = cd.face.w, H = cd.face.h, P = cd.dessus.h;   // valable pour toutes les sortes de pièces
+  const ex1 = Math.floor((ZW - L - P) / 3), ey = Math.floor((ZH - H - P) / 3);
+  const v = vues(pc, [ex1, ey + P + ey], [ex1, ey]);
+  if (ex.mode === 'coupe') { const cp = coupeA(pc, [ex1, ey + P + ey], [ex1, ey]); return corrige ? [cp.hachure, ...cp.dessus, ...cp.face, { t: 'x', x: ex1 + L / 2 - 4, y: ey + P + ey + H + 4, txt: 'A-A', h: 5 }] : cp.dessus; }
   if (corrige) return [...v.face, ...v.dessus, ...v.gauche];
   const out = [];
   for (const k of ['face', 'dessus', 'gauche']) {
@@ -56,7 +75,7 @@ function pageExercice(ex, corrige) {
         <h2>□ Données :</h2><ul>${ex.donnees.map((d) => `<li>${esc(d)}</li>`).join('')}</ul>
         <h2>□ EXERCICE :</h2><ol>${ex.exercice.map((d) => `<li>${esc(d)}</li>`).join('')}</ol>
       </div>
-      <div class="cah-persp">${svgPerspective(ex.piece, { largeur: 360 })}</div>
+      ${ex.mode === 'construction' || ex.mode === 'iso' || ex.mode === 'cav' ? '' : `<div class="cah-persp">${svgPerspective(ex.piece, { largeur: 360 })}</div>`}
     </div>
     <div class="cah-pied">Cahier de dessin — exercices créés pour l'appli Révisions · imprimer en taille réelle (100 %) · page ${ex.n}</div>
   </section>`;
