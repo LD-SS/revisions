@@ -71,7 +71,11 @@ function svgGrille(p) {
   let fins = '', forts = '';
   for (let i = 0, x = z.x; x <= z.x + z.w + 0.01; i++, x = z.x + i * s) (i % 5 ? (fins += `M${r(x)} ${z.y}V${z.y + z.h}`) : (forts += `M${r(x)} ${z.y}V${z.y + z.h}`));
   for (let i = 0, y = z.y + z.h; y >= z.y - 0.01; i++, y = z.y + z.h - i * s) (i % 5 ? (fins += `M${z.x} ${r(y)}H${z.x + z.w}`) : (forts += `M${z.x} ${r(y)}H${z.x + z.w}`));
-  return `<path class="dao-gr" d="${fins}"/><path class="dao-gr dao-gr-f" d="${forts}"/>`;
+  // sous-grille de 1 pas d'accroche (1 mm à 1:1), très légère : visible en zoomant
+  let mm = ''; const sm = s / 5;
+  for (let i = 1, x = z.x + sm; x < z.x + z.w; i++, x = z.x + i * sm) if (i % 5) mm += `M${r(x)} ${z.y}V${z.y + z.h}`;
+  for (let i = 1, y = z.y + z.h - sm; y > z.y; i++, y = z.y + z.h - i * sm) if (i % 5) mm += `M${z.x} ${r(y)}H${z.x + z.w}`;
+  return `<path class="dao-gr dao-gr-mm" d="${mm}"/><path class="dao-gr" d="${fins}"/><path class="dao-gr dao-gr-f" d="${forts}"/>`;
 }
 
 /** Cadre + cartouche (dimensions et textes d'après ISO 5457 / ISO 7200, simplifiés). */
