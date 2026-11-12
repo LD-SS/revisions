@@ -687,7 +687,7 @@ function monterPage(el, remonter) {
       if (res) svg += points(res);
     } else if (['coupe', 'demi', 'locale'].includes(p.exo.mode)) {
       const cp = p.exo.mode === 'locale' ? coupeLocale(pc, p.exo.o, p.exo.ecart) : coupeA(pc, p.exo.o, p.exo.ecart, { demi: p.exo.mode === 'demi' });
-      if (voirSolution) svg += [...cp.face, cp.hachure].map((e) => svgEntite(p, e, 'dao-cor-sol')).join('');
+      if (voirSolution) svg += [...cp.face, ...(cp.hachures || [cp.hachure])].map((e) => svgEntite(p, e, 'dao-cor-sol')).join('');
       if (res) svg += points(res);
     } else {
       const pl = placementVues(p, pc);
