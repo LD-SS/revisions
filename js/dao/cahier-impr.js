@@ -8,7 +8,8 @@
    ===================================================================== */
 
 import { CAHIER } from './cahier.js';
-import { vues, coupeA } from './pieces.js';
+import { vues, coupeA, sectionB } from './pieces.js';
+import { auxSolide } from './solide.js';
 import { svgPerspective, perspectiveEntites } from './perspective.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -50,10 +51,18 @@ function entitesPage(ex, corrige) {
     const base = [...v.face, ...v.dessus, ...v.gauche, ...croix];
     return corrige ? [...base, ...perspectiveEntites(pc, r, ex.mode).traits] : base;
   }
+  if (ex.mode === 'aux') {   // face + dessus + vue auxiliaire, l'ensemble centré dans la zone
+    const boite = (es) => { const xs = es.flatMap((e) => (e.t === 'l' ? [e.x1, e.x2] : [e.cx - e.r, e.cx + e.r])), ys = es.flatMap((e) => (e.t === 'l' ? [e.y1, e.y2] : [e.cy - e.r, e.cy + e.r])); return [Math.min(...xs), Math.min(...ys), Math.max(...xs), Math.max(...ys)]; };
+    const tout = (o) => { const v = vues(pc, o, [10, 12]), a = auxSolide(pc, o); return { base: [...v.face, ...v.dessus, a.ref], sol: a.traits }; };
+    const t0 = tout([0, 0]), [x0, y0, x1, y1] = boite([...t0.base, ...t0.sol]);
+    const t1 = tout([(ZW - (x1 - x0)) / 2 - x0, (ZH - (y1 - y0)) / 2 - y0]);
+    return corrige ? [...t1.base, ...t1.sol] : t1.base;
+  }
   const cd = vues(pc, [0, 0], 0).cadres, L = cd.face.w, H = cd.face.h, P = cd.dessus.h;   // valable pour toutes les sortes de pièces
   const ex1 = Math.floor((ZW - L - P) / 3), ey = Math.floor((ZH - H - P) / 3);
   const v = vues(pc, [ex1, ey + P + ey], [ex1, ey]);
   if (ex.mode === 'coupe' || ex.mode === 'demi') { const cp = coupeA(pc, [ex1, ey + P + ey], [ex1, ey], { demi: ex.mode === 'demi' }); return corrige ? [...(cp.hachures || [cp.hachure]), ...cp.dessus, ...cp.face, { t: 'x', x: ex1 + L / 2 - 4, y: ey + P + ey + H + 4, txt: 'A-A', h: 5 }] : cp.dessus; }
+  if (ex.mode === 'section') { const sb = sectionB(pc, [ex1, ey + P + ey], [ex1, ey]); return corrige ? [...sb.hachures, ...sb.donnees, ...sb.section] : sb.donnees; }
   if (corrige) return [...v.face, ...v.dessus, ...v.gauche];
   const out = [];
   for (const k of ['face', 'dessus', 'gauche']) {
