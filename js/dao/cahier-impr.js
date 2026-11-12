@@ -53,7 +53,7 @@ function entitesPage(ex, corrige) {
   const cd = vues(pc, [0, 0], 0).cadres, L = cd.face.w, H = cd.face.h, P = cd.dessus.h;   // valable pour toutes les sortes de pièces
   const ex1 = Math.floor((ZW - L - P) / 3), ey = Math.floor((ZH - H - P) / 3);
   const v = vues(pc, [ex1, ey + P + ey], [ex1, ey]);
-  if (ex.mode === 'coupe') { const cp = coupeA(pc, [ex1, ey + P + ey], [ex1, ey]); return corrige ? [cp.hachure, ...cp.dessus, ...cp.face, { t: 'x', x: ex1 + L / 2 - 4, y: ey + P + ey + H + 4, txt: 'A-A', h: 5 }] : cp.dessus; }
+  if (ex.mode === 'coupe' || ex.mode === 'demi') { const cp = coupeA(pc, [ex1, ey + P + ey], [ex1, ey], { demi: ex.mode === 'demi' }); return corrige ? [...(cp.hachures || [cp.hachure]), ...cp.dessus, ...cp.face, { t: 'x', x: ex1 + L / 2 - 4, y: ey + P + ey + H + 4, txt: 'A-A', h: 5 }] : cp.dessus; }
   if (corrige) return [...v.face, ...v.dessus, ...v.gauche];
   const out = [];
   for (const k of ['face', 'dessus', 'gauche']) {
