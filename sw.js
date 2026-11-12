@@ -7,7 +7,7 @@
    Quand on ajoute un fichier JS / CSS : l'ajouter dans FICHIERS_APP.
    ===================================================================== */
 
-const CACHE = 'revisions-v78';
+const CACHE = 'revisions-v79';
 
 const FICHIERS_APP = [
   './',
@@ -65,6 +65,10 @@ const FICHIERS_APP = [
   'js/dao/catalogue.js',
   'js/dao/revolution.js',
   'js/dao/miseenpage.js',
+  'js/dao/prisme.js',
+  'js/dao/cahier.js',
+  'js/dao/cahier-aretes.js',
+  'js/dao/cahier-impr.js',
   'js/geometrie.js',
   'lib/katex/katex.min.js',
   'lib/katex/katex.min.css',
