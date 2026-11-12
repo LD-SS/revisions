@@ -175,7 +175,7 @@ export function creerTraceur(o) {
     let a = accrocher(q, orth ? pts.filter((x) => Math.abs(x[0] - origine[0]) < EPS || Math.abs(x[1] - origine[1]) < EPS) : pts, tol);
     if (a) { st.acc = a; return [a[0], a[1]]; }
     st.acc = null;
-    const pas = p.grille ? pasGrille(p) : 1;
+    const pas = p.grille ? pasGrille(p) / 5 : 1;   // accroche tous les 1 mm (1:1) : la grille affichée (5 mm) n'est qu'un repère visuel
     const g = (v) => Math.round(v / pas) * pas;
     if (orth) return Math.abs(q[0] - origine[0]) < EPS ? [q[0], g(q[1])] : [g(q[0]), q[1]];
     return [g(q[0]), g(q[1])];
