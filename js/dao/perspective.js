@@ -13,7 +13,7 @@
 import { boite, intervallesZ } from './pieces.js';
 import { svgRevolution } from './revolution.js';
 import { svgPrisme } from './prisme.js';
-import { svgSolide } from './solide.js';
+import { svgSolide, perspSolide } from './solide.js';
 
 const C30 = Math.cos(Math.PI / 6), S30 = 0.5;
 const f2 = (v) => Math.round(v * 100) / 100;
@@ -150,6 +150,7 @@ export function svgPerspective(piece, { cotes = true, largeur = 420 } = {}) {
    ===================================================================== */
 const r3 = (v) => Math.round(v * 1000) / 1000;
 export function perspectiveEntites(piece, origine, type = 'iso') {
+  if (piece.cs) return perspSolide(piece, origine, type);
   const b = boite(piece), P = piece.prof, prof = piece.profil, [Ox, Oy] = origine;
   const k = 0.5, c45 = Math.SQRT1_2;
   const proj = type === 'cav'
