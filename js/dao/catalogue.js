@@ -47,4 +47,4 @@ SERIES.unshift(...SERIES_CAHIER);
 export const EXERCICES = SERIES.flatMap((s) => s.exos);
 enregistrerPieces(EXERCICES.map((e) => e.piece).filter((pc) => pc && pc.profil));   // les constructions géométriques n'ont pas de pièce
 
-export const NOMS_MODES = { completer: 'Vues à compléter', vues: '3 vues', cotes: 'Cotation', coupe: 'Coupe A-A', demi: 'Demi-coupe', section: 'Section B-B', locale: 'Coupe locale', iso: 'Isométrique', cav: 'Cavalière' };
+export const NOMS_MODES = { completer: 'Vues à compléter', vues: '3 vues', cotes: 'Cotation', coupe: 'Coupe A-A', demi: 'Demi-coupe', section: 'Section B-B', locale: 'Coupe locale', iso: 'Isométrique', cav: 'Cavalière', aux: 'Vue auxiliaire' };
