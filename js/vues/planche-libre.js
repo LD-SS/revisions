@@ -16,6 +16,7 @@ import { matiere } from '../store.js';
 import { monterFeuille, nouvellePlanche, ECHELLES, FORMATS, pasGrille, zone, facteur, versPapier, imprimerPlanche, CARTOUCHE } from '../dao/feuille.js';
 import { PIECES, vues, boite as boitePiece, trouverPiece, coupeA, estSymetrique, sectionB, coupeLocale, aTrouVertical, graineTrouVertical } from '../dao/pieces.js';
 import { svgPerspective, perspectiveEntites } from '../dao/perspective.js';
+import { auxSolide } from '../dao/solide.js';
 import { EXERCICES } from '../dao/catalogue.js';
 import { ZONES, attendu, detecter, controler, texteCalcul, nombreFr, zoneUtile } from '../dao/miseenpage.js';
 import { monterPiece3D } from '../piece3d.js';
@@ -218,6 +219,10 @@ function consigne(p) {
       'Seulement la surface coupée, hachurée.',
       'Les axes des trous coupés en trait mixte.',
       'Son coin inférieur gauche est au repère ✚.']);
+    case 'aux': return enonce('dessiner la <b>vue auxiliaire partielle</b> de la face inclinée.', [
+      'On regarde perpendiculairement à la face inclinée : la vue se place dans le prolongement, du côté de l\'observateur.',
+      'La ligne fine donnée correspond à la face avant de la pièce (y = 0) ; les lignes de rappel partent de la vue de face, perpendiculaires à la face inclinée.',
+      'Seulement la partie inclinée (vraie grandeur), arêtes vues en trait fort, axes en mixte.']);
     case 'demi': return enonce('dessiner la <b>vue de face en demi-coupe A-A</b> (la pièce est symétrique).', [
       'À droite de l\'axe de symétrie (trait mixte) : la coupe, matière coupée hachurée.',
       'À gauche : la vue extérieure, sans traits cachés.', rep]);
@@ -311,7 +316,12 @@ function creerExo(pc, depuis = null, mode = 'vues', examen = 0, cat = null) {
   const base = { ...np, format: PERSP.includes(mode) ? 'A3' : 'A4', orientation: 'paysage', echelle: '1:1', cartouche: { ...np.cartouche, titre, auteur: depuis?.cartouche?.auteur || np.cartouche.auteur, classe: depuis?.cartouche?.classe || np.cartouche.classe } };
   const b = boitePiece(pc), z = zone(base), k = facteur(base.echelle);
   const [ecart, marge] = mode === 'cotes' ? [30, 25] : [15, 15];
-  const o = [marge, Math.round(Math.max(pc.prof + ecart + marge, z.h / k - marge - (b.z1 - b.z0)))];
+  let o = [marge, Math.round(Math.max(pc.prof + ecart + marge, z.h / k - marge - (b.z1 - b.z0)))];
+  if (mode === 'aux') {   // la vue auxiliaire doit tenir sur la feuille avec la face et le dessus
+    const c = auxSolide(pc, [0, 0]).cadre, W = b.x1 - b.x0, H = b.z1 - b.z0;
+    const x0 = Math.min(0, c.x), y1 = Math.max(H, c.y + c.h);
+    o = [Math.round(marge - x0), Math.round(z.h / k - marge - y1)];
+  }
   let r0 = null;
   if (PERSP.includes(mode)) {   // origine de la perspective : à droite des 3 vues, sommet aligné sur celui de la vue de face
     const W = b.x1 - b.x0, H = b.z1 - b.z0, P = pc.prof;
@@ -326,6 +336,7 @@ function creerExo(pc, depuis = null, mode = 'vues', examen = 0, cat = null) {
   if (mode === 'cotes') { const v = vues(pc, o, ecart); entites = [...v.face, ...v.dessus, ...v.gauche]; }
   if (mode === 'coupe' || mode === 'demi') entites = coupeA(pc, o, ecart, { demi: mode === 'demi' }).dessus;
   if (mode === 'section') entites = sectionB(pc, o, ecart).donnees;
+  if (mode === 'aux') { const v = vues(pc, o, ecart); entites = [...v.face, ...v.dessus, { ...auxSolide(pc, o).ref, don: 1 }]; }
   if (mode === 'locale') entites = coupeLocale(pc, o, ecart)?.donnees || [];
   if (PERSP.includes(mode)) { const v = vues(pc, o, ecart); entites = [...v.face, ...v.dessus, ...v.gauche]; }
   t[n] = { ...base, ...(examen ? { grille: false } : {}), entites, exo, maj: Date.now() };
@@ -682,6 +693,8 @@ function monterPage(el, remonter) {
     };
     if (PERSP.includes(p.exo.mode)) {
       if (voirSolution) svg += perspectiveEntites(pc, p.exo.r, p.exo.mode).traits.map((e) => svgEntite(p, e, 'dao-cor-sol')).join('');
+    } else if (p.exo.mode === 'aux') {
+      if (voirSolution) svg += auxSolide(pc, p.exo.o).traits.map((e) => svgEntite(p, e, 'dao-cor-sol')).join('');
     } else if (sb) {
       if (voirSolution) svg += [...sb.section, ...sb.hachures].map((e) => svgEntite(p, e, 'dao-cor-sol')).join('');
       if (res) svg += points(res);
@@ -772,6 +785,10 @@ function monterPage(el, remonter) {
         const dans = (x, y) => x >= c.x - M && x <= c.x + c.w + M && y >= c.y - M && y <= c.y + c.h + M;
         r = corriger(sol.traits, (p.entites || []).filter((e) => (e.t === 'l' && dans((e.x1 + e.x2) / 2, (e.y1 + e.y2) / 2)) || ((e.t === 'c' || e.t === 'a') && dans(e.cx, e.cy))));
       } else if (p.exo.mode === 'section') r = corrigerSection(pc, p.exo, p.entites || []);
+      else if (p.exo.mode === 'aux') {
+        const sol = auxSolide(pc, p.exo.o), dans = sol.dans;
+        r = corriger(sol.traits, (p.entites || []).filter((e) => !e.don && ((e.t === 'l' && dans((e.x1 + e.x2) / 2, (e.y1 + e.y2) / 2)) || ((e.t === 'c' || e.t === 'a') && dans(e.cx, e.cy)))));
+      }
       else if (['coupe', 'demi', 'locale'].includes(p.exo.mode)) r = corrigerCoupe(pc, p.exo, p.entites || []);
       else if (p.exo.mode === 'completer') r = corrigerCompleter(pc, p.exo, p.entites || []);
       else {
