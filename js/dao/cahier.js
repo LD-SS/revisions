@@ -12,7 +12,7 @@
 import { prisme } from './prisme.js';
 import { revolution } from './revolution.js';
 import { CONSTRUCTIONS } from './constructions.js';
-import { solide, E as Es, disque as Dq, rect as Rc, arc as Ar } from './solide.js';
+import { solide, E as Es, disque as Dq, rect as Rc, arc as Ar, Rv } from './solide.js';
 import { ARETES } from './cahier-aretes.js';
 
 export const TYPES = {
@@ -21,6 +21,8 @@ export const TYPES = {
   intersection: { titre: 'Intersections, congés et raccordements', intro: 'Cylindres qui se coupent, rainures de clavetage, congés, nervures : repère les points particuliers (extrêmes, de tangence) sur les vues données, puis trace les courbes. Un raccordement tangent ne donne pas d\'arête.' },
   coupe: { titre: 'Coupes', intro: 'Le plan de coupe A-A est tracé sur la vue de dessus. Dessine la vue de face en coupe : on enlève la partie avant, la matière coupée est hachurée, les trous restent vides, pas de traits cachés.' },
   demicoupe: { titre: 'Demi-coupes', intro: 'Pièce symétrique : à droite de l\'axe, la moitié en coupe (hachures) ; à gauche, la moitié en vue extérieure, sans traits cachés. L\'axe de symétrie sépare les deux moitiés.' },
+  section: { titre: 'Sections sorties', intro: 'On coupe la pièce par un plan B-B et on dessine seulement la surface coupée, hachurée, à côté de la vue (ici à la place de la vue de gauche). Utile pour les arbres : rainures de clavette, méplats, perçages.' },
+  auxiliaire: { titre: 'Vues auxiliaires', intro: 'Une face inclinée est déformée sur les vues normales : on la dessine en vraie grandeur sur une vue auxiliaire partielle, regardée perpendiculairement à la face, dans le prolongement de la vue de face.' },
   cylindre: { titre: 'Cylindres, plats et perçages', intro: 'Pièces tournées : un cylindre se voit en rectangle d\'un côté et en cercle de l\'autre, toujours avec son axe ; un plat donne une droite dans une vue et une corde dans l\'autre.' },
   perspective: { titre: 'Perspectives', intro: 'À partir des 3 vues, dessine la perspective (cavalière : face en vraie grandeur, fuyantes à 45° réduites de moitié ; isométrique : axes à 30°, longueurs vraies). Seulement les arêtes vues.' },
   filetage: { titre: 'Filetages et taraudages', intro: 'Représentation normalisée : fond de filet en trait fin, sommet en trait fort ; vue de bout : 3/4 de cercle fin.' },
@@ -41,6 +43,8 @@ function tangentes(p, c, r) {
   const d = Math.hypot(c[0] - p[0], c[1] - p[1]), b = Math.atan2(p[1] - c[1], p[0] - c[0]), a = Math.acos(r / d);
   return [b + a, b - a].map((x) => [c[0] + r * Math.cos(x), c[1] + r * Math.sin(x)]);
 }
+const hexa = (cu, cv, s, rot = 0) => Array.from({ length: 6 }, (_, k) => { const a = ((60 * k + rot) * Math.PI) / 180, R = s / Math.sqrt(3); return [cu + R * Math.cos(a), cv + R * Math.sin(a)]; });
+const nG = [-Math.SQRT1_2, 0, Math.SQRT1_2], POINTE = 4.25 / Math.tan(Math.PI / 3);
 const vue = { face: 'vue de face', dessus: 'vue de dessus', gauche: 'vue de gauche' };
 
 /** Textes types (données / exercice) selon ce qui est donné. */
@@ -51,6 +55,15 @@ function textes(ex) {
   const manque = Object.keys(d).filter((k) => d[k] === 'rien').map((k) => vue[k]);
   const liste0 = (a) => (a.length > 1 ? `${a.slice(0, -1).join(', ')} et ${a[a.length - 1]}` : a[0]);
   const liste = (a) => liste0(a.map((v, i) => (i ? `la ${v}` : v)));   // « la vue de face et la vue de gauche »
+  if (ex.donneesTxt && ex.exerciceTxt) return { donnees: ex.donneesTxt, exercice: ex.exerciceTxt };
+  if (ex.type === 'section') return {
+    donnees: ['la vue de face (avec le plan de section B-B) et la vue de dessus ;', 'la perspective cotée de la pièce.'],
+    exercice: ['Dessiner la section sortie B-B à la place de la vue de gauche (on regarde dans le sens des flèches).', 'Ne dessiner que la surface coupée, hachurée ; tracer les axes.'],
+  };
+  if (ex.type === 'auxiliaire') return {
+    donnees: ['la vue de face et la vue de dessus ;', 'la ligne de référence de la vue auxiliaire (face avant de la pièce, y = 0) ;', 'la perspective cotée de la pièce.'],
+    exercice: ['Dessiner la vue auxiliaire partielle de la face inclinée, regardée perpendiculairement à cette face.', 'Seulement la partie inclinée, en vraie grandeur ; axes des trous en trait mixte.'],
+  };
   if (ex.type === 'geometrie') return { donnees: ex.donneesTxt, exercice: ex.exerciceTxt };
   if (ex.type === 'perspective') return {
     donnees: ['les trois vues de la pièce ;', `le coin avant-bas-gauche de la perspective, au repère ✚.`],
@@ -232,13 +245,88 @@ const EX = [
     plusTxt: ['Le bras (épaisseur 10) est tangent aux deux bossages : chercher où s\'arrêtent ses arêtes sur la vue de face.'],
     piece: S('60', 'Levier à bossages', { L: 100, P: 30, H: 20, corps: [Es('z', 0, 10, levier([15, 15], 15, [90, 15], 10)), Es('z', 0, 20, Dq(15, 15, 15)), Es('z', 0, 16, Dq(90, 15, 10))], creux: [Es('z', -1, 21, Dq(15, 15, 6)), Es('z', -1, 17, Dq(90, 15, 4))],
       cotes: [{ a: [15, 0, 0], b: [90, 0, 0], off: [0, 0, -24], txt: '75' }], reperes: [{ p: [15, 4, 20], txt: 'Ø30 / Ø12', dx: -20 }, { p: [90, 8, 16], txt: 'Ø20 / Ø8' }] }) },
+  // ----- lot 5 (cahier 2, fin) : coupes par plans parallèles, sections sorties, vues auxiliaires, filetages, perspectives de cylindres -----
+  { n: 61, titre: 'COUPE PAR PLANS PARALLÈLES', type: 'coupe', mode: 'coupe', matiere: 'Acier S235', echelle: '1:1', donne: {},
+    plusTxt: ['Le plan A-A est brisé (plans parallèles) : la coupe se dessine comme si les plans étaient dans le prolongement l\'un de l\'autre, sans trait aux changements de plan.'],
+    piece: S('61', 'Plaque à bossage', { L: 90, P: 50, H: 30, coupe: [[0, 30, 15], [30, 60, 35], [60, 90, 15]],
+      corps: [Es('z', 0, 12, Rc(0, 0, 90, 50)), Es('z', 12, 30, Dq(45, 35, 12))], creux: [Es('z', -1, 13, Dq(15, 15, 5)), Es('z', -1, 13, Dq(75, 15, 5)), Es('z', -1, 31, Dq(45, 35, 6))],
+      reperes: [{ p: [45, 23, 30], txt: 'Ø24 / Ø12', dx: -20 }, { p: [75, 15, 12], txt: '2 × Ø10' }] }) },
+  { n: 62, titre: 'CORPS DE CONTRE-POINTE', type: 'coupe', mode: 'coupe', matiere: 'Fonte EN-GJL-200', echelle: '1:1', donne: {},
+    plusTxt: ['Le plan A-A est brisé (plans parallèles) : pas de trait au changement de plan.'],
+    piece: S('62', 'Corps de contre-pointe', { L: 80, P: 50, H: 40, coupe: [[0, 40, 15], [40, 80, 30]],
+      corps: [Es('y', 0, 50, Rc(0, 0, 80, 40))], creux: [Es('x', -1, 81, Dq(30, 25, 10)), Es('z', -1, 41, Dq(15, 15, 5)), Es('y', -1, 51, Rc(30, -1, 50, 8))],
+      reperes: [{ p: [0, 30, 35], txt: 'alésage Ø20', dx: -20 }, { p: [15, 15, 40], txt: 'Ø10' }] }) },
+  { n: 63, titre: 'BROCHE : SECTION SORTIE', type: 'section', mode: 'section', matiere: 'Acier 42CrMo4', echelle: '1:1', donne: {},
+    piece: S('63', 'Broche', { L: 80, P: 24, H: 24, section: 20,
+      corps: [Rv('x', 12, 12, [[0, 0], [0, 12], [40, 12], [40, 10], [80, 10], [80, 0]])], creux: [Es('z', 20, 25, [...Ar(14, 12, 3, 90, 270), ...Ar(26, 12, 3, -90, 90)]), Es('y', -1, 25, Dq(60, 12, 3))],
+      reperes: [{ p: [0, 3.5, 20.5], txt: 'Ø24', dx: -20 }, { p: [20, 9, 24], txt: 'rainure 6 × 4' }, { p: [80, 5, 17], txt: 'Ø20, trou Ø6' }] }) },
+  { n: 64, titre: 'ARBRE À MÉPLATS : SECTION', type: 'section', mode: 'section', matiere: 'Acier C45', echelle: '1:1', donne: {},
+    piece: S('64', 'Arbre à méplats', { L: 90, P: 30, H: 30, section: 70,
+      corps: [Rv('x', 15, 15, [[0, 0], [0, 15], [90, 15], [90, 0]])], creux: [Es('x', 50, 91, Rc(-1, 28, 31, 31)), Es('x', 50, 91, Rc(-1, -1, 31, 2)), Es('y', -1, 31, Dq(25, 15, 4))],
+      reperes: [{ p: [0, 4.4, 25.6], txt: 'Ø30', dx: -20 }, { p: [70, 15, 28], txt: 'méplats à 26' }, { p: [25, 0, 15], txt: 'Ø8', dx: -20, dy: -20 }] }) },
+  { n: 65, titre: 'DOUILLE ÉPAULÉE', type: 'coupe', mode: 'coupe', matiere: 'Bronze CuSn8', echelle: '1:1', donne: {},
+    piece: S('65', 'Douille épaulée', { L: 50, P: 40, H: 40, coupe: 20,
+      corps: [Rv('x', 20, 20, [[0, 0], [0, 20], [10, 20], [10, 14], [49, 14], [50, 13], [50, 0]])], creux: [Rv('x', 20, 20, [[-1, 9], [1, 9], [2, 8], [24, 8], [24, 10], [28, 10], [28, 8], [51, 8]])],
+      reperes: [{ p: [0, 5.9, 34.1], txt: 'Ø40, Ø16', dx: -20 }, { p: [50, 10.1, 29.9], txt: 'Ø28, gorge int. Ø20 × 4' }] }) },
+  { n: 66, titre: 'VUE AUXILIAIRE : SUPPORT INCLINÉ', type: 'auxiliaire', mode: 'aux', matiere: 'Acier S235', echelle: '1:1', donne: {},
+    piece: S('66', 'Support incliné', { L: 70, P: 40, H: 45, aux: { n: nG, d0: 15 / Math.SQRT2, s: 30 },
+      corps: [Es('y', 0, 40, [[0, 0], [70, 0], [70, 45], [30, 45], [0, 15]])], creux: [Es({ w: nG, o: [15, 20, 30] }, -20, 1, Dq(0, 0, 6))],
+      reperes: [{ p: [15, 20, 30], txt: 'Ø12 ⟂ face, prof. 20', dx: -20 }] }) },
+  { n: 67, titre: 'VUE AUXILIAIRE : CORPS DE BRIDE', type: 'auxiliaire', mode: 'aux', matiere: 'Fonte EN-GJMB-350', echelle: '1:1', donne: {},
+    piece: S('67', 'Corps de bride', { L: 64, P: 36, H: 40, aux: { n: nG, d0: 16 / Math.SQRT2, s: 32 },
+      corps: [Es('y', 0, 36, [[0, 0], [64, 0], [64, 40], [24, 40], [0, 16]]), Es({ w: nG, o: [12, 18, 28] }, -6, 8, Dq(0, 0, 8))], creux: [Es({ w: nG, o: [12, 18, 28] }, -20, 9, Dq(0, 0, 4))],
+      reperes: [{ p: [6.3, 18, 33.7], txt: 'bossage Ø16 × 8, trou Ø8', dx: -20 }] }) },
+  { n: 68, titre: 'TROU BORGNE TARAUDÉ', type: 'filetage', mode: 'coupe', matiere: 'Acier C35', echelle: '1:1', donne: {},
+    donneesTxt: ['la vue de dessus avec le plan de coupe A-A ;', 'le trou : taraudage M10, profondeur 22 ; perçage Ø8,5 profondeur 28, fond conique à 120°.'],
+    exerciceTxt: ['Dessiner la vue de face en coupe A-A.', 'Perçage en trait fort (fond à 120°), diamètre nominal Ø10 en trait fin, limite du taraudage en trait fort.', 'Les hachures vont jusqu\'au trait fort du perçage.'],
+    piece: S('68', 'Bloc taraudé borgne', { L: 50, P: 30, H: 40, coupe: 15,
+      corps: [Es('y', 0, 30, Rc(0, 0, 50, 40))], creux: [Rv('z', 25, 15, [[12 - POINTE, 0], [12, 4.25], [41, 4.25]])],
+      filets: [{ ax: 'z', c: [25, 15], w: [18, 40], d: 10, D: 10, int: true, fin: 18 }], reperes: [{ p: [25, 15, 40], txt: 'M10 prof. 22, perçage 28' }] }) },
+  { n: 69, titre: 'VIS À TÊTE HEXAGONALE', type: 'filetage', matiere: 'Acier 8.8', echelle: '1:1', donne: { face: 'contour', dessus: 'contour', gauche: 'complet' },
+    exerciceTxt: ['Terminer la représentation de la vis H M10-47 (filetage sur 26 mm).', 'Sommet du filet (Ø10) en trait fort, fond de filet (Ø8,4) en trait fin, limite du filetage en trait fort.', 'Vue de gauche (côté tête) : le filetage n\'est pas visible.'],
+    piece: S('69', 'Vis H M10', { L: 47, P: 20, H: 20,
+      corps: [Es('x', 0, 7, hexa(10, 10, 17, 90)), Rv('x', 10, 10, [[7, 0], [7, 5], [46, 5], [47, 4], [47, 0]])],
+      filets: [{ ax: 'x', c: [10, 10], w: [21, 47], d: 8.4, D: 10, fin: 21 }], reperes: [{ p: [0, 10, 18.5], txt: 'H 17, ép. 7', dx: -20 }, { p: [47, 10, 15], txt: 'M10, filetage 26' }] }) },
+  { n: 70, titre: 'VIS À TÊTE CYLINDRIQUE (CHC)', type: 'filetage', matiere: 'Acier 10.9', echelle: '1:1', donne: { face: 'contour', dessus: 'contour', gauche: 'complet' },
+    exerciceTxt: ['Terminer la représentation de la vis CHC M10-30 (filetage sur 22 mm).', 'Tête Ø16 × 10, six pans creux de 8 (profondeur 5, en traits cachés).', 'Fond de filet Ø8,4 en trait fin, limite du filetage en trait fort.'],
+    piece: S('70', 'Vis CHC M10', { L: 40, P: 16, H: 16,
+      corps: [Rv('x', 8, 8, [[0, 0], [0, 7.5], [0.5, 8], [10, 8], [10, 5], [39, 5], [40, 4], [40, 0]])], creux: [Es('x', -1, 5, hexa(8, 8, 8, 0), { sansAxe: true })],
+      filets: [{ ax: 'x', c: [8, 8], w: [18, 40], d: 8.4, D: 10, fin: 18 }], reperes: [{ p: [0, 8, 16], txt: 'Ø16 × 10, 6 pans creux 8', dx: -20 }, { p: [40, 8, 13], txt: 'M10' }] }) },
+  { n: 71, titre: 'ÉCROU HEXAGONAL', type: 'filetage', mode: 'coupe', matiere: 'Acier 8', echelle: '1:1', donne: {},
+    donneesTxt: ['la vue de dessus de l\'écrou H M10 (sur plats 17, hauteur 8) avec le plan A-A ;', 'perçage Ø8,5, taraudage M10 sur toute la hauteur.'],
+    exerciceTxt: ['Dessiner la vue de face en coupe A-A.', 'Perçage en trait fort, nominal Ø10 en trait fin ; hachures jusqu\'au trait fort.'],
+    piece: S('71', 'Écrou H M10', { L: 20, P: 20, H: 8, coupe: 10,
+      corps: [Es('z', 0, 8, hexa(10, 10, 17, 0))], creux: [Rv('z', 10, 10, [[-1, 4.25], [9, 4.25]])],
+      filets: [{ ax: 'z', c: [10, 10], w: [0, 8], d: 10, D: 10, int: true }], reperes: [{ p: [10, 10, 8], txt: 'M10, H 17' }] }) },
+  { n: 72, titre: 'GORGE DE DÉGAGEMENT : ARBRE', type: 'filetage', matiere: 'Acier C35', echelle: '1:1', donne: { face: 'contour', dessus: 'contour', gauche: 'complet' },
+    exerciceTxt: ['L\'arbre se termine par un filetage M20 (fond Ø17,3) exécuté jusqu\'à l\'épaulement Ø30.', 'Terminer le dessin : chanfrein, filetage (fond en trait fin), gorge de dégagement Ø17 × 4 pour la sortie de l\'outil.'],
+    piece: S('72', 'Arbre fileté à gorge', { L: 60, P: 30, H: 30,
+      corps: [Rv('x', 15, 15, [[0, 0], [0, 9], [1, 10], [30, 10], [30, 8.5], [34, 8.5], [34, 15], [60, 15], [60, 0]])],
+      filets: [{ ax: 'x', c: [15, 15], w: [1, 30], d: 17.3, D: 20, fin: 30, bout: -1 }], reperes: [{ p: [0, 8, 22], txt: 'M20 × 30', dx: -20 }, { p: [32, 15, 23.5], txt: 'gorge Ø17 × 4' }, { p: [60, 4.4, 25.6], txt: 'Ø30' }] }) },
+  { n: 73, titre: 'GORGE DE DÉGAGEMENT : ALÉSAGE', type: 'filetage', mode: 'coupe', matiere: 'Acier S355', echelle: '1:1', donne: {},
+    donneesTxt: ['la vue de dessus du corps Ø50 × 40 avec le plan A-A ;', 'taraudage M24 (perçage Ø21) sur 20 mm, gorge intérieure Ø26 × 4, puis alésage Ø18.'],
+    exerciceTxt: ['Dessiner la vue de face en coupe A-A.', 'Perçage en trait fort, nominal Ø24 en trait fin, limite du taraudage en trait fort.', 'Hachures jusqu\'aux traits forts.'],
+    piece: S('73', 'Corps taraudé à gorge', { L: 40, P: 50, H: 50, coupe: 25,
+      corps: [Rv('x', 25, 25, [[0, 0], [0, 25], [40, 25], [40, 0]])], creux: [Rv('x', 25, 25, [[-1, 10.5], [20, 10.5], [20, 13], [24, 13], [24, 9], [41, 9]])],
+      filets: [{ ax: 'x', c: [25, 25], w: [0, 20], d: 24, D: 24, int: true, fin: 20, bout: -1 }], reperes: [{ p: [0, 25, 37], txt: 'M24 × 20', dx: -20 }] }) },
+  { n: 74, titre: 'CALIBRE À MÂCHOIRES', type: 'geometrie', mode: 'construction', matiere: 'Tracé', echelle: '1:1', donne: {}, cons: CONSTRUCTIONS.raccordInterieur(),
+    piece: { id: 'cah-74', nom: 'Calibre à mâchoires' }, donneesTxt: ['deux cercles Ø44 et Ø32 (entraxe 70) ;', 'les rayons de raccordement R60 (dessus) et R20 (dessous).'],
+    exerciceTxt: ['Tracer l\'arc R60 qui enveloppe les deux cercles (raccordement intérieur : son centre est à 60 − r de chaque centre).', 'Tracer l\'arc R20 sous les cercles (raccordement extérieur : centre à 20 + r).', 'Chercher les points de raccordement, puis tracer les arcs en trait fort.'] },
+  { n: 75, titre: 'PERSPECTIVE CAVALIÈRE : BAGUE', type: 'perspective', mode: 'cav', matiere: 'Acier C35', echelle: '1:1', donne: {},
+    piece: S('75', 'Bague entaillée', { L: 60, P: 30, H: 60, persp: 'cav',
+      corps: [Rv('y', 30, 30, [[0, 0], [0, 30], [30, 30], [30, 0]])], creux: [Rv('y', 30, 30, [[-1, 15], [31, 15]]), Es('y', -1, 31, Rc(30, 30, 61, 61))],
+      reperes: [{ p: [8.8, 0, 51.2], txt: 'Ø60 / Ø30', dx: -20 }, { p: [45, 0, 30], txt: '1/4 enlevé' }] }) },
+  { n: 76, titre: 'PERSPECTIVE ISOMÉTRIQUE : CYLINDRE', type: 'perspective', mode: 'iso', matiere: 'Acier S275', echelle: '1:1', donne: {},
+    piece: S('76', 'Cylindre sur semelle', { L: 60, P: 40, H: 40,
+      corps: [Es('z', 0, 10, Rc(0, 0, 60, 40)), Rv('z', 30, 20, [[10, 0], [10, 15], [40, 15], [40, 0]])], creux: [Rv('z', 30, 20, [[-1, 8], [41, 8]])],
+      reperes: [{ p: [30, 5, 40], txt: 'Ø30 / Ø16' }] }) },
 ];
 
 EX.sort((a, b) => a.n - b.n);
 for (const ex of EX) {
   const pre = ARETES[ex.piece.id];   // arêtes précalculées : l'Atelier s'affiche tout de suite
   if (pre) ex.piece._a = pre.map((r) => ({ a: r.slice(0, 3), b: r.slice(3, 6), vis: [...r[6]].map((c) => c === '1') }));
-  const t = textes(ex); ex.donnees = t.donnees; ex.exercice = [...t.exercice, ...(ex.plusTxt || [])]; ex.id = `c${ex.n}`; ex.mode = ex.mode || 'completer'; ex.niveau = ex.type === 'rectangle' ? 2 : 1; ex.titreCourt = (ex.titre.charAt(0) + ex.titre.slice(1).toLowerCase()).replace(/ en t /, ' en T '); }
+  const t = textes(ex); ex.donnees = t.donnees; ex.exercice = [...t.exercice, ...(ex.plusTxt || [])]; ex.id = `c${ex.n}`; ex.mode = ex.mode || 'completer'; ex.niveau = ex.type === 'rectangle' ? 2 : 1; ex.titreCourt = (ex.titre.charAt(0) + ex.titre.slice(1).toLowerCase()).replace(/ en t /, ' en T ').replace('(chc)', '(CHC)'); }
 export const CAHIER = EX;
 
 /** Séries de l'Atelier (exercices regroupés par type). */
