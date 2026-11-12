@@ -236,6 +236,15 @@ export function vuesPrisme(pc, origine = [20, 90], ecart = 20) {
       if (iv.length) { const a = iv[0][0], b = iv[iv.length - 1][1]; L2(face, F(a - DEB, t.z), F(b + DEB, t.z), 'a'); L2(dessus, D(a - DEB, t.y), D(b + DEB, t.y), 'a'); }
     }
   }
+  // trous taraudés (t.M = diamètre nominal) : 3/4 de cercle fin dans la vue de bout, traits cachés du nominal ailleurs
+  for (const t of pc.trous) {
+    if (!t.M) continue;
+    const R = t.M / 2;
+    const arc = (arr, c) => arr.push({ t: 'a', cx: r3(c[0]), cy: r3(c[1]), r: r3(R), a0: 90, a1: 360, s: 'n' });
+    if (t.axe === 'y') { arc(face, F(t.x, t.z)); for (const [a, b] of o.selonY(t.x, t.z)) { for (const dx of [-R, R]) L2(dessus, D(t.x + dx, a), D(t.x + dx, b), 'c'); for (const dz of [-R, R]) L2(gauche, G(a, t.z + dz), G(b, t.z + dz), 'c'); } }
+    else if (t.axe === 'z') { arc(dessus, D(t.x, t.y)); for (const [a, b] of o.selonZ(t.x, t.y)) { for (const dx of [-R, R]) L2(face, F(t.x + dx, a), F(t.x + dx, b), 'c'); for (const dy of [-R, R]) L2(gauche, G(t.y + dy, a), G(t.y + dy, b), 'c'); } }
+    else { arc(gauche, G(t.y, t.z)); for (const [a, b] of o.selonX(t.y, t.z)) { for (const dz of [-R, R]) L2(face, F(a, t.z + dz), F(b, t.z + dz), 'c'); for (const dy of [-R, R]) L2(dessus, D(a, t.y + dy), D(b, t.y + dy), 'c'); } }
+  }
   const cadres = { face: { x: ox, y: oy, w: W, h: H }, dessus: { x: ox, y: oy - ey - P, w: W, h: P }, gauche: { x: ox + W + ex, y: oy, w: P, h: H } };
   return { face: fusionner(face), dessus: fusionner(dessus), gauche: fusionner(gauche), cadres };
 }
@@ -319,4 +328,71 @@ export function svgPrisme(pc, { cotes = true, largeur = 420, arete = true, flech
   const m = 10, us = tous.map((p) => p[0]), vs = tous.map((p) => p[1]);
   const x0 = Math.min(...us) - m, y0 = Math.min(...vs) - m, w = Math.max(...us) - Math.min(...us) + 2 * m, h = Math.max(...vs) - Math.min(...vs) + 2 * m;
   return `<svg viewBox="${f2(x0)} ${f2(y0)} ${f2(w)} ${f2(h)}" width="${largeur}" role="img" aria-label="Perspective isométrique de la pièce ${String(pc.nom || '').replace(/"/g, '')}" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;background:#fff">${corps}${cot}</svg>`;
+}
+
+/* =====================================================================
+   COUPE A-A d'une pièce « 3 profils » : plan vertical y = c (tracé sur la
+   vue de dessus), on enlève l'avant, vue de face sans traits cachés,
+   matière coupée hachurée. Même format que coupeA() de pieces.js.
+   ===================================================================== */
+function couperDemiPlan(poly, k, v, garderSup) {   // garde coord[k] >= v (ou <=)
+  const out = [], dedans = (p) => (garderSup ? p[k] >= v - 1e-9 : p[k] <= v + 1e-9);
+  poly.forEach((A, i) => {
+    const B = poly[(i + 1) % poly.length], ia = dedans(A), ib = dedans(B);
+    if (ia) out.push(A);
+    if (ia !== ib) { const t = (v - A[k]) / (B[k] - A[k]); const P = [A[0] + (B[0] - A[0]) * t, A[1] + (B[1] - A[1]) * t]; P[k] = v; out.push(P); }
+  });
+  return out;
+}
+export function coupePrisme(pc, origine = [20, 90], ecart = 20) {
+  const [ex, ey] = Array.isArray(ecart) ? ecart : [ecart, ecart];
+  const v = vuesPrisme(pc, origine, ecart), [ox, oy] = origine, P = pc.P;
+  const c = pc.coupe ?? (pc.trous.find((t) => t.axe === 'z')?.y ?? P / 2);
+  const F = (x, z) => [ox + x, oy + z], D = (x, y) => [ox + x, oy - ey - P + y];
+  const L2 = (arr, a, b, s) => arr.push({ t: 'l', x1: r3(a[0]), y1: r3(a[1]), x2: r3(b[0]), y2: r3(b[1]), s });
+  if (!pc._coupe) {
+    const arr = prisme({ ...pc, id: `${pc.id}-coupe`, fxy: couperDemiPlan(pc.fxy, 1, c, true), fyz: couperDemiPlan(pc.fyz, 0, c, true), trous: [] });
+    pc._coupe = aretes3D(arr);
+  }
+  const face = [];
+  for (const { a, b, vis } of pc._coupe) if (vis[0] && Math.hypot(a[0] - b[0], a[2] - b[2]) > 1e-4) L2(face, F(a[0], a[2]), F(b[0], b[2]), 'v');
+  const o = outils(pc);
+  const coupes = [];
+  for (const t of pc.trous) {
+    const r = t.d / 2;
+    if (t.axe === 'y') {
+      if (!o.selonY(t.x, t.z).some(([a, b]) => b > c)) continue;
+      const [cx, cz] = F(t.x, t.z);
+      face.push({ t: 'c', cx: r3(cx), cy: r3(cz), r: r3(r), s: 'v' }); L2(face, [cx - r - DEB, cz], [cx + r + DEB, cz], 'a'); L2(face, [cx, cz - r - DEB], [cx, cz + r + DEB], 'a');
+    } else if (Math.abs((t.axe === 'z' ? t.y : t.y) - c) < r - 1e-6) {
+      const w = Math.sqrt(r * r - (t.y - c) ** 2); coupes.push({ ...t, w });
+      if (t.axe === 'z') { const iv = o.selonZ(t.x, c); for (const [a, b] of iv) for (const dx of [-w, w]) L2(face, F(t.x + dx, a), F(t.x + dx, b), 'v'); if (iv.length) L2(face, F(t.x, iv[0][0] - DEB), F(t.x, iv[iv.length - 1][1] + DEB), 'a'); }
+      else { const iv = o.selonX(c, t.z); for (const [a, b] of iv) for (const dz of [-w, w]) L2(face, F(a, t.z + dz), F(b, t.z + dz), 'v'); if (iv.length) L2(face, F(iv[0][0] - DEB, t.z), F(iv[iv.length - 1][1] + DEB, t.z), 'a'); }
+    }
+  }
+  // trace du plan A-A sur la vue de dessus
+  const trace = [];
+  const [xa, ya] = D(-9, c), [xb] = D(pc.L + 9, c);
+  trace.push({ t: 'l', x1: r3(xa), y1: r3(ya), x2: r3(xb), y2: r3(ya), s: 'a' }, { t: 'l', x1: r3(xa), y1: r3(ya), x2: r3(xa + 5), y2: r3(ya), s: 'v' }, { t: 'l', x1: r3(xb - 5), y1: r3(ya), x2: r3(xb), y2: r3(ya), s: 'v' });
+  for (const x of [xa + 1.5, xb - 1.5]) {
+    trace.push({ t: 'l', x1: r3(x), y1: r3(ya), x2: r3(x), y2: r3(ya + 8), s: 'n' }, { t: 'l', x1: r3(x), y1: r3(ya + 8), x2: r3(x - 1.2), y2: r3(ya + 4.5), s: 'n' }, { t: 'l', x1: r3(x), y1: r3(ya + 8), x2: r3(x + 1.2), y2: r3(ya + 4.5), s: 'n' });
+    trace.push({ t: 'x', x: r3(x + (x < ox ? -5 : 2)), y: r3(ya + 3), txt: 'A', h: 5, s: 'n' });
+  }
+  // matière coupée et hachure de la solution
+  const matiere = (x, z) => o.dedans(x, c, z) && !pc.trous.some((t) => (t.axe === 'y' ? Math.hypot(x - t.x, z - t.z) < t.d / 2 : false)) && !coupes.some((t) => (t.axe === 'z' ? Math.abs(x - t.x) < t.w : Math.abs(z - t.z) < t.w));
+  const ivx = (() => { const sxy = swap(pc.fxy); return intervalles(sxy, c); })(), ivz = intervalles(pc.fyz, c);
+  const x0 = Math.min(...ivx.map((q) => q[0])), x1 = Math.max(...ivx.map((q) => q[1])), z0 = Math.min(...ivz.map((q) => q[0])), z1 = Math.max(...ivz.map((q) => q[1]));
+  let poly = pc.fxz;
+  poly = couperDemiPlan(poly, 0, x0, true); poly = couperDemiPlan(poly, 0, x1, false); poly = couperDemiPlan(poly, 1, z0, true); poly = couperDemiPlan(poly, 1, z1, false);
+  const rect = (a, b, c2, d) => [F(a, c2), F(b, c2), F(b, d), F(a, d)];
+  const trous = [];
+  for (let i = 0; i + 1 < ivx.length; i++) trous.push(rect(ivx[i][1], ivx[i + 1][0], z0, z1));
+  for (let i = 0; i + 1 < ivz.length; i++) trous.push(rect(x0, x1, ivz[i][1], ivz[i + 1][0]));
+  for (const t of pc.trous) if (t.axe === 'y' && o.selonY(t.x, t.z).some(([a, b]) => b > c)) trous.push(Array.from({ length: 48 }, (_, k) => F(t.x + (t.d / 2) * Math.cos((k / 48) * 2 * Math.PI), t.z + (t.d / 2) * Math.sin((k / 48) * 2 * Math.PI))));
+  for (const t of coupes) {   // bandes vides des trous coupés, seulement là où il y a de la matière
+    if (t.axe === 'z') for (const [a, b] of o.selonZ(t.x, c)) trous.push(rect(t.x - t.w, t.x + t.w, a, b));
+    else for (const [a, b] of o.selonX(c, t.z)) trous.push(rect(a, b, t.z - t.w, t.z + t.w));
+  }
+  const hachure = { t: 'h', pts: poly.map(([x, z]) => F(x, z)), trous, ang: 45, pas: 3, s: 'n' };
+  return { c, face: fusionner(face), dessus: [...v.dessus, ...trace], hachure, matiere, cadres: v.cadres };
 }
