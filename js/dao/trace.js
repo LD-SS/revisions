@@ -610,7 +610,13 @@ export function creerTraceur(o) {
       return false;
     }
     if (ev.key === 'F8') { st.ortho = !st.ortho; apercu(); return true; }
-    if (ev.key === 'Escape') { if (st.saisie) st.saisie = ''; else if (st.op || st.pts.length) finir(); else st.sel.clear(); apercu(); return true; }
+    // Échap : efface la saisie en cours ; sinon termine le tracé ou l'opération en cours et revient à l'outil Sélection
+    if (ev.key === 'Escape') {
+      if (st.saisie) { st.saisie = ''; apercu(); return true; }
+      if (st.op || st.pts.length) finir();
+      if (st.outil !== 'selection') choisirOutil('selection'); else { st.sel.clear(); apercu(); }
+      return true;
+    }
     if ((ev.key === 'Delete' || ev.key === 'Backspace') && !st.saisie && st.sel.size && !st.op) { supprimerSelection(); return true; }
     if (ev.key === 'Enter' && st.saisie) { appliquerSaisie(); return true; }
     if (ev.key === 'Backspace' && st.saisie) { st.saisie = st.saisie.slice(0, -1); apercu(); return true; }
