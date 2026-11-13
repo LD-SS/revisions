@@ -28,7 +28,7 @@ import { majBoutonProposer, viderAttente } from './proposer.js';
 import { demarrerSynchro, adopterCompte } from './synchro.js';
 import { exigerAcces, ecranPerte } from './vues/acces.js';
 
-const VERSION = '1.41.0 (cahier de dessin, lot 5 : plans parallèles, sections, vues auxiliaires, filetages, perspectives de cylindres)';
+const VERSION = '1.42.0 (atelier : cahier renuméroté par série, trait Repère orange corrigé, consigne réductible, fenêtre Pièce zoomable)';
 const vue = document.getElementById('vue');
 let nettoyer = null; // fonction fournie par la page affichée, appelée avant d'en changer
 
