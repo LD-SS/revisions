@@ -453,6 +453,12 @@ function monterPage(el, remonter) {
               : `<button class="btn primary" type="button" data-exo="corriger">${icone('check')} Corriger</button>
             ${p.exo.mode === 'cotes' ? '' : '<button class="btn" type="button" data-exo="solution" aria-pressed="false">Voir la solution</button>'}`}
             ${PERSP.includes(p.exo.mode) || (p.exo.mode === 'ancien' && !p.exo.vox && !p.exo.persp) ? '' : '<button class="btn" type="button" data-exo="piece">Pièce</button>'}
+            ${(() => {   // exercice du catalogue : précédent / suivant (ordre de l'Atelier)
+              const i = p.exo.cat && !p.exo.examen ? EXERCICES.findIndex((x) => x.id === p.exo.cat) : -1;
+              if (i < 0) return '';
+              const lien = (ex, txt, cls) => ex ? `<a class="btn ${cls}" href="#/dessin/libre/cat-${esc(ex.id)}" title="${esc(ex.titre)}">${txt}</a>` : `<span class="btn ${cls}" aria-disabled="true">${txt}</span>`;
+              return `<span class="dao-exo-nav">${lien(EXERCICES[i - 1], '◀ Précédent', 'dao-prec')}<span class="muted dao-exo-n">${i + 1} / ${EXERCICES.length}</span>${lien(EXERCICES[i + 1], 'Suivant ▶', 'dao-suiv')}</span>`;
+            })()}
           </span>
           ${mepAFaire(p) ? formMep(p) : p.exo.mep?.note && p.exo.mep.ok ? `<span class="dao-mep-ok">Mise en page validée${p.exo.mep.essais > 1 ? ` en ${p.exo.mep.essais} essais` : ' du premier coup'} : les 4 coins de chaque vue sont marqués en trait fin (accroches) : dessine le contour de chaque vue en trait fort entre ses coins.</span>` : ''}
           <span class="dao-exo-res">${p.exo.examen && !p.exo.examen.fini ? '<b>Mode examen</b> : pas de correction ni de solution avant d\'avoir rendu la copie.' : p.exo.score != null ? `Meilleur score : <b>${p.exo.score} %</b>` : ''}</span>
