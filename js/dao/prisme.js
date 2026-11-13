@@ -281,9 +281,9 @@ export function svgPrisme(pc, { cotes = true, largeur = 420, arete = true, flech
   // arête repérée
   if (arete && pc.arete) {
     const [a, b] = pc.arete.map(pr);
-    corps += `<path d="M${f2(a[0])} ${f2(a[1])}L${f2(b[0])} ${f2(b[1])}" stroke="#d11" stroke-width="3" stroke-linecap="round"/>`;
+    corps += `<path d="M${f2(a[0])} ${f2(a[1])}L${f2(b[0])} ${f2(b[1])}" stroke="#ef7d00" stroke-width="3" stroke-linecap="round"/>`;
     const m = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2], q = [m[0] - 30, m[1] - 34];
-    cot += `<path d="M${f2(m[0])} ${f2(m[1])}L${f2(q[0])} ${f2(q[1])}h-14" stroke="#d11" stroke-width="0.9" fill="none"/><text x="${f2(q[0] - 16)}" y="${f2(q[1] - 2)}" text-anchor="end" font-size="8.5" font-weight="700" font-family="Segoe UI,Arial,sans-serif" fill="#d11">ROUGE</text>`;
+    cot += `<path d="M${f2(m[0])} ${f2(m[1])}L${f2(q[0])} ${f2(q[1])}h-14" stroke="#ef7d00" stroke-width="0.9" fill="none"/><text x="${f2(q[0] - 16)}" y="${f2(q[1] - 2)}" text-anchor="end" font-size="8.5" font-weight="700" font-family="Segoe UI,Arial,sans-serif" fill="#ef7d00">REPÈRE</text>`;
     tous.push([q[0] - 52, q[1] - 10]);
   }
   if (cotes) {
