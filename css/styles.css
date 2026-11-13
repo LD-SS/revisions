@@ -1102,6 +1102,9 @@ label.cgu-ok input{margin-top:3px}
 .dao-exobar.replie .dao-consigne>:not(b:first-child):not(.dao-but){display:none}
 .dao-exobar.replie .dao-mep-ok,.dao-exobar.replie .dao-exam-note{display:none}
 .dao-exo-btns{display:flex;gap:6px;flex-wrap:wrap}
+.dao-exo-nav{display:inline-flex;align-items:center;gap:6px;margin-left:auto}
+.dao-exo-nav .btn[aria-disabled]{opacity:.4;pointer-events:none}
+.dao-exo-n{font-size:12.5px;white-space:nowrap}
 .dao-exo-res{font-size:13.5px}
 .dao-exobar .btn.on{background:var(--accent-weak);border-color:var(--accent)}
 .dao-l-man{color:#d33;font-weight:600}.dao-l-type{color:#8a3ffc;font-weight:600}.dao-l-trop{color:#e07b00;font-weight:600}
