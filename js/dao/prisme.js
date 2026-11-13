@@ -289,21 +289,39 @@ export function svgPrisme(pc, { cotes = true, largeur = 420, arete = true, flech
   if (cotes) {
     const fin = 'stroke="#1d5fd1" stroke-width="0.9"';
     const fl = (t, u) => { const n = [-u[1], u[0]], Lf = 5; return `<path d="M${f2(t[0])} ${f2(t[1])}L${f2(t[0] - u[0] * Lf + n[0] * 1.6)} ${f2(t[1] - u[1] * Lf + n[1] * 1.6)}L${f2(t[0] - u[0] * Lf - n[0] * 1.6)} ${f2(t[1] - u[1] * Lf - n[1] * 1.6)}Z" fill="#1d5fd1"/>`; };
-    const chaine = (vals, pt3, off) => {
+    // off : décalage de la ligne de cote (vecteur, ou fonction de la valeur) ; dessus : chiffres serrés côté pièce, sinon à l'extérieur ;
+    // exterieur : chiffres du côté extérieur de la ligne (chaîne posée au-dessus de la pièce)
+    const chaine = (vals, pt3, off0, dessus = true, exterieur = false) => {
+      const offDe = typeof off0 === 'function' ? off0 : () => off0;
       const vs = [...new Set(vals.map(r3))].sort((p, q) => p - q);
+      const placees = [];   // textes déjà posés sur cette chaîne : [position le long de la chaîne, demi-largeur, niveau]
       for (let k = 0; k + 1 < vs.length; k++) {
         const A3 = pt3(vs[k]), B3 = pt3(vs[k + 1]), A = pr(A3), B = pr(B3);
-        const Ao = pr(A3.map((v, i) => v + off[i])), Bo = pr(B3.map((v, i) => v + off[i]));
+        const oA = offDe(vs[k]), oB = offDe(vs[k + 1]);
+        const Ao = pr(A3.map((v, i) => v + oA[i])), Bo = pr(B3.map((v, i) => v + oB[i]));
         cot += `<path d="M${f2(A[0])} ${f2(A[1])}L${f2(Ao[0])} ${f2(Ao[1])}M${f2(B[0])} ${f2(B[1])}L${f2(Bo[0])} ${f2(Bo[1])}" ${fin} stroke-dasharray="2 2" fill="none"/>`;
         const Lg = Math.hypot(Bo[0] - Ao[0], Bo[1] - Ao[1]); if (Lg < 1) continue;
         const u = [(Bo[0] - Ao[0]) / Lg, (Bo[1] - Ao[1]) / Lg];
-        cot += `<path d="M${f2(Ao[0])} ${f2(Ao[1])}L${f2(Bo[0])} ${f2(Bo[1])}" ${fin} fill="none"/>` + fl(Ao, [-u[0], -u[1]]) + fl(Bo, u);
+        const txt = nb(vs[k + 1] - vs[k]), demi = txt.length * 2.6 + 0.8;
+        const court = Lg < 2 * demi + 1;   // pas la place pour les flèches et le chiffre : flèches à l'extérieur
+        if (court) cot += `<path d="M${f2(Ao[0] - u[0] * 7)} ${f2(Ao[1] - u[1] * 7)}L${f2(Bo[0] + u[0] * 7)} ${f2(Bo[1] + u[1] * 7)}" ${fin} fill="none"/>` + fl(Ao, u) + fl(Bo, [-u[0], -u[1]]);
+        else cot += `<path d="M${f2(Ao[0])} ${f2(Ao[1])}L${f2(Bo[0])} ${f2(Bo[1])}" ${fin} fill="none"/>` + fl(Ao, [-u[0], -u[1]]) + fl(Bo, u);
         tous.push(Ao, Bo);
-        const txt = nb(vs[k + 1] - vs[k]);
-        if (Math.abs(u[0]) < 0.15) { const m = [Math.max(Ao[0], Bo[0]) + 3, (Ao[1] + Bo[1]) / 2 + 3]; cot += `<text x="${f2(m[0])}" y="${f2(m[1])}" font-size="9" font-family="Segoe UI,Arial,sans-serif" fill="#1d5fd1">${txt}</text>`; tous.push([m[0] + txt.length * 5.5, m[1]]); continue; }
+        // chiffre : côté pièce si la place suffit ; sinon à l'extérieur de la ligne de cote, sur un niveau libre (avec un petit trait de rappel)
+        const tPos = ((Ao[0] + Bo[0]) / 2) * u[0] + ((Ao[1] + Bo[1]) / 2) * u[1];
+        let niv = 0;
+        if (court || placees.some(([tp, d, n]) => n === 0 && Math.abs(tp - tPos) < d + demi + 1)) { niv = 1; while (placees.some(([tp, d, n]) => n === niv && Math.abs(tp - tPos) < d + demi + 1)) niv++; }
+        placees.push([tPos, demi, niv]);
+        const ecart = 3 + niv * 8;
+        let nrm = [u[1], -u[0]]; const dehors = [Ao[0] - A[0], Ao[1] - A[1]];
+        if (nrm[0] * dehors[0] + nrm[1] * dehors[1] < 0) nrm = [-nrm[0], -nrm[1]];   // nrm : vers l'extérieur (côté opposé à la pièce)
+        const mil = [(Ao[0] + Bo[0]) / 2, (Ao[1] + Bo[1]) / 2];
+        if (Math.abs(u[0]) < 0.15) { const m = [Math.max(Ao[0], Bo[0]) + 3 + (niv ? 4 + (niv - 1) * 12 : 0), mil[1] + 3]; if (niv) cot += `<path d="M${f2(mil[0])} ${f2(mil[1])}H${f2(m[0] - 1)}" stroke="#1d5fd1" stroke-width="0.5" fill="none"/>`; cot += `<text x="${f2(m[0])}" y="${f2(m[1])}" font-size="9" font-family="Segoe UI,Arial,sans-serif" fill="#1d5fd1">${txt}</text>`; tous.push([m[0] + txt.length * 5.5, m[1]]); continue; }
         let ang = (Math.atan2(u[1], u[0]) * 180) / Math.PI; if (ang > 90) ang -= 180; if (ang < -90) ang += 180;
-        const nrm = [u[1], -u[0]], s = nrm[1] < 0 ? 1 : -1;
-        const m = [(Ao[0] + Bo[0]) / 2 + s * nrm[0] * 3, (Ao[1] + Bo[1]) / 2 + s * nrm[1] * 3];
+        // chiffre au-dessus de la ligne de cote (côté pièce) ; les chiffres serrés montent d'un rang, avec un petit trait de rappel
+        const sg = exterieur || (niv && !dessus) ? 1 : -1, e2 = niv && !dessus && !exterieur ? 4 + niv * 8 : ecart;
+        const m = [mil[0] + sg * nrm[0] * e2, mil[1] + sg * nrm[1] * e2];
+        if (niv) cot += `<path d="M${f2(mil[0])} ${f2(mil[1])}L${f2(m[0] - sg * nrm[0] * (dessus || exterieur ? 1 : 6))} ${f2(m[1] - sg * nrm[1] * (dessus || exterieur ? 1 : 6))}" stroke="#1d5fd1" stroke-width="0.5" fill="none"/>`;
         cot += `<text x="${f2(m[0])}" y="${f2(m[1])}" transform="rotate(${f2(ang)} ${f2(m[0])} ${f2(m[1])})" text-anchor="middle" font-size="9" font-family="Segoe UI,Arial,sans-serif" fill="#1d5fd1">${txt}</text>`;
         tous.push([m[0] - 8, m[1] - 10], [m[0] + 8, m[1] + 10]);
       }
@@ -311,14 +329,42 @@ export function svgPrisme(pc, { cotes = true, largeur = 420, arete = true, flech
     const xs = [...pc.fxz.map((p) => p[0]), ...pc.fxy.map((p) => p[0]), ...pc.trous.filter((t) => t.axe !== 'x').map((t) => t.x)];
     const zs = [...pc.fxz.map((p) => p[1]), ...pc.fyz.map((p) => p[1]), ...pc.trous.filter((t) => t.axe !== 'z').map((t) => t.z)];
     const ys = [...pc.fxy.map((p) => p[1]), ...pc.fyz.map((p) => p[0]), ...pc.trous.filter((t) => t.axe !== 'y').map((t) => t.y)];
-    chaine(xs, (x) => [x, 0, 0], [0, 0, -14]);
-    chaine(zs, (z) => [pc.L, 0, z], [14, 0, 0]);
-    chaine(ys, (y) => [0, y, 0], [-10, 0, -10]);
+    // Cotation « au plus près » : chaque forme est cotée sur la face où elle se voit.
+    const haut = (poly, a) => { let z = 0; poly.forEach((p, k) => { const q = poly[(k + 1) % poly.length]; if ((p[0] - a) * (q[0] - a) <= 0) { const zz = p[0] === q[0] ? Math.max(p[1], q[1]) : p[1] + ((a - p[0]) * (q[1] - p[1])) / (q[0] - p[0]); z = Math.max(z, zz); } }); return z; };
+    const uniq = (a) => [...new Set(a.map(r3))].sort((p, q) => p - q);
+    const serre = (a) => a.some((v, k) => k && v - a[k - 1] < 2 * (nb(v - a[k - 1]).length * 2.6 + 0.8) + 1);
+    // longueurs : sous la face avant ; si la fin de la chaîne (à partir d'un gradin du profil de face) est serrée, cette fin au-dessus de la pièce
+    {
+      const vs = uniq(xs);
+      const enBas = new Set([...pc.fxz.filter((p) => p[1] === 0).map((p) => r3(p[0])), ...pc.fxy.map((p) => r3(p[0])), ...pc.trous.filter((t) => t.axe !== 'x').map((t) => r3(t.x))]);
+      const i = vs.findIndex((v) => !enBas.has(v));
+      if (i > 0 && serre(vs.slice(i - 1))) {
+        const fin = vs.slice(i - 1), zc = Math.max(...fin.map((x) => haut(pc.fxz, x))) + 10;
+        chaine(vs.slice(0, i), (x) => [x, 0, 0], [0, 0, -14]);
+        const Pp = pc.P ?? pc.prof;   // le long de l'arête arrière : la ligne de cote reste hors de la pièce
+        chaine(fin, (x) => [x, Pp, haut(pc.fxz, x)], (x) => [0, 0, zc - haut(pc.fxz, x)], true, true);
+      } else chaine(vs, (x) => [x, 0, 0], [0, 0, -14]);
+    }
+    // hauteurs : sur l'arête verticale avant droite
+    chaine(zs, (z) => [pc.L, 0, z], [12, 0, 0]);
+    // profondeurs : formes vues de dessus (profil fxy, trous verticaux) sur l'arête gauche ; formes du profil de côté (fyz) au-dessus de la face de droite
+    {
+      const P = pc.P ?? pc.prof;
+      const dessusY = uniq([0, P, ...pc.fxy.map((p) => p[1]), ...pc.trous.filter((t) => t.axe !== 'y').map((t) => t.y)]);
+      const coteY = uniq([0, P, ...pc.fyz.map((p) => p[0])]).filter((y) => y === 0 || y === P || !dessusY.includes(y));
+      const zG = (y) => Math.min(haut(pc.fxz, 0), haut(pc.fyz, y)), zD = (y) => Math.min(haut(pc.fxz, pc.L), haut(pc.fyz, y));
+      if (coteY.length > 2) {
+        const zc = Math.max(...coteY.map(zD)) + 10;
+        chaine(coteY, (y) => [pc.L, y, zD(y)], (y) => [0, 0, zc - zD(y)], true, true);
+      }
+      if (dessusY.length > 2 || coteY.length <= 2) chaine(dessusY, (y) => [0, y, 0], [-12, 0, -12], false);
+    }
     for (const t of pc.trous) {
       if (!t._c) continue;
-      const c = pr(t._c), q = [c[0] + 20, c[1] - 24];
-      cot += `<path d="M${f2(c[0])} ${f2(c[1])}L${f2(q[0])} ${f2(q[1])}h16" ${fin} fill="none"/><text x="${f2(q[0] + 2)}" y="${f2(q[1] - 2)}" font-size="9" font-family="Segoe UI,Arial,sans-serif" fill="#1d5fd1">Ø${nb(t.d)}</text>`;
-      tous.push([q[0] + 22, q[1] - 12]);
+      // renvoi vers le haut à gauche (côté libre : les chaînes de cotes sont en bas, à droite et au-dessus de la face de droite)
+      const c = pr(t._c), q = [c[0] - 20, c[1] - 24];
+      cot += `<path d="M${f2(c[0])} ${f2(c[1])}L${f2(q[0])} ${f2(q[1])}h-16" ${fin} fill="none"/><text x="${f2(q[0] - 2)}" y="${f2(q[1] - 2)}" text-anchor="end" font-size="9" font-family="Segoe UI,Arial,sans-serif" fill="#1d5fd1">Ø${nb(t.d)}</text>`;
+      tous.push([q[0] - 24, q[1] - 12]);
     }
   }
   if (fleche) {
