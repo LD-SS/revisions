@@ -173,11 +173,19 @@ function donneesCompleter(pc, exo) {
   }
   return out;
 }
+/** Arête repérée sur la perspective (pc.arete) projetée sur chacune des 3 vues : traits « Repère » (s = 'b') attendus. */
+function repereSol(pc, exo) {
+  if (!pc?.arete) return [];
+  const c = vues(pc, exo.o, exo.ecart).cadres, P = pc.prof;
+  const F = ([x, , z]) => [c.face.x + x, c.face.y + z], D = ([x, y]) => [c.dessus.x + x, c.dessus.y + y], G = ([, y, z]) => [c.gauche.x + P - y, c.gauche.y + z];
+  return [F, D, G].map((f) => { const [a, b] = pc.arete.map(f); return { t: 'l', x1: a[0], y1: a[1], x2: b[0], y2: b[1], s: 'b' }; })
+    .filter((e) => Math.hypot(e.x2 - e.x1, e.y2 - e.y1) > 0.5);   // arête vue de bout : un point, rien à repasser
+}
 /** Correction « vues à compléter » : seulement ce qui n'était pas donné ; un trait redessiné sur une donnée n'est pas « en trop ». */
 function corrigerCompleter(pc, exo, es) {
-  const sol = (() => { const v = vues(pc, exo.o, exo.ecart); return [...v.face, ...v.dessus, ...v.gauche]; })();
+  const sol = (() => { const v = vues(pc, exo.o, exo.ecart); return [...v.face, ...v.dessus, ...v.gauche, ...repereSol(pc, exo)]; })();
   const don = es.filter((e) => e.don);
-  const couvert = (e) => don.length && corriger([{ ...e, tol: undefined }], don.map((g) => ({ ...g, s: e.s }))).ok.length === 1;
+  const couvert = (e) => e.s !== 'b' && don.length && corriger([{ ...e, tol: undefined }], don.map((g) => ({ ...g, s: e.s }))).ok.length === 1;
   const reste = sol.filter((s) => !couvert(s));
   const eleve = es.filter((e) => !e.don && !((e.t === 'l' || e.t === 'c' || e.t === 'a') && couvert(e)));
   return corriger(reste, eleve);
@@ -190,7 +198,7 @@ function coinsMep(pc, a) {
     .map(([x1, y1, x2, y2]) => ({ t: 'l', x1: r3(x1), y1: r3(y1), x2: r3(x2), y2: r3(y2), s: 'n', mep: 1 }));
 }
 /** Énoncé structuré : un but en gras, puis les points à respecter en liste. */
-const enonce = (but, points, astuce = '', etapes = []) => `<b>À faire :</b> ${but}<ul>${points.map((x) => `<li>${x}</li>`).join('')}</ul>${etapes.length ? `<b>Étapes :</b><ol>${etapes.map((x) => `<li>${x}</li>`).join('')}</ol>` : ''}${astuce ? `<span class="muted">Astuce : ${astuce}</span>` : ''}`;
+const enonce = (but, points, astuce = '', etapes = []) => `<b>À faire :</b> <span class="dao-but">${but}</span><ul>${points.map((x) => `<li>${x}</li>`).join('')}</ul>${etapes.length ? `<b>Étapes :</b><ol>${etapes.map((x) => `<li>${x}</li>`).join('')}</ol>` : ''}${astuce ? `<span class="muted">Astuce : ${astuce}</span>` : ''}`;
 function consigne(p) {
   const e = p.exo, rep = 'Le coin inférieur gauche de la vue de face est au repère ✚.';
   switch (e.mode) {
@@ -237,7 +245,7 @@ function consigne(p) {
         `<b>Données :</b> ${ex.donnees.map(esc).join(' ')}`,
         'Projection européenne : vue de dessus sous la face, vue de gauche à droite de la face.',
         'Arêtes vues en trait <b>fort</b>, cachées en trait <b>interrompu</b>, axes en trait <b>mixte</b>.',
-        ...(ex.piece.arete ? ['L\'arête repérée en rouge sur la perspective (bouton Pièce) : repère-la sur les vues (pas corrigé dans l\'appli).'] : [])], '', [...ex.exercice.map(esc), 'Clique sur Corriger.']);
+        ...(ex.piece.arete ? ['L\'arête repérée en <b>orange</b> sur la perspective (bouton Pièce) : repasse-la sur chaque vue avec le trait <b>Repère</b> (touche B), par-dessus le trait fort ou interrompu. Elle est corrigée.'] : [])], '', [...ex.exercice.map(esc), 'Clique sur Corriger.']);
     }
     case 'cotes': return enonce('<b>coter les 3 vues</b> avec l\'outil Cote.', [
       'Chaque arête et chaque axe de trou situé une seule fois (pas de chaîne fermée).',
@@ -400,7 +408,7 @@ function monterPage(el, remonter) {
           <div class="dao-menu" data-nom="Trait">
             <button class="btn dao-b dao-menu-b" type="button" data-menu="trait" aria-haspopup="true" aria-expanded="false" title="Type de trait"><span class="dao-menu-ic"></span><span class="dao-menu-nom">Trait</span> ▾</button>
             <div class="panel dao-menu-p" hidden aria-label="Type de trait">
-              ${Object.entries(STYLES).map(([k, o]) => `<button class="btn dao-b" type="button" data-style="${k}" title="${esc(o.titre)}"><svg viewBox="0 0 34 10" class="dao-ech"><line class="dao-ech-${k}" x1="2" y1="5" x2="32" y2="5"/></svg><span>${esc(o.nom)}</span>${o.touche ? `<kbd>${o.touche.toUpperCase()}</kbd>` : ''}</button>`).join('')}
+              ${Object.entries(STYLES).filter(([k]) => k !== 'b' || (p.exo?.mode === 'completer' && EXERCICES.find((x) => x.id === p.exo.cat)?.piece?.arete)).map(([k, o]) => `<button class="btn dao-b" type="button" data-style="${k}" title="${esc(o.titre)}"><svg viewBox="0 0 34 10" class="dao-ech"><line class="dao-ech-${k}" x1="2" y1="5" x2="32" y2="5"/></svg><span>${esc(o.nom)}</span>${o.touche ? `<kbd>${o.touche.toUpperCase()}</kbd>` : ''}</button>`).join('')}
             </div>
           </div>
           <span class="dao-sep"></span>
@@ -435,7 +443,8 @@ function monterPage(el, remonter) {
           <label>N° <input class="field" name="numero" maxlength="10" value="${esc(p.cartouche.numero)}"></label>
           <p class="muted">La date, l'échelle et le format se remplissent tout seuls.</p>
         </form>
-        ${p.exo ? `<div class="panel dao-exobar">
+        ${p.exo ? `<div class="panel dao-exobar${stockage.lire('dao.consigneReduite', false) === true ? ' replie' : ''}">
+          <button class="btn icon dao-replier" type="button" data-replier title="Réduire ou afficher la consigne (la place gagnée va à la feuille)" aria-label="Réduire ou afficher la consigne">${stockage.lire('dao.consigneReduite', false) === true ? '▸' : '▾'}</button>
           <div class="dao-consigne">${consigne(p)}</div>
           <span class="dao-exo-btns">
             ${p.exo.mep && !p.exo.examen ? `<label class="dao-choix"><span>Mise en page</span><select class="field" data-mep>${[['sans', 'notée · cadre sans cartouche'], ['cadre', 'notée · cadre entier'], ['libre', 'libre (non notée)']].map(([v, l]) => `<option value="${v}" ${(p.exo.mep.note ? p.exo.mep.zone : 'libre') === v ? 'selected' : ''}>${l}</option>`).join('')}</select></label>` : ''}
@@ -479,9 +488,16 @@ function monterPage(el, remonter) {
           <span class="muted">Un type de trait choisi ci-dessus s'applique à la sélection.</span>
         </div>
         <div class="panel dao-piece" hidden>
-          <div class="dao-piece-t"><b class="dao-piece-nom"></b><button class="btn icon" type="button" data-act="fermer-piece" title="Fermer">${icone('croix')}</button></div>
+          <div class="dao-piece-t" title="Glisse ici pour déplacer la fenêtre"><b class="dao-piece-nom"></b>
+            <span class="dao-piece-z">
+              <button class="btn icon" type="button" data-pz="moins" title="Dézoomer">−</button>
+              <button class="btn icon" type="button" data-pz="plus" title="Zoomer">+</button>
+              <button class="btn icon" type="button" data-pz="ajuster" title="Revoir toute la pièce">⤢</button>
+              <button class="btn icon" type="button" data-pz="grand" title="Agrandir / réduire la fenêtre">⛶</button>
+              <button class="btn icon" type="button" data-act="fermer-piece" title="Fermer">${icone('croix')}</button>
+            </span></div>
           <div class="dao-piece-fig"></div>
-          <p class="muted">Perspective isométrique cotée (mm). Les 3 vues sont sur la feuille.</p>
+          <p class="muted dao-piece-aide">Molette ou 2 doigts : zoom · glisser : déplacer la pièce · coin en bas à droite : taille de la fenêtre · barre du haut : déplacer la fenêtre.</p>
         </div>
         <div class="dao-cadre-ecran"></div>
         </div>
@@ -646,13 +662,59 @@ function monterPage(el, remonter) {
     if (pc.ancien) {           // ancien exercice : pièce en cubes (vue 3D tournante) ou perspective du cours
       pan.querySelector('.dao-piece-nom').textContent = p.cartouche.titre || 'Pièce';
       const fig = pan.querySelector('.dao-piece-fig');
-      if (p.exo.vox) { fig.innerHTML = ''; monterPiece3D(fig, p.exo.vox, { rotation: true }); } else fig.innerHTML = svgSur(p.exo.persp || '');
-      pan.hidden = false; return;
+      if (p.exo.vox) { fig.innerHTML = ''; monterPiece3D(fig, p.exo.vox, { rotation: true }); pzVb = null; } else fig.innerHTML = svgSur(p.exo.persp || '');
+      pan.hidden = false; if (!p.exo.vox) zoomPiece(); return;
     }
     pan.querySelector('.dao-piece-nom').textContent = pc.nom;
     pan.querySelector('.dao-piece-fig').innerHTML = svgPerspective(pc, { largeur: 300 });
-    pan.hidden = false;
+    pan.hidden = false; zoomPiece();
   };
+  /* Fenêtre « Pièce » : zoom et déplacement dans la perspective (viewBox), fenêtre déplaçable et redimensionnable. */
+  let pzVb = null, pzVb0 = null;
+  const pzSvg = () => el.querySelector('.dao-piece-fig > svg');
+  const pzAppliquer = () => { const s = pzSvg(); if (s && pzVb) s.setAttribute('viewBox', pzVb.map((v) => Math.round(v * 100) / 100).join(' ')); };
+  function zoomPiece() {
+    const s = pzSvg(); if (!s) { pzVb = null; return; }
+    s.removeAttribute('width'); s.style.width = '100%'; s.style.height = '100%'; s.style.maxWidth = 'none';
+    s.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+    pzVb0 = (s.getAttribute('viewBox') || '0 0 100 100').split(/[ ,]+/).map(Number); pzVb = [...pzVb0];
+  }
+  const pzZoom = (f, cx = 0.5, cy = 0.5) => {
+    if (!pzVb) return;
+    const [x, y, w, h] = pzVb, nw = Math.min(Math.max(w * f, pzVb0[2] / 12), pzVb0[2] * 3), k = nw / w;
+    pzVb = [x + (w - nw) * cx, y + (h - h * k) * cy, nw, h * k]; pzAppliquer();
+  };
+  {
+    const pan = el.querySelector('.dao-piece'), fig = pan.querySelector('.dao-piece-fig'), barre = pan.querySelector('.dao-piece-t');
+    const rel = (ev) => { const r = pzSvg().getBoundingClientRect(); return [(ev.clientX - r.left) / r.width, (ev.clientY - r.top) / r.height]; };
+    fig.addEventListener('wheel', (ev) => { if (!pzVb) return; ev.preventDefault(); const [a, b] = rel(ev); pzZoom(ev.deltaY > 0 ? 1.15 : 1 / 1.15, a, b); }, { passive: false });
+    const doigts = new Map(); let dist0 = 0;
+    fig.addEventListener('pointerdown', (ev) => { if (!pzVb) return; fig.setPointerCapture(ev.pointerId); doigts.set(ev.pointerId, [ev.clientX, ev.clientY]); if (doigts.size === 2) { const [p1, p2] = [...doigts.values()]; dist0 = Math.hypot(p1[0] - p2[0], p1[1] - p2[1]); } });
+    fig.addEventListener('pointermove', (ev) => {
+      if (!doigts.has(ev.pointerId) || !pzVb) return;
+      const prec = doigts.get(ev.pointerId); doigts.set(ev.pointerId, [ev.clientX, ev.clientY]);
+      const r = pzSvg().getBoundingClientRect(), echelle = Math.max(pzVb[2] / r.width, pzVb[3] / r.height);
+      if (doigts.size === 1) { pzVb[0] -= (ev.clientX - prec[0]) * echelle; pzVb[1] -= (ev.clientY - prec[1]) * echelle; pzAppliquer(); }
+      else if (doigts.size === 2) { const [p1, p2] = [...doigts.values()], d = Math.hypot(p1[0] - p2[0], p1[1] - p2[1]); if (dist0 && d) { pzZoom(dist0 / d, ((p1[0] + p2[0]) / 2 - r.left) / r.width, ((p1[1] + p2[1]) / 2 - r.top) / r.height); dist0 = d; } }
+    });
+    const lacher = (ev) => { doigts.delete(ev.pointerId); dist0 = 0; };
+    fig.addEventListener('pointerup', lacher); fig.addEventListener('pointercancel', lacher);
+    pan.addEventListener('click', (ev) => {
+      const b = ev.target.closest('[data-pz]'); if (!b) return;
+      if (b.dataset.pz === 'plus') pzZoom(1 / 1.3); else if (b.dataset.pz === 'moins') pzZoom(1.3);
+      else if (b.dataset.pz === 'ajuster') { if (pzVb0) { pzVb = [...pzVb0]; pzAppliquer(); } }
+      else { const z = pan.parentElement.getBoundingClientRect(), g = !pan.classList.contains('grand'); pan.classList.toggle('grand', g); pan.style.width = g ? `${Math.round(z.width * 0.6)}px` : ''; pan.style.height = g ? `${Math.round(Math.min(z.height * 0.8, 640))}px` : ''; if (g) { pan.style.left = ''; pan.style.top = ''; pan.style.right = '8px'; } }
+    });
+    // déplacer la fenêtre par sa barre de titre (dans la zone de dessin)
+    barre.addEventListener('pointerdown', (ev) => {
+      if (ev.target.closest('button')) return;
+      ev.preventDefault(); barre.setPointerCapture(ev.pointerId);
+      const z = pan.parentElement.getBoundingClientRect(), r0 = pan.getBoundingClientRect(), dx = ev.clientX - r0.left, dy = ev.clientY - r0.top;
+      const bouger = (e) => { pan.style.right = 'auto'; pan.style.left = `${Math.max(0, Math.min(z.width - 60, e.clientX - z.left - dx))}px`; pan.style.top = `${Math.max(0, Math.min(z.height - 40, e.clientY - z.top - dy))}px`; };
+      const fin = () => { barre.removeEventListener('pointermove', bouger); barre.removeEventListener('pointerup', fin); barre.removeEventListener('pointercancel', fin); };
+      barre.addEventListener('pointermove', bouger); barre.addEventListener('pointerup', fin); barre.addEventListener('pointercancel', fin);
+    });
+  }
   /** Correction de la cotation : positions non situées (tirets rouges), Ø manquants, cotes fausses / en double / surabondantes. */
   const svgCorrCotes = (pc, r) => {
     const b = boitePiece(pc), [ox, oy] = p.exo.o, W = b.x1 - b.x0, H = b.z1 - b.z0, D = 3;
@@ -705,7 +767,7 @@ function monterPage(el, remonter) {
     } else {
       const pl = placementVues(p, pc);
       const sol = vues(pc, pl.o, pl.ecart);
-      if (voirSolution) svg += [...sol.face, ...sol.dessus, ...sol.gauche].map((e) => svgEntite(p, e, 'dao-cor-sol')).join('');
+      if (voirSolution) svg += [...sol.face, ...sol.dessus, ...sol.gauche, ...(p.exo.mode === 'completer' ? repereSol(pc, { ...p.exo, o: pl.o, ecart: pl.ecart }) : [])].map((e) => svgEntite(p, e, 'dao-cor-sol')).join('');
       if (res?.mep && res.mep.ok < 4) {   // emplacement attendu des 3 vues (cadres en tirets rouges)
         const c = vues(pc, res.mep.a.o, res.mep.a.ecart).cadres;
         svg += Object.values(c).flatMap((q) => [[q.x, q.y, q.x + q.w, q.y], [q.x + q.w, q.y, q.x + q.w, q.y + q.h], [q.x + q.w, q.y + q.h, q.x, q.y + q.h], [q.x, q.y + q.h, q.x, q.y]])
@@ -745,6 +807,12 @@ function monterPage(el, remonter) {
       minuteur = setInterval(tic, 1000); tic();
     }
     el.querySelector('.dao-exobar').addEventListener('click', (ev) => {
+      const rb = ev.target.closest('[data-replier]');
+      if (rb) {
+        const bar = el.querySelector('.dao-exobar'), r = !bar.classList.contains('replie');
+        bar.classList.toggle('replie', r); rb.textContent = r ? '▸' : '▾'; stockage.ecrire('dao.consigneReduite', r);
+        window.dispatchEvent(new Event('resize')); return;
+      }
       const b = ev.target.closest('[data-exo]'); if (!b || !pc) return;
       if (b.dataset.exo === 'piece') { montrerPiece(pc); return; }
       if (b.dataset.exo === 'rendre') {
