@@ -7,7 +7,7 @@
    Quand on ajoute un fichier JS / CSS : l'ajouter dans FICHIERS_APP.
    ===================================================================== */
 
-const CACHE = 'revisions-v87';
+const CACHE = 'revisions-v88';
 
 const FICHIERS_APP = [
   './',
