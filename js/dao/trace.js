@@ -32,6 +32,7 @@ export const STYLES = {
   n: { nom: 'Fin', titre: 'Trait fin : construction, cotes (N)', touche: 'n' },
   c: { nom: 'Interrompu', titre: 'Trait interrompu fin : arête cachée (C)', touche: 'c' },
   a: { nom: 'Mixte', titre: 'Trait mixte fin : axe (A)', touche: 'a' },
+  b: { nom: 'Repère', titre: 'Trait orange : arête repérée sur la perspective (B)', touche: 'b' },
 };
 export const OUTILS = {
   main: { nom: 'Déplacer', touche: 'm', aide: 'Glisse pour déplacer la feuille, molette ou 2 doigts pour zoomer.' },
