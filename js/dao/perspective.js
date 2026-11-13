@@ -25,8 +25,8 @@ export function flecheFace(s, e) {
   const b1 = [e[0] - u[0] * 7 + n[0] * 3, e[1] - u[1] * 7 + n[1] * 3], b2 = [e[0] - u[0] * 7 - n[0] * 3, e[1] - u[1] * 7 - n[1] * 3];
   const c = '#c2410c';
   const svg = `<path d="M${f2(s[0])} ${f2(s[1])}L${f2(e[0] - u[0] * 6)} ${f2(e[1] - u[1] * 6)}" stroke="${c}" stroke-width="1.8" fill="none"/><path d="M${f2(e[0])} ${f2(e[1])}L${f2(b1[0])} ${f2(b1[1])}L${f2(b2[0])} ${f2(b2[1])}Z" fill="${c}"/>`
-    + `<text x="${f2(s[0] + 2)}" y="${f2(s[1] + 11)}" font-size="9.5" font-weight="700" font-family="Segoe UI,Arial,sans-serif" fill="${c}">Vue de face</text>`;
-  return { svg, pts: [s, e, [s[0] + 60, s[1] + 14]] };
+    + `<text x="${f2(s[0] - 3)}" y="${f2(s[1] + 12)}" text-anchor="end" font-size="9.5" font-weight="700" font-family="Segoe UI,Arial,sans-serif" fill="${c}">VF</text>`;
+  return { svg, pts: [s, e, [s[0] - 18, s[1] + 14]] };
 }
 
 export function svgPerspective(piece, { cotes = true, largeur = 420 } = {}) {
