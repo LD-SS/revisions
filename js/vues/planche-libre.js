@@ -964,11 +964,10 @@ function monterPage(el, remonter) {
   const plein = (on) => {
     bloc.classList.toggle('dao-plein', on);
     document.body.classList.toggle('pl-plein-ouvert', on);
-    el.querySelector('[data-act=plein] span').textContent = on ? 'Quitter' : 'Plein écran';
+    { const b = el.querySelector('[data-act=plein]'); if (b) { b.title = on ? 'Quitter le plein écran' : 'Plein écran'; b.setAttribute('aria-label', b.title); const s = b.querySelector('span'); if (s) s.textContent = on ? 'Quitter' : 'Plein écran'; } }
     requestAnimationFrame(() => feuille.ajuster());
   };
-  const echap = (ev) => { if (ev.key === 'Escape' && bloc.classList.contains('dao-plein')) plein(false); };
-  window.addEventListener('keydown', echap);
+  // Échap ne quitte plus le plein écran (il ramène à l'outil Sélection) : on quitte par le bouton « Quitter »
 
   el.querySelector('[data-pl]').addEventListener('change', (ev) => { stockage.ecrire(CLE_COURANTE, ev.target.value); remonter(); });
   el.querySelectorAll('[data-pla]').forEach((b) => b.addEventListener('click', () => {
@@ -996,5 +995,5 @@ function monterPage(el, remonter) {
   });
 
   // appelé par le routeur avant de quitter la page
-  return () => { clearInterval(minuteur); document.removeEventListener('pointerdown', horsMenu); feuille.detruire(); window.removeEventListener('keydown', echap); window.removeEventListener('keydown', touches); document.body.classList.remove('pl-plein-ouvert'); };
+  return () => { clearInterval(minuteur); document.removeEventListener('pointerdown', horsMenu); feuille.detruire(); window.removeEventListener('keydown', touches); document.body.classList.remove('pl-plein-ouvert'); };
 }
