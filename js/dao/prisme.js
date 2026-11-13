@@ -335,13 +335,23 @@ export function svgPrisme(pc, { cotes = true, largeur = 420, arete = true, flech
     const serre = (a) => a.some((v, k) => k && v - a[k - 1] < 2 * (nb(v - a[k - 1]).length * 2.6 + 0.8) + 1);
     // longueurs : sous la face avant ; si la fin de la chaîne (à partir d'un gradin du profil de face) est serrée, cette fin au-dessus de la pièce
     {
-      const vs = uniq(xs);
+      let vs = uniq(xs);
+      const Pp = pc.P ?? pc.prof;
+      // formes vues seulement de dessus (encoche du profil fxy) trop étroites pour la chaîne du bas : cotées au-dessus, le long de l'arête arrière
+      const deFace = new Set([...pc.fxz.map((p) => r3(p[0])), ...pc.trous.filter((t) => t.axe !== 'x').map((t) => r3(t.x))]);
+      const seulDessus = vs.filter((v, k) => k && !deFace.has(v) && v - vs[k - 1] < 2 * (nb(v - vs[k - 1]).length * 2.6 + 0.8) + 1);
+      if (seulDessus.length) {
+        const haute = uniq([...seulDessus, ...seulDessus.map((v) => vs[vs.indexOf(v) - 1])]);
+        const zc = Math.max(...haute.map((x) => haut(pc.fxz, x))) + 10;
+        chaine(haute, (x) => [x, Pp, haut(pc.fxz, x)], (x) => [0, 0, zc - haut(pc.fxz, x)], true, true);
+        vs = vs.filter((v) => !seulDessus.includes(v));
+      }
       const enBas = new Set([...pc.fxz.filter((p) => p[1] === 0).map((p) => r3(p[0])), ...pc.fxy.map((p) => r3(p[0])), ...pc.trous.filter((t) => t.axe !== 'x').map((t) => r3(t.x))]);
       const i = vs.findIndex((v) => !enBas.has(v));
       if (i > 0 && serre(vs.slice(i - 1))) {
         const fin = vs.slice(i - 1), zc = Math.max(...fin.map((x) => haut(pc.fxz, x))) + 10;
         chaine(vs.slice(0, i), (x) => [x, 0, 0], [0, 0, -14]);
-        const Pp = pc.P ?? pc.prof;   // le long de l'arête arrière : la ligne de cote reste hors de la pièce
+        // le long de l'arête arrière : la ligne de cote reste hors de la pièce
         chaine(fin, (x) => [x, Pp, haut(pc.fxz, x)], (x) => [0, 0, zc - haut(pc.fxz, x)], true, true);
       } else chaine(vs, (x) => [x, 0, 0], [0, 0, -14]);
     }
