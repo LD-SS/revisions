@@ -92,7 +92,7 @@ function textes(ex) {
   } else {
     exercice.push('Reconnaître les vues dessinées.', `Terminer la ${liste(contours)} (arêtes vues, arêtes cachées, axes).`);
   }
-  if (ex.piece.arete) exercice.push('Repasser en rouge, sur toutes les vues, l\'arête repérée sur la perspective.');
+  if (ex.piece.arete) exercice.push('Repasser en orange, sur toutes les vues, l\'arête repérée sur la perspective.');
   return { donnees, exercice };
 }
 
@@ -322,11 +322,12 @@ const EX = [
       reperes: [{ p: [30, 5, 40], txt: 'Ø30 / Ø16' }] }) },
 ];
 
-EX.sort((a, b) => a.n - b.n);
+// numérotation suivie par série (ordre des TYPES), puis par difficulté ; l'identifiant garde l'ancien numéro (progression enregistrée)
+{ const rang = Object.keys(TYPES); EX.sort((a, b) => rang.indexOf(a.type) - rang.indexOf(b.type) || a.n - b.n); EX.forEach((ex, i) => { ex.old = ex.n; ex.n = i + 1; }); }
 for (const ex of EX) {
   const pre = ARETES[ex.piece.id];   // arêtes précalculées : l'Atelier s'affiche tout de suite
   if (pre) ex.piece._a = pre.map((r) => ({ a: r.slice(0, 3), b: r.slice(3, 6), vis: [...r[6]].map((c) => c === '1') }));
-  const t = textes(ex); ex.donnees = t.donnees; ex.exercice = [...t.exercice, ...(ex.plusTxt || [])]; ex.id = `c${ex.n}`; ex.mode = ex.mode || 'completer'; ex.niveau = ex.type === 'rectangle' ? 2 : 1; ex.titreCourt = (ex.titre.charAt(0) + ex.titre.slice(1).toLowerCase()).replace(/ en t /, ' en T ').replace('(chc)', '(CHC)'); }
+  const t = textes(ex); ex.donnees = t.donnees; ex.exercice = [...t.exercice, ...(ex.plusTxt || [])]; ex.id = `c${ex.old}`; ex.mode = ex.mode || 'completer'; ex.niveau = ex.type === 'rectangle' ? 2 : 1; ex.titreCourt = (ex.titre.charAt(0) + ex.titre.slice(1).toLowerCase()).replace(/ en t /, ' en T ').replace('(chc)', '(CHC)'); }
 export const CAHIER = EX;
 
 /** Séries de l'Atelier (exercices regroupés par type). */
