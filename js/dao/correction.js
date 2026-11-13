@@ -37,7 +37,7 @@ export function corriger(solution, eleve, tol = TOL) {
   const traits = eleve.filter((e) => (e.t === 'l' || e.t === 'c' || e.t === 'a') && e.s !== 'n');
   // traits fins (s = 'n') : comptés seulement pour les solutions en trait fin (filetages, constructions) et jamais « en trop »
   const fins = eleve.filter((e) => (e.t === 'l' || e.t === 'c' || e.t === 'a') && e.s === 'n' && !e.mep && !e.don);
-  const parType = { v: traits.filter((e) => e.s === 'v'), c: traits.filter((e) => e.s === 'c'), a: traits.filter((e) => e.s === 'a'), n: fins };
+  const parType = { v: traits.filter((e) => e.s === 'v'), c: traits.filter((e) => e.s === 'c'), a: traits.filter((e) => e.s === 'a'), b: traits.filter((e) => e.s === 'b'), n: fins };
   const res = { ok: [], type: [], manquants: [], trop: [] };
   let total = 0, gagne = 0;
   for (const s of solution) {
