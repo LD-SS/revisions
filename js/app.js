@@ -15,7 +15,7 @@
 import { esc, toast, stockage } from './utils.js';
 import { icone } from './icones.js';
 import { nomCourt, styleMatiere } from './matieres.js';
-import { chargerIndex, matieres, chargerChapitre, chargerSchemas, chargerEvaluations } from './store.js';
+import { chargerIndex, rafraichirIndex, matieres, chargerChapitre, chargerSchemas, chargerEvaluations } from './store.js';
 import { vueAccueil } from './vues/accueil.js';
 import { vueMatiere } from './vues/matiere.js';
 import { vueChapitre } from './vues/chapitre.js';
@@ -28,7 +28,7 @@ import { majBoutonProposer, viderAttente } from './proposer.js';
 import { demarrerSynchro, adopterCompte } from './synchro.js';
 import { exigerAcces, ecranPerte } from './vues/acces.js';
 
-const VERSION = '1.42.7 (perspectives : toutes les entrées de trou vues)';
+const VERSION = '1.42.8 (contenu relu sur le serveur)';
 const vue = document.getElementById('vue');
 let nettoyer = null; // fonction fournie par la page affichée, appelée avant d'en changer
 
@@ -177,6 +177,16 @@ async function demarrer() {
     if (sur && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName || '')) router();
   });
   demarrerSynchro();
+  // Appli restée ouverte (téléphone) : au retour, on relit la liste des chapitres (au plus toutes les 2 min).
+  let vuIndex = Date.now();
+  document.addEventListener('visibilitychange', async () => {
+    if (document.visibilityState !== 'visible' || Date.now() - vuIndex < 120000) return;
+    vuIndex = Date.now();
+    if (!(await rafraichirIndex())) return;
+    const h = location.hash;
+    const sur = h === '' || h === '#/' || /^#\/m\/[^/]+(\/schemas)?$/.test(h) || /^#\/parametres$/.test(h);
+    if (sur && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName || '')) router();
+  });
   // Administrateur : pastille du nombre de demandes (inscriptions, appareils) sur l'onglet Membres.
   if (window.__admin) compte.surveillerDemandes((n) => { window.__nbDemandes = n; rendreOnglets(routeAffichee); });
   // Hors ligne : une fois par jour, tout le contenu est copié sur l'appareil (en arrière-plan).
