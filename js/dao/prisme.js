@@ -268,15 +268,23 @@ export function svgPrisme(pc, { cotes = true, largeur = 420, arete = true, flech
     corps += `<path d="M${f2(p[0])} ${f2(p[1])}L${f2(q[0])} ${f2(q[1])}" ${trait}/>`;
   }
   const o = outils(pc);
-  // trous : ellipse d'entrée si elle est vue
+  // une ellipse par face d'entrée vue (ex. chape : le trou traverse les deux montants → deux ellipses)
+  const vue = (p) => { for (let k = 1; k <= 120; k++) { const d = k * 0.5; if (o.dedans(p[0] - d, p[1] - d, p[2] + d)) return false; } return true; };
   for (const t of pc.trous) {
-    const r = t.d / 2, pts = [];
-    let c;
-    if (t.axe === 'y') { const iv = o.selonY(t.x, t.z); if (!iv.length) continue; c = [t.x, iv[0][0], t.z]; for (let k = 0; k < 48; k++) { const a = (k / 48) * 2 * Math.PI; pts.push(pr([t.x + r * Math.cos(a), c[1], t.z + r * Math.sin(a)])); } }
-    else if (t.axe === 'z') { const iv = o.selonZ(t.x, t.y); if (!iv.length) continue; c = [t.x, t.y, iv[iv.length - 1][1]]; for (let k = 0; k < 48; k++) { const a = (k / 48) * 2 * Math.PI; pts.push(pr([t.x + r * Math.cos(a), t.y + r * Math.sin(a), c[2]])); } }
-    else { const iv = o.selonX(t.y, t.z); if (!iv.length) continue; c = [iv[0][0], t.y, t.z]; for (let k = 0; k < 48; k++) { const a = (k / 48) * 2 * Math.PI; pts.push(pr([c[0], t.y + r * Math.cos(a), t.z + r * Math.sin(a)])); } }
-    corps += `<path d="M${pts.map((p) => `${f2(p[0])} ${f2(p[1])}`).join('L')}Z" fill="#e9eef5" ${trait}/>`;
-    t._c = c;
+    const r = t.d / 2;
+    const iv = t.axe === 'y' ? o.selonY(t.x, t.z) : t.axe === 'z' ? o.selonZ(t.x, t.y) : o.selonX(t.y, t.z);
+    const faces = t.axe === 'y' ? iv.map((v) => [t.x, v[0], t.z]) : t.axe === 'z' ? iv.map((v) => [t.x, t.y, v[1]]).reverse() : iv.map((v) => [v[0], t.y, t.z]);
+    t._c = undefined;
+    faces.forEach((c, n) => {
+      if (n && !vue(c)) return;
+      const pts = [];
+      for (let k = 0; k < 48; k++) {
+        const a = (k / 48) * 2 * Math.PI, ca = r * Math.cos(a), sa = r * Math.sin(a);
+        pts.push(pr(t.axe === 'y' ? [c[0] + ca, c[1], c[2] + sa] : t.axe === 'z' ? [c[0] + ca, c[1] + sa, c[2]] : [c[0], c[1] + ca, c[2] + sa]));
+      }
+      corps += `<path d="M${pts.map((p) => `${f2(p[0])} ${f2(p[1])}`).join('L')}Z" fill="#e9eef5" ${trait}/>`;
+      if (!t._c) t._c = c;
+    });
   }
   // arête repérée
   if (arete && pc.arete) {
