@@ -1184,3 +1184,16 @@ label.cgu-ok input{margin-top:3px}
 .dao-consigne{flex-basis:100%;line-height:1.45}
 .dao-consigne ul,.dao-consigne ol{margin:4px 0 2px;padding-left:22px}
 .dao-consigne li{margin:1px 0}
+
+/* Signaler une erreur : capture + annotation */
+.sig-fond{position:fixed;inset:0;z-index:95;background:rgba(10,14,20,.6);display:flex;align-items:center;justify-content:center;padding:12px}
+.sig{background:var(--panel);border:1px solid var(--border);border-radius:12px;width:100%;max-width:760px;max-height:100%;overflow:auto;padding:12px 14px;box-shadow:0 10px 40px rgba(0,0,0,.35);display:flex;flex-direction:column;gap:8px}
+.sig-tete,.sig-choix,.sig-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.sig .grow{flex:1}
+.sig-tete svg{width:18px;height:18px;vertical-align:-3px;color:var(--bad)}
+.sig-ou{margin:0;font-size:13px}.sig-aide{margin:0;font-size:13px}
+.sig-choix .btn.actif{border-color:var(--accent);color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,transparent)}
+.sig-zone{border:1px solid var(--border);border-radius:8px;background:var(--bg);min-height:120px;max-height:52vh;overflow:auto;display:flex;align-items:flex-start;justify-content:center}
+.sig-toile{width:100%;height:auto;touch-action:none;cursor:crosshair;display:block}
+.sig-lab{display:flex;flex-direction:column;gap:4px;font-size:14px;font-weight:600}
+.sig-lab textarea{font:inherit;font-weight:400;padding:8px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);resize:vertical}
+@media (max-width:640px){.sig-fond{padding:0}.sig{border-radius:0;height:100%}}
