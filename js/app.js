@@ -28,7 +28,7 @@ import { majBoutonProposer, viderAttente } from './proposer.js';
 import { demarrerSynchro, adopterCompte } from './synchro.js';
 import { exigerAcces, ecranPerte } from './vues/acces.js';
 
-const VERSION = '1.42.6 (perspectives : axe des trous coté depuis la base)';
+const VERSION = '1.42.7 (perspectives : toutes les entrées de trou vues)';
 const vue = document.getElementById('vue');
 let nettoyer = null; // fonction fournie par la page affichée, appelée avant d'en changer
 
