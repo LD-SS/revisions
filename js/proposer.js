@@ -56,6 +56,8 @@ async function capturer(cible) {
   return html2canvas(el, opts);
 }
 
+const partageFichiers = () => { try { return !!navigator.canShare?.({ files: [new File([''], 'x.png', { type: 'image/png' })] }); } catch { return false; } };
+
 /* ---------- fenêtre ---------- */
 export function ouvrirProposition() {
   document.querySelector('.sig-fond')?.remove();
@@ -76,9 +78,11 @@ export function ouvrirProposition() {
       <p class="muted sig-aide">${icone('crayon')} Entoure l'erreur au doigt ou à la souris (trait rouge).</p>
       <label class="sig-lab">Ce qui ne va pas
         <textarea rows="3" placeholder="Ex. : la réponse b) devrait être 4,31 m, pas 4,13 m."></textarea></label>
+      <p class="muted sig-note">Destinataire : <b>${esc(CONFIG.admin)}</b></p>
       <div class="sig-actions"><span class="grow"></span>
         <button class="btn" data-s="fermer">Annuler</button>
-        <button class="btn primary" data-s="envoyer">${icone('check')} Envoyer</button></div>
+        <button class="btn${partageFichiers() ? '' : ' primary'}" data-s="mail" title="Ouvre ta messagerie avec l'adresse et le message déjà remplis ; la capture est téléchargée, à joindre">${icone('page')} Par e-mail</button>
+        ${partageFichiers() ? `<button class="btn primary" data-s="partager" title="Partage la capture jointe (Gmail, Mail…) ; l'adresse est copiée, à coller dans « À »">${icone('check')} Partager avec la capture</button>` : ''}</div>
     </div>`;
   document.body.appendChild(fond);
   const zone = fond.querySelector('.sig-zone');
@@ -120,18 +124,20 @@ export function ouvrirProposition() {
   }
   const imageBlob = () => new Promise((ok) => (toile ? toile.toBlob(ok, 'image/png') : ok(null)));
 
-  async function envoyer() {
+  async function envoyer(mode) {
     const message = txt.value.trim();
     const sujet = `Révisions — erreur signalée (${ou})`.slice(0, 180);
     const corps = `Endroit : ${ou}\nLien : ${location.href}\nVersion : ${window.__version || ''}\n\nCe qui ne va pas :\n${message || '(à compléter)'}\n`;
     const blob = await imageBlob();
     const nom = `erreur-revisions-${new Date().toISOString().slice(0, 16).replace(/[:T]/g, '-')}.png`;
     const fichier = blob ? new File([blob], nom, { type: 'image/png' }) : null;
-    // 1) partage natif avec la capture jointe (téléphone, Windows récent…)
-    if (fichier && navigator.canShare?.({ files: [fichier] })) {
+    // 1) partage natif avec la capture jointe (téléphone, Windows récent…) : le partage ne peut pas remplir
+    //    le destinataire, alors l'adresse est copiée dans le presse-papiers (à coller dans « À »)
+    if (mode === 'partager' && fichier && navigator.canShare?.({ files: [fichier] })) {
+      try { await navigator.clipboard?.writeText(CONFIG.admin); toast(`Adresse copiée : colle-la dans « À » (${CONFIG.admin})`, 7000); } catch { /* presse-papiers refusé */ }
       try {
-        await navigator.share({ title: sujet, text: `À : ${CONFIG.admin}\n${sujet}\n\n${corps}`, files: [fichier] });
-        fermer(); toast('Merci pour ton signalement !'); return;
+        await navigator.share({ title: sujet, text: `À envoyer à : ${CONFIG.admin}\n${sujet}\n\n${corps}`, files: [fichier] });
+        fermer(); return;
       } catch (e) { if (e?.name === 'AbortError') return; }
     }
     // 2) sinon : téléchargement de la capture + messagerie pré-remplie
@@ -154,7 +160,7 @@ export function ouvrirProposition() {
     if (s === 'fermer') fermer();
     else if (s === 'exo' || s === 'ecran') prendre(s);
     else if (s === 'effacer' && base && dessin) dessin.drawImage(base, 0, 0);
-    else if (s === 'envoyer') envoyer();
+    else if (s === 'partager' || s === 'mail') envoyer(s);
   });
   prendre('exo');
 }
