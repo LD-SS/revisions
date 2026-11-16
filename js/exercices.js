@@ -113,6 +113,8 @@ export function lecteurExercices(conteneur, tous, options = {}) {
     monter();
   }
 
+  // Légende des schémas de correction en couleurs (trigonométrie : côtés vus depuis l'angle utilisé)
+  const LEGENDE_TRIGO = '<b class="leg-opp">rouge</b> = côté opposé · <b class="leg-adj">bleu</b> = adjacent · <b class="leg-hyp">vert</b> = hypoténuse · <b>?</b> = ce qu\'on cherche';
   const imageOk = (x) => typeof x === 'string' && /^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(x);
 
   function carte(e, t) {
@@ -131,6 +133,7 @@ export function lecteurExercices(conteneur, tous, options = {}) {
           <div class="ex-step rep"><span class="ex-rep">${icone('check')} Réponse</span>${texte(it.r)}</div>
           ${avecDev[i] ? (ouvert
             ? `<div class="ex-dev"><div class="ex-dev-t">Développement du calcul <button class="btn ex-dev-b" data-action="dev" data-i="${i}" title="Masquer le développement">Masquer</button></div>
+                ${imageOk(it.fig) ? `<figure class="fig ex-img ex-fig-dev"><img src="${it.fig}" alt="Schéma de la correction"><figcaption>${it.figLeg ? esc(it.figLeg) : LEGENDE_TRIGO}</figcaption></figure>` : ''}
                 ${it.etapes.map((x, k) => `<div class="ex-step"><span class="ex-num">${k + 1}</span><div>${texte(x)}</div></div>`).join('')}</div>`
             : `<button class="btn ex-dev-b" data-action="dev" data-i="${i}">${icone('fleche-d')} Voir le développement</button>`) : ''}
         </div></div>`;
