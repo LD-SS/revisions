@@ -203,8 +203,13 @@ const idContenu = (chemin) => chemin.replace(/^\.?\//, '').replaceAll('/', '|');
 export async function lireContenu(chemin) {
   const ref = doc(db, 'contenu', idContenu(chemin));
   let s;
-  try { s = await getDoc(ref); }
-  catch (e) { throw new Error(e?.code === 'permission-denied' ? 'Accès au contenu refusé : ton compte n\'est pas (ou plus) autorisé.' : `Contenu indisponible (${e?.code || e?.message}).`); }
+  // serveur d'abord (le cache disque de Firestore peut garder une ancienne version) ; cache seulement hors ligne
+  const refus = (e) => new Error(e?.code === 'permission-denied' ? 'Accès au contenu refusé : ton compte n\'est pas (ou plus) autorisé.' : `Contenu indisponible (${e?.code || e?.message}).`);
+  try { s = await getDocFromServer(ref); }
+  catch (e1) {
+    if (e1?.code === 'permission-denied') throw refus(e1);
+    try { s = await getDoc(ref); } catch (e2) { throw refus(e2); }
+  }
   if (!s.exists()) throw new Error(`Contenu introuvable : ${chemin}`);
   return JSON.parse(s.data().json);
 }
