@@ -30,6 +30,16 @@ export async function chargerIndex() {
   return index;
 }
 
+/** Relit l'index (nouveaux chapitres publiés pendant que l'appli restait ouverte). Renvoie true s'il a changé. */
+export async function rafraichirIndex() {
+  const ancien = index, avant = JSON.stringify(index);
+  index = null;
+  try { await chargerIndex(); } catch { index = ancien; return false; }
+  if (JSON.stringify(index) === avant) return false;
+  chapitresEnMemoire.clear();
+  return true;
+}
+
 export const matieres = () => index?.matieres || [];
 export const matiere = (mid) => matieres().find((m) => m.id === mid) || null;
 export const infoChapitre = (mid, cid) => matiere(mid)?.chapitres.find((c) => c.id === cid) || null;
