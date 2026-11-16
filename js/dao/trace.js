@@ -478,6 +478,22 @@ export function creerTraceur(o) {
     }
     const es = entites();
     for (const i of st.sel) if (es[i]) svg += svgEntite(p, es[i], 'dao-sel');
+    if (!e && !st.op && st.outil === 'selection' && st.sel.size) {   // longueur de la sélection
+      const g = [...st.sel].map((i) => es[i]).filter((x) => x && 'lca'.includes(x.t) && x.t.length === 1);
+      if (g.length === 1) {
+        const x = g[0];
+        info = mesure(x);
+        if (x.t === 'l') info += ` · ${arrondi(angleDe([x.x1, x.y1], [x.x2, x.y2]), 1)}°`;
+        const m = x.t === 'l' ? [(x.x1 + x.x2) / 2, (x.y1 + x.y2) / 2]
+          : x.t === 'c' ? [x.cx + x.r * 0.7071, x.cy + x.r * 0.7071]
+          : (() => { const a = ((x.a0 + x.a1) / 2) * Math.PI / 180; return [x.cx + x.r * Math.cos(a), x.cy + x.r * Math.sin(a)]; })();
+        const [bx, by] = versPapier(p, m[0], m[1]);
+        const h = t * 2.4;
+        svg += `<g class="dao-bulle"><rect x="${f2(bx + t)}" y="${f2(by - h * 2)}" width="${f2(info.length * h * 0.56 + h)}" height="${f2(h * 1.55)}" rx="${f2(h * 0.35)}"/><text x="${f2(bx + t + h * 0.5)}" y="${f2(by - h * 2 + h * 1.12)}" style="font-size:${f2(h)}px">${info.replace(/</g, '&lt;')}</text></g>`;
+      } else if (g.length > 1 && g.every((x) => x.t === 'l')) {
+        info = `${g.length} traits · total ${arrondi(g.reduce((s, x) => s + Math.hypot(x.x2 - x.x1, x.y2 - x.y1), 0), 2)} mm`;
+      }
+    }
     if (st.survol >= 0 && es[st.survol]) svg += svgEntite(p, es[st.survol], st.outil === 'gomme' || st.outil === 'ajuster' ? 'dao-gomme' : 'dao-sel');
     if (st.choix && es[st.choix.i]) svg += svgEntite(p, es[st.choix.i], 'dao-sel');
     if (st.op && st.pts.length && st.cur) {
