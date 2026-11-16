@@ -945,6 +945,8 @@ label.cgu-ok input{margin-top:3px}
 .syn-zoom svg{width:100%!important;height:100%!important;max-width:none;max-height:100%}
 .syn-zoom p{margin:6px 0 0;font-size:13px;color:var(--muted)}
 .ex-img-corr{margin:4px 0 14px}
+.ex-fig-dev{margin:4px 0 8px}.ex-fig-dev img{width:100%;max-width:640px;max-height:none}
+.ex-fig-dev .leg-opp{color:#c0392b}.ex-fig-dev .leg-adj{color:#1d5fd1}.ex-fig-dev .leg-hyp{color:#1a8a3a}
 .ex-img-corr img{max-width:min(100%,900px)!important;max-height:none!important}
 .ex-img-corr figcaption .vert{color:#15803d}.ex-img-corr figcaption .bleu{color:#1d4ed8}
 
