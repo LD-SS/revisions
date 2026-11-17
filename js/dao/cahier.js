@@ -92,7 +92,7 @@ function textes(ex) {
   } else {
     exercice.push('Reconnaître les vues dessinées.', `Terminer la ${liste(contours)} (arêtes vues, arêtes cachées, axes).`);
   }
-  if (ex.piece.arete) exercice.push('Repasser en orange, sur toutes les vues, l\'arête repérée sur la perspective.');
+  if (ex.piece.arete) exercice.push('Repasser en orange, sur toutes les vues, l\'arête repérée sur la perspective (là où elle est cachée, le trait interrompu est aussi accepté).');
   return { donnees, exercice };
 }
 
