@@ -182,8 +182,25 @@ function repereSol(pc, exo) {
     .filter((e) => Math.hypot(e.x2 - e.x1, e.y2 - e.y1) > 0.5);   // arête vue de bout : un point, rien à repasser
 }
 /** Correction « vues à compléter » : seulement ce qui n'était pas donné ; un trait redessiné sur une donnée n'est pas « en trop ». */
+// segment g entièrement posé sur des traits de `lignes` (à 0,3 mm près) ?
+function surTraits(g, lignes) {
+  const d = (p, l) => { const vx = l.x2 - l.x1, vy = l.y2 - l.y1, L2 = vx * vx + vy * vy || 1e-9; const k = Math.max(0, Math.min(1, ((p[0] - l.x1) * vx + (p[1] - l.y1) * vy) / L2)); return Math.hypot(p[0] - l.x1 - k * vx, p[1] - l.y1 - k * vy); };
+  for (let i = 0; i <= 10; i++) { const p = [g.x1 + (g.x2 - g.x1) * i / 10, g.y1 + (g.y2 - g.y1) * i / 10]; if (!lignes.some((l) => l.t === 'l' && d(p, l) < 0.3)) return false; }
+  return true;
+}
+/** Solution des vues + repère orange : exigé là où l'arête est VUE ; là où elle est cachée, le trait interrompu
+ *  attendu accepte aussi l'orange (les deux sont justes). */
+function solutionCompleter(pc, exo) {
+  const v = vues(pc, exo.o, exo.ecart);
+  const sol = [...v.face, ...v.dessus, ...v.gauche].map((e) => ({ ...e }));
+  for (const r of repereSol(pc, exo)) {
+    if (surTraits(r, sol.filter((e) => e.s === 'v'))) { sol.push(r); continue; }
+    for (const e of sol) if (e.t === 'l' && e.s === 'c' && surTraits(e, [r])) e.alt = 'b';
+  }
+  return sol;
+}
 function corrigerCompleter(pc, exo, es) {
-  const sol = (() => { const v = vues(pc, exo.o, exo.ecart); return [...v.face, ...v.dessus, ...v.gauche, ...repereSol(pc, exo)]; })();
+  const sol = solutionCompleter(pc, exo);
   const don = es.filter((e) => e.don);
   const couvert = (e) => e.s !== 'b' && don.length && corriger([{ ...e, tol: undefined }], don.map((g) => ({ ...g, s: e.s }))).ok.length === 1;
   const reste = sol.filter((s) => !couvert(s));
