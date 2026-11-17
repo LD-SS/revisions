@@ -45,7 +45,8 @@ export function corriger(solution, eleve, tol = TOL) {
     let pts = echantillons(s);
     if (axe) pts = pts.slice(Math.floor(pts.length * 0.15), Math.ceil(pts.length * 0.85));   // le milieu de l'axe suffit
     const t = axe ? tol * 2 : s.tol || tol;   // s.tol : tolérance propre (ex. ellipses par 4 arcs)
-    const memeType = pts.filter((p) => proche(p, parType[s.s] || [], t)).length / pts.length;
+    const pool = s.alt ? [...(parType[s.s] || []), ...(parType[s.alt] || [])] : (parType[s.s] || []);   // s.alt : autre trait accepté
+    const memeType = pts.filter((p) => proche(p, pool, t)).length / pts.length;
     const nimporte = memeType >= 0.9 ? memeType : pts.filter((p) => proche(p, s.s === 'n' ? [...traits, ...fins] : traits, t)).length / pts.length;
     const poids = longueur(s) * (axe ? 0.5 : 1);
     total += poids;
