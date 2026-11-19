@@ -229,7 +229,7 @@ const EX = [
       reperes: [{ p: [45, 0, 58], txt: 'Ø36 / Ø18' }, { p: [30, 15, 15], txt: 'nervure ép. 10', dx: -20, dy: -10 }] }) },
   { n: 56, titre: 'PORTE-GALET', type: 'intersection', matiere: 'Acier 42CrMo4', echelle: '1:1', donne: { face: 'contour', dessus: 'contour', gauche: 'complet' },
     piece: S('56', 'Porte-galet', { L: 60, P: 40, H: 60, corps: [Es('y', 0, 40, Rc(0, 0, 60, 15)), Es('x', 0, 12, [[0, 15], [40, 15], [40, 40], ...Ar(20, 40, 20, 0, 180)]), Es('x', 48, 60, [[0, 15], [40, 15], [40, 40], ...Ar(20, 40, 20, 0, 180)])], creux: [Es('x', -1, 61, Dq(20, 40, 6)), Es('z', -1, 16, Dq(30, 20, 5))],
-      cotes: [{ a: [0, 0, 60], b: [12, 0, 60], off: [0, 0, 10] }], reperes: [{ p: [0, 20, 60], txt: 'R20, Ø12', dx: -20 }, { p: [30, 20, 15], txt: 'Ø10' }] }) },
+      cotes: [{ a: [0, 0, 60], b: [12, 0, 60], off: [0, 0, 10] }], reperes: [{ p: [0, 20, 60], txt: 'R20, Ø12', dx: -20 }, { p: [30, 20, 15], txt: 'Ø10', dx: -46, dy: -24 }] }) },
   { n: 57, titre: 'RONDELLE PIVOTANTE', type: 'intersection', matiere: 'Acier S355', echelle: '1:1', donne: { face: 'contour', dessus: 'complet', gauche: 'contour' },
     plusTxt: ['Les droites sont tangentes aux arcs : les traits s\'arrêtent aux points de tangence (contours apparents).'],
     piece: S('57', 'Rondelle pivotante', { L: 87, P: 44, H: 18, corps: [Es('z', 0, 8, levier([22, 22], 22, [75, 22], 12)), Es('z', 8, 18, Dq(22, 22, 15))], creux: [Es('z', -1, 19, Dq(22, 22, 8)), Es('z', -1, 9, Dq(75, 22, 4))],
