@@ -513,6 +513,7 @@ function monterPage(el, remonter) {
         <div class="panel dao-piece" hidden>
           <div class="dao-piece-t" title="Glisse ici pour déplacer la fenêtre"><b class="dao-piece-nom"></b>
             <span class="dao-piece-z">
+              <button class="btn icon" type="button" data-act="retoucher" title="Retoucher la cotation de cette perspective (admin)" hidden>✎</button>
               <button class="btn icon" type="button" data-pz="moins" title="Dézoomer">−</button>
               <button class="btn icon" type="button" data-pz="plus" title="Zoomer">+</button>
               <button class="btn icon" type="button" data-pz="ajuster" title="Revoir toute la pièce">⤢</button>
@@ -690,6 +691,9 @@ function monterPage(el, remonter) {
     }
     pan.querySelector('.dao-piece-nom').textContent = pc.nom;
     pan.querySelector('.dao-piece-fig').innerHTML = svgPerspective(pc, { largeur: 300 });
+    const bt = pan.querySelector('[data-act="retoucher"]');
+    bt.hidden = !(window.__admin && pc.p3 && String(pc.id || '').startsWith('cah-'));
+    bt.onclick = () => { location.hash = `#/dessin/retouche/${encodeURIComponent(pc.id)}`; };
     pan.hidden = false; zoomPiece();
   };
   /* Fenêtre « Pièce » : zoom et déplacement dans la perspective (viewBox), fenêtre déplaçable et redimensionnable. */
