@@ -299,6 +299,7 @@ export function svgPrisme(pc, { cotes = true, largeur = 420, arete = true, flech
     const fl = (t, u) => { const n = [-u[1], u[0]], Lf = 5; return `<path d="M${f2(t[0])} ${f2(t[1])}L${f2(t[0] - u[0] * Lf + n[0] * 1.6)} ${f2(t[1] - u[1] * Lf + n[1] * 1.6)}L${f2(t[0] - u[0] * Lf - n[0] * 1.6)} ${f2(t[1] - u[1] * Lf - n[1] * 1.6)}Z" fill="#1d5fd1"/>`; };
     // off : décalage de la ligne de cote (vecteur, ou fonction de la valeur) ; dessus : chiffres serrés côté pièce, sinon à l'extérieur ;
     // exterieur : chiffres du côté extérieur de la ligne (chaîne posée au-dessus de la pièce)
+    const etiquettes = [];   // chiffres déjà posés : [x0, y0, x1, y1]
     const chaine = (vals, pt3, off0, dessus = true, exterieur = false) => {
       const offDe = typeof off0 === 'function' ? off0 : () => off0;
       const vs = [...new Set(vals.map(r3))].sort((p, q) => p - q);
@@ -324,14 +325,14 @@ export function svgPrisme(pc, { cotes = true, largeur = 420, arete = true, flech
         let nrm = [u[1], -u[0]]; const dehors = [Ao[0] - A[0], Ao[1] - A[1]];
         if (nrm[0] * dehors[0] + nrm[1] * dehors[1] < 0) nrm = [-nrm[0], -nrm[1]];   // nrm : vers l'extérieur (côté opposé à la pièce)
         const mil = [(Ao[0] + Bo[0]) / 2, (Ao[1] + Bo[1]) / 2];
-        if (Math.abs(u[0]) < 0.15) { const m = [Math.max(Ao[0], Bo[0]) + 3 + (niv ? 4 + (niv - 1) * 12 : 0), mil[1] + 3]; if (niv) cot += `<path d="M${f2(mil[0])} ${f2(mil[1])}H${f2(m[0] - 1)}" stroke="#1d5fd1" stroke-width="0.5" fill="none"/>`; cot += `<text x="${f2(m[0])}" y="${f2(m[1])}" font-size="9" font-family="Segoe UI,Arial,sans-serif" fill="#1d5fd1">${txt}</text>`; tous.push([m[0] + txt.length * 5.5, m[1]]); continue; }
+        if (Math.abs(u[0]) < 0.15) { const m = [Math.max(Ao[0], Bo[0]) + 3 + (niv ? 4 + (niv - 1) * 12 : 0), mil[1] + 3]; if (niv) cot += `<path d="M${f2(mil[0])} ${f2(mil[1])}H${f2(m[0] - 1)}" stroke="#1d5fd1" stroke-width="0.5" fill="none"/>`; cot += `<text x="${f2(m[0])}" y="${f2(m[1])}" font-size="9" font-family="Segoe UI,Arial,sans-serif" fill="#1d5fd1">${txt}</text>`; tous.push([m[0] + txt.length * 5.5, m[1]]); etiquettes.push([m[0], m[1] - 9, m[0] + txt.length * 5.5, m[1] + 2]); continue; }
         let ang = (Math.atan2(u[1], u[0]) * 180) / Math.PI; if (ang > 90) ang -= 180; if (ang < -90) ang += 180;
         // chiffre au-dessus de la ligne de cote (côté pièce) ; les chiffres serrés montent d'un rang, avec un petit trait de rappel
         const sg = exterieur || (niv && !dessus) ? 1 : -1, e2 = niv && !dessus && !exterieur ? 4 + niv * 8 : ecart;
         const m = [mil[0] + sg * nrm[0] * e2, mil[1] + sg * nrm[1] * e2];
         if (niv) cot += `<path d="M${f2(mil[0])} ${f2(mil[1])}L${f2(m[0] - sg * nrm[0] * (dessus || exterieur ? 1 : 6))} ${f2(m[1] - sg * nrm[1] * (dessus || exterieur ? 1 : 6))}" stroke="#1d5fd1" stroke-width="0.5" fill="none"/>`;
         cot += `<text x="${f2(m[0])}" y="${f2(m[1])}" transform="rotate(${f2(ang)} ${f2(m[0])} ${f2(m[1])})" text-anchor="middle" font-size="9" font-family="Segoe UI,Arial,sans-serif" fill="#1d5fd1">${txt}</text>`;
-        tous.push([m[0] - 8, m[1] - 10], [m[0] + 8, m[1] + 10]);
+        tous.push([m[0] - 8, m[1] - 10], [m[0] + 8, m[1] + 10]); etiquettes.push([m[0] - 8, m[1] - 10, m[0] + 8, m[1] + 3]);
       }
     };
     const xs = [...pc.fxz.map((p) => p[0]), ...pc.fxy.map((p) => p[0]), ...pc.trous.filter((t) => t.axe !== 'x').map((t) => t.x)];
@@ -372,21 +373,31 @@ export function svgPrisme(pc, { cotes = true, largeur = 420, arete = true, flech
       const dessusY = uniq([0, P, ...pc.fxy.map((p) => p[1]), ...pc.trous.filter((t) => t.axe !== 'y').map((t) => t.y)]);
       const coteY = uniq([0, P, ...pc.fyz.map((p) => p[0])]).filter((y) => y === 0 || y === P || !dessusY.includes(y));
       const zG = (y) => Math.min(haut(pc.fxz, 0), haut(pc.fyz, y)), zD = (y) => Math.min(haut(pc.fxz, pc.L), haut(pc.fyz, y));
-      if (coteY.length > 2) {
+      const Hmax = Math.max(...pc.fyz.map((p) => p[1]));
+      // petites marches du profil de côté du côté arrière (y = P, bord gauche de la face de bout) : cotées « au plus près »
+      // sur la face de bout, au niveau de l'encoche, flèches et chiffres vers l'extérieur ; le reste garde la chaîne du haut
+      let bout = [];
+      if (coteY.length > 2 && haut(pc.fxz, 0) >= Hmax - 1e-6) {
+        let k = coteY.length - 2; while (k > 0 && coteY[k] - coteY[k - 1] < 6) k--;
+        if (k < coteY.length - 2) bout = coteY.slice(k);
+      }
+      if (bout.length) {
+        const zG0 = (y) => haut(pc.fyz, y);
+        const zc0 = Math.max(...bout.map(zG0)) + 10;
+        chaine(bout, (y) => [0, y, zG0(y)], (y) => [0, 0, zc0 - zG0(y)], true, true);
+        const reste = coteY.slice(0, coteY.length - bout.length + 1);
+        if (reste.length > 2 || (reste.length === 2 && reste[1] < P)) {
+          const zc = Math.max(...reste.map(zD)) + 10;
+          chaine(reste, (y) => [pc.L, y, zD(y)], (y) => [0, 0, zc - zD(y)], true, true);
+        }
+      } else if (coteY.length > 2) {
         const zc = Math.max(...coteY.map(zD)) + 10;
         chaine(coteY, (y) => [pc.L, y, zD(y)], (y) => [0, 0, zc - zD(y)], true, true);
       }
       if (dessusY.length > 2 || coteY.length <= 2) chaine(dessusY, (y) => [0, y, 0], [-12, 0, -12], false);
     }
     const boites = [];   // libellés Ø déjà posés : [x0, y0, x1, y1]
-    for (const t of pc.trous) {
-      if (!t._c) continue;
-      // renvoi vers le haut à gauche (côté libre : les chaînes de cotes sont en bas, à droite et au-dessus de la face de droite)
-      const c = pr(t._c), q = [c[0] - 20, c[1] - 24];
-      cot += `<path d="M${f2(c[0])} ${f2(c[1])}L${f2(q[0])} ${f2(q[1])}h-16" ${fin} fill="none"/><text x="${f2(q[0] - 2)}" y="${f2(q[1] - 2)}" text-anchor="end" font-size="9" font-family="Segoe UI,Arial,sans-serif" fill="#1d5fd1">Ø${nb(t.d)}</text>`;
-      tous.push([q[0] - 24, q[1] - 12]);
-      boites.push([q[0] - 2 - (nb(t.d).length + 1) * 5.5, q[1] - 11, q[0] - 2, q[1]]);
-    }
+    const axeEt = [];    // chiffres des cotes d'axe : un renvoi ne les traverse pas
     // axe des trous selon x : cote « base → axe » derrière la pièce, à gauche, avec trait de rappel depuis le centre du trou
     {
       const Pp = pc.P ?? pc.prof; let kx = 0, ky = 0;
@@ -403,12 +414,32 @@ export function svgPrisme(pc, { cotes = true, largeur = 420, arete = true, flech
         const txt = nb(c3[2]), w = txt.length * 5.5, yT = (Ht[1] + Bt[1]) / 2 + 3;
         let gauche = parX;
         const xg = Math.min(Ht[0], Bt[0]) - 3, xd = Math.max(Ht[0], Bt[0]) + 3;
-        const gene = (x0, x1) => boites.some(([a0, b0, a1, b1]) => x0 < a1 && x1 > a0 && yT - 10 < b1 && yT > b0);
+        const gene = (x0, x1) => [...boites, ...etiquettes].some(([a0, b0, a1, b1]) => x0 < a1 && x1 > a0 && yT - 10 < b1 && yT > b0);
         if (gauche && gene(xg - w, xg)) gauche = false; else if (!gauche && gene(xd, xd + w)) gauche = true;
         const m = [gauche ? xg : xd, yT];
         cot += `<text x="${f2(m[0])}" y="${f2(m[1])}" text-anchor="${gauche ? 'end' : 'start'}" font-size="9" font-family="Segoe UI,Arial,sans-serif" fill="#1d5fd1">${txt}</text>`;
-        tous.push(Ht, Bt, H, B, [m[0] + (gauche ? -1 : 1) * w, m[1]]);
+        tous.push(Ht, Bt, H, B, [m[0] + (gauche ? -1 : 1) * w, m[1]]); { const bx = gauche ? [m[0] - w, m[1] - 9, m[0], m[1] + 2] : [m[0], m[1] - 9, m[0] + w, m[1] + 2]; etiquettes.push(bx); axeEt.push(bx); }
       }
+    }
+
+    if (fleche) {   // zone de la flèche VF : les libellés Ø l'évitent
+      const xm = pc.L / 2, zf = pc.H * 0.85, a = pr([xm, -30, zf]), b = pr([xm, -3, zf]);
+      boites.push([Math.min(a[0], b[0]) - 4, Math.min(a[1], b[1]) - 16, Math.max(a[0], b[0]) + 22, Math.max(a[1], b[1]) + 4]);
+    }
+    for (const t of pc.trous) {
+      if (!t._c) continue;
+      // renvoi vers le haut à gauche (côté libre : les chaînes de cotes sont en bas, à droite et au-dessus de la face de droite)
+      // haut-gauche d'abord ; si le libellé chevauche un chiffre déjà posé, on essaie d'autres directions
+      const c = pr(t._c), w = (nb(t.d).length + 1) * 5.5;
+      const essais = [[-20, -24, -1], [-30, -40, -1], [-26, 22, -1], [22, -26, 1], [26, 22, 1], [44, 40, 1], [-44, -52, -1], [-40, 34, -1], [34, -40, 1], [-56, -18, -1]];
+      const boite = ([dx, dy, sg]) => { const q = [c[0] + dx, c[1] + dy]; return sg < 0 ? [q[0] - 18 - w, q[1] - 11, q[0] - 2, q[1]] : [q[0] + 2, q[1] - 11, q[0] + 18 + w, q[1]]; };
+      const libre = (b) => ![...etiquettes, ...boites].some((e) => b[0] < e[2] + 6 && b[2] > e[0] - 6 && b[1] < e[3] + 3 && b[3] > e[1] - 3);
+      const coupe = ([dx, dy]) => { for (let k = 1; k < 10; k++) { const x = c[0] + dx * k / 10, y = c[1] + dy * k / 10; if ([...axeEt, ...boites].some((e) => x > e[0] - 1 && x < e[2] + 1 && y > e[1] - 1 && y < e[3] + 1)) return true; } return false; };
+      const [dx, dy, sg] = essais.find((e) => libre(boite(e)) && !coupe(e)) || essais.find((e) => libre(boite(e))) || essais[0];
+      const q = [c[0] + dx, c[1] + dy];
+      cot += `<path d="M${f2(c[0])} ${f2(c[1])}L${f2(q[0])} ${f2(q[1])}h${sg * 16}" ${fin} fill="none"/><text x="${f2(q[0] + sg * 2)}" y="${f2(q[1] - 2)}" text-anchor="${sg < 0 ? 'end' : 'start'}" font-size="9" font-family="Segoe UI,Arial,sans-serif" fill="#1d5fd1">Ø${nb(t.d)}</text>`;
+      const bx = boite([dx, dy, sg]); tous.push([bx[0], bx[1]], [bx[2], bx[3]]);
+      boites.push(bx);
     }
 
   }
