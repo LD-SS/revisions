@@ -7,7 +7,7 @@
    Quand on ajoute un fichier JS / CSS : l'ajouter dans FICHIERS_APP.
    ===================================================================== */
 
-const CACHE = 'revisions-v98';
+const CACHE = 'revisions-v99';
 
 const FICHIERS_APP = [
   './',
@@ -66,6 +66,8 @@ const FICHIERS_APP = [
   'js/dao/revolution.js',
   'js/dao/miseenpage.js',
   'js/dao/prisme.js',
+  'js/dao/retouches.js',
+  'js/vues/retouche.js',
   'js/dao/cahier.js',
   'js/dao/cahier-aretes.js',
   'js/dao/cahier-impr.js',
