@@ -4,6 +4,7 @@
    #/dessin              catalogue : séries d'exercices (js/dao/catalogue.js),
                          pièces au hasard, planche libre, mode examen
    #/dessin/libre[/…]    planche (js/vues/planche-libre.js)
+   #/dessin/retouche/<id> retouche de la cotation d'une perspective (admin, js/vues/retouche.js)
    L'ancien dessin sur grille (lecteur, pièces en cubes) a été retiré le 11/11/2026.
    ===================================================================== */
 
@@ -71,6 +72,7 @@ export async function vueAtelier(el, params = []) {
   if (!m) throw new Error('Matière « dessin » introuvable.');
   const [cid, eid] = params;
   if (cid === 'libre') return vuePlancheLibre(el, eid);
+  if (cid === 'retouche') return import('./retouche.js').then((x) => x.vueRetouche(el, eid));
   if (cid) { location.replace('#/dessin'); return null; }   // anciennes adresses (ancien dessin sur grille)
   razAncien();
 
