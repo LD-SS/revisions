@@ -28,7 +28,7 @@ import { majBoutonProposer, viderAttente } from './proposer.js';
 import { demarrerSynchro, adopterCompte } from './synchro.js';
 import { exigerAcces, ecranPerte } from './vues/acces.js';
 
-const VERSION = '1.43.4 (petites cotes serrées à l\'horizontale)';
+const VERSION = '1.44.0 (retouche des cotes des perspectives)';
 window.__version = VERSION;
 const vue = document.getElementById('vue');
 let nettoyer = null; // fonction fournie par la page affichée, appelée avant d'en changer
@@ -161,8 +161,12 @@ async function demarrer() {
   window.__admin = compte.estAdmin();
   adopterCompte(compte.utilisateur().uid);
   vue.innerHTML = '<div class="loading">Chargement…</div>';
+  // retouches de cotation des perspectives (admin) : pour tout le monde, sans bloquer le démarrage
+  const retouches = Promise.all([compte.lireContenu('content/dessin/retouches-cotes.json'), import('./dao/retouches.js')])
+    .then(([r, m]) => m.definirRetouches(r)).catch(() => {});
   try {
     await chargerIndex();
+    await Promise.race([retouches, new Promise((ok) => setTimeout(ok, 2500))]);
   } catch (err) {
     vue.innerHTML = `<div class="error-box"><b>Le contenu n'a pas pu être chargé.</b><br>${esc(err.message)}</div>
       <p class="muted">Sur ton PC, lance l'appli avec <code>lancer-local.bat</code> plutôt qu'en double-cliquant sur index.html.</p>`;
