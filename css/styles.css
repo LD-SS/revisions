@@ -1197,3 +1197,12 @@ label.cgu-ok input{margin-top:3px}
 .sig-lab{display:flex;flex-direction:column;gap:4px;font-size:14px;font-weight:600}
 .sig-lab textarea{font:inherit;font-weight:400;padding:8px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);resize:vertical}
 @media (max-width:640px){.sig-fond{padding:0}.sig{border-radius:0;height:100%}}
+/* retouche de la cotation des perspectives (admin) */
+.rt-tete{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}.rt-tete h2{margin:0;font-size:1.1rem}
+.rt-barre,.rt-prop{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:6px}.rt-sep{width:10px}
+.rt-prop input{font:inherit;padding:4px 6px;border:1px solid var(--line,#ccc);border-radius:6px}
+.rt-aide{margin:2px 0 6px;min-height:1.3em}
+.rt-zone{background:#fff;border:1px solid var(--line,#ccc);border-radius:8px;overflow:hidden}
+.rt-svg{display:block;width:100%;height:min(70vh,640px);touch-action:none;cursor:crosshair}
+.rt-obj{cursor:move}.rt-sel path,.rt-sel text{stroke:#e11d48!important}.rt-sel text{fill:#e11d48!important;stroke:none!important}.rt-sel path[fill="#1d5fd1"]{fill:#e11d48!important}
+.rt-prov{opacity:.6}
