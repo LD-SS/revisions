@@ -96,7 +96,7 @@ export async function vueRetouche(el, id) {
 
   const AIDES = {
     sel: 'Glisse un chiffre pour le déplacer, une ligne de cote pour la rapprocher ou l\'éloigner, un renvoi par son coude. Glisse le fond pour te déplacer, molette pour zoomer.',
-    cote: ['Cote : touche une arête (cotée en entier) ou clique le 1er point (sommet ou trou).', 'Cote : clique le 2e point.', 'Cote : place la ligne de cote (clic). Échap pour annuler.'],
+    cote: ['Cote : touche un 1er élément : arête, sommet ou centre de trou.', 'Cote : touche le 2e élément (sommet, trou, arête parallèle) ; après une arête, clic dans le vide = sa longueur.', 'Cote : place la ligne de cote (clic). Échap pour annuler.'],
     renvoi: ['Renvoi : clique le point visé (un trou par exemple).', 'Renvoi : clique la position du coude.'],
     texte: 'Texte : clique où placer le texte, puis tape-le dans la case « Texte ».',
     gomme: 'Gomme : touche une cote, un renvoi ou un texte pour le supprimer.',
@@ -131,7 +131,27 @@ export async function vueRetouche(el, id) {
     }
     return best;
   }
-  /** Objet sous le point (indice) et partie touchée. */
+  const pr3 = ([x, y, z]) => [(x - y) * C30, -((x + y) * S30 + z)];
+  const dist3 = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
+  /** Pied (3D) de la perpendiculaire menée de P sur la droite de l'arête [A, B]. */
+  const pied3 = ([A, B], P) => { const u = [0, 1, 2].map((k) => B.p3[k] - A.p3[k]), L2 = u.reduce((s, v) => s + v * v, 0), t = [0, 1, 2].reduce((s, k) => s + (P[k] - A.p3[k]) * u[k], 0) / L2; return [0, 1, 2].map((k) => A.p3[k] + t * u[k]); };
+  /** Deux points mesurés à partir de deux éléments (sommet / centre, arête), ou un message. */
+  function paire(e1, e2) {
+    if (!e1.arete && !e2.arete) return [e1, e2];
+    if (e1.arete && e2.arete) {
+      const u = [0, 1, 2].map((k) => e1.arete[1].p3[k] - e1.arete[0].p3[k]), v = [0, 1, 2].map((k) => e2.arete[1].p3[k] - e2.arete[0].p3[k]);
+      const cx = [u[1] * v[2] - u[2] * v[1], u[2] * v[0] - u[0] * v[2], u[0] * v[1] - u[1] * v[0]];
+      if (Math.hypot(...cx) > 1e-6 * Math.hypot(...u) * Math.hypot(...v)) return 'Ces deux arêtes ne sont pas parallèles : choisis un sommet.';
+      const m = [0, 1, 2].map((k) => (e2.arete[0].p3[k] + e2.arete[1].p3[k]) / 2), f = pied3(e1.arete, m);
+      return [{ p: pr3(f), p3: f }, { p: pr3(m), p3: m }];
+    }
+    const [ar, pt] = e1.arete ? [e1, e2] : [e2, e1];
+    if (!pt.p3) return 'Choisis un sommet ou le centre d\'un trou (accroche rouge).';
+    const f = pied3(ar.arete, pt.p3);
+    if (dist3(f, pt.p3) < 1e-6) return 'Ce point est sur l\'arête.';
+    return e1.arete ? [{ p: pr3(f), p3: f }, pt] : [pt, { p: pr3(f), p3: f }];
+  }
+  /** Objet sous le point (indice) et partie touchée. */  /** Objet sous le point (indice) et partie touchée. */
   function toucher(p) {
     const tol = 7 * echelle();
     let best = -1, bd = tol, partie = null;
@@ -166,8 +186,9 @@ export async function vueRetouche(el, id) {
     // tracé en cours
     if (outil === 'cote' && etape.length === 2 && survol) s += svgObjet(coteVers(etape[0].p, etape[1].p, survol, '…'), 'class="rt-prov"');
     if (outil === 'renvoi' && etape.length === 1 && survol) s += svgObjet({ t: 'r', c: etape[0].p, q: survol, sg: survol[0] < etape[0].p[0] ? -1 : 1, txt: '…' }, 'class="rt-prov"');
-    for (const e of etape) s += `<circle cx="${r2(e.p[0])}" cy="${r2(e.p[1])}" r="${r2(3 * echelle())}" fill="#e11d48"/>`;
-    if (survol && outil === 'cote' && !etape.length && !accroche(survol).p3) {
+    for (const e of etape) if (!e.arete) s += `<circle cx="${r2(e.p[0])}" cy="${r2(e.p[1])}" r="${r2(3 * echelle())}" fill="#e11d48"/>`;
+    for (const e of etape) if (e.arete) s += `<path d="M${r2(e.arete[0].p[0])} ${r2(e.arete[0].p[1])}L${r2(e.arete[1].p[0])} ${r2(e.arete[1].p[1])}" stroke="#e11d48" stroke-width="${r2(2.4 * echelle())}" stroke-linecap="round" fill="none"/>`;
+    if (survol && outil === 'cote' && etape.length < 2 && !accroche(survol).p3) {
       const ar = areteSous(survol);
       if (ar) s += `<path d="M${r2(ar[0].p[0])} ${r2(ar[0].p[1])}L${r2(ar[1].p[0])} ${r2(ar[1].p[1])}" stroke="#e11d48" stroke-width="${r2(2.4 * echelle())}" stroke-linecap="round" opacity=".55" fill="none"/>`;
     }
@@ -195,15 +216,24 @@ export async function vueRetouche(el, id) {
     if (outil === 'gomme') { const t = toucher(p); if (t) { memoriser(); objs.splice(t.i, 1); sel = -1; dessiner(); } return; }
     if (outil === 'texte') { memoriser(); objs.push({ t: 'x', m: p, txt: 'texte', ang: 0, an: 'middle' }); sel = objs.length - 1; outil = 'sel'; dessiner(); champ.focus(); champ.select(); return; }
     if (outil === 'cote') {
+      // 1er élément : sommet / centre de trou, ou ARÊTE (gardée en attente)
       if (!etape.length) {
         const a = accroche(p);
-        const ar = a.p3 ? null : areteSous(p);   // pas de sommet visé : une arête touchée est cotée en entier
-        if (ar) { etape = ar; dessiner(); return; }
-        etape.push(a); dessiner(); return;
+        const ar = a.p3 ? null : areteSous(p);
+        etape = [ar ? { arete: ar, p: mul(add(ar[0].p, ar[1].p), 0.5) } : a]; dessiner(); return;
       }
-      if (etape.length < 2) { etape.push(accroche(p)); dessiner(); return; }
+      if (etape.length === 1) {
+        const e1 = etape[0], b = accroche(p), ar2 = b.p3 ? null : areteSous(p);
+        if (e1.arete && !b.p3 && !ar2) {        // arête puis clic dans le vide : longueur de l'arête, posée ici
+          const [A, B] = e1.arete; etape = [];
+          memoriser(); objs.push(coteVers(A.p, B.p, p, nb(dist3(A.p3, B.p3)))); sel = objs.length - 1; dessiner(); champ.focus(); champ.select(); return;
+        }
+        const r = paire(e1, ar2 ? { arete: ar2 } : b);
+        if (typeof r === 'string') { aide.textContent = r; return; }
+        etape = r; dessiner(); return;
+      }
       const [a, b] = etape;
-      const val = a.p3 && b.p3 ? nb(Math.hypot(a.p3[0] - b.p3[0], a.p3[1] - b.p3[1], a.p3[2] - b.p3[2])) : '';
+      const val = a.p3 && b.p3 ? nb(dist3(a.p3, b.p3)) : '';
       memoriser(); objs.push(coteVers(a.p, b.p, p, val)); sel = objs.length - 1; etape = []; dessiner();
       champ.focus(); champ.select(); return;
     }
