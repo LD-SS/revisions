@@ -264,9 +264,10 @@ export function svgPrisme(pc, { cotes = true, largeur = 420, arete = true, flech
   let corps = '', cot = '';
   const tous = [];
   const sommets = [];   // points d'accroche pour la retouche : [x, y écran, [x, y, z]]
+  const aretesVues = [];   // arêtes vues pour la retouche : [p écran, q écran, a 3D, b 3D]
   for (const { a, b, vis } of aretes3D(pc)) {
     if (!vis[3]) continue;
-    const p = pr(a), q = pr(b); tous.push(p, q); sommets.push([...p, a], [...q, b]);
+    const p = pr(a), q = pr(b); tous.push(p, q); sommets.push([...p, a], [...q, b]); aretesVues.push([p, q, a, b]);
     corps += `<path d="M${f2(p[0])} ${f2(p[1])}L${f2(q[0])} ${f2(q[1])}" ${trait}/>`;
   }
   const o = outils(pc);
@@ -458,7 +459,7 @@ export function svgPrisme(pc, { cotes = true, largeur = 420, arete = true, flech
   const ret = retouche(pc.id);
   if (brut) {
     const xm = pc.L / 2, zf = pc.H * 0.85, vf = fleche ? fleche(pr([xm, -30, zf]), pr([xm, -3, zf])) : { svg: '', pts: [] };
-    return { corps: corps + repere, vf: vf.svg, auto: objs, objs: ret || objs, sommets, corpsBornes: tous.slice(0, nTous).concat(vf.pts) };
+    return { corps: corps + repere, vf: vf.svg, auto: objs, objs: ret || objs, sommets, aretes: aretesVues, corpsBornes: tous.slice(0, nTous).concat(vf.pts) };
   }
   if (cotes) {
     const liste = ret || objs;
