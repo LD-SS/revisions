@@ -1054,11 +1054,12 @@ label.cgu-ok input{margin-top:3px}
 .dao-svg .dao-cadre-tch{fill:rgba(40,160,80,.08);stroke:#28a050;stroke-dasharray:5 3}
 
 /* DAO : cotes */
-.dao-svg .dao-cote-l{fill:none;stroke:#111;stroke-width:.25}
-.dao-svg .dao-fl{fill:#111;stroke:none}
-.dao-svg .dao-cote-t{font-size:3.5px;fill:#111;font-family:"Segoe UI",Roboto,Arial,sans-serif}
+/* cotation des vues : trait très fin et en couleur (même bleu que la cotation des perspectives) */
+.dao-svg .dao-cote-l{fill:none;stroke:#1d5fd1;stroke-width:.18}
+.dao-svg .dao-fl{fill:#1d5fd1;stroke:none}
+.dao-svg .dao-cote-t{font-size:3.5px;fill:#1d5fd1;font-family:"Segoe UI",Roboto,Arial,sans-serif}
 .dao-svg .dao-ap .dao-cote-l{stroke:var(--accent)}.dao-svg .dao-ap .dao-fl,.dao-svg .dao-ap .dao-cote-t{fill:var(--accent)}
-.dao-svg .dao-sel .dao-cote-l{stroke:#1d5fd1;stroke-width:.7;opacity:.6}.dao-svg .dao-sel .dao-fl,.dao-svg .dao-sel .dao-cote-t{fill:#1d5fd1}
+.dao-svg .dao-sel .dao-cote-l{stroke:#0b3d91;stroke-width:.7;opacity:.6}.dao-svg .dao-sel .dao-fl,.dao-svg .dao-sel .dao-cote-t{fill:#0b3d91}
 .dao-svg .dao-gomme .dao-cote-l{stroke:#d33;stroke-width:.8}.dao-svg .dao-gomme .dao-fl,.dao-svg .dao-gomme .dao-cote-t{fill:#d33}
 
 /* DAO : hachures, texte */
@@ -1116,6 +1117,10 @@ label.cgu-ok input{margin-top:3px}
 .dao-svg .dao-cor-man{stroke:#d33;stroke-width:.9;opacity:.85}
 .dao-svg .dao-cor-type{stroke:#8a3ffc;stroke-width:.9;opacity:.85}
 .dao-svg .dao-cor-trop{stroke:#e07b00;stroke-width:.9;opacity:.85}
+.dao-svg .dao-cor-sol .dao-cote-l{stroke:#1aa35a}.dao-svg .dao-cor-sol .dao-fl,.dao-svg .dao-cor-sol .dao-cote-t{fill:#1aa35a}
+.dao-svg .dao-cor-man .dao-cote-l{stroke:#d33;stroke-width:.6}.dao-svg .dao-cor-man .dao-fl,.dao-svg .dao-cor-man .dao-cote-t{fill:#d33}
+.dao-svg .dao-cor-type .dao-cote-l{stroke:#8a3ffc;stroke-width:.6}.dao-svg .dao-cor-type .dao-fl,.dao-svg .dao-cor-type .dao-cote-t{fill:#8a3ffc}
+.dao-svg .dao-cor-trop .dao-cote-l{stroke:#e07b00;stroke-width:.6}.dao-svg .dao-cor-trop .dao-fl,.dao-svg .dao-cor-trop .dao-cote-t{fill:#e07b00}
 .dao-regles{display:block;margin-top:4px}
 .dao-svg .dao-pt-man{fill:#d33;stroke:none}.dao-svg .dao-pt-trop{fill:#e07b00;stroke:none}
 #impr-dao{display:none}
