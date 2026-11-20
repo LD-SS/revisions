@@ -54,8 +54,8 @@ export const OUTILS = {
   gomme: { nom: 'Gomme', touche: 'e', aide: 'Gomme : touche un trait pour l\'effacer (Ctrl+Z pour le récupérer).' },
 };
 export const COTES = {
-  lin: { nom: 'Linéaire', aide: ['Cote linéaire : touche une arête (elle est cotée en entier) ou clique le 1er point mesuré.', 'Cote : clique le 2e point mesuré.', 'Cote : place la ligne de cote (aimantée à 8 mm, puis tous les 7 mm) ou tape son écart, ex. 8 ↵.'] },
-  al: { nom: 'Alignée', aide: ['Cote alignée : touche une arête ou clique le 1er point.', 'Cote alignée : clique le 2e point.', 'Cote alignée : place la ligne de cote.'] },
+  lin: { nom: 'Linéaire', aide: ['Cote linéaire : touche un 1er élément : point, arête, contour ou intérieur d\'un cercle.', 'Cote : touche le 2e élément (point, arête parallèle, cercle) ; après une arête, clic dans le vide = sa longueur.', 'Cote : place la ligne de cote (aimantée à 8 mm, puis tous les 7 mm) ou tape son écart, ex. 8 ↵.'] },
+  al: { nom: 'Alignée', aide: ['Cote alignée : touche un 1er élément (point, arête, cercle).', 'Cote alignée : touche le 2e élément ; après une arête, clic dans le vide = sa longueur.', 'Cote alignée : place la ligne de cote.'] },
   d: { nom: 'Diamètre', aide: ['Cote de diamètre : touche un cercle.', 'Cote de diamètre : choisis la direction de la ligne de cote.'] },
   r: { nom: 'Rayon', aide: ['Cote de rayon : touche un arc ou un cercle.', 'Cote de rayon : choisis la direction de la ligne de cote.'] },
   ang: { nom: 'Angle', aide: ['Cote d\'angle : clique le sommet.', 'Cote d\'angle : clique un point du 1er côté.', 'Cote d\'angle : clique un point du 2e côté.', 'Cote d\'angle : place l\'arc de cote.'] },
@@ -145,6 +145,7 @@ export function creerTraceur(o) {
     cache: null,                  // points d'accroche du dessin
     sel: new Set(), op: null,     // sélection (indices) et opération en cours
     coteK: 'lin', cible: null,    // type de cote, cercle visé (Ø, R)
+    cElem: [], coteForce: null,   // cote linéaire entre éléments (arête, point, cercle) et sens imposé ('h' | 'v' | 'al')
     ecartCote: null,              // écart tapé pour la ligne de cote (mm papier)
     param: { chanfrein: 5, conge: 5, texte: '', h: 3.5, pas: 3 }, choix: null,   // chanfrein, congé, texte, hachures
     cadre: null, survol: -1,      // cadre de sélection, trait sous la gomme
@@ -193,7 +194,7 @@ export function creerTraceur(o) {
   }
   const ajouter = (...es) => changer([...entites(), ...es.map((e) => ({ ...e, s: e.s || st.style }))]);
   function annuler() {
-    if (st.pts.length) { st.pts = []; apercu(); return; }
+    if (st.pts.length || st.cElem.length) { st.pts = []; st.cElem = []; st.coteForce = null; apercu(); return; }
     if (!st.hist.length) return;
     st.refaire.push(JSON.stringify(entites()));
     o.enregistrer(JSON.parse(st.hist.pop())); st.cache = null; st.sel.clear(); st.op = null; redessiner();
@@ -244,17 +245,71 @@ export function creerTraceur(o) {
     return best;
   }
 
+  /** Élément visé pour une cote : point accroché, arête, contour ou intérieur d'un cercle. */
+  function elementVise(q, brut) {
+    if (st.acc && st.acc[2] !== 'mil') return { type: 'pt', p: [st.acc[0], st.acc[1]] };
+    const es = entites(), tol = toleranceReel(9);
+    let best = null, bd = tol;
+    es.forEach((e, i) => {
+      if (e.mep || e.t === 'q' || e.t === 'x' || e.t === 'h' || e.t === 'p') return;
+      if (e.t === 'l') { if (Math.hypot(e.x2 - e.x1, e.y2 - e.y1) > EPS) { const d = distanceA(e, brut); if (d <= bd) { bd = d; best = { type: 'arete', i }; } } return; }
+      if (e.t === 'c' || e.t === 'a') {
+        const dc = dist([e.cx, e.cy], brut);
+        if (Math.abs(dc - e.r) <= bd) { bd = Math.abs(dc - e.r); best = { type: 'contour', i, clic: brut }; }
+        else if (dc < e.r - tol && (!best || best.type === 'centre') && (!best || dc < best.dc)) best = { type: 'centre', i, p: [e.cx, e.cy], dc };
+      }
+    });
+    if (best && best.type === 'centre') return { type: 'pt', p: best.p, i: best.i };
+    if (best) return best;
+    if (st.acc) return { type: 'pt', p: [st.acc[0], st.acc[1]] };
+    return null;
+  }
+  /** Points de mesure et sens d'une cote entre deux éléments (ou message d'erreur). */
+  function coteEntre(e1, e2) {
+    const es = entites();
+    const seg = (el) => { const e = es[el.i]; return [[e.x1, e.y1], [e.x2, e.y2]]; };
+    const sens = (el) => { const [a, b] = seg(el); return Math.abs(a[1] - b[1]) < EPS ? 'H' : Math.abs(a[0] - b[0]) < EPS ? 'V' : 'O'; };
+    const pied = (el, P) => { const [a, b] = seg(el), dx = b[0] - a[0], dy = b[1] - a[1], t = ((P[0] - a[0]) * dx + (P[1] - a[1]) * dy) / (dx * dx + dy * dy); return [a[0] + t * dx, a[1] + t * dy]; };
+    const centre = (el) => { const e = es[el.i]; return [e.cx, e.cy]; };
+    // contour d'un cercle : point du cercle du côté cliqué, dans le sens de la mesure
+    const surContour = (el, axe) => { const e = es[el.i], c = [e.cx, e.cy]; if (axe === 'h') return [e.cx + Math.sign(el.clic[0] - e.cx || 1) * e.r, e.cy]; return [e.cx, e.cy + Math.sign(el.clic[1] - e.cy || 1) * e.r]; };
+    const pointDe = (el) => (el.type === 'pt' ? el.p : el.type === 'contour' ? centre(el) : null);
+    const [A, B] = e1.type === 'arete' ? [e1, e2] : e2.type === 'arete' ? [e2, e1] : [e1, e2];
+    if (A.type === 'arete') {
+      const sa = sens(A);
+      let P;
+      if (B.type === 'arete') {
+        const [b1, b2] = seg(B), [a1, a2] = seg(A);
+        const ua = [a2[0] - a1[0], a2[1] - a1[1]], ub = [b2[0] - b1[0], b2[1] - b1[1]];
+        if (Math.abs(ua[0] * ub[1] - ua[1] * ub[0]) > 1e-6 * Math.hypot(...ua) * Math.hypot(...ub)) return 'Ces deux arêtes ne sont pas parallèles : utilise la cote d\'angle.';
+        P = [(b1[0] + b2[0]) / 2, (b1[1] + b2[1]) / 2];
+      } else if (B.type === 'contour') P = surContour(B, sa === 'H' ? 'v' : 'h');
+      else P = B.p;
+      if (sa === 'H') { const [a1, a2] = seg(A), x = Math.min(Math.max(P[0], Math.min(a1[0], a2[0])), Math.max(a1[0], a2[0])); return { pts: [[x, a1[1]], P], force: 'v' }; }
+      if (sa === 'V') { const [a1, a2] = seg(A), y = Math.min(Math.max(P[1], Math.min(a1[1], a2[1])), Math.max(a1[1], a2[1])); return { pts: [[a1[0], y], P], force: 'h' }; }
+      if (B.type === 'contour') P = centre(B);
+      return { pts: [pied(A, P), P], force: 'al' };
+    }
+    // points et cercles
+    let p1 = pointDe(A), p2 = pointDe(B);
+    if (dist(p1, p2) < EPS) return 'Les deux éléments sont au même endroit.';
+    const axe = Math.abs(p2[0] - p1[0]) >= Math.abs(p2[1] - p1[1]) ? 'h' : 'v';
+    if (A.type === 'contour') p1 = surContour(A, axe);
+    if (B.type === 'contour') p2 = surContour(B, axe);
+    return { pts: [p1, p2], force: A.type === 'contour' || B.type === 'contour' ? axe : null };
+  }
+
   /** Cote en cours d'après les points posés et le point visé q (ou null). */
   function coteAvec(q) {
     const [a, b, c] = st.pts;
     if (st.coteK === 'lin' || st.coteK === 'al') {
       if (!a || !b || !q || dist(a, b) < EPS) return null;
-      if (st.coteK === 'al') {
+      if (st.coteK === 'al' || st.coteForce === 'al') {
         const L = dist(a, b), nx = -(b[1] - a[1]) / L, ny = (b[0] - a[0]) / L;
         return { t: 'q', k: 'al', x1: a[0], y1: a[1], x2: b[0], y2: b[1], d: arrondi((q[0] - a[0]) * nx + (q[1] - a[1]) * ny, 3), s: 'n' };
       }
       const mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2;
-      const h = Math.abs(a[0] - b[0]) < EPS ? false : Math.abs(a[1] - b[1]) < EPS ? true : Math.abs(q[1] - my) >= Math.abs(q[0] - mx);
+      const h = st.coteForce ? st.coteForce === 'h' : Math.abs(a[0] - b[0]) < EPS ? false : Math.abs(a[1] - b[1]) < EPS ? true : Math.abs(q[1] - my) >= Math.abs(q[0] - mx);
       const d = st.ecartCote != null ? ecartVersD(a, b, h, q, st.ecartCote) : aimanterCote(a, b, h, h ? q[1] : q[0]);
       return h ? { t: 'q', k: 'h', x1: a[0], y1: a[1], x2: b[0], y2: b[1], d: arrondi(d, 3), s: 'n' } : { t: 'q', k: 'v', x1: a[0], y1: a[1], x2: b[0], y2: b[1], d: arrondi(d, 3), s: 'n' };
     }
@@ -287,12 +342,25 @@ export function creerTraceur(o) {
       const e = coteAvec(q); st.cible = null; if (e) ajouter(e); apercu(); return;
     }
     const n = k === 'ang' ? 3 : 2;
-    if ((k === 'lin' || k === 'al') && !st.pts.length && st.survol >= 0) {   // arête touchée : ses deux extrémités
-      const e = entites()[st.survol]; st.survol = -1;
-      if (e && e.t === 'l') { st.pts = [[e.x1, e.y1], [e.x2, e.y2]]; apercu(); return; }
+    if ((k === 'lin' || k === 'al') && st.pts.length < 2) {
+      const el = st.cVise || { type: 'pt', p: q, vide: true };
+      if (!st.cElem.length) {
+        if (el.type === 'pt') { st.pts = [el.p]; st.cElem = [el]; }
+        else { st.cElem = [el]; st.pts = []; }
+        apercu(); return;
+      }
+      const e1 = st.cElem[0];
+      if (e1.type === 'arete' && el.vide) {      // arête puis clic dans le vide : cote de la longueur de l'arête, posée ici
+        const a = entites()[e1.i];
+        st.pts = [[a.x1, a.y1], [a.x2, a.y2]]; st.coteForce = null; st.cElem = [];
+        const c = coteAvec(q); st.pts = []; if (c) ajouter(c); apercu(); return;
+      }
+      const r = coteEntre(e1, el);
+      if (typeof r === 'string') { apercu(r); return; }
+      st.pts = r.pts; st.coteForce = r.force; st.cElem = []; apercu(); return;
     }
     if (st.pts.length < n) { st.pts.push(q); apercu(); return; }
-    const e = coteAvec(q); st.pts = []; if (e) ajouter(e); apercu();
+    const e = coteAvec(q); st.pts = []; st.coteForce = null; st.cElem = []; if (e) ajouter(e); apercu();
   }
 
   function poser(q) {
@@ -342,7 +410,7 @@ export function creerTraceur(o) {
     }
     apercu();
   }
-  function finir() { st.pts = []; st.saisie = ''; st.op = null; st.cible = null; st.choix = null; apercu(); }
+  function finir() { st.pts = []; st.cElem = []; st.coteForce = null; st.saisie = ''; st.op = null; st.cible = null; st.choix = null; apercu(); }
 
   /** Applique la saisie clavier (Entrée). */
   function appliquerSaisie() {
@@ -499,6 +567,7 @@ export function creerTraceur(o) {
       }
     }
     if (st.survol >= 0 && es[st.survol]) svg += svgEntite(p, es[st.survol], st.outil === 'gomme' || st.outil === 'ajuster' ? 'dao-gomme' : 'dao-sel');
+    if (st.outil === 'cote') for (const el of st.cElem) if (el.i != null && es[el.i]) svg += svgEntite(p, es[el.i], 'dao-sel');
     if (st.choix && es[st.choix.i]) svg += svgEntite(p, es[st.choix.i], 'dao-sel');
     if (st.op && st.pts.length && st.cur) {
       const [a, b] = [st.pts[0], st.cur];
@@ -526,7 +595,7 @@ export function creerTraceur(o) {
     }
     o.feuille.calque('apercu').innerHTML = svg;
     const aide = st.op ? OPERATIONS[st.op].aide : st.outil === 'cote' ? COTES[st.coteK].aide : OUTILS[st.outil].aide;
-    const etape = (st.outil === 'cote' && st.cible) || st.choix ? 1 : st.pts.length;
+    const etape = (st.outil === 'cote' && (st.cible || (st.cElem.length && st.pts.length < 2))) || st.choix ? 1 : st.pts.length;
     if (st.outil === 'cote' && st.cible) info = 'cercle choisi';
     o.surEtat({
       aide: message || (Array.isArray(aide) ? aide[Math.min(etape, aide.length - 1)] : aide),
@@ -547,13 +616,11 @@ export function creerTraceur(o) {
     if (['gomme', 'ajuster', 'prolonger', 'chanfrein', 'conge', 'hachures'].includes(st.outil) || (st.outil === 'selection' && !st.op)) return pointerSansAccroche(type, ev, pp);
     const q = viser(pp);
     st.cur = q;
-    // cote linéaire / alignée : au 1er clic, toucher une ARÊTE (hors extrémité) la cote entièrement
-    st.survol = -1;
-    if (st.outil === 'cote' && (st.coteK === 'lin' || st.coteK === 'al') && !st.pts.length && (!st.acc || st.acc[2] === 'mil')) {
-      const es = entites(), brut = versReel(P(), pp[0], pp[1]), tol = toleranceReel(9);
-      let bd = tol;
-      es.forEach((e, k) => { if (e.t === 'l' && !e.mep && Math.hypot(e.x2 - e.x1, e.y2 - e.y1) > EPS) { const d = distanceA(e, brut); if (d <= bd) { bd = d; st.survol = k; } } });
-      if (st.survol >= 0) st.acc = null;
+    // cote linéaire / alignée : élément visé (arête, cercle, point) pour coter ENTRE deux éléments
+    st.survol = -1; st.cVise = null;
+    if (st.outil === 'cote' && (st.coteK === 'lin' || st.coteK === 'al') && st.pts.length < 2) {
+      st.cVise = elementVise(q, versReel(P(), pp[0], pp[1]));
+      if (st.cVise && st.cVise.i != null) { st.survol = st.cVise.i; if (st.cVise.type !== 'pt') st.acc = null; }
     }
     if (type === 'bas') st.bas = { x: ev.clientX, y: ev.clientY, q };
     if (type === 'haut' && st.bas) {
@@ -663,7 +730,7 @@ export function creerTraceur(o) {
   }
 
   function choisirOutil(t) {
-    st.outil = t; st.pts = []; st.saisie = ''; st.acc = null; st.op = null; st.survol = -1; st.cadre = null; st.cible = null; st.choix = null;
+    st.outil = t; st.pts = []; st.cElem = []; st.coteForce = null; st.saisie = ''; st.acc = null; st.op = null; st.survol = -1; st.cadre = null; st.cible = null; st.choix = null;
     if (t !== 'selection') st.sel.clear();
     o.surOutil?.(t); apercu();
   }
@@ -687,7 +754,7 @@ export function creerTraceur(o) {
     /** Termine le tracé en cours (comme Échap ou le clic droit) : utile au stylet. */
     terminer() { finir(); },
         saisir(txt) { st.saisie = String(txt || ''); if (st.saisie) appliquerSaisie(); else apercu(); },
-        choisirCote(k) { st.coteK = k; st.pts = []; st.cible = null; if (st.outil !== 'cote') choisirOutil('cote'); else apercu(); },
+        choisirCote(k) { st.coteK = k; st.pts = []; st.cElem = []; st.coteForce = null; st.cible = null; if (st.outil !== 'cote') choisirOutil('cote'); else apercu(); },
     /** À appeler quand l'échelle ou le format change (les entités restent en mm réels). */
     rafraichir() { st.cache = null; redessiner(); },
   };
