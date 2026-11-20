@@ -54,8 +54,8 @@ export const OUTILS = {
   gomme: { nom: 'Gomme', touche: 'e', aide: 'Gomme : touche un trait pour l\'effacer (Ctrl+Z pour le récupérer).' },
 };
 export const COTES = {
-  lin: { nom: 'Linéaire', aide: ['Cote linéaire : clique le 1er point mesuré.', 'Cote : clique le 2e point mesuré.', 'Cote : place la ligne de cote (aimantée à 8 mm, puis tous les 7 mm) ou tape son écart, ex. 8 ↵.'] },
-  al: { nom: 'Alignée', aide: ['Cote alignée : clique le 1er point.', 'Cote alignée : clique le 2e point.', 'Cote alignée : place la ligne de cote.'] },
+  lin: { nom: 'Linéaire', aide: ['Cote linéaire : touche une arête (elle est cotée en entier) ou clique le 1er point mesuré.', 'Cote : clique le 2e point mesuré.', 'Cote : place la ligne de cote (aimantée à 8 mm, puis tous les 7 mm) ou tape son écart, ex. 8 ↵.'] },
+  al: { nom: 'Alignée', aide: ['Cote alignée : touche une arête ou clique le 1er point.', 'Cote alignée : clique le 2e point.', 'Cote alignée : place la ligne de cote.'] },
   d: { nom: 'Diamètre', aide: ['Cote de diamètre : touche un cercle.', 'Cote de diamètre : choisis la direction de la ligne de cote.'] },
   r: { nom: 'Rayon', aide: ['Cote de rayon : touche un arc ou un cercle.', 'Cote de rayon : choisis la direction de la ligne de cote.'] },
   ang: { nom: 'Angle', aide: ['Cote d\'angle : clique le sommet.', 'Cote d\'angle : clique un point du 1er côté.', 'Cote d\'angle : clique un point du 2e côté.', 'Cote d\'angle : place l\'arc de cote.'] },
@@ -287,6 +287,10 @@ export function creerTraceur(o) {
       const e = coteAvec(q); st.cible = null; if (e) ajouter(e); apercu(); return;
     }
     const n = k === 'ang' ? 3 : 2;
+    if ((k === 'lin' || k === 'al') && !st.pts.length && st.survol >= 0) {   // arête touchée : ses deux extrémités
+      const e = entites()[st.survol]; st.survol = -1;
+      if (e && e.t === 'l') { st.pts = [[e.x1, e.y1], [e.x2, e.y2]]; apercu(); return; }
+    }
     if (st.pts.length < n) { st.pts.push(q); apercu(); return; }
     const e = coteAvec(q); st.pts = []; if (e) ajouter(e); apercu();
   }
@@ -543,6 +547,14 @@ export function creerTraceur(o) {
     if (['gomme', 'ajuster', 'prolonger', 'chanfrein', 'conge', 'hachures'].includes(st.outil) || (st.outil === 'selection' && !st.op)) return pointerSansAccroche(type, ev, pp);
     const q = viser(pp);
     st.cur = q;
+    // cote linéaire / alignée : au 1er clic, toucher une ARÊTE (hors extrémité) la cote entièrement
+    st.survol = -1;
+    if (st.outil === 'cote' && (st.coteK === 'lin' || st.coteK === 'al') && !st.pts.length && (!st.acc || st.acc[2] === 'mil')) {
+      const es = entites(), brut = versReel(P(), pp[0], pp[1]), tol = toleranceReel(9);
+      let bd = tol;
+      es.forEach((e, k) => { if (e.t === 'l' && !e.mep && Math.hypot(e.x2 - e.x1, e.y2 - e.y1) > EPS) { const d = distanceA(e, brut); if (d <= bd) { bd = d; st.survol = k; } } });
+      if (st.survol >= 0) st.acc = null;
+    }
     if (type === 'bas') st.bas = { x: ev.clientX, y: ev.clientY, q };
     if (type === 'haut' && st.bas) {
       const glisse = Math.hypot(ev.clientX - st.bas.x, ev.clientY - st.bas.y) > 8;
