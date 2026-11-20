@@ -7,7 +7,7 @@
      Sélection : glisser un chiffre (le déplace), une ligne de cote (la
        rapproche / l'éloigne de la pièce), un renvoi (son coude ; près du
        point d'attache : le point). Suppr : supprimer.
-     Cote : point 1, point 2 (accroche sur les sommets et les trous), puis
+     Cote : une arête (cotée en entier) ou point 1, point 2 (accroche sur les sommets et les trous), puis
        la position de la ligne de cote ; le chiffre proposé est la vraie
        longueur (3D) quand les deux points sont des sommets.
      Renvoi : point visé, puis coude ; texte proposé « Øx » sur un trou.
@@ -96,7 +96,7 @@ export async function vueRetouche(el, id) {
 
   const AIDES = {
     sel: 'Glisse un chiffre pour le déplacer, une ligne de cote pour la rapprocher ou l\'éloigner, un renvoi par son coude. Glisse le fond pour te déplacer, molette pour zoomer.',
-    cote: ['Cote : clique le 1er point (sommet ou trou).', 'Cote : clique le 2e point.', 'Cote : place la ligne de cote (clic). Échap pour annuler.'],
+    cote: ['Cote : touche une arête (cotée en entier) ou clique le 1er point (sommet ou trou).', 'Cote : clique le 2e point.', 'Cote : place la ligne de cote (clic). Échap pour annuler.'],
     renvoi: ['Renvoi : clique le point visé (un trou par exemple).', 'Renvoi : clique la position du coude.'],
     texte: 'Texte : clique où placer le texte, puis tape-le dans la case « Texte ».',
     gomme: 'Gomme : touche une cote, un renvoi ou un texte pour le supprimer.',
@@ -119,6 +119,17 @@ export async function vueRetouche(el, id) {
     let best = null, bd = tol;
     for (const s of base.sommets) { const d = Math.hypot(s[0] - p[0], s[1] - p[1]); if (d < bd) { bd = d; best = s; } }
     return best ? { p: [best[0], best[1]], p3: best[2], d: best[3] } : { p, p3: null };
+  }
+  /** Arête vue de la pièce sous le point (hors de ses extrémités), sinon null. */
+  function areteSous(p) {
+    const tol = 7 * echelle();
+    let best = null, bd = tol;
+    for (const [a, b, a3, b3] of base.aretes || []) {
+      if (len(sub(p, a)) < 10 * echelle() || len(sub(p, b)) < 10 * echelle()) continue;
+      const d = distSeg(p, a, b);
+      if (d < bd) { bd = d; best = [{ p: a, p3: a3 }, { p: b, p3: b3 }]; }
+    }
+    return best;
   }
   /** Objet sous le point (indice) et partie touchée. */
   function toucher(p) {
@@ -156,6 +167,10 @@ export async function vueRetouche(el, id) {
     if (outil === 'cote' && etape.length === 2 && survol) s += svgObjet(coteVers(etape[0].p, etape[1].p, survol, '…'), 'class="rt-prov"');
     if (outil === 'renvoi' && etape.length === 1 && survol) s += svgObjet({ t: 'r', c: etape[0].p, q: survol, sg: survol[0] < etape[0].p[0] ? -1 : 1, txt: '…' }, 'class="rt-prov"');
     for (const e of etape) s += `<circle cx="${r2(e.p[0])}" cy="${r2(e.p[1])}" r="${r2(3 * echelle())}" fill="#e11d48"/>`;
+    if (survol && outil === 'cote' && !etape.length && !accroche(survol).p3) {
+      const ar = areteSous(survol);
+      if (ar) s += `<path d="M${r2(ar[0].p[0])} ${r2(ar[0].p[1])}L${r2(ar[1].p[0])} ${r2(ar[1].p[1])}" stroke="#e11d48" stroke-width="${r2(2.4 * echelle())}" stroke-linecap="round" opacity=".55" fill="none"/>`;
+    }
     if (survol && ['cote', 'renvoi'].includes(outil)) { const a = accroche(survol); if (a.p3) s += `<circle cx="${r2(a.p[0])}" cy="${r2(a.p[1])}" r="${r2(5 * echelle())}" fill="none" stroke="#e11d48" stroke-width="${r2(1.2 * echelle())}"/>`; }
     svg.innerHTML = s;
     el.querySelectorAll('[data-o]').forEach((b) => b.classList.toggle('primary', b.dataset.o === outil));
@@ -180,6 +195,12 @@ export async function vueRetouche(el, id) {
     if (outil === 'gomme') { const t = toucher(p); if (t) { memoriser(); objs.splice(t.i, 1); sel = -1; dessiner(); } return; }
     if (outil === 'texte') { memoriser(); objs.push({ t: 'x', m: p, txt: 'texte', ang: 0, an: 'middle' }); sel = objs.length - 1; outil = 'sel'; dessiner(); champ.focus(); champ.select(); return; }
     if (outil === 'cote') {
+      if (!etape.length) {
+        const a = accroche(p);
+        const ar = a.p3 ? null : areteSous(p);   // pas de sommet visé : une arête touchée est cotée en entier
+        if (ar) { etape = ar; dessiner(); return; }
+        etape.push(a); dessiner(); return;
+      }
       if (etape.length < 2) { etape.push(accroche(p)); dessiner(); return; }
       const [a, b] = etape;
       const val = a.p3 && b.p3 ? nb(Math.hypot(a.p3[0] - b.p3[0], a.p3[1] - b.p3[1], a.p3[2] - b.p3[2])) : '';
