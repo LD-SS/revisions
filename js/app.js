@@ -28,7 +28,7 @@ import { majBoutonProposer, viderAttente } from './proposer.js';
 import { demarrerSynchro, adopterCompte } from './synchro.js';
 import { exigerAcces, ecranPerte } from './vues/acces.js';
 
-const VERSION = '1.44.3 (cotes : bords de cercles et de trous, tous les cas)';
+const VERSION = '1.44.4 (longueur, Ø ou R d\'un trait sélectionné modifiable)';
 window.__version = VERSION;
 const vue = document.getElementById('vue');
 let nettoyer = null; // fonction fournie par la page affichée, appelée avant d'en changer
