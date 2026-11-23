@@ -9,7 +9,7 @@
    La planche ouverte sur cet appareil : « dao.courante » (non synchronisée).
    ===================================================================== */
 
-import { esc, stockage } from '../utils.js';
+import { esc, stockage, toast } from '../utils.js';
 import { icone } from '../icones.js';
 import { styleMatiere } from '../matieres.js';
 import { matiere } from '../store.js';
@@ -507,6 +507,7 @@ function monterPage(el, remonter) {
           <button class="btn dao-b" type="button" data-op="deplacer" title="Déplacer la sélection (point de base, puis destination)">Déplacer</button>
           <button class="btn dao-b" type="button" data-op="copier" title="Copier la sélection (point de base, puis une ou plusieurs destinations)">Copier</button>
           <button class="btn dao-b" type="button" data-op="miroir" title="Symétrie de la sélection par rapport à un axe (2 points)">Miroir</button>
+          <span class="dao-dim" hidden><label class="dao-choix"><span class="dao-dim-nom">Longueur</span><input class="field dao-dim-v" type="number" step="0.5" min="0.1" style="width:80px"></label><label class="dao-choix dao-dim-a"><span>Angle °</span><input class="field dao-dim-ang" type="number" step="1" style="width:70px"></label><button class="btn dao-b" type="button" data-dim="ok" title="Appliquer (Entrée) : le bout le plus proche de ton clic se déplace">OK</button></span>
           <button class="btn dao-b bad" type="button" data-op="supprimer" title="Supprimer la sélection (Suppr)">${icone('croix')}<span>Supprimer</span></button>
           <span class="muted">Un type de trait choisi ci-dessus s'applique à la sélection.</span>
         </div>
@@ -632,10 +633,23 @@ function monterPage(el, remonter) {
       if (avecParam && parambar.dataset.o !== po) { parambar.dataset.o = po; el.querySelector('.dao-param-nom').textContent = po === 'conge' ? 'Rayon du congé' : 'Chanfrein'; paramIn.value = i.param[po]; }
       if (!avecParam) parambar.dataset.o = '';
       cotebar.querySelectorAll('[data-cote]').forEach((b) => b.classList.toggle('on', b.dataset.cote === i.coteK));
+      { const dz = selbar.querySelector('.dao-dim'), vIn = dz.querySelector('.dao-dim-v'), aIn = dz.querySelector('.dao-dim-ang');
+        dz.hidden = !i.dim;
+        if (i.dim) {
+          dz.querySelector('.dao-dim-nom').textContent = i.dim.t === 'l' ? 'Longueur' : i.dim.t === 'c' ? 'Ø' : 'R';
+          dz.querySelector('.dao-dim-a').hidden = i.dim.t !== 'l';
+          if (document.activeElement !== vIn && document.activeElement !== aIn) { vIn.value = i.dim.val; aIn.value = i.dim.ang ?? ''; }
+        } }
       selbar.hidden = !i.sel; selN.textContent = `${i.sel} élément${i.sel > 1 ? 's' : ''} sélectionné${i.sel > 1 ? 's' : ''} :`;
       selbar.querySelectorAll('[data-op]').forEach((b) => b.classList.toggle('on', b.dataset.op === i.op));
     },
   });
+  { // longueur / Ø / R d'un trait sélectionné
+    const dz = selbar.querySelector('.dao-dim'), vIn = dz.querySelector('.dao-dim-v'), aIn = dz.querySelector('.dao-dim-ang');
+    const appliquer = () => { const v = parseFloat(String(vIn.value).replace(',', '.')), a = parseFloat(String(aIn.value).replace(',', '.')); if (!traceur.modifierDim(v, dz.querySelector('.dao-dim-a').hidden ? NaN : a)) toast('Valeur non valable.'); vIn.blur(); aIn.blur(); };
+    dz.querySelector('[data-dim="ok"]').addEventListener('click', appliquer);
+    for (const x of [vIn, aIn]) x.addEventListener('keydown', (ev) => { ev.stopPropagation(); if (ev.key === 'Enter') { ev.preventDefault(); appliquer(); } else if (ev.key === 'Escape') x.blur(); });
+  }
   const outilMemo = stockage.lire('dao.outil', 'ligne');
   traceur.choisirOutil(OUTILS[outilMemo] ? outilMemo : 'ligne');
   traceur.choisirStyle('v');
