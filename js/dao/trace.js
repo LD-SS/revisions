@@ -287,12 +287,26 @@ export function creerTraceur(o) {
       else P = B.p;
       if (sa === 'H') { const [a1, a2] = seg(A), x = Math.min(Math.max(P[0], Math.min(a1[0], a2[0])), Math.max(a1[0], a2[0])); return { pts: [[x, a1[1]], P], force: 'v' }; }
       if (sa === 'V') { const [a1, a2] = seg(A), y = Math.min(Math.max(P[1], Math.min(a1[1], a2[1])), Math.max(a1[1], a2[1])); return { pts: [[a1[0], y], P], force: 'h' }; }
-      if (B.type === 'contour') P = centre(B);
+      if (B.type === 'contour') {   // arête oblique et cercle : tangente du côté cliqué (proche ou loin de l'arête)
+        const c = centre(B), f = pied(A, c), d = dist(c, f), r = es[B.i].r;
+        if (d < EPS) return 'Le centre du cercle est sur l\'arête.';
+        const n = [(c[0] - f[0]) / d, (c[1] - f[1]) / d], proche = [c[0] - n[0] * r, c[1] - n[1] * r], loin = [c[0] + n[0] * r, c[1] + n[1] * r];
+        P = dist(B.clic, proche) <= dist(B.clic, loin) ? proche : loin;
+      }
       return { pts: [pied(A, P), P], force: 'al' };
     }
     // points et cercles
+    if (A.type === 'contour' && B.type === 'contour' && A.i === B.i) {   // deux clics sur le même cercle : son diamètre
+      const e = es[A.i], dx = Math.abs(B.clic[0] - A.clic[0]), dy = Math.abs(B.clic[1] - A.clic[1]);
+      return dx >= dy ? { pts: [[e.cx - e.r, e.cy], [e.cx + e.r, e.cy]], force: 'h' } : { pts: [[e.cx, e.cy - e.r], [e.cx, e.cy + e.r]], force: 'v' };
+    }
     let p1 = pointDe(A), p2 = pointDe(B);
-    if (dist(p1, p2) < EPS) return 'Les deux éléments sont au même endroit.';
+    if (dist(p1, p2) < EPS) {
+      const ct = A.type === 'contour' ? A : B.type === 'contour' ? B : null;
+      if (!ct) return 'Les deux éléments sont au même endroit.';
+      const c = centre(ct), axe = Math.abs(ct.clic[0] - c[0]) >= Math.abs(ct.clic[1] - c[1]) ? 'h' : 'v';   // centre + bord : le rayon
+      return { pts: [c, surContour(ct, axe)], force: axe };
+    }
     const axe = Math.abs(p2[0] - p1[0]) >= Math.abs(p2[1] - p1[1]) ? 'h' : 'v';
     if (A.type === 'contour') p1 = surContour(A, axe);
     if (B.type === 'contour') p2 = surContour(B, axe);
