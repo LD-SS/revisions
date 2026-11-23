@@ -96,7 +96,7 @@ export async function vueRetouche(el, id) {
 
   const AIDES = {
     sel: 'Glisse un chiffre pour le déplacer, une ligne de cote pour la rapprocher ou l\'éloigner, un renvoi par son coude. Glisse le fond pour te déplacer, molette pour zoomer.',
-    cote: ['Cote : touche un 1er élément : arête, sommet ou centre de trou.', 'Cote : touche le 2e élément (sommet, trou, arête parallèle) ; après une arête, clic dans le vide = sa longueur.', 'Cote : place la ligne de cote (clic). Échap pour annuler.'],
+    cote: ['Cote : touche un 1er élément : sommet, arête, centre ou bord d\'un trou.', 'Cote : touche le 2e élément (sommet, arête parallèle, centre ou bord de trou ; 2 clics sur le même bord = diamètre) ; après une arête, clic dans le vide = sa longueur.', 'Cote : place la ligne de cote (clic). Échap pour annuler.'],
     renvoi: ['Renvoi : clique le point visé (un trou par exemple).', 'Renvoi : clique la position du coude.'],
     texte: 'Texte : clique où placer le texte, puis tape-le dans la case « Texte ».',
     gomme: 'Gomme : touche une cote, un renvoi ou un texte pour le supprimer.',
@@ -131,12 +131,63 @@ export async function vueRetouche(el, id) {
     }
     return best;
   }
+  const AXE3 = { x: [1, 0, 0], y: [0, 1, 0], z: [0, 0, 1] };
+  /** Points 3D du contour d'un trou (cercle de rayon r autour de son axe). */
+  const cercle3 = (t, n = 48) => { const [i, j] = t.axe === 'x' ? [1, 2] : t.axe === 'y' ? [0, 2] : [0, 1]; return Array.from({ length: n }, (_, k) => { const a = (k / n) * 2 * Math.PI, q = [...t.c]; q[i] += t.r * Math.cos(a); q[j] += t.r * Math.sin(a); return q; }); };
+  /** Contour (bord) de trou sous le point : { trou, clic, d } ou null (le centre reste une accroche). */
+  function contourSous(p) {
+    const tol = 7 * echelle();
+    let best = null, bd = tol;
+    for (const t of base.trous || []) {
+      if (len(sub(p, pr3(t.c))) < 6 * echelle()) continue;
+      const pts = cercle3(t).map(pr3);
+      pts.forEach((q, k) => { const d = distSeg(p, q, pts[(k + 1) % pts.length]); if (d < bd) { bd = d; best = { trou: t, clic: p, d }; } });
+    }
+    return best;
+  }
+  /** Élément visé : sommet / centre (accroche), arête ou contour de trou (le plus proche), sinon point libre. */
+  function elementIso(p) {
+    const a = accroche(p);
+    if (a.p3) return a;
+    const ct = contourSous(p), ar = areteSous(p);
+    if (ct && (!ar || ct.d <= distSeg(p, ar[0].p, ar[1].p))) return { contour: ct.trou, clic: ct.clic, p: ct.clic };
+    if (ar) return { arete: ar, p: mul(add(ar[0].p, ar[1].p), 0.5) };
+    return a;
+  }
+  /** Point 3D du bord du trou dans la direction de Q (côté proche ou loin selon le clic). */
+  function surBord(e, Q) {
+    const t = e.contour, ax = AXE3[t.axe] || [0, 0, 1];
+    let w = [0, 1, 2].map((k) => Q[k] - t.c[k]); const pa = w[0] * ax[0] + w[1] * ax[1] + w[2] * ax[2]; w = w.map((v, k) => v - pa * ax[k]);
+    const L = Math.hypot(...w); if (L < 1e-6) return null;
+    const proche = t.c.map((v, k) => v + (t.r * w[k]) / L), loin = t.c.map((v, k) => v - (t.r * w[k]) / L);
+    return len(sub(e.clic, pr3(proche))) <= len(sub(e.clic, pr3(loin))) ? proche : loin;
+  }
   const pr3 = ([x, y, z]) => [(x - y) * C30, -((x + y) * S30 + z)];
   const dist3 = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
   /** Pied (3D) de la perpendiculaire menée de P sur la droite de l'arête [A, B]. */
   const pied3 = ([A, B], P) => { const u = [0, 1, 2].map((k) => B.p3[k] - A.p3[k]), L2 = u.reduce((s, v) => s + v * v, 0), t = [0, 1, 2].reduce((s, k) => s + (P[k] - A.p3[k]) * u[k], 0) / L2; return [0, 1, 2].map((k) => A.p3[k] + t * u[k]); };
   /** Deux points mesurés à partir de deux éléments (sommet / centre, arête), ou un message. */
   function paire(e1, e2) {
+    const pt3 = (q) => ({ p: pr3(q), p3: q });
+    if (e1.contour || e2.contour) {
+      if (e1.contour && e2.contour && e1.contour === e2.contour) {   // deux clics sur le même trou : son diamètre
+        const t = e1.contour, v = sub(e2.clic, e1.clic), cand = Object.entries(AXE3).filter(([k]) => k !== t.axe).map(([, u]) => u);
+        const u = cand.map((c) => [c, Math.abs(dot(unit(sub(pr3(c.map((x, k) => t.c[k] + x)), pr3(t.c))), unit(v)))]).sort((a, b) => b[1] - a[1])[0][0];
+        return [pt3(t.c.map((x, k) => x - t.r * u[k])), pt3(t.c.map((x, k) => x + t.r * u[k]))];
+      }
+      const [ct, autre] = e1.contour ? [e1, e2] : [e2, e1];
+      let r;
+      if (autre.contour) { const b1 = surBord(ct, autre.contour.c), b2 = b1 && surBord(autre, ct.contour.c); if (!b1 || !b2) return 'Trous sur le même axe : choisis leurs centres.'; r = [pt3(b1), pt3(b2)]; }
+      else if (autre.arete) { const b = surBord(ct, pied3(autre.arete, ct.contour.c)); if (!b) return 'Le centre du trou est sur l\'arête.'; r = [pt3(pied3(autre.arete, b)), pt3(b)]; }
+      else { if (!autre.p3) return 'Choisis un sommet, un centre, une arête ou le bord d\'un trou.'; let b = surBord(ct, autre.p3);
+        if (!b) {   // point sur l'axe du trou (son centre) : rayon dans la direction du clic
+          const t = ct.contour, v = sub(ct.clic, pr3(t.c)), cand = Object.entries(AXE3).filter(([k]) => k !== t.axe).map(([, u]) => u);
+          const best = cand.map((c) => { const d = sub(pr3(c.map((x, k) => t.c[k] + x)), pr3(t.c)); return [c, dot(unit(d), unit(v))]; }).sort((a, c) => Math.abs(c[1]) - Math.abs(a[1]))[0];
+          b = t.c.map((x, k) => x + Math.sign(best[1] || 1) * t.r * best[0][k]);
+        }
+        r = [autre, pt3(b)]; }
+      return e1.contour ? r.reverse() : r;
+    }
     if (!e1.arete && !e2.arete) return [e1, e2];
     if (e1.arete && e2.arete) {
       const u = [0, 1, 2].map((k) => e1.arete[1].p3[k] - e1.arete[0].p3[k]), v = [0, 1, 2].map((k) => e2.arete[1].p3[k] - e2.arete[0].p3[k]);
@@ -151,7 +202,7 @@ export async function vueRetouche(el, id) {
     if (dist3(f, pt.p3) < 1e-6) return 'Ce point est sur l\'arête.';
     return e1.arete ? [{ p: pr3(f), p3: f }, pt] : [pt, { p: pr3(f), p3: f }];
   }
-  /** Objet sous le point (indice) et partie touchée. */  /** Objet sous le point (indice) et partie touchée. */
+  /** Objet sous le point (indice) et partie touchée. */
   function toucher(p) {
     const tol = 7 * echelle();
     let best = -1, bd = tol, partie = null;
@@ -186,9 +237,12 @@ export async function vueRetouche(el, id) {
     // tracé en cours
     if (outil === 'cote' && etape.length === 2 && survol) s += svgObjet(coteVers(etape[0].p, etape[1].p, survol, '…'), 'class="rt-prov"');
     if (outil === 'renvoi' && etape.length === 1 && survol) s += svgObjet({ t: 'r', c: etape[0].p, q: survol, sg: survol[0] < etape[0].p[0] ? -1 : 1, txt: '…' }, 'class="rt-prov"');
-    for (const e of etape) if (!e.arete) s += `<circle cx="${r2(e.p[0])}" cy="${r2(e.p[1])}" r="${r2(3 * echelle())}" fill="#e11d48"/>`;
+    for (const e of etape) if (!e.arete && !e.contour) s += `<circle cx="${r2(e.p[0])}" cy="${r2(e.p[1])}" r="${r2(3 * echelle())}" fill="#e11d48"/>`;
     for (const e of etape) if (e.arete) s += `<path d="M${r2(e.arete[0].p[0])} ${r2(e.arete[0].p[1])}L${r2(e.arete[1].p[0])} ${r2(e.arete[1].p[1])}" stroke="#e11d48" stroke-width="${r2(2.4 * echelle())}" stroke-linecap="round" fill="none"/>`;
-    if (survol && outil === 'cote' && etape.length < 2 && !accroche(survol).p3) {
+    const trouTrace = (t, epais) => { const q = cercle3(t).map(pr3); return `<path d="M${q.map((v) => `${r2(v[0])} ${r2(v[1])}`).join('L')}Z" stroke="#e11d48" stroke-width="${r2(epais * echelle())}" fill="none" opacity=".7"/>`; };
+    for (const e of etape) if (e.contour) s += trouTrace(e.contour, 2.4);
+    if (survol && outil === 'cote' && etape.length < 2) { const ev = elementIso(survol); if (ev.contour) s += trouTrace(ev.contour, 1.8); }
+    if (survol && outil === 'cote' && etape.length < 2 && !accroche(survol).p3 && !elementIso(survol).contour) {
       const ar = areteSous(survol);
       if (ar) s += `<path d="M${r2(ar[0].p[0])} ${r2(ar[0].p[1])}L${r2(ar[1].p[0])} ${r2(ar[1].p[1])}" stroke="#e11d48" stroke-width="${r2(2.4 * echelle())}" stroke-linecap="round" opacity=".55" fill="none"/>`;
     }
@@ -217,18 +271,15 @@ export async function vueRetouche(el, id) {
     if (outil === 'texte') { memoriser(); objs.push({ t: 'x', m: p, txt: 'texte', ang: 0, an: 'middle' }); sel = objs.length - 1; outil = 'sel'; dessiner(); champ.focus(); champ.select(); return; }
     if (outil === 'cote') {
       // 1er élément : sommet / centre de trou, ou ARÊTE (gardée en attente)
-      if (!etape.length) {
-        const a = accroche(p);
-        const ar = a.p3 ? null : areteSous(p);
-        etape = [ar ? { arete: ar, p: mul(add(ar[0].p, ar[1].p), 0.5) } : a]; dessiner(); return;
-      }
+      if (!etape.length) { etape = [elementIso(p)]; dessiner(); return; }
       if (etape.length === 1) {
-        const e1 = etape[0], b = accroche(p), ar2 = b.p3 ? null : areteSous(p);
-        if (e1.arete && !b.p3 && !ar2) {        // arête puis clic dans le vide : longueur de l'arête, posée ici
+        const e1 = etape[0], e2 = elementIso(p);
+        if (e1.arete && !e2.p3 && !e2.arete && !e2.contour) {        // arête puis clic dans le vide : longueur de l'arête, posée ici
           const [A, B] = e1.arete; etape = [];
           memoriser(); objs.push(coteVers(A.p, B.p, p, nb(dist3(A.p3, B.p3)))); sel = objs.length - 1; dessiner(); champ.focus(); champ.select(); return;
         }
-        const r = paire(e1, ar2 ? { arete: ar2 } : b);
+        if (!e1.p3 && !e1.arete && !e1.contour && !e2.p3 && !e2.arete && !e2.contour) { etape = [e1, e2]; dessiner(); return; }
+        const r = paire(e1, e2);
         if (typeof r === 'string') { aide.textContent = r; return; }
         etape = r; dessiner(); return;
       }
