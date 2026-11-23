@@ -459,7 +459,7 @@ export function svgPrisme(pc, { cotes = true, largeur = 420, arete = true, flech
   const ret = retouche(pc.id);
   if (brut) {
     const xm = pc.L / 2, zf = pc.H * 0.85, vf = fleche ? fleche(pr([xm, -30, zf]), pr([xm, -3, zf])) : { svg: '', pts: [] };
-    return { corps: corps + repere, vf: vf.svg, auto: objs, objs: ret || objs, sommets, aretes: aretesVues, corpsBornes: tous.slice(0, nTous).concat(vf.pts) };
+    return { corps: corps + repere, vf: vf.svg, auto: objs, objs: ret || objs, sommets, aretes: aretesVues, trous: pc.trous.filter((t) => t._c).map((t) => ({ c: t._c, r: t.d / 2, axe: t.axe })), corpsBornes: tous.slice(0, nTous).concat(vf.pts) };
   }
   if (cotes) {
     const liste = ret || objs;
