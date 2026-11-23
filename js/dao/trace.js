@@ -616,6 +616,7 @@ export function creerTraceur(o) {
       saisie: st.saisie, mesure: info, accroche: st.acc ? NOM_ACC[st.acc[2]] : '', ortho: st.ortho,
       annuler: st.hist.length > 0 || st.pts.length > 0, retablir: st.refaire.length > 0,
       sel: st.sel.size, op: st.op, coteK: st.coteK, param: st.param,
+      dim: dimSelection(),
       attente: attente(),
       enCours: st.pts.length > 0 || !!st.cible || !!st.op,
     });
@@ -696,12 +697,45 @@ export function creerTraceur(o) {
       } else {
         const i = toucher(es, q, tol);
         if (i < 0) { if (!ajout) st.sel.clear(); } else if (ajout) { st.sel.has(i) ? st.sel.delete(i) : st.sel.add(i); } else { st.sel = new Set([i]); }
+        st.selClic = q;   // le bout le plus proche du clic sera celui qui bouge si on change la longueur
       }
       st.cadre = null; st.bas = null;
     }
     apercu(); return pp;
   }
 
+  /** Trait seul sélectionné : sa dimension modifiable (longueur + angle d'une ligne, Ø d'un cercle, R d'un arc). */
+  function dimSelection() {
+    if (st.outil !== 'selection' || st.op || st.sel.size !== 1) return null;
+    const i = [...st.sel][0], e = entites()[i];
+    if (!e) return null;
+    if (e.t === 'l') { const [f, m] = boutsLigne(e); return { t: 'l', val: arrondi(dist(f, m), 3), ang: arrondi(angleDe(f, m), 2) }; }
+    if (e.t === 'c') return { t: 'c', val: arrondi(2 * e.r, 3) };
+    if (e.t === 'a') return { t: 'a', val: arrondi(e.r, 3) };
+    return null;
+  }
+  /** [bout fixe, bout qui bouge] d'une ligne : bouge le bout le plus proche du dernier clic de sélection. */
+  function boutsLigne(e) {
+    const a = [e.x1, e.y1], b = [e.x2, e.y2];
+    return st.selClic && dist(st.selClic, a) < dist(st.selClic, b) ? [b, a] : [a, b];
+  }
+  /** Change la longueur (et l'angle) d'une ligne, le Ø d'un cercle ou le R d'un arc sélectionné. */
+  function modifierDim(val, ang) {
+    const i = [...st.sel][0], es = entites(), e = es[i];
+    if (st.sel.size !== 1 || !e || !(val > 0)) return false;
+    let n;
+    if (e.t === 'l') {
+      const [f, m] = boutsLigne(e), a = Number.isFinite(ang) ? ang : angleDe(f, m);
+      const q = [arrondi(f[0] + val * Math.cos((a * Math.PI) / 180), 4), arrondi(f[1] + val * Math.sin((a * Math.PI) / 180), 4)];
+      const premierFixe = f[0] === e.x1 && f[1] === e.y1;
+      n = premierFixe ? { ...e, x2: q[0], y2: q[1] } : { ...e, x1: q[0], y1: q[1] };
+      st.selClic = q;
+    } else if (e.t === 'c') n = { ...e, r: arrondi(val / 2, 4) };
+    else if (e.t === 'a') n = { ...e, r: arrondi(val, 4) };
+    else return false;
+    changer(es.map((x, k) => (k === i ? n : x)));
+    return true;
+  }
   function supprimerSelection() {
     if (!st.sel.size) return;
     const s = st.sel; st.sel = new Set(); st.op = null;
@@ -762,7 +796,7 @@ export function creerTraceur(o) {
     toutEffacer() { st.sel.clear(); st.op = null; if (entites().length) changer([]); },
     /** Ajoute des entités toutes faites (ex. vues d'une pièce) ; annulable. */
     inserer(es) { if (es.length) changer([...entites(), ...es]); },
-    supprimerSelection, lancerOp,
+    supprimerSelection, lancerOp, modifierDim,
     reglerParam(nom, v) { if (nom === 'texte') st.param.texte = v; else if (v > 0) st.param[nom] = v; },
     /** Saisie venant de la case à l'écran (tablette) : comme taper la valeur puis Entrée. */
     /** Termine le tracé en cours (comme Échap ou le clic droit) : utile au stylet. */
