@@ -1218,8 +1218,10 @@ label.cgu-ok input{margin-top:3px}
 .sim-sep{flex:1}
 .sim-aff{display:flex;flex-wrap:wrap;gap:4px 16px;margin:0 0 8px;font-size:14px}
 .sim-ch{display:inline-flex;gap:6px;align-items:center;cursor:pointer}
-.sim-wrap{display:grid;grid-template-columns:168px 1fr 260px;gap:10px;height:calc(100vh - 230px);min-height:460px}
-.sim-pal{overflow:auto;padding:6px;display:flex;flex-direction:column;gap:3px}
+.sim-wrap{display:grid;grid-template-columns:172px 1fr 250px;gap:8px;height:calc(100vh - 190px);min-height:420px}
+.sim-pal{overflow:auto;padding:6px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-content:start;gap:3px}
+.sim-pal .sim-outil{min-width:0}
+.sim-pal .sim-fam{grid-column:1/-1}
 .sim-fam{font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:8px 4px 2px}
 .sim-outil{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:6px;text-align:left;border:1px solid transparent;background:none;border-radius:8px;padding:5px 6px;color:inherit;font:inherit;font-size:13.5px;cursor:pointer}
 .sim-outil:not(.sim-comp){grid-template-columns:1fr auto;padding:8px 8px}
@@ -1246,3 +1248,17 @@ label.cgu-ok input{margin-top:3px}
 .sim-alerte { margin: .5rem 0 0; padding: .45rem .6rem; border: 1px solid #e0a000; border-radius: 6px; font-size: .85rem; }
 .sim-curseur { width: 100%; margin: 4px 0 0; accent-color: #1e6fd9; }
 .sim-bornes { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted, #667); margin: -2px 0 6px; }
+/* simulateur : toute la largeur, palette en tuiles, plein écran */
+body.sim-large main{max-width:none;padding:8px 14px}
+body.sim-large .sim-barre{margin:4px 0}
+body.sim-large .sim-aff{margin:0 0 6px}
+.sim-pal .sim-comp{grid-template-columns:1fr;justify-items:center;text-align:center;position:relative;padding:4px 2px 5px;gap:1px}
+.sim-pal .sim-comp svg{width:50px;height:34px}
+.sim-pal .sim-comp b{font-size:11.5px;line-height:1.15;font-weight:600}
+.sim-pal .sim-comp span{position:absolute;top:2px;right:2px;font-size:10px;padding:0 3px}
+.sim-pal .sim-fam{margin:6px 4px 1px}
+.mc.sim-plein{position:fixed;inset:0;z-index:1000;background:var(--bg,#f3f5f8);padding:8px 12px;overflow:auto}
+.mc.sim-plein:fullscreen{background:var(--bg,#f3f5f8)}
+.mc.sim-plein .crumb{display:none}
+@media (max-width:900px){.sim-pal{display:flex}}
+.sim-pal .sim-outil:not(.sim-comp){grid-column:1/-1}
