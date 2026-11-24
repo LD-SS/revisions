@@ -25,13 +25,14 @@ const TYPES = {
   S: { nom: 'Interrupteur', pre: 'K', touche: 'k', aide: 'Clique dessus pour l\'ouvrir ou le fermer.' },
   A: { nom: 'Ampèremètre', pre: 'A', touche: 'a', aide: 'Se branche en série.' },
   U: { nom: 'Voltmètre', pre: 'V', touche: 'v', aide: 'Se branche en parallèle.' },
+  W: { nom: 'Générateur réglable', unite: 'V', defaut: 12, pre: 'G', touche: 'g', aide: 'Tension réglable : tape une valeur ou glisse le curseur. Borne + du côté du grand trait.' },
   I: { nom: 'Source de courant', unite: 'A', defaut: 0.01, pre: 'I', touche: 'i' },
   G: { nom: 'Masse', pre: 'M', touche: 'm', aide: 'Potentiel de référence (0 V).' },
   D: { nom: 'Diode', pre: 'D', touche: 'd', aide: 'Anode côté triangle, cathode côté barre. Passante si U(anode→cathode) atteint le seuil, sinon bloquée.' },
   Z: { nom: 'Zener', pre: 'DZ', touche: 'z', aide: 'Dans le sens direct : comme une diode. En inverse : bloquée jusqu\'à Vz, puis la tension reste à Vz.' },
   H: { nom: 'LED', pre: 'D', touche: 'h', aide: 'S\'allume dans le sens direct. Toujours avec une résistance en série (environ 10 à 20 mA).' },
 };
-const FAMILLES = [['Sources', ['V', 'I']], ['Récepteurs', ['R', 'L', 'S']], ['Diodes', ['D', 'Z', 'H']], ['Mesure', ['A', 'U']], ['Référence', ['G']]];
+const FAMILLES = [['Sources', ['V', 'W', 'I']], ['Récepteurs', ['R', 'L', 'S']], ['Diodes', ['D', 'Z', 'H']], ['Mesure', ['A', 'U']], ['Référence', ['G']]];
 const AFF = { val: 'Valeurs des composants', ui: 'Tensions et courants', anim: 'Courant animé', coul: 'Couleurs des tensions' };
 
 /* ---------- valeurs : lecture « 4,7k », « 100 mA »… et affichage ---------- */
@@ -48,7 +49,7 @@ function fmt(v, u) {
   if (Math.abs(v) < 1e-9) return `0 ${u}`;
   return joli(v, u);
 }
-const valeurTexte = (c) => (c.t === 'R' ? fmt(c.val, 'Ω') : c.t === 'V' ? fmt(c.val, 'V') : c.t === 'I' ? fmt(c.val, 'A') : c.t === 'L' ? `${fmt(c.un || 12, 'V')} · ${fmt(c.pn || 6, 'W')}`
+const valeurTexte = (c) => (c.t === 'R' ? fmt(c.val, 'Ω') : c.t === 'V' || c.t === 'W' ? fmt(c.val, 'V') : c.t === 'I' ? fmt(c.val, 'A') : c.t === 'L' ? `${fmt(c.un || 12, 'V')} · ${fmt(c.pn || 6, 'W')}`
   : c.t === 'D' ? `seuil ${vc(c.vs ?? 0.7)}` : c.t === 'Z' ? `Vz ${vc(c.vz ?? 5.1)}` : c.t === 'H' ? (c.coul || 'rouge') : '');
 const vc = (v) => `${String(+(+v).toPrecision(3)).replace('.', ',')} V`;
 const ETAT = { fwd: 'Passante', off: 'Bloquée', rev: 'Conduit en inverse (tension Vz)' };
@@ -118,6 +119,7 @@ function symbole(c, res) {
   switch (c.t) {
     case 'R': return `${fil(0, m - 13)}${fil(m + 13, L)}<rect class="sc sc-b" x="${m - 13}" y="-6" width="26" height="12"/>`;
     case 'V': return `${fil(0, m - 3)}${fil(m + 3, L)}<path class="sc" style="stroke-width:5" d="M${m - 3} -6V6"/><path class="sc" d="M${m + 3} -12V12"/><text class="st" x="${m + 10}" y="-9" text-anchor="middle" transform="rotate(${-(c.rot || 0) * 90} ${m + 10} -12)">+</text>`;
+    case 'W': return `${symbole({ ...c, t: 'V' })}<path class="sc" style="stroke-width:1.4" d="M${m - 13} 13L${m + 12} -12"/><path class="sj" d="M${m + 15} -15L${m + 6} -12L${m + 12} -6Z"/>`;
     case 'I': return `${rond('')}<path class="sc" d="M${m - 7} 0H${m + 6}M${m + 1} -4L${m + 7} 0L${m + 1} 4"/>`;
     case 'A': return rond('A');
     case 'U': return rond('V');
@@ -387,25 +389,46 @@ export async function vueSimulateur(el) {
     let f = `<label class="sim-f"><span>Nom</span><input data-k="nom" value="${esc(c.nom || '')}" maxlength="12"></label>`;
     if (c.t === 'R') f += champ('val', 'Résistance', fmt(c.val, 'Ω').replace(/\s?[kM]?Ω$/, (x) => x.trim().replace('Ω', '')), 'Ω');
     if (c.t === 'V') f += champ('val', 'Tension', String(c.val).replace('.', ','), 'V');
+    if (c.t === 'W') {
+      const vmax = c.vmax || 30;
+      f += champ('val', 'Tension', String(+(+c.val).toFixed(2)).replace('.', ','), 'V')
+        + `<input class="sim-curseur" type="range" min="0" max="${vmax}" step="${vmax / 300}" value="${Math.min(vmax, Math.max(0, c.val || 0))}" aria-label="Régler la tension"><div class="sim-bornes"><span>0 V</span><span>${String(vmax).replace('.', ',')} V</span></div>`
+        + champ('vmax', 'Maximum du curseur', String(vmax).replace('.', ','), 'V');
+    }
     if (c.t === 'I') f += champ('val', 'Courant', fmt(c.val, 'A').replace(/\s?[mµ]?A$/, (x) => x.trim().replace('A', '')), 'A');
     if (c.t === 'L') f += champ('un', 'Tension nominale', String(c.un || 12).replace('.', ','), 'V') + champ('pn', 'Puissance nominale', String(c.pn || 6).replace('.', ','), 'W') + `<p class="muted small">Résistance : ${fmt(resistanceLampe(c), 'Ω')}</p>`;
     if (c.t === 'D' || c.t === 'Z') f += champ('vs', 'Seuil (sens direct)', String(c.vs ?? 0.7).replace('.', ','), 'V');
     if (c.t === 'Z') f += champ('vz', 'Tension Zener Vz', String(c.vz ?? 5.1).replace('.', ','), 'V');
     if (c.t === 'H') f += `<label class="sim-f"><span>Couleur</span><select data-coul>${Object.entries(LED).map(([k, [v]]) => `<option value="${k}"${(c.coul || 'rouge') === k ? ' selected' : ''}>${k} · ${String(v).replace('.', ',')} V</option>`).join('')}</select></label>`;
     if (c.t === 'S') f += `<button class="btn ${c.ferme ? 'primary' : ''}" data-a="basculer" type="button">${c.ferme ? 'Fermé : cliquer pour ouvrir' : 'Ouvert : cliquer pour fermer'}</button>`;
-    const resu = !r ? '' : c.t === 'A' ? `<div class="sim-lec">${esc(fmt(Math.abs(r.i) < 1e-9 ? 0 : r.i, 'A'))}</div>`
+    const resuDe = () => { const r = st.res?.ok ? st.res.comps.get(c.id) : null; return !r ? '' : c.t === 'A' ? `<div class="sim-lec">${esc(fmt(Math.abs(r.i) < 1e-9 ? 0 : r.i, 'A'))}</div>`
       : c.t === 'U' ? `<div class="sim-lec">${esc(fmt(Math.abs(r.u) < 1e-9 ? 0 : r.u, 'V'))}</div>`
-      : c.t === 'G' ? '' : `<dl class="sim-res"><dt>Tension</dt><dd>${esc(fmt(Math.abs(r.u), 'V'))}</dd><dt>Courant</dt><dd>${esc(fmt(Math.abs(r.i) < 1e-12 ? 0 : Math.abs(r.i), 'A'))}</dd>${c.t !== 'S' ? `<dt>Puissance</dt><dd>${esc(fmt(r.p, 'W'))}</dd>` : ''}${c.t === 'L' ? `<dt>Éclat</dt><dd>${Math.round(Math.min(1, r.p / (c.pn || 6)) * 100)} %</dd>` : ''}${r.etat ? `<dt>État</dt><dd>${ETAT[r.etat]}</dd>` : ''}</dl>${c.t === 'H' && r.i > 0.03 ? '<p class="sim-alerte">⚠ Plus de 30 mA : une vraie LED grillerait. Ajoute ou augmente la résistance en série.</p>' : ''}`;
+      : c.t === 'G' ? '' : `<dl class="sim-res"><dt>Tension</dt><dd>${esc(fmt(Math.abs(r.u), 'V'))}</dd><dt>Courant</dt><dd>${esc(fmt(Math.abs(r.i) < 1e-12 ? 0 : Math.abs(r.i), 'A'))}</dd>${c.t !== 'S' ? `<dt>Puissance</dt><dd>${esc(fmt(r.p, 'W'))}</dd>` : ''}${c.t === 'L' ? `<dt>Éclat</dt><dd>${Math.round(Math.min(1, r.p / (c.pn || 6)) * 100)} %</dd>` : ''}${r.etat ? `<dt>État</dt><dd>${ETAT[r.etat]}</dd>` : ''}</dl>${c.t === 'H' && r.i > 0.03 ? '<p class="sim-alerte">⚠ Plus de 30 mA : une vraie LED grillerait. Ajoute ou augmente la résistance en série.</p>' : ''}`; };
+    const resu = resuDe();
     prop.innerHTML = `<h3>${esc(T.nom)}</h3>${T.aide ? `<p class="muted small">${esc(T.aide)}</p>` : ''}
-      <div class="sim-champs">${f}</div>${resu}
+      <div class="sim-champs">${f}</div><div class="sim-resu">${resu}</div>
       <div class="sim-btns"><button class="btn" data-a="tourner" type="button" title="Tourner (R)">↻ Tourner</button><button class="btn" data-a="supprimer" type="button">${icone('croix')} Supprimer</button></div>`;
+    const cur = prop.querySelector('.sim-curseur');
+    if (cur) {
+      let avant = null;
+      cur.addEventListener('input', () => {                 // en direct pendant qu'on glisse
+        if (avant == null) avant = JSON.stringify(C);
+        c.val = +(+cur.value).toFixed(2); calculer(); dessiner();
+        const iv = prop.querySelector('input[data-k="val"]'); if (iv) iv.value = String(c.val).replace('.', ',');
+        prop.querySelector('.sim-resu').innerHTML = resuDe();
+      });
+      cur.addEventListener('change', () => {                // lâché : une seule étape d'historique
+        if (avant != null) { st.hist.push(avant); if (st.hist.length > 100) st.hist.shift(); st.refaire = []; avant = null; }
+        sauver();
+      });
+    }
     prop.querySelector('select[data-coul]')?.addEventListener('change', (ev) => changer(() => { c.coul = ev.target.value; }));
     prop.querySelectorAll('input[data-k]').forEach((inp) => inp.addEventListener('change', () => {
       const k = inp.dataset.k;
       if (k === 'nom') { changer(() => { c.nom = inp.value.trim().slice(0, 12); }); return; }
       const v = lireValeur(inp.value);
       if (v == null || (k !== 'val' && v <= 0) || (c.t === 'R' && v <= 0)) { toast('Valeur non comprise : exemples 100 · 4,7k · 2,2M · 20m'); panneau(); return; }
-      changer(() => { c[k] = v; });
+      changer(() => { c[k] = v; if (c.t === 'W') { if (k === 'val' && v > (c.vmax || 30)) c.vmax = v; if (k === 'vmax' && c.val > v) c.val = v; } });
     }));
   }
 
@@ -425,6 +448,7 @@ export async function vueSimulateur(el) {
     if (T.defaut != null) c.val = T.defaut;
     if (t === 'L') { c.un = 12; c.pn = 6; }
     if (t === 'S') c.ferme = true;
+    if (t === 'W') c.vmax = 30;
     if (t === 'D' || t === 'Z') c.vs = 0.7;
     if (t === 'Z') c.vz = 5.1;
     if (t === 'H') c.coul = 'rouge';
