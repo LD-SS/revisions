@@ -4,7 +4,7 @@
    On résout sur sa feuille (comme à l'examen), puis on dévoile la correction
    étape par étape et on se note : Juste / Presque / Faux.
    Exercice : { id, titre, consigne, niveau (1-3), tags?, page, doc?, complement?,
-                indice?, items: [{ q, r, etapes?: [..] }] }
+                indice?, simu? (circuit du simulateur), items: [{ q, r, etapes?: [..] }] }
      q / r / etapes : texte enrichi ($formule$, **gras**…), voir rendu.js.
    Les notes sont gardées dans ce navigateur (clé « exos »), pour la progression.
    Score en % : Juste = 1, Presque = ½, Faux = 0 (dernière note de chaque exercice).
@@ -164,6 +164,7 @@ export function lecteurExercices(conteneur, tous, options = {}) {
         ${corr}
         <div class="fc-actions">
           ${!fini ? `<button class="btn primary" data-action="reponse">${icone('check')} Voir la réponse</button>` : ''}
+          ${e.simu ? `<button class="btn" data-action="simu" title="Ouvrir ce circuit dans le simulateur : changer les valeurs et voir ce qui se passe">${icone('eclair')} Voir dans le simulateur</button>` : ''}
           ${fini ? `
             <span class="ex-q">Comment ça s'est passé ?</span>
             <button class="btn ok" data-action="noter" data-r="ok">${icone('check')} Juste</button>
@@ -319,6 +320,14 @@ export function lecteurExercices(conteneur, tous, options = {}) {
       etat.dev = etat.dev.size >= idx.length ? new Set() : new Set(idx); afficher();
     },
     indice: () => { etat.indice = true; afficher(); },
+    simu: () => {                            // le circuit de l'exercice s'ouvre (neuf) dans le simulateur
+      const e = etat.liste[etat.pos];
+      const c = structuredClone(e.simu); c.id = `ex-${cle(e).replace(/[^\w-]+/g, '-')}`; c.nom = c.nom || `Ex : ${e.titre}`; c.maj = Date.now();
+      const L = stockage.lire('simu', null) || {}; L[c.id] = c; stockage.ecrire('simu', L); stockage.ecrire('simu.courant', c.id);
+      const h = location.hash; const k = h.indexOf('/exercices');
+      stockage.ecrire('simu.retour', { id: c.id, t: e.titre, h: k >= 0 ? `${h.slice(0, k + 10)}/${encodeURIComponent(e.id)}` : h });
+      location.hash = '#/simu';
+    },
     noter: (b) => {
       const ec = etat.liste[etat.pos];
       noter(cle(ec), b.dataset.r, { t: ec.titre, ...(ec.type === 'dessin' ? { aide: niveauAide(), pct: etat.dessin?.pct } : {}) });
