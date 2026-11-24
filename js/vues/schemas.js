@@ -26,6 +26,7 @@ export function ongletsMatiere(m, actif) {
     <a class="m-onglet ${actif === 'chapitres' ? 'actif' : ''}" href="#/m/${esc(m.id)}">${icone('synthese')} Chapitres</a>
     ${m.schemas ? `<a class="m-onglet ${actif === 'schemas' ? 'actif' : ''}" href="#/m/${esc(m.id)}/schemas">${icone('eclair')} Exercices sur schéma <span class="badge">${m.schemas.nb || ''}</span></a>` : ''}
     ${atelier ? `<a class="m-onglet ${actif === 'atelier' ? 'actif' : ''}" href="#/dessin">${icone('crayon')} Atelier de dessin</a>` : ''}
+    ${m.schemas ? `<a class="m-onglet ${actif === 'simu' ? 'actif' : ''}" href="#/simu">${icone('ampoule')} Simulateur</a>` : ''}
     ${generateur ? `<a class="m-onglet ${actif === 'generateur' ? 'actif' : ''}" href="#/m/${esc(m.id)}/generateur">${icone('liste')} Générateur de synthèse</a>` : ''}
   </nav>`;
 }
