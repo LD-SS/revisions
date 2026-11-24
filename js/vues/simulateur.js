@@ -1,7 +1,7 @@
 /* =====================================================================
    VUE SIMULATEUR DE CIRCUITS — #/simu
    ---------------------------------------------------------------------
-   Dessiner librement un circuit et le voir fonctionner (courant continu).
+   Dessiner librement un circuit et le voir fonctionner (courant continu, diodes).
    Palette à gauche, grille au centre, panneau des valeurs à droite.
    Calcul : js/simu/moteur.js. Circuits enregistrés dans « simu »
    (synchronisé avec le compte, js/synchro.js).
@@ -15,7 +15,7 @@ import { icone } from '../icones.js';
 import { matieres } from '../store.js';
 import { styleMatiere } from '../matieres.js';
 import { joli } from '../circuit.js';
-import { resoudre, bornes, resistanceLampe, LONG } from '../simu/moteur.js';
+import { resoudre, bornes, resistanceLampe, LONG, LED } from '../simu/moteur.js';
 
 const K = 24;                                   // px par carreau
 const TYPES = {
@@ -27,8 +27,11 @@ const TYPES = {
   U: { nom: 'Voltmètre', pre: 'V', touche: 'v', aide: 'Se branche en parallèle.' },
   I: { nom: 'Source de courant', unite: 'A', defaut: 0.01, pre: 'I', touche: 'i' },
   G: { nom: 'Masse', pre: 'M', touche: 'm', aide: 'Potentiel de référence (0 V).' },
+  D: { nom: 'Diode', pre: 'D', touche: 'd', aide: 'Anode côté triangle, cathode côté barre. Passante si U(anode→cathode) atteint le seuil, sinon bloquée.' },
+  Z: { nom: 'Zener', pre: 'DZ', touche: 'z', aide: 'Dans le sens direct : comme une diode. En inverse : bloquée jusqu\'à Vz, puis la tension reste à Vz.' },
+  H: { nom: 'LED', pre: 'D', touche: 'h', aide: 'S\'allume dans le sens direct. Toujours avec une résistance en série (environ 10 à 20 mA).' },
 };
-const FAMILLES = [['Sources', ['V', 'I']], ['Récepteurs', ['R', 'L', 'S']], ['Mesure', ['A', 'U']], ['Référence', ['G']]];
+const FAMILLES = [['Sources', ['V', 'I']], ['Récepteurs', ['R', 'L', 'S']], ['Diodes', ['D', 'Z', 'H']], ['Mesure', ['A', 'U']], ['Référence', ['G']]];
 const AFF = { val: 'Valeurs des composants', ui: 'Tensions et courants', anim: 'Courant animé', coul: 'Couleurs des tensions' };
 
 /* ---------- valeurs : lecture « 4,7k », « 100 mA »… et affichage ---------- */
@@ -45,7 +48,10 @@ function fmt(v, u) {
   if (Math.abs(v) < 1e-9) return `0 ${u}`;
   return joli(v, u);
 }
-const valeurTexte = (c) => (c.t === 'R' ? fmt(c.val, 'Ω') : c.t === 'V' ? fmt(c.val, 'V') : c.t === 'I' ? fmt(c.val, 'A') : c.t === 'L' ? `${fmt(c.un || 12, 'V')} · ${fmt(c.pn || 6, 'W')}` : '');
+const valeurTexte = (c) => (c.t === 'R' ? fmt(c.val, 'Ω') : c.t === 'V' ? fmt(c.val, 'V') : c.t === 'I' ? fmt(c.val, 'A') : c.t === 'L' ? `${fmt(c.un || 12, 'V')} · ${fmt(c.pn || 6, 'W')}`
+  : c.t === 'D' ? `seuil ${vc(c.vs ?? 0.7)}` : c.t === 'Z' ? `Vz ${vc(c.vz ?? 5.1)}` : c.t === 'H' ? (c.coul || 'rouge') : '');
+const vc = (v) => `${String(+(+v).toPrecision(3)).replace('.', ',')} V`;
+const ETAT = { fwd: 'Passante', off: 'Bloquée', rev: 'Conduit en inverse (tension Vz)' };
 
 /* ---------- enregistrement ---------- */
 /* « simu » = { id: circuit } (chaque circuit est synchronisé à part) ; le circuit ouvert : « simu.courant » (cet appareil). */
@@ -74,6 +80,11 @@ const EXEMPLES = {
     { id: 'r2', t: 'R', x: 10, y: 6, rot: 1, val: 300, nom: 'R2' }, { id: 'r3', t: 'R', x: 14, y: 6, rot: 1, val: 150, nom: 'R3' },
     { id: 'a1', t: 'A', x: 6, y: 4, rot: 0, nom: 'A' }],
     fils: [[2, 6, 2, 4], [8, 4, 14, 4], [10, 4, 10, 6], [14, 4, 14, 6], [10, 8, 10, 10], [14, 8, 14, 10], [14, 10, 2, 10], [2, 10, 2, 8]] },
+  diodes: { nom: 'Diodes : une LED allumée, une diode bloquée', comps: [
+    { id: 'e1', t: 'V', x: 2, y: 8, rot: 3, val: 9, nom: 'E' }, { id: 'r1', t: 'R', x: 4, y: 4, rot: 0, val: 470, nom: 'R1' },
+    { id: 'h1', t: 'H', x: 8, y: 6, rot: 1, coul: 'rouge', nom: 'D1' }, { id: 'd2', t: 'D', x: 16, y: 6, rot: 3, vs: 0.7, nom: 'D2' },
+    { id: 'h3', t: 'H', x: 16, y: 6, rot: 1, coul: 'vert', nom: 'D3' }],
+    fils: [[2, 6, 2, 4], [2, 4, 4, 4], [6, 4, 8, 4], [8, 4, 16, 4], [8, 4, 8, 6], [8, 8, 8, 10], [16, 8, 16, 10], [16, 10, 2, 10], [2, 10, 2, 8]] },
 };
 
 /* ---------- dessin SVG ---------- */
@@ -117,6 +128,19 @@ function symbole(c, res) {
     }
     case 'S': return `${fil(0, m - 10)}${fil(m + 10, L)}<circle class="sj" cx="${m - 10}" cy="0" r="2.6"/><circle class="sj" cx="${m + 10}" cy="0" r="2.6"/><path class="sc" d="M${m - 10} 0L${m + 11} ${c.ferme ? 0 : -11}"/>`;
     case 'G': return `<path class="sc" d="M0 0V12M-11 12H11M-7 17H7M-3 22H3"/>`;
+    case 'D': case 'Z': case 'H': {             // anode (0) → cathode (L) : triangle puis barre
+      const tri = `M${m - 8} -9L${m + 8} 0L${m - 8} 9Z`;
+      const barre = c.t === 'Z' ? `M${m + 3} -13L${m + 8} -9V9L${m + 13} 13` : `M${m + 8} -9V9`;
+      let fond = '', rayons = '';
+      if (c.t === 'H') {
+        const [, col] = LED[c.coul] || LED.rouge; const r = res?.comps.get(c.id);
+        const lum = r && r.i > 0 ? Math.min(1, r.i / 0.02) : 0;
+        if (lum > 0.02) fond = `<circle cx="${m}" cy="0" r="16" fill="${col}" opacity="${(lum * 0.45).toFixed(2)}" stroke="none"/>`;
+        fond += `<path d="${tri}" fill="${col}" opacity="${(0.25 + lum * 0.75).toFixed(2)}" stroke="none"/>`;
+        rayons = `<path class="sc" style="stroke-width:1.3" d="M${m - 3} 10l5 6M${m + 4} 10l5 6"/><path class="sj" d="M${m + 3} 17L${m - 0.6} 14.4L${m + 2.1} 12.1ZM${m + 10} 17L${m + 6.4} 14.4L${m + 9.1} 12.1Z"/>`;
+      }
+      return `${fil(0, m - 8)}${fil(m + 8, L)}${fond}<path class="sc" d="${tri}"/><path class="sc" d="${barre}"/>${rayons}`;
+    }
     default: return '';
   }
 }
@@ -365,13 +389,17 @@ export async function vueSimulateur(el) {
     if (c.t === 'V') f += champ('val', 'Tension', String(c.val).replace('.', ','), 'V');
     if (c.t === 'I') f += champ('val', 'Courant', fmt(c.val, 'A').replace(/\s?[mµ]?A$/, (x) => x.trim().replace('A', '')), 'A');
     if (c.t === 'L') f += champ('un', 'Tension nominale', String(c.un || 12).replace('.', ','), 'V') + champ('pn', 'Puissance nominale', String(c.pn || 6).replace('.', ','), 'W') + `<p class="muted small">Résistance : ${fmt(resistanceLampe(c), 'Ω')}</p>`;
+    if (c.t === 'D' || c.t === 'Z') f += champ('vs', 'Seuil (sens direct)', String(c.vs ?? 0.7).replace('.', ','), 'V');
+    if (c.t === 'Z') f += champ('vz', 'Tension Zener Vz', String(c.vz ?? 5.1).replace('.', ','), 'V');
+    if (c.t === 'H') f += `<label class="sim-f"><span>Couleur</span><select data-coul>${Object.entries(LED).map(([k, [v]]) => `<option value="${k}"${(c.coul || 'rouge') === k ? ' selected' : ''}>${k} · ${String(v).replace('.', ',')} V</option>`).join('')}</select></label>`;
     if (c.t === 'S') f += `<button class="btn ${c.ferme ? 'primary' : ''}" data-a="basculer" type="button">${c.ferme ? 'Fermé : cliquer pour ouvrir' : 'Ouvert : cliquer pour fermer'}</button>`;
     const resu = !r ? '' : c.t === 'A' ? `<div class="sim-lec">${esc(fmt(Math.abs(r.i) < 1e-9 ? 0 : r.i, 'A'))}</div>`
       : c.t === 'U' ? `<div class="sim-lec">${esc(fmt(Math.abs(r.u) < 1e-9 ? 0 : r.u, 'V'))}</div>`
-      : c.t === 'G' ? '' : `<dl class="sim-res"><dt>Tension</dt><dd>${esc(fmt(Math.abs(r.u), 'V'))}</dd><dt>Courant</dt><dd>${esc(fmt(Math.abs(r.i) < 1e-12 ? 0 : Math.abs(r.i), 'A'))}</dd>${c.t !== 'S' ? `<dt>Puissance</dt><dd>${esc(fmt(r.p, 'W'))}</dd>` : ''}${c.t === 'L' ? `<dt>Éclat</dt><dd>${Math.round(Math.min(1, r.p / (c.pn || 6)) * 100)} %</dd>` : ''}</dl>`;
+      : c.t === 'G' ? '' : `<dl class="sim-res"><dt>Tension</dt><dd>${esc(fmt(Math.abs(r.u), 'V'))}</dd><dt>Courant</dt><dd>${esc(fmt(Math.abs(r.i) < 1e-12 ? 0 : Math.abs(r.i), 'A'))}</dd>${c.t !== 'S' ? `<dt>Puissance</dt><dd>${esc(fmt(r.p, 'W'))}</dd>` : ''}${c.t === 'L' ? `<dt>Éclat</dt><dd>${Math.round(Math.min(1, r.p / (c.pn || 6)) * 100)} %</dd>` : ''}${r.etat ? `<dt>État</dt><dd>${ETAT[r.etat]}</dd>` : ''}</dl>${c.t === 'H' && r.i > 0.03 ? '<p class="sim-alerte">⚠ Plus de 30 mA : une vraie LED grillerait. Ajoute ou augmente la résistance en série.</p>' : ''}`;
     prop.innerHTML = `<h3>${esc(T.nom)}</h3>${T.aide ? `<p class="muted small">${esc(T.aide)}</p>` : ''}
       <div class="sim-champs">${f}</div>${resu}
       <div class="sim-btns"><button class="btn" data-a="tourner" type="button" title="Tourner (R)">↻ Tourner</button><button class="btn" data-a="supprimer" type="button">${icone('croix')} Supprimer</button></div>`;
+    prop.querySelector('select[data-coul]')?.addEventListener('change', (ev) => changer(() => { c.coul = ev.target.value; }));
     prop.querySelectorAll('input[data-k]').forEach((inp) => inp.addEventListener('change', () => {
       const k = inp.dataset.k;
       if (k === 'nom') { changer(() => { c.nom = inp.value.trim().slice(0, 12); }); return; }
@@ -397,6 +425,9 @@ export async function vueSimulateur(el) {
     if (T.defaut != null) c.val = T.defaut;
     if (t === 'L') { c.un = 12; c.pn = 6; }
     if (t === 'S') c.ferme = true;
+    if (t === 'D' || t === 'Z') c.vs = 0.7;
+    if (t === 'Z') c.vz = 5.1;
+    if (t === 'H') c.coul = 'rouge';
     changer(() => { C.comps.push(c); });
     st.sel = { type: 'c', id: c.id }; panneau(); dessiner();
   }
