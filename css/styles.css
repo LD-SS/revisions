@@ -1262,3 +1262,4 @@ body.sim-large .sim-aff{margin:0 0 6px}
 .mc.sim-plein .crumb{display:none}
 @media (max-width:900px){.sim-pal{display:flex}}
 .sim-pal .sim-outil:not(.sim-comp){grid-column:1/-1}
+body.sim-large .sim-barre select{max-width:210px}
