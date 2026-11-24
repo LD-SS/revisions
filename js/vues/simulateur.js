@@ -182,6 +182,7 @@ export async function vueSimulateur(el) {
       <button class="btn icon" data-a="zp" type="button" title="Zoomer">+</button>
       <button class="btn" data-a="voir" type="button" title="Voir tout le circuit">Tout voir</button>
       <button class="btn" data-a="image" type="button" title="Télécharger le schéma (image SVG)">${icone('telecharger')} Image</button>
+      <button class="btn" data-a="plein" type="button" title="Plein écran (P)">⛶ <span class="sim-plein-t">Plein écran</span></button>
     </div>
     <div class="sim-aff">${Object.entries(AFF).map(([k, t]) => `<label class="sim-ch"><input type="checkbox" data-aff="${k}"${aff[k] ? ' checked' : ''}> ${t}</label>`).join('')}</div>
     <div class="sim-wrap">
@@ -475,7 +476,7 @@ export async function vueSimulateur(el) {
     const pts = [...C.comps.flatMap(bornes), ...C.fils.flatMap((f) => [[f[0], f[1]], [f[2], f[3]]])];
     if (!pts.length) { vb = { x: -2 * K, y: -2 * K, w: 30 * K, h: 18 * K }; dessiner(); return; }
     const xs = pts.map((p) => p[0]), ys = pts.map((p) => p[1]);
-    const x0 = Math.min(...xs) - 5, x1 = Math.max(...xs) + 5, y0 = Math.min(...ys) - 4, y1 = Math.max(...ys) + 4;
+    const x0 = Math.min(...xs) - 4, x1 = Math.max(...xs) + 4, y0 = Math.min(...ys) - 3, y1 = Math.max(...ys) + 3;
     const r = svg.clientWidth / Math.max(svg.clientHeight, 1) || 1.6;
     let w = (x1 - x0) * K, h = (y1 - y0) * K;
     if (w / h < r) w = h * r; else h = w / r;
@@ -570,6 +571,7 @@ export async function vueSimulateur(el) {
     if (k === 'Escape') { if (st.mode === 'fil' && st.filPts.length) { st.filPts = []; dessiner(); } else if (st.mode !== 'sel') setMode('sel'); else { st.sel = null; panneau(); dessiner(); } return; }
     if (k === 'Delete' || k === 'Backspace') { if (st.sel) { ev.preventDefault(); supprimerSel(); } return; }
     if (k === 'f' || k === 'F' || k === 'w' || k === 'W') { setMode('fil'); return; }
+    if (k === 'p' || k === 'P') { pleinEcran(); return; }
     if (k === ' ' && st.mode === 'place') { ev.preventDefault(); tourner(); return; }
     if ((k === 'r' || k === 'R') && (st.mode === 'place' || compSel())) { tourner(); return; }
     const t = Object.entries(TYPES).find(([, T]) => T.touche === k.toLowerCase());
@@ -584,7 +586,7 @@ export async function vueSimulateur(el) {
     if (b.dataset.place) { setMode('place', b.dataset.place); return; }
     const a = b.dataset.a;
     if (a === 'annuler') annuler(); else if (a === 'retablir') retablir();
-    else if (a === 'zm') zoom(1.25); else if (a === 'zp') zoom(0.8); else if (a === 'voir') toutVoir();
+    else if (a === 'zm') zoom(1.25); else if (a === 'zp') zoom(0.8); else if (a === 'voir') toutVoir(); else if (a === 'plein') pleinEcran();
     else if (a === 'image') exporterImage();
     else if (a === 'tourner') tourner(); else if (a === 'supprimer') supprimerSel();
     else if (a === 'basculer') { const c = compSel(); if (c) changer(() => { c.ferme = !c.ferme; }); }
@@ -607,7 +609,36 @@ export async function vueSimulateur(el) {
   // premier affichage
   sauver(); listeCircuits(); calculer(); setMode('sel'); panneau();
   requestAnimationFrame(() => { if (C.comps.length || C.fils.length) toutVoir(); else dessiner(); });
-  const surTaille = () => dessiner();
+  /* ----- place à l'écran et plein écran ----- */
+  const wrap = el.querySelector('.sim-wrap'); const mc = el.querySelector('.mc');
+  document.body.classList.add('sim-large');            // la page prend toute la largeur
+  function ajuster() {                                  // la zone de dessin descend jusqu'au bas de la fenêtre
+    if (window.innerWidth <= 900) { wrap.style.height = ''; return; }
+    const haut = wrap.getBoundingClientRect().top + window.scrollY;
+    wrap.style.height = `${Math.max(420, window.innerHeight - (mc.classList.contains('sim-plein') ? wrap.getBoundingClientRect().top : haut) - 10)}px`;
+  }
+  const surTaille = () => { ajuster(); dessiner(); };
+  function majPlein() {
+    const on = mc.classList.contains('sim-plein');
+    el.querySelector('.sim-plein-t').textContent = on ? 'Quitter' : 'Plein écran';
+    requestAnimationFrame(() => { ajuster(); toutVoir(); });
+  }
+  function pleinEcran() {
+    const on = !mc.classList.contains('sim-plein');
+    mc.classList.toggle('sim-plein', on);
+    try {
+      if (on && mc.requestFullscreen && !document.fullscreenElement) mc.requestFullscreen().catch(() => {});
+      else if (!on && document.fullscreenElement) document.exitFullscreen().catch(() => {});
+    } catch { /* navigateur sans plein écran : la classe suffit (fenêtre entière) */ }
+    majPlein();
+  }
+  const surPlein = () => { if (!document.fullscreenElement && mc.classList.contains('sim-plein')) { mc.classList.remove('sim-plein'); majPlein(); } };
+  document.addEventListener('fullscreenchange', surPlein);
   window.addEventListener('resize', surTaille);
-  return () => { document.removeEventListener('keydown', clavier); window.removeEventListener('resize', surTaille); };
+  ajuster(); toutVoir();
+  return () => {
+    document.removeEventListener('keydown', clavier); window.removeEventListener('resize', surTaille);
+    document.removeEventListener('fullscreenchange', surPlein); document.body.classList.remove('sim-large');
+    if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+  };
 }
