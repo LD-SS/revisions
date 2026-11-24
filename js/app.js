@@ -28,7 +28,7 @@ import { majBoutonProposer, viderAttente } from './proposer.js';
 import { demarrerSynchro, adopterCompte } from './synchro.js';
 import { exigerAcces, ecranPerte } from './vues/acces.js';
 
-const VERSION = '1.44.4 (longueur, Ø ou R d\'un trait sélectionné modifiable)';
+const VERSION = '1.45.0 (simulateur de circuits : dessiner un circuit et le voir fonctionner)';
 window.__version = VERSION;
 const vue = document.getElementById('vue');
 let nettoyer = null; // fonction fournie par la page affichée, appelée avant d'en changer
@@ -66,7 +66,7 @@ function rendreOnglets(route) {
   routeAffichee = route;
   const actif = (cond) => (cond ? 'active' : '');
   const enPlus = ['plus', 'recherche', 'examen', 'parametres', 'membres'].includes(route[0]);
-  const surMatiere = (m) => (route[0] === 'm' && route[1] === m.id) || (route[0] === 'dessin' && m.id === 'dessin');
+  const surMatiere = (m) => (route[0] === 'm' && route[1] === m.id) || (route[0] === 'dessin' && m.id === 'dessin') || (route[0] === 'simu' && !!m.schemas);
   const tabs = [
     `<a class="tab ${actif(route[0] === '')}" href="#/">${icone('accueil')}<span class="txt">Accueil</span></a>`,
     ...matieres().map((m) => `<a class="tab mc ${actif(surMatiere(m))}" ${styleMatiere(m)} href="#/m/${esc(m.id)}" title="${esc(m.nom)}">
@@ -92,6 +92,7 @@ const ROUTES = {
     : cid ? vueChapitre(el, mid, cid, onglet, extra) : vueMatiere(el, mid)),
   parametres: (el) => vueParametres(el, { version: VERSION, theme, changerTheme }),
   dessin: (el, params) => vueAtelier(el, params),
+  simu: async (el) => (await import('./vues/simulateur.js')).vueSimulateur(el),
   plus: (el) => vuePlus(el),
   recherche: (el, [q]) => vueRecherche(el, q),
   examen: (el, params) => vueExamen(el, params),
