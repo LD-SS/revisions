@@ -1211,3 +1211,35 @@ label.cgu-ok input{margin-top:3px}
 .rt-svg{display:block;width:100%;height:min(70vh,640px);touch-action:none;cursor:crosshair}
 .rt-obj{cursor:move}.rt-sel path,.rt-sel text{stroke:#e11d48!important}.rt-sel text{fill:#e11d48!important;stroke:none!important}.rt-sel path[fill="#1d5fd1"]{fill:#e11d48!important}
 .rt-prov{opacity:.6}
+
+/* ---------- Simulateur de circuits (js/vues/simulateur.js) ---------- */
+.sim-barre{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:8px 0 6px}
+.sim-barre select{min-height:36px;max-width:260px}
+.sim-sep{flex:1}
+.sim-aff{display:flex;flex-wrap:wrap;gap:4px 16px;margin:0 0 8px;font-size:14px}
+.sim-ch{display:inline-flex;gap:6px;align-items:center;cursor:pointer}
+.sim-wrap{display:grid;grid-template-columns:168px 1fr 260px;gap:10px;height:calc(100vh - 230px);min-height:460px}
+.sim-pal{overflow:auto;padding:6px;display:flex;flex-direction:column;gap:3px}
+.sim-fam{font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:8px 4px 2px}
+.sim-outil{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:6px;text-align:left;border:1px solid transparent;background:none;border-radius:8px;padding:5px 6px;color:inherit;font:inherit;font-size:13.5px;cursor:pointer}
+.sim-outil:not(.sim-comp){grid-template-columns:1fr auto;padding:8px 8px}
+.sim-outil span{font-size:11px;color:var(--muted);border:1px solid var(--line,#ccd);border-radius:4px;padding:0 4px}
+.sim-outil:hover{background:color-mix(in srgb,var(--accent) 8%,transparent)}
+.sim-outil.actif{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 14%,transparent)}
+.sim-outil svg{background:#fff;border-radius:5px}
+.sim-zone{position:relative;padding:0;overflow:hidden}
+.sim-svg{width:100%;height:100%;display:block;touch-action:none;cursor:crosshair;outline:none}
+.sim-msg{position:absolute;left:10px;right:10px;top:10px;background:#fdecea;color:#8a1c12;border:1px solid #f2b8b0;border-radius:8px;padding:8px 10px;font-size:14px}
+.sim-aide{position:absolute;left:10px;bottom:6px;right:10px;font-size:12.5px;pointer-events:none;text-shadow:0 0 3px #fff}
+.sim-prop{overflow:auto;padding:12px}
+.sim-prop h3{margin:0 0 6px}
+.sim-f{display:grid;grid-template-columns:1fr 92px 22px;gap:6px;align-items:center;margin:6px 0;font-size:14px}
+.sim-f:first-child{grid-template-columns:1fr 114px}
+.sim-f input{min-height:34px;width:100%}
+.sim-f em{font-style:normal;color:var(--muted)}
+.sim-res{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;margin:12px 0;font-size:14.5px}
+.sim-res dt{color:var(--muted)}.sim-res dd{margin:0;font-weight:600;text-align:right}
+.sim-lec{font:700 26px/1.2 var(--mono,monospace);text-align:center;background:#fffbe6;color:#1b1f24;border:1px solid #e3d9a5;border-radius:8px;padding:10px;margin:12px 0}
+.sim-btns{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.sim-mode{padding-left:18px;font-size:14px}.sim-mode li{margin:5px 0}
+@media (max-width:900px){.sim-wrap{grid-template-columns:1fr;height:auto}.sim-pal{flex-direction:row;flex-wrap:wrap}.sim-zone{height:60vh}.sim-fam{display:none}}
