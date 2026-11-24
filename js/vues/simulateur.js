@@ -15,7 +15,7 @@ import { icone } from '../icones.js';
 import { matieres } from '../store.js';
 import { styleMatiere } from '../matieres.js';
 import { joli } from '../circuit.js';
-import { resoudre, bornes, resistanceLampe, LONG, LED } from '../simu/moteur.js';
+import { resoudre, bornes, resistanceLampe, LONG, LED, seuil } from '../simu/moteur.js';
 
 const K = 24;                                   // px par carreau
 const TYPES = {
@@ -50,7 +50,7 @@ function fmt(v, u) {
   return joli(v, u);
 }
 const valeurTexte = (c) => (c.t === 'R' ? fmt(c.val, 'Ω') : c.t === 'V' || c.t === 'W' ? fmt(c.val, 'V') : c.t === 'I' ? fmt(c.val, 'A') : c.t === 'L' ? `${fmt(c.un || 12, 'V')} · ${fmt(c.pn || 6, 'W')}`
-  : c.t === 'D' ? `seuil ${vc(c.vs ?? 0.7)}` : c.t === 'Z' ? `Vz ${vc(c.vz ?? 5.1)}` : c.t === 'H' ? (c.coul || 'rouge') : '');
+  : c.t === 'D' ? `seuil ${vc(c.vs ?? 0.7)}` : c.t === 'Z' ? `Vz ${vc(c.vz ?? 5.1)}` : c.t === 'H' ? `${c.coul || 'rouge'} · ${vc(seuil(c))}` : '');
 const vc = (v) => `${String(+(+v).toPrecision(3)).replace('.', ',')} V`;
 const ETAT = { fwd: 'Passante', off: 'Bloquée', rev: 'Conduit en inverse (tension Vz)' };
 
@@ -170,6 +170,7 @@ export async function vueSimulateur(el) {
   <div class="mc" ${m ? styleMatiere(m) : ''}>
     <div class="crumb"><a href="#/">Accueil</a><span class="crumb-sep">›</span>${m ? `<a href="#/m/${esc(m.id)}">${esc(m.nom)}</a><span class="crumb-sep">›</span>` : ''}<span>Simulateur de circuits</span></div>
     <div class="sim-barre">
+      <a class="btn sim-retour" hidden>${icone('fleche-g')} Retour à l'exercice</a>
       <select class="sim-liste" aria-label="Mes circuits"></select>
       <button class="btn" data-a="nouveau" type="button">+ Nouveau</button>
       <button class="btn" data-a="renommer" type="button">Renommer</button>
@@ -217,6 +218,11 @@ export async function vueSimulateur(el) {
     const ls = Object.values(D.liste).sort((a, b) => (b.maj || 0) - (a.maj || 0));
     if (!ls.find((x) => x.id === C.id)) ls.unshift(C);
     el.querySelector('.sim-liste').innerHTML = ls.map((x) => `<option value="${esc(x.id)}"${x.id === C.id ? ' selected' : ''}>${esc(x.nom || 'Sans nom')}</option>`).join('');
+    majRetour();
+  }
+  function majRetour() {                    // circuit ouvert depuis un exercice : lien de retour
+    const r = stockage.lire('simu.retour', null); const a = el.querySelector('.sim-retour');
+    a.hidden = !(r && r.id === C.id); if (!a.hidden) { a.href = r.h; a.title = r.t || ''; }
   }
   function ouvrir(c) { C = structuredClone(c); st.sel = null; st.hist = []; st.refaire = []; st.filPts = []; sauver(); listeCircuits(); calculer(); toutVoir(); panneau(); }
 
@@ -391,15 +397,17 @@ export async function vueSimulateur(el) {
     if (c.t === 'R') f += champ('val', 'Résistance', fmt(c.val, 'Ω').replace(/\s?[kM]?Ω$/, (x) => x.trim().replace('Ω', '')), 'Ω');
     if (c.t === 'V') f += champ('val', 'Tension', String(c.val).replace('.', ','), 'V');
     if (c.t === 'W') {
-      const vmax = c.vmax || 30;
+      const vmax = c.vmax || 30, vmin = c.vmin || 0;
       f += champ('val', 'Tension', String(+(+c.val).toFixed(2)).replace('.', ','), 'V')
-        + `<input class="sim-curseur" type="range" min="0" max="${vmax}" step="${vmax / 300}" value="${Math.min(vmax, Math.max(0, c.val || 0))}" aria-label="Régler la tension"><div class="sim-bornes"><span>0 V</span><span>${String(vmax).replace('.', ',')} V</span></div>`
+        + `<input class="sim-curseur" type="range" min="${vmin}" max="${vmax}" step="${(vmax - vmin) / 300}" value="${Math.min(vmax, Math.max(vmin, c.val || 0))}" aria-label="Régler la tension"><div class="sim-bornes"><span>${String(vmin).replace('.', ',')} V</span><span>${String(vmax).replace('.', ',')} V</span></div>`
+        + champ('vmin', 'Minimum du curseur', String(vmin).replace('.', ','), 'V')
         + champ('vmax', 'Maximum du curseur', String(vmax).replace('.', ','), 'V');
     }
     if (c.t === 'I') f += champ('val', 'Courant', fmt(c.val, 'A').replace(/\s?[mµ]?A$/, (x) => x.trim().replace('A', '')), 'A');
     if (c.t === 'L') f += champ('un', 'Tension nominale', String(c.un || 12).replace('.', ','), 'V') + champ('pn', 'Puissance nominale', String(c.pn || 6).replace('.', ','), 'W') + `<p class="muted small">Résistance : ${fmt(resistanceLampe(c), 'Ω')}</p>`;
     if (c.t === 'D' || c.t === 'Z') f += champ('vs', 'Seuil (sens direct)', String(c.vs ?? 0.7).replace('.', ','), 'V');
     if (c.t === 'Z') f += champ('vz', 'Tension Zener Vz', String(c.vz ?? 5.1).replace('.', ','), 'V');
+    if (c.t === 'H') f += champ('vs', 'Seuil', String(seuil(c)).replace('.', ','), 'V');
     if (c.t === 'H') f += `<label class="sim-f"><span>Couleur</span><select data-coul>${Object.entries(LED).map(([k, [v]]) => `<option value="${k}"${(c.coul || 'rouge') === k ? ' selected' : ''}>${k} · ${String(v).replace('.', ',')} V</option>`).join('')}</select></label>`;
     if (c.t === 'S') f += `<button class="btn ${c.ferme ? 'primary' : ''}" data-a="basculer" type="button">${c.ferme ? 'Fermé : cliquer pour ouvrir' : 'Ouvert : cliquer pour fermer'}</button>`;
     const resuDe = () => { const r = st.res?.ok ? st.res.comps.get(c.id) : null; return !r ? '' : c.t === 'A' ? `<div class="sim-lec">${esc(fmt(Math.abs(r.i) < 1e-9 ? 0 : r.i, 'A'))}</div>`
@@ -423,13 +431,13 @@ export async function vueSimulateur(el) {
         sauver();
       });
     }
-    prop.querySelector('select[data-coul]')?.addEventListener('change', (ev) => changer(() => { c.coul = ev.target.value; }));
+    prop.querySelector('select[data-coul]')?.addEventListener('change', (ev) => changer(() => { c.coul = ev.target.value; c.vs = LED[c.coul][0]; }));
     prop.querySelectorAll('input[data-k]').forEach((inp) => inp.addEventListener('change', () => {
       const k = inp.dataset.k;
       if (k === 'nom') { changer(() => { c.nom = inp.value.trim().slice(0, 12); }); return; }
       const v = lireValeur(inp.value);
-      if (v == null || (k !== 'val' && v <= 0) || (c.t === 'R' && v <= 0)) { toast('Valeur non comprise : exemples 100 · 4,7k · 2,2M · 20m'); panneau(); return; }
-      changer(() => { c[k] = v; if (c.t === 'W') { if (k === 'val' && v > (c.vmax || 30)) c.vmax = v; if (k === 'vmax' && c.val > v) c.val = v; } });
+      if (v == null || (k !== 'val' && k !== 'vmin' && v <= 0) || (k === 'vmin' && v >= (c.vmax || 30)) || (c.t === 'R' && v <= 0)) { toast('Valeur non comprise : exemples 100 · 4,7k · 2,2M · 20m'); panneau(); return; }
+      changer(() => { c[k] = v; if (c.t === 'W') { if (k === 'val' && v > (c.vmax || 30)) c.vmax = v; if (k === 'val' && v < (c.vmin || 0)) c.vmin = v; if (k === 'vmax' && c.val > v) c.val = v; if (k === 'vmin' && c.val < v) c.val = v; } });
     }));
   }
 
