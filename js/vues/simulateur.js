@@ -46,7 +46,7 @@ export function lireValeur(s) {
 }
 function fmt(v, u) {
   if (u === 'Ω') { const a = Math.abs(v); if (a >= 1e6) return `${String(+(v / 1e6).toPrecision(3)).replace('.', ',')} MΩ`; if (a >= 1e3) return `${String(+(v / 1e3).toPrecision(3)).replace('.', ',')} kΩ`; return `${String(+v.toPrecision(3)).replace('.', ',')} Ω`; }
-  if (Math.abs(v) < 1e-9) return `0 ${u}`;
+  if (Math.abs(v) < (u === 'V' ? 1e-6 : 1e-9)) return `0 ${u}`;   // fuites de calcul minuscules : 0
   return joli(v, u);
 }
 const valeurTexte = (c) => (c.t === 'R' ? fmt(c.val, 'Ω') : c.t === 'V' || c.t === 'W' ? fmt(c.val, 'V') : c.t === 'I' ? fmt(c.val, 'A') : c.t === 'L' ? `${fmt(c.un || 12, 'V')} · ${fmt(c.pn || 6, 'W')}`
