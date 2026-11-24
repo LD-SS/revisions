@@ -25,7 +25,7 @@ export const LONG = 2;               // longueur d'un composant (carreaux)
 const DIR = [[1, 0], [0, 1], [-1, 0], [0, -1]];
 const RD = 0.05, GOFF = 1e-9;        // diode passante (Ω) ; diode bloquée (S)
 export const LED = { rouge: [1.8, '#e53935'], orange: [1.9, '#fb8c00'], jaune: [2.0, '#fdd835'], vert: [2.2, '#43a047'], bleu: [3.0, '#1e88e5'], blanc: [3.2, '#cfd8dc'] };
-export const seuil = (c) => (c.t === 'H' ? (LED[c.coul] || LED.rouge)[0] : (c.vs ?? 0.7));
+export const seuil = (c) => (c.vs ?? (c.t === 'H' ? (LED[c.coul] || LED.rouge)[0] : 0.7));   // LED : seuil de sa couleur, sauf valeur donnée
 
 /** Bornes [a, b] d'un composant (la masse n'en a qu'une). */
 export function bornes(c) {
