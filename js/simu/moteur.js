@@ -125,6 +125,7 @@ export function resoudre(circuit) {
     if (!pire) break;
     pire[0].etat = pire[1];
   }
+  if (!x) return { ok: false, msg: 'Circuit impossible : deux sources de tension directement en parallèle, ou une boucle formée seulement de sources.', V: new Map(), comps: new Map(), fils: [] };
   const Vn = (i) => (i < 0 ? 0 : x[i]);
   const V = new Map([...idx].map(([k, i]) => [k, Vn(i)]));
   const comps = new Map(); const fils = []; let court = false;
