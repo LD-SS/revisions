@@ -1243,3 +1243,4 @@ label.cgu-ok input{margin-top:3px}
 .sim-btns{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
 .sim-mode{padding-left:18px;font-size:14px}.sim-mode li{margin:5px 0}
 @media (max-width:900px){.sim-wrap{grid-template-columns:1fr;height:auto}.sim-pal{flex-direction:row;flex-wrap:wrap}.sim-zone{height:60vh}.sim-fam{display:none}}
+.sim-alerte { margin: .5rem 0 0; padding: .45rem .6rem; border: 1px solid #e0a000; border-radius: 6px; font-size: .85rem; }
