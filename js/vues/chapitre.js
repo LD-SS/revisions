@@ -1,5 +1,5 @@
 /* =====================================================================
-   VUE CHAPITRE — en-tête + onglets Synthèse / Flashcards / Exercices
+   VUE CHAPITRE — en-tête + onglets (Cours) / Synthèse / Flashcards / Exercices
    ---------------------------------------------------------------------
    Adresse : #/m/<matière>/<chapitre>/<onglet>   (onglet par défaut : synthese)
    Pour ajouter un onglet : une entrée dans ONGLETS + son affichage dans afficherOnglet().
@@ -15,6 +15,7 @@ import { lecteurExercices } from '../exercices.js';
 import { memoriserVisite, cartesARevoir } from '../suivi.js';
 
 const ONGLETS = [
+  { id: 'cours', libelle: 'Cours', icone: 'livre', siCours: true },   // seulement si le chapitre a un cours interactif
   { id: 'synthese', libelle: 'Synthèse', icone: 'synthese' },
   { id: 'flashcards', libelle: 'Flashcards', icone: 'cartes' },
   { id: 'exercices', libelle: 'Exercices', icone: 'exercices' },
@@ -24,13 +25,14 @@ export async function vueChapitre(el, mid, cid, onglet = 'synthese', extra = '')
   const m = matiere(mid);
   const info = infoChapitre(mid, cid);
   if (!m || !info) throw new Error(`Chapitre introuvable : « ${mid}/${cid} ».`);
-  if (!ONGLETS.some((o) => o.id === onglet)) onglet = 'synthese';
-
   const ch = await chargerChapitre(mid, cid);
+  const onglets = ONGLETS.filter((o) => !o.siCours || ch.cours?.lecons?.length);
+  if (!onglets.some((o) => o.id === onglet)) onglet = 'synthese';
+
   const base = `#/m/${esc(m.id)}/${esc(info.id)}`;
   const num = m.chapitres.indexOf(info) + 1;
-  const compte = { synthese: ch.synthese.sections.length, flashcards: ch.flashcards.length, exercices: ch.exercices.length };
-  memoriserVisite(`${base}/${onglet}`, ch.titre || info.titre, `${m.court || m.nom} · ${ONGLETS.find((o) => o.id === onglet).libelle}`);
+  const compte = { cours: ch.cours?.lecons?.length || 0, synthese: ch.synthese.sections.length, flashcards: ch.flashcards.length, exercices: ch.exercices.length };
+  memoriserVisite(`${base}/${onglet}`, ch.titre || info.titre, `${m.court || m.nom} · ${onglets.find((o) => o.id === onglet).libelle}`);
   const nbRevoir = cartesARevoir(`${mid}/${cid}`).length;
   const { precedent, suivant } = voisins(mid, cid);
 
@@ -48,7 +50,7 @@ export async function vueChapitre(el, mid, cid, onglet = 'synthese', extra = '')
       ${ch.exemple || info.exemple ? `<div class="notice">${icone('info')}<div><b>Contenu d'exemple.</b>
         Ce chapitre a été rédigé pour tester l'appli : il ne provient pas d'un PDF de cours. Les numéros de page sont fictifs.</div></div>` : ''}
       <nav class="seg" aria-label="Contenu du chapitre">
-        ${ONGLETS.map((o) => `<a href="${base}/${o.id}" class="${o.id === onglet ? 'active' : ''}" ${o.id === onglet ? 'aria-current="page"' : ''}>
+        ${onglets.map((o) => `<a href="${base}/${o.id}" class="${o.id === onglet ? 'active' : ''}" ${o.id === onglet ? 'aria-current="page"' : ''}>
           ${icone(o.icone)}<span class="seg-t">${o.libelle}</span><span class="count">${compte[o.id]}</span>${o.id === 'flashcards' && nbRevoir ? `<span class="count ko" title="Cartes à revoir">${nbRevoir}</span>` : ''}</a>`).join('')}
       </nav>
       <div id="onglet"></div>
@@ -70,6 +72,8 @@ export async function vueChapitre(el, mid, cid, onglet = 'synthese', extra = '')
 function afficherOnglet(zone, onglet, ch, adresse, extra) {
   const prefixe = `${ch.matiere}/${ch.id}`;
   switch (onglet) {
+    case 'cours':
+      return import('../cours.js').then(({ lecteurCours }) => lecteurCours(zone, ch.cours, { docs: sourcesDe(ch), prefixe }));
     case 'flashcards':
       return lecteurFlashcards(zone, ch.flashcards, { docs: sourcesDe(ch), prefixe, revoir: extra === 'revoir' });
     case 'exercices':

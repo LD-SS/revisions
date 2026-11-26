@@ -44,7 +44,7 @@ export function lireValeur(s) {
   const v = parseFloat(m[1]) * f;
   return Number.isFinite(v) ? v : null;
 }
-function fmt(v, u) {
+export function fmt(v, u) {
   if (u === 'Ω') { const a = Math.abs(v); if (a >= 1e6) return `${String(+(v / 1e6).toPrecision(3)).replace('.', ',')} MΩ`; if (a >= 1e3) return `${String(+(v / 1e3).toPrecision(3)).replace('.', ',')} kΩ`; return `${String(+v.toPrecision(3)).replace('.', ',')} Ω`; }
   if (Math.abs(v) < (u === 'V' ? 1e-6 : 1e-9)) return `0 ${u}`;   // fuites de calcul minuscules : 0
   return joli(v, u);
@@ -52,7 +52,7 @@ function fmt(v, u) {
 const valeurTexte = (c) => (c.t === 'R' ? fmt(c.val, 'Ω') : c.t === 'V' || c.t === 'W' ? fmt(c.val, 'V') : c.t === 'I' ? fmt(c.val, 'A') : c.t === 'L' ? `${fmt(c.un || 12, 'V')} · ${fmt(c.pn || 6, 'W')}`
   : c.t === 'D' ? `seuil ${vc(c.vs ?? 0.7)}` : c.t === 'Z' ? `Vz ${vc(c.vz ?? 5.1)}` : c.t === 'H' ? `${c.coul || 'rouge'} · ${vc(seuil(c))}` : '');
 const vc = (v) => `${String(+(+v).toPrecision(3)).replace('.', ',')} V`;
-const ETAT = { fwd: 'Passante', off: 'Bloquée', rev: 'Conduit en inverse (tension Vz)' };
+export const ETAT = { fwd: 'Passante', off: 'Bloquée', rev: 'Conduit en inverse (tension Vz)' };
 
 /* ---------- enregistrement ---------- */
 /* « simu » = { id: circuit } (chaque circuit est synchronisé à part) ; le circuit ouvert : « simu.courant » (cet appareil). */
@@ -156,6 +156,111 @@ function couleurV(v, vmax) {
 }
 const vitesse = (i) => { const a = Math.abs(i); if (a < 1e-7) return 0; return 12 + 46 * Math.log10(1 + a * 1e4) / 4; };   // px/s
 
+/** Distance d'un point à un segment (en carreaux). */
+const dSeg = (p, a, b) => {
+  const dx = b[0] - a[0], dy = b[1] - a[1], l2 = dx * dx + dy * dy;
+  const t = l2 ? Math.max(0, Math.min(1, ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / l2)) : 0;
+  return Math.hypot(p[0] - a[0] - t * dx, p[1] - a[1] - t * dy);
+};
+
+/** Fils, raccords, composants, courant animé et étiquettes (sans grille ni outils d'édition). */
+function corpsCircuit(C, res, aff, sel0 = null) {
+  let s = '';
+  const vmax = Math.max(1e-9, ...[...res.V.values()].map(Math.abs));
+  const Vde = (x, y) => res.V.get(`${x},${y}`) ?? 0;
+  // fils
+  C.fils.forEach((f, i) => {
+    const sel = sel0?.type === 'f' && sel0.i === i;
+    const col = aff.coul && res.ok ? couleurV((Vde(f[0], f[1]) + Vde(f[2], f[3])) / 2, vmax) : null;
+    s += `<path class="sf${sel ? ' sel' : ''}" d="M${f[0] * K} ${f[1] * K}L${f[2] * K} ${f[3] * K}"${col && !sel ? ` style="stroke:${col}"` : ''}/>`;
+  });
+  // points de raccord (3 branches ou plus)
+  const nb = new Map(); const ajn = (x, y) => { const k = `${x},${y}`; nb.set(k, (nb.get(k) || 0) + 1); };
+  for (const f of C.fils) { ajn(f[0], f[1]); ajn(f[2], f[3]); }
+  for (const c of C.comps) for (const b of bornes(c)) ajn(b[0], b[1]);
+  for (const f of C.fils) for (const [x, y] of [[f[0], f[1]], [f[2], f[3]]]) {   // T : bout de fil au milieu d'un autre fil
+    for (const g of C.fils) if (g !== f && dSeg([x, y], [g[0], g[1]], [g[2], g[3]]) < 1e-6 && !((g[0] === x && g[1] === y) || (g[2] === x && g[3] === y))) ajn(x, y), ajn(x, y);
+  }
+  for (const [k, n] of nb) if (n >= 3) { const [x, y] = k.split(',').map(Number); s += `<circle class="sj" cx="${x * K}" cy="${y * K}" r="3.6"/>`; }
+  // composants
+  for (const c of C.comps) {
+    const sel = sel0?.type === 'c' && sel0.id === c.id;
+    s += `<g class="${sel ? 'sel' : ''}" transform="translate(${c.x * K} ${c.y * K})${c.t === 'G' ? '' : ` rotate(${(c.rot || 0) * 90})`}">${symbole(c, res)}</g>`;
+  }
+  // courant animé
+  if (aff.anim && res.ok && !res.court) {
+    for (const { seg, i } of res.fils) {
+      const v = vitesse(i); if (!v) continue;
+      const [a, b] = i > 0 ? [[seg[0], seg[1]], [seg[2], seg[3]]] : [[seg[2], seg[3]], [seg[0], seg[1]]];
+      s += `<path class="sfl" style="animation-duration:${(16 / v).toFixed(2)}s" d="M${a[0] * K} ${a[1] * K}L${b[0] * K} ${b[1] * K}"/>`;
+    }
+    for (const c of C.comps) {
+      const r = res.comps.get(c.id); if (!r || c.t === 'G') continue;
+      const v = vitesse(r.i); if (!v) continue;
+      const [a, b] = bornes(c); const [p, q] = r.i > 0 ? [a, b] : [b, a];
+      s += `<path class="sfl" style="animation-duration:${(16 / v).toFixed(2)}s" d="M${p[0] * K} ${p[1] * K}L${q[0] * K} ${q[1] * K}"/>`;
+    }
+  }
+  // étiquettes, flèches, appareils de mesure
+  for (const c of C.comps) s += etiquettes(c, res, aff);
+  return s;
+}
+
+/** Nom, valeur, tension (flèche vers le +) et courant d'un composant. */
+function etiquettes(c, res, aff) {
+  if (c.t === 'G') return aff.val ? '' : '';
+  const [a, b] = bornes(c); const r = res.ok ? res.comps.get(c.id) : null;
+  const hor = a[1] === b[1];
+  const mx = (a[0] + b[0]) / 2 * K, my = (a[1] + b[1]) / 2 * K;
+  let s = '';
+  // côté « étiquette » : au-dessus (horizontal) ou à droite (vertical)
+  const lig = [];
+  if (aff.val) { lig.push([c.nom || '', 'st']); const v = valeurTexte(c); if (v) lig.push([v, 'st-v']); }
+  if (c.t === 'A' || c.t === 'U') {           // appareil de mesure : sa lecture, toujours visible
+    const val = r ? (c.t === 'A' ? fmt(Math.abs(r.i) < 1e-9 ? 0 : r.i, 'A') : fmt(Math.abs(r.u) < 1e-9 ? 0 : r.u, 'V')) : '—';
+    const w = val.length * 7.4 + 12;
+    const bx = hor ? mx - w / 2 : mx + 18, by = hor ? my - 38 : my - 10;
+    s += `<rect class="sm" x="${bx}" y="${by}" width="${w}" height="20" rx="4"/><text class="sm-t" x="${bx + w / 2}" y="${by + 14}" text-anchor="middle">${esc(val)}</text>`;
+    return s;
+  }
+  if (aff.ui && r && c.t !== 'S') lig.push([`I = ${fmt(Math.abs(r.i) < 1e-12 ? 0 : Math.abs(r.i), 'A')}`, 'st-i']);
+  if (aff.ui && r && c.t === 'S' && !c.ferme && Math.abs(r.u) > 1e-6) lig.push([`U = ${fmt(Math.abs(r.u), 'V')}`, 'st-u']);
+  lig.forEach(([t, cl], k) => {
+    if (hor) s += `<text class="${cl}" x="${mx}" y="${my - 18 - (lig.length - 1 - k) * 13}" text-anchor="middle">${esc(t)}</text>`;
+    else s += `<text class="${cl}" x="${mx + 18}" y="${my - (lig.length - 1) * 6.5 + k * 13 + 4}">${esc(t)}</text>`;
+  });
+  if (!aff.ui || !r || c.t === 'S') return s;
+  // flèche de tension, de l'autre côté, vers le potentiel le plus haut
+  if (Math.abs(r.u) > 1e-6) {
+    const [lo, hi] = r.u > 0 ? [b, a] : [a, b];          // u = V(a) − V(b)
+    const off = 22, nx = hor ? 0 : -off, ny = hor ? off : 0;
+    const p1 = [lo[0] * K + nx, lo[1] * K + ny], p2 = [hi[0] * K + nx, hi[1] * K + ny];
+    const ux = Math.sign(p2[0] - p1[0]), uy = Math.sign(p2[1] - p1[1]);
+    const q1 = [p1[0] + ux * 6, p1[1] + uy * 6], q2 = [p2[0] - ux * 6, p2[1] - uy * 6];
+    s += `<path class="su" d="M${q1[0]} ${q1[1]}L${q2[0]} ${q2[1]}"/><path class="su-f" d="M${q2[0]} ${q2[1]}l${-ux * 7 - uy * 3.5} ${-uy * 7 + ux * 3.5}l${uy * 7} ${-ux * 7}z"/>`;
+    const t = `U = ${fmt(Math.abs(r.u), 'V')}`;
+    s += hor ? `<text class="st-u" x="${mx}" y="${my + off + 15}" text-anchor="middle">${esc(t)}</text>` : `<text class="st-u" x="${mx - off - 6}" y="${my + 4}" text-anchor="end">${esc(t)}</text>`;
+  }
+  // flèche de courant, sur le fil d'arrivée
+  if (Math.abs(r.i) > 1e-9) {
+    const [p, q] = r.i > 0 ? [a, b] : [b, a];
+    const ux = Math.sign(q[0] - p[0]), uy = Math.sign(q[1] - p[1]);
+    const cx = p[0] * K + ux * 8, cy = p[1] * K + uy * 8;
+    s += `<path class="si" d="M${cx + ux * 5} ${cy + uy * 5}l${-ux * 8 - uy * 4.5} ${-uy * 8 + ux * 4.5}l${uy * 9} ${-ux * 9}z"/>`;
+  }
+  return s;
+}
+
+/** Schéma figé d'un circuit résolu (cours interactif, aperçus) : SVG complet. */
+export function svgCircuit(C, res, aff = { val: true, ui: true, anim: true, coul: false }, marge = 2) {
+  const pts = [];
+  for (const c of C.comps) for (const b of bornes(c)) pts.push(b);
+  for (const f of C.fils) pts.push([f[0], f[1]], [f[2], f[3]]);
+  const xs = pts.map((p) => p[0]), ys = pts.map((p) => p[1]);
+  const x0 = (Math.min(...xs) - marge) * K, y0 = (Math.min(...ys) - marge) * K, w = (Math.max(...xs) - Math.min(...xs) + 2 * marge) * K, h = (Math.max(...ys) - Math.min(...ys) + 2 * marge) * K;
+  return `<svg class="sim-apercu" viewBox="${x0} ${y0} ${w} ${h}" width="${w}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Schéma du circuit"><style>${STYLE}</style><rect x="${x0}" y="${y0}" width="${w}" height="${h}" fill="#fff"/>${corpsCircuit(C, res, aff)}</svg>`;
+}
+
 /* ============================== la vue ============================== */
 export async function vueSimulateur(el) {
   const m = matieres().find((x) => x.schemas) || null;
@@ -240,11 +345,6 @@ export async function vueSimulateur(el) {
     return [p.x / K, p.y / K];
   }
   const accroche = (p) => [Math.round(p[0]), Math.round(p[1])];
-  const dSeg = (p, a, b) => {
-    const dx = b[0] - a[0], dy = b[1] - a[1], l2 = dx * dx + dy * dy;
-    const t = l2 ? Math.max(0, Math.min(1, ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / l2)) : 0;
-    return Math.hypot(p[0] - a[0] - t * dx, p[1] - a[1] - t * dy);
-  };
   function toucher(p) {
     for (let k = C.comps.length - 1; k >= 0; k--) {
       const c = C.comps[k]; const bs = bornes(c);
@@ -268,43 +368,7 @@ export async function vueSimulateur(el) {
       for (let x = gx0; x <= gx1; x++) for (let y = gy0; y <= gy1; y++) d += `M${x * K} ${y * K}h.01`;
       s += `<path d="${d}" stroke="#c3cad6" stroke-width="2.4" stroke-linecap="round"/>`;
     }
-    const vmax = Math.max(1e-9, ...[...res.V.values()].map(Math.abs));
-    const Vde = (x, y) => res.V.get(`${x},${y}`) ?? 0;
-    // fils
-    C.fils.forEach((f, i) => {
-      const sel = st.sel?.type === 'f' && st.sel.i === i;
-      const col = aff.coul && res.ok ? couleurV((Vde(f[0], f[1]) + Vde(f[2], f[3])) / 2, vmax) : null;
-      s += `<path class="sf${sel ? ' sel' : ''}" d="M${f[0] * K} ${f[1] * K}L${f[2] * K} ${f[3] * K}"${col && !sel ? ` style="stroke:${col}"` : ''}/>`;
-    });
-    // points de raccord (3 branches ou plus)
-    const nb = new Map(); const ajn = (x, y) => { const k = `${x},${y}`; nb.set(k, (nb.get(k) || 0) + 1); };
-    for (const f of C.fils) { ajn(f[0], f[1]); ajn(f[2], f[3]); }
-    for (const c of C.comps) for (const b of bornes(c)) ajn(b[0], b[1]);
-    for (const f of C.fils) for (const [x, y] of [[f[0], f[1]], [f[2], f[3]]]) {   // T : bout de fil au milieu d'un autre fil
-      for (const g of C.fils) if (g !== f && dSeg([x, y], [g[0], g[1]], [g[2], g[3]]) < 1e-6 && !((g[0] === x && g[1] === y) || (g[2] === x && g[3] === y))) ajn(x, y), ajn(x, y);
-    }
-    for (const [k, n] of nb) if (n >= 3) { const [x, y] = k.split(',').map(Number); s += `<circle class="sj" cx="${x * K}" cy="${y * K}" r="3.6"/>`; }
-    // composants
-    for (const c of C.comps) {
-      const sel = st.sel?.type === 'c' && st.sel.id === c.id;
-      s += `<g class="${sel ? 'sel' : ''}" transform="translate(${c.x * K} ${c.y * K})${c.t === 'G' ? '' : ` rotate(${(c.rot || 0) * 90})`}">${symbole(c, res)}</g>`;
-    }
-    // courant animé
-    if (aff.anim && res.ok && !res.court) {
-      for (const { seg, i } of res.fils) {
-        const v = vitesse(i); if (!v) continue;
-        const [a, b] = i > 0 ? [[seg[0], seg[1]], [seg[2], seg[3]]] : [[seg[2], seg[3]], [seg[0], seg[1]]];
-        s += `<path class="sfl" style="animation-duration:${(16 / v).toFixed(2)}s" d="M${a[0] * K} ${a[1] * K}L${b[0] * K} ${b[1] * K}"/>`;
-      }
-      for (const c of C.comps) {
-        const r = res.comps.get(c.id); if (!r || c.t === 'G') continue;
-        const v = vitesse(r.i); if (!v) continue;
-        const [a, b] = bornes(c); const [p, q] = r.i > 0 ? [a, b] : [b, a];
-        s += `<path class="sfl" style="animation-duration:${(16 / v).toFixed(2)}s" d="M${p[0] * K} ${p[1] * K}L${q[0] * K} ${q[1] * K}"/>`;
-      }
-    }
-    // étiquettes, flèches, appareils de mesure
-    for (const c of C.comps) s += etiquettes(c, res);
+    s += corpsCircuit(C, res, aff, st.sel);
     // zones cliquables
     for (const c of C.comps) { const bs = bornes(c); const b2 = c.t === 'G' ? [bs[0][0], bs[0][1] + 0.9] : bs[1]; s += `<path class="sx" data-c="${esc(c.id)}" d="M${bs[0][0] * K} ${bs[0][1] * K}L${b2[0] * K} ${b2[1] * K}"/>`; }
     // aperçus (placement, fil en cours)
@@ -318,51 +382,6 @@ export async function vueSimulateur(el) {
     }
     if (st.mode !== 'sel') for (const c of C.comps) for (const b of bornes(c)) s += `<circle class="sp" cx="${b[0] * K}" cy="${b[1] * K}" r="2.8"/>`;
     svg.innerHTML = s;
-  }
-
-  /** Nom, valeur, tension (flèche vers le +) et courant d'un composant. */
-  function etiquettes(c, res) {
-    if (c.t === 'G') return aff.val ? '' : '';
-    const [a, b] = bornes(c); const r = res.ok ? res.comps.get(c.id) : null;
-    const hor = a[1] === b[1];
-    const mx = (a[0] + b[0]) / 2 * K, my = (a[1] + b[1]) / 2 * K;
-    let s = '';
-    // côté « étiquette » : au-dessus (horizontal) ou à droite (vertical)
-    const lig = [];
-    if (aff.val) { lig.push([c.nom || '', 'st']); const v = valeurTexte(c); if (v) lig.push([v, 'st-v']); }
-    if (c.t === 'A' || c.t === 'U') {           // appareil de mesure : sa lecture, toujours visible
-      const val = r ? (c.t === 'A' ? fmt(Math.abs(r.i) < 1e-9 ? 0 : r.i, 'A') : fmt(Math.abs(r.u) < 1e-9 ? 0 : r.u, 'V')) : '—';
-      const w = val.length * 7.4 + 12;
-      const bx = hor ? mx - w / 2 : mx + 18, by = hor ? my - 38 : my - 10;
-      s += `<rect class="sm" x="${bx}" y="${by}" width="${w}" height="20" rx="4"/><text class="sm-t" x="${bx + w / 2}" y="${by + 14}" text-anchor="middle">${esc(val)}</text>`;
-      return s;
-    }
-    if (aff.ui && r && c.t !== 'S') lig.push([`I = ${fmt(Math.abs(r.i) < 1e-12 ? 0 : Math.abs(r.i), 'A')}`, 'st-i']);
-    if (aff.ui && r && c.t === 'S' && !c.ferme && Math.abs(r.u) > 1e-6) lig.push([`U = ${fmt(Math.abs(r.u), 'V')}`, 'st-u']);
-    lig.forEach(([t, cl], k) => {
-      if (hor) s += `<text class="${cl}" x="${mx}" y="${my - 18 - (lig.length - 1 - k) * 13}" text-anchor="middle">${esc(t)}</text>`;
-      else s += `<text class="${cl}" x="${mx + 18}" y="${my - (lig.length - 1) * 6.5 + k * 13 + 4}">${esc(t)}</text>`;
-    });
-    if (!aff.ui || !r || c.t === 'S') return s;
-    // flèche de tension, de l'autre côté, vers le potentiel le plus haut
-    if (Math.abs(r.u) > 1e-6) {
-      const [lo, hi] = r.u > 0 ? [b, a] : [a, b];          // u = V(a) − V(b)
-      const off = 22, nx = hor ? 0 : -off, ny = hor ? off : 0;
-      const p1 = [lo[0] * K + nx, lo[1] * K + ny], p2 = [hi[0] * K + nx, hi[1] * K + ny];
-      const ux = Math.sign(p2[0] - p1[0]), uy = Math.sign(p2[1] - p1[1]);
-      const q1 = [p1[0] + ux * 6, p1[1] + uy * 6], q2 = [p2[0] - ux * 6, p2[1] - uy * 6];
-      s += `<path class="su" d="M${q1[0]} ${q1[1]}L${q2[0]} ${q2[1]}"/><path class="su-f" d="M${q2[0]} ${q2[1]}l${-ux * 7 - uy * 3.5} ${-uy * 7 + ux * 3.5}l${uy * 7} ${-ux * 7}z"/>`;
-      const t = `U = ${fmt(Math.abs(r.u), 'V')}`;
-      s += hor ? `<text class="st-u" x="${mx}" y="${my + off + 15}" text-anchor="middle">${esc(t)}</text>` : `<text class="st-u" x="${mx - off - 6}" y="${my + 4}" text-anchor="end">${esc(t)}</text>`;
-    }
-    // flèche de courant, sur le fil d'arrivée
-    if (Math.abs(r.i) > 1e-9) {
-      const [p, q] = r.i > 0 ? [a, b] : [b, a];
-      const ux = Math.sign(q[0] - p[0]), uy = Math.sign(q[1] - p[1]);
-      const cx = p[0] * K + ux * 8, cy = p[1] * K + uy * 8;
-      s += `<path class="si" d="M${cx + ux * 5} ${cy + uy * 5}l${-ux * 8 - uy * 4.5} ${-uy * 8 + ux * 4.5}l${uy * 9} ${-ux * 9}z"/>`;
-    }
-    return s;
   }
 
   /** Fil en L entre deux points (horizontal puis vertical, ou l'inverse). */
