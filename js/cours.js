@@ -6,6 +6,9 @@
    formule, liste, tableau, figure) + trois blocs interactifs :
      qcm    → { id, q, choix: [..], bonne: n, explication? }
      nombre → { id, q, reponse, unite?, tol? (relative, défaut 0,02), indice?, explication? }
+     schema → { id, q, schema, solution, donnees? }  schéma à annoter (flèches de courant et vecteurs
+              tension + valeurs), même format que les exercices sur schéma (voir circuit.js) ;
+              réussi quand « Vérifier » donne 100 %
      labo   → { id, titre?, consigne?, circuit (format du simulateur),
                 reglages: [ { c, champ: 'val'|'vz'|'vs'|'ferme', label, min?, max?, pas?, unite? } ],
                 mesures:  [ { c, g: 'u'|'-u'|'i'|'-i'|'p'|'etat', label, unite? } ]   (u = V(a) − V(b) ; -u = l'inverse),
@@ -22,15 +25,16 @@ import { enLigne } from './rendu.js';
 import { rendreBloc } from './synthese.js';
 import { resoudre } from './simu/moteur.js';
 import { svgCircuit, fmt, ETAT } from './vues/simulateur.js';
+import { monterCircuit } from './circuit.js';
 
-const INTERACTIFS = new Set(['qcm', 'nombre', 'labo']);
+const INTERACTIFS = new Set(['qcm', 'nombre', 'labo', 'schema']);
 const lireProg = () => stockage.lire('cours', {}) || {};
 const reussi = (cle) => !!lireProg()[cle];
 function noter(cle) { const p = lireProg(); if (p[cle]) return; p[cle] = 1; stockage.ecrire('cours', p); }
 
 const nombre = (s) => { const v = parseFloat(String(s ?? '').trim().replace(/\s/g, '').replace(',', '.')); return Number.isFinite(v) ? v : null; };
 const joliNb = (v) => String(+(+v).toPrecision(4)).replace('.', ',');
-const questions = (l) => (l.blocs || []).filter((b) => (b.type === 'qcm' || b.type === 'nombre' || (b.type === 'labo' && b.defi)) && b.id);
+const questions = (l) => (l.blocs || []).filter((b) => (b.type === 'qcm' || b.type === 'nombre' || b.type === 'schema' || (b.type === 'labo' && b.defi)) && b.id);
 
 /** Lecteur du cours. Renvoie une fonction de nettoyage. */
 export function lecteurCours(zone, cours, { docs = [], prefixe = '' } = {}) {
@@ -67,6 +71,12 @@ export function lecteurCours(zone, cours, { docs = [], prefixe = '' } = {}) {
         <form class="crs-n"><input type="text" inputmode="decimal" autocomplete="off" placeholder="ta réponse" aria-label="Réponse"${ok ? ` value="${esc(joliNb(b.reponse))}"` : ''}>
           ${b.unite ? `<span class="crs-u">${esc(b.unite)}</span>` : ''}<button class="btn primary" type="submit">Vérifier</button>
           ${b.indice ? '<button class="btn crs-ind" type="button">Indice</button>' : ''}</form>
+        <div class="crs-fb" ${ok ? '' : 'hidden'}>${ok ? retour(true, b) : ''}</div></div>`;
+    }
+    if (b.type === 'schema') {
+      return `<div class="crs-q${ok ? ' ok' : ''}" data-q="${esc(b.id)}" data-type="schema">
+        <div class="crs-qt">${icone('eclair')} ${enLigne(b.q)}</div>
+        <div class="crs-ci"></div>
         <div class="crs-fb" ${ok ? '' : 'hidden'}>${ok ? retour(true, b) : ''}</div></div>`;
     }
     // labo
@@ -153,6 +163,12 @@ export function lecteurCours(zone, cours, { docs = [], prefixe = '' } = {}) {
           if (bon) { el.classList.add('ok'); noter(cle); majFin(l); }
         });
         el.querySelector('.crs-ind')?.addEventListener('click', () => { fb.hidden = false; fb.innerHTML = `<div class="crs-ret ind">${icone('ampoule')} ${enLigne(b.indice)}</div>`; });
+      } else if (b.type === 'schema') {
+        monterCircuit(el.querySelector('.crs-ci'), b, { cle: `cours/${cle}`, onVerifier: (pct) => {
+          if (pct !== 100) return;
+          fb.hidden = false; fb.innerHTML = retour(true, b);
+          if (!reussi(cle)) { el.classList.add('ok'); noter(cle); majFin(l); }
+        } });
       } else if (b.type === 'labo') {
         labo(el, b, () => { if (!reussi(cle)) { noter(cle); el.classList.add('ok'); const d = el.querySelector('.crs-dok'); if (d) d.innerHTML = `${icone('check')} réussi`; majFin(l); } });
       }

@@ -28,7 +28,7 @@ import { majBoutonProposer, viderAttente } from './proposer.js';
 import { demarrerSynchro, adopterCompte } from './synchro.js';
 import { exigerAcces, ecranPerte } from './vues/acces.js';
 
-const VERSION = '1.48.0 (cours interactif : onglet « Cours » du chapitre 9, diodes)';
+const VERSION = '1.48.1 (cours : schémas à annoter avec flèches de courant et vecteurs tension ; symboles Zener et LED)';
 window.__version = VERSION;
 const vue = document.getElementById('vue');
 let nettoyer = null; // fonction fournie par la page affichée, appelée avant d'en changer

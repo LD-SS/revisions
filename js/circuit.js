@@ -6,7 +6,7 @@
               fleches: [[x1,y1,x2,y2,'txt']]   (flèches libres : courants entrant/sortant…),
               comps: [{ id, t, a:[x,y], b:[x,y], nom, val, plus: 'a'|'b', fl: 'a'|'b', lettre, pm }] }
      t : R résistance · G pile · E source de tension (cercle) · J source de courant (flèche vers fl)
-         A ampèremètre · V voltmètre · M multimètre (lettre) · L lampe · D diode (vers b)
+         A ampèremètre · V voltmètre · M multimètre (lettre) · L lampe · D diode (vers b) · Z Zener · H LED
          C condensateur · B bobine · F branche de fil (pour noter un courant)
    barres: ['id', …], fils_barres: [[…]]   portions qui ne comptent pas : l'élève doit les barrer ; barrées en rouge seulement à la correction
    donnees = { id: { i: { d, txt }, u: { d, txt } } }   flèches données par l'énoncé (non notées)
@@ -20,9 +20,9 @@
 import { stockage, esc } from './utils.js';
 
 const K = 46;                    // pixels par unité de grille
-const LONG = { S: 0.8, R: 1.4, A: 0.84, V: 0.84, M: 0.84, E: 0.84, J: 0.84, L: 0.84, G: 0.5, D: 0.6, C: 0.3, B: 1.3, F: 0 };
+const LONG = { S: 0.8, R: 1.4, A: 0.84, V: 0.84, M: 0.84, E: 0.84, J: 0.84, L: 0.84, G: 0.5, D: 0.6, Z: 0.6, H: 0.6, C: 0.3, B: 1.3, F: 0 };
 const ROND = new Set(['A', 'V', 'M', 'E', 'J', 'L']);
-const NOMS = { R: 'Résistance', A: 'Ampèremètre', V: 'Voltmètre', M: 'Appareil de mesure', G: 'Générateur', E: 'Source de tension', J: 'Source de courant', L: 'Lampe', D: 'Diode', C: 'Condensateur', B: 'Bobine', F: 'Fil', S: 'Contact NO' };
+const NOMS = { R: 'Résistance', A: 'Ampèremètre', V: 'Voltmètre', M: 'Appareil de mesure', G: 'Générateur', E: 'Source de tension', J: 'Source de courant', L: 'Lampe', D: 'Diode', Z: 'Diode Zener', H: 'LED', C: 'Condensateur', B: 'Bobine', F: 'Fil', S: 'Contact NO' };
 const UNITES = { I: [['A', 1], ['mA', 1e-3], ['µA', 1e-6]], U: [['V', 1], ['mV', 1e-3], ['kV', 1e3]] };
 
 const lire = () => stockage.lire('circuits', {});
@@ -151,8 +151,14 @@ export function monterCircuit(el, ex, opts = {}) {
       const d = c.fl === 'a' ? -1 : 1; const t1 = [m[0] + u[0] * 0.26 * d, m[1] + u[1] * 0.26 * d], t0 = [m[0] - u[0] * 0.26 * d, m[1] - u[1] * 0.26 * d];
       s += `<circle class="ci-m" cx="${m[0] * K}" cy="${m[1] * K}" r="${0.42 * K}"/>` + ligne(t0, t1, 'ci-fil');
       s += `<polygon class="ci-pt" points="${P(...t1)} ${P(t1[0] - u[0] * 0.14 * d + n[0] * 0.1, t1[1] - u[1] * 0.14 * d + n[1] * 0.1)} ${P(t1[0] - u[0] * 0.14 * d - n[0] * 0.1, t1[1] - u[1] * 0.14 * d - n[1] * 0.1)}"/>`;
-    } else if (c.t === 'D') {   // diode : triangle vers b + barre
+    } else if ('DZH'.includes(c.t)) {   // diode : triangle vers b + barre (Zener : barre à crochets ; LED : 2 flèches de lumière)
       s += `<polygon class="ci-r" points="${P(p[0] + n[0] * 0.26, p[1] + n[1] * 0.26)} ${P(p[0] - n[0] * 0.26, p[1] - n[1] * 0.26)} ${P(...q)}"/>` + ligne([q[0] + n[0] * 0.26, q[1] + n[1] * 0.26], [q[0] - n[0] * 0.26, q[1] - n[1] * 0.26], 'ci-pl');
+      if (c.t === 'Z') s += ligne([q[0] + n[0] * 0.26, q[1] + n[1] * 0.26], [q[0] + n[0] * 0.34 - u[0] * 0.1, q[1] + n[1] * 0.34 - u[1] * 0.1], 'ci-pl') + ligne([q[0] - n[0] * 0.26, q[1] - n[1] * 0.26], [q[0] - n[0] * 0.34 + u[0] * 0.1, q[1] - n[1] * 0.34 + u[1] * 0.1], 'ci-pl');
+      if (c.t === 'H') for (const k of [-0.12, 0.1]) {
+        const o = [m[0] + u[0] * k - n[0] * 0.3, m[1] + u[1] * k - n[1] * 0.3], e = [o[0] - n[0] * 0.26 + u[0] * 0.1, o[1] - n[1] * 0.26 + u[1] * 0.1];
+        const L2 = Math.hypot(e[0] - o[0], e[1] - o[1]), w = [(e[0] - o[0]) / L2, (e[1] - o[1]) / L2], z = [-w[1], w[0]];
+        s += ligne(o, e, 'ci-fil') + `<polygon class="ci-pt" points="${P(...e)} ${P(e[0] - w[0] * 0.1 + z[0] * 0.05, e[1] - w[1] * 0.1 + z[1] * 0.05)} ${P(e[0] - w[0] * 0.1 - z[0] * 0.05, e[1] - w[1] * 0.1 - z[1] * 0.05)}"/>`;
+      }
     } else if (c.t === 'C') {
       s += ligne([p[0] + n[0] * 0.38, p[1] + n[1] * 0.38], [p[0] - n[0] * 0.38, p[1] - n[1] * 0.38], 'ci-pl') + ligne([q[0] + n[0] * 0.38, q[1] + n[1] * 0.38], [q[0] - n[0] * 0.38, q[1] - n[1] * 0.38], 'ci-pl');
     } else if (c.t === 'B') {   // bobine : 4 boucles
