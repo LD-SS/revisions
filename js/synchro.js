@@ -15,7 +15,7 @@
 import { stockage, surEcriture } from './utils.js';
 import { utilisateur, lireProgression, ecrireProgression } from './compte.js';
 
-const CLES = ['exos', 'fc', 'circuits', 'dernier', 'fiches', 'planches', 'simu'];      // ce qui est synchronisé (planches : planche libre de dessin ; simu : simulateur de circuits)
+const CLES = ['exos', 'fc', 'circuits', 'dernier', 'fiches', 'planches', 'simu', 'cours'];      // ce qui est synchronisé (planches : planche libre de dessin ; simu : simulateur de circuits ; cours : questions réussies du cours interactif)
 const UNIQUE = new Set(['dernier']);                      // valeur d'un seul bloc
 let enFusion = false;   // écritures faites par la synchro elle-même : pas d'horodatage
 export const synchroActive = () => !!utilisateur() && !!stockage.lire('sync.uid', '');
