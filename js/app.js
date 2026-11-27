@@ -28,7 +28,7 @@ import { majBoutonProposer, viderAttente } from './proposer.js';
 import { demarrerSynchro, adopterCompte } from './synchro.js';
 import { exigerAcces, ecranPerte } from './vues/acces.js';
 
-const VERSION = '1.48.1 (cours : schémas à annoter avec flèches de courant et vecteurs tension ; symboles Zener et LED)';
+const VERSION = '1.49.0 (cours complétés, bilans à refaire avec de nouvelles valeurs, questions anode / cathode, réponses à taper dans les exercices, Ctrl + clic pour annoter plusieurs composants)';
 window.__version = VERSION;
 const vue = document.getElementById('vue');
 let nettoyer = null; // fonction fournie par la page affichée, appelée avant d'en changer

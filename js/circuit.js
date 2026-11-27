@@ -80,7 +80,7 @@ export function monterCircuit(el, ex, opts = {}) {
     return m ? `R ${m[1]}-${m[2]}` : c.id;
   };
   const barrable = barres.size > 0 || !!ex.origine?.labo;
-  const etat = { notes: (annotable && lire()[opts.cle]) || {}, sel: null, verif: null, voirSol: false };
+  const etat = { notes: (annotable && lire()[opts.cle]) || {}, sel: null, multi: [], verif: null, voirSol: false };
 
   el.innerHTML = `
     <div class="ci">
@@ -240,7 +240,7 @@ export function monterCircuit(el, ex, opts = {}) {
     };
     for (const c of S.comps) {
       const v = etat.verif?.[c.id]; const x = etat.notes[c.id]?.x; const solB = etat.voirSol && barres.has(c.id);
-      s += `<g class="ci-c ${etat.sel === c.id ? 'sel' : ''} ${v ? `v-${v}` : ''} ${x || solB ? 'ci-bar' : ''}">${symbole(c)}</g>`;
+      s += `<g class="ci-c ${etat.sel === c.id || etat.multi.includes(c.id) ? 'sel' : ''} ${v ? `v-${v}` : ''} ${x || solB ? 'ci-bar' : ''}">${symbole(c)}</g>`;
       if (x) s += croix(c, 'ci-barre-e');
       if (solB) s += croix(c, 'ci-barre');
     }
@@ -257,12 +257,57 @@ export function monterCircuit(el, ex, opts = {}) {
     for (const c of S.comps) {
       const a = etat.notes[c.id];
       if (a && !a.x) s += fleches(c, { i: a.i && { ...a.i, txt: texteNote(a.i, 'i') }, u: a.u && { ...a.u, txt: texteNote(a.u, 'u') } }, 'eleve');
-      if (etat.voirSol) { const o = solA(c.id); if (o) s += fleches(c, o, 'sol'); }
+      if (etat.voirSol) {
+        const o = solA(c.id); if (o) s += fleches(c, o, 'sol');
+        // générateurs (valeur et + sur le schéma) : leur vecteur tension aussi, dans la solution
+        else if (donV[c.id]?.U !== undefined && !don[c.id]?.u) { const U = donV[c.id].U; s += fleches(c, { u: Math.abs(U) < 1e-12 ? { d: 0, txt: '0 V' } : { d: Math.sign(U), txt: joli(Math.abs(U), 'V') } }, 'sol'); }
+      }
     }
     svg.innerHTML = s; listeAFaire();
   }
 
+  /* plusieurs composants choisis (Ctrl + clic) : même sens à l'écran, même valeur pour tous */
+  const DIRS = [['→', [1, 0]], ['←', [-1, 0]], ['↓', [0, 1]], ['↑', [0, -1]]];
+  function panneauMulti() {
+    const ids = etat.multi; const cs = ids.map((id) => comps[id]);
+    const commun = (g, k) => { const v = ids.filter((id) => etat.notes[id]?.[g]).map((id) => etat.notes[id][g][k] ?? ''); if (!v.length) return ''; return v.every((x) => x === v[0]) ? v[0] : null; };
+    const ligneM = (g, lib, aide) => {
+      const un = UNITES[g === 'i' ? 'I' : 'U']; const v = commun(g, 'v'); const u = commun(g, 'unite');
+      return `<div class="ci-l"><b>${lib}</b><span class="muted">${aide}</span>
+        <div class="ci-sens">${DIRS.map(([f, dir], k) => `<button class="btn" type="button" data-mg="${g}" data-dir="${k}" title="Flèche ${f} pour tous">${f}</button>`).join('')}
+          <input class="field" inputmode="decimal" data-mgv="${g}" value="${esc(v ?? '')}" placeholder="${v === null ? 'valeurs différentes' : 'valeur'}" aria-label="${lib} : valeur pour tous">
+          <select class="field" data-mgu="${g}">${un.map(([n]) => `<option ${(u || un[0][0]) === n ? 'selected' : ''}>${n}</option>`).join('')}</select>
+          <button class="btn icon" type="button" data-mg="${g}" data-dir="x" title="Retirer pour tous">✕</button>
+        </div></div>`;
+    };
+    const tousBarres = ids.every((id) => etat.notes[id]?.x);
+    pan.hidden = false;
+    pan.innerHTML = `<div class="ci-t"><b>${ids.length} composants : ${esc(cs.map((c) => (c.nom ? lbl(c) : NOMS[c.t])).join(', '))}</b>
+        <span class="grow"></span><button class="btn ci-mbtn ${etat.multiTactile ? 'actif' : ''}" type="button" data-ci="multi" title="Choisir plusieurs composants (ou Ctrl + clic)">⧉ Plusieurs</button><button class="btn icon" type="button" data-ci="fermer" title="Fermer">✕</button></div>
+      <p class="muted ci-multi-aide">Ctrl + clic sur un composant pour l'ajouter ou le retirer. Le sens et la valeur s'appliquent à tous ; un composant perpendiculaire à la flèche choisie garde son sens.</p>
+      <button class="btn ci-barrer ${tousBarres ? 'actif' : ''}" type="button" data-ci="barrer">${tousBarres ? '↩ Ne plus barrer' : '✖ Barrer tous'}</button>
+      ${ligneM('i', 'Courant I', 'sens de la flèche sur le fil')}${ligneM('u', 'Tension U', 'la pointe du vecteur = côté +')}`;
+  }
+  function majMulti(g, champ, val) {
+    const garde = etat.sel;
+    for (const id of etat.multi) {
+      const c = comps[id]; if ((champ === 'v' || champ === 'unite') && !etat.notes[id]?.[g]) continue;   // pas encore de flèche : rien à remplir
+      etat.sel = id;
+      if (champ === 'dir') {
+        if (val === 'x') { maj(g, 'd', 0); continue; }
+        if (g === 'i' ? c.t === 'V' : (c.t === 'A' || c.t === 'F')) continue;
+        const { u } = geo(c); const p = u[0] * DIRS[val][1][0] + u[1] * DIRS[val][1][1];
+        if (Math.abs(p) < 0.3) continue;
+        maj(g, 'd', g === 'i' ? Math.sign(p) : -Math.sign(p));
+        const v = pan.querySelector(`[data-mgv=${g}]`)?.value, un = pan.querySelector(`[data-mgu=${g}]`)?.value;   // valeur déjà tapée
+        if (v) maj(g, 'v', v); if (un) maj(g, 'unite', un);
+      } else maj(g, champ, val);
+    }
+    etat.sel = garde;
+  }
+
   function panneau() {
+    if (etat.multi.length > 1) { panneauMulti(); return; }
     const c = comps[etat.sel]; if (!c) { pan.hidden = true; return; }
     const a = etat.notes[c.id] || {}; const { u } = geo(c); const s = sol[c.id] || {};
     const f1 = fleche(u[0], u[1]), f2 = fleche(-u[0], -u[1]);
@@ -290,6 +335,7 @@ export function monterCircuit(el, ex, opts = {}) {
         <b>${esc([c.nom ? lbl(c) : NOMS[c.t], c.val].filter(Boolean).join(' '))}</b>
         <button class="btn icon" type="button" data-ci="suiv" title="Composant suivant">›</button>
         <span class="grow"></span>
+        <button class="btn ci-mbtn ${etat.multiTactile ? 'actif' : ''}" type="button" data-ci="multi" title="Choisir plusieurs composants (ou Ctrl + clic)">⧉ Plusieurs</button>
         <button class="btn icon" type="button" data-ci="fermer" title="Fermer">✕</button></div>
       <button class="btn ci-barrer ${a.x ? 'actif' : ''}" type="button" data-ci="barrer">${a.x ? '↩ Ne plus barrer' : '✖ Barrer : cette portion ne compte pas'}</button>
       ${a.x ? '<p class="muted">Barré : tu indiques que ce composant ne participe pas au circuit (aucun courant possible, court-circuité…).</p>'
@@ -359,7 +405,7 @@ export function monterCircuit(el, ex, opts = {}) {
   if (!annotable) return { verifier() {} };
   const mobile = () => window.matchMedia('(max-width:640px)').matches;
   function choisir(id) {
-    etat.sel = id; dessiner(); panneau();
+    etat.sel = id; etat.multi = []; dessiner(); panneau();
     el.classList.toggle('ci-ouvert', !!id);
     if (!id) return;
     if (mobile()) {   // volet en bas : on garde le composant visible au-dessus
@@ -370,14 +416,34 @@ export function monterCircuit(el, ex, opts = {}) {
   afaire?.addEventListener('click', (ev) => { const b = ev.target.closest('[data-af]'); if (b) choisir(b.dataset.af); });
   svg.addEventListener('click', (ev) => {
     const h = ev.target.closest('[data-comp]'); if (!h) return;
-    choisir(etat.sel === h.dataset.comp ? null : h.dataset.comp);
+    const id = h.dataset.comp;
+    if (ev.ctrlKey || ev.metaKey || ev.shiftKey || etat.multiTactile) {   // sélection multiple
+      const m = etat.multi.length ? etat.multi : (etat.sel ? [etat.sel] : []);
+      etat.multi = m.includes(id) ? m.filter((x) => x !== id) : [...m, id];
+      etat.sel = etat.multi.length === 1 ? etat.multi[0] : etat.multi.length ? etat.multi[etat.multi.length - 1] : null;
+      if (etat.multi.length <= 1) etat.multi = [];
+      dessiner(); panneau(); el.classList.toggle('ci-ouvert', !!etat.sel);
+      return;
+    }
+    choisir(etat.sel === id && !etat.multi.length ? null : id);
   });
   pan.addEventListener('click', (ev) => {
     const b = ev.target.closest('button'); if (!b) return;
-    if (b.dataset.ci === 'fermer') { choisir(null); return; }
+    if (b.dataset.ci === 'fermer') { etat.multiTactile = false; choisir(null); return; }
+    if (b.dataset.ci === 'multi') { etat.multiTactile = !etat.multiTactile; panneau(); return; }
     if (b.dataset.ci === 'prec' || b.dataset.ci === 'suiv') {
       const i = ordre.indexOf(etat.sel); const n = ordre.length;
       choisir(ordre[(i + (b.dataset.ci === 'suiv' ? 1 : -1) + n) % n]); return;
+    }
+    if (b.dataset.ci === 'barrer' && etat.multi.length > 1) {
+      const tous = etat.multi.every((id) => etat.notes[id]?.x);
+      for (const id of etat.multi) { const a = etat.notes[id] || (etat.notes[id] = {}); if (tous) delete a.x; else a.x = true; }
+      sauver(opts.cle, etat.notes); etat.verif = null; res.hidden = true; dessiner(); panneau(); return;
+    }
+    if (b.dataset.mg) {
+      majMulti(b.dataset.mg, 'dir', b.dataset.dir === 'x' ? 'x' : +b.dataset.dir); dessiner(); panneau();
+      if (b.dataset.dir !== 'x') pan.querySelector(`[data-mgv=${b.dataset.mg}]`)?.focus();
+      return;
     }
     if (b.dataset.ci === 'barrer') {
       const a = etat.notes[etat.sel] || (etat.notes[etat.sel] = {});
@@ -390,8 +456,8 @@ export function monterCircuit(el, ex, opts = {}) {
       if (d) pan.querySelector(`[data-gv=${g}]`)?.focus();
     }
   });
-  pan.addEventListener('input', (ev) => { const t = ev.target; if (t.dataset.gv) { maj(t.dataset.gv, 'v', t.value); dessiner(); } });
-  pan.addEventListener('change', (ev) => { const t = ev.target; if (t.dataset.gu) { maj(t.dataset.gu, 'unite', t.value); dessiner(); } });
+  pan.addEventListener('input', (ev) => { const t = ev.target; if (t.dataset.gv) { maj(t.dataset.gv, 'v', t.value); dessiner(); } if (t.dataset.mgv) { majMulti(t.dataset.mgv, 'v', t.value); dessiner(); } });
+  pan.addEventListener('change', (ev) => { const t = ev.target; if (t.dataset.gu) { maj(t.dataset.gu, 'unite', t.value); dessiner(); } if (t.dataset.mgu) { majMulti(t.dataset.mgu, 'unite', t.value); dessiner(); } });
   el.querySelector('.ci-actions').addEventListener('click', (ev) => {
     const b = ev.target.closest('[data-ci]'); if (!b) return;
     if (b.dataset.ci === 'verifier') { choisir(null); verifier(); }

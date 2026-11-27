@@ -77,7 +77,7 @@ export function lecteurExercices(conteneur, tous, options = {}) {
     });
   }
   function nouvelleListe(liste, pos = 0) { etat.liste = liste; etat.pos = Math.max(0, Math.min(pos, liste.length - 1)); reset(); afficher(); }
-  function reset() { etat.vus = 0; etat.indice = false; etat.rep = false; etat.dev = new Set(); }
+  function reset() { etat.vus = 0; etat.indice = false; etat.rep = false; etat.dev = new Set(); etat.saisie = {}; etat.verif = new Set(); }
 
   function afficher() {
     if (!tous.length) {
@@ -117,13 +117,46 @@ export function lecteurExercices(conteneur, tous, options = {}) {
   const LEGENDE_TRIGO = '<b class="leg-opp">rouge</b> = côté opposé · <b class="leg-adj">bleu</b> = adjacent · <b class="leg-hyp">vert</b> = hypoténuse · <b>?</b> = ce qu\'on cherche';
   const imageOk = (x) => typeof x === 'string' && /^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(x);
 
+  /* ---------- Cases réponse : la valeur se tape dans l'exercice, la correction est immédiate ---------- */
+  const lireNb = (x) => {
+    let t = String(x || '').trim().replace(/\s+/g, '').replace(/[−–]/g, '-').replace(',', '.');
+    const m = t.match(/^([+-]?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?)([kmµu]?)/i);
+    if (!m) return NaN;
+    const f = { k: 1e3, K: 1e3, m: 1e-3, 'µ': 1e-6, u: 1e-6 }[m[2]] || 1;
+    return parseFloat(m[1]) * f;
+  };
+  function jugerCase(v, b) {
+    const x = lireNb(v);
+    if (!Number.isFinite(x)) return { ok: false, msg: 'Écris un nombre' };
+    const ans = +b.ans; const tol = b.tol ?? 0.02;
+    const pres = (a, c) => Math.abs(a - c) <= Math.max(tol * Math.abs(c), 1e-9 + (c === 0 ? 0.01 : 0));
+    if (pres(x, ans)) return { ok: true };
+    if (ans !== 0 && pres(-x, ans)) return { ok: false, msg: 'Vérifie le signe' };
+    if (ans !== 0 && (pres(x * 1000, ans) || pres(x / 1000, ans))) return { ok: false, msg: "Vérifie l'unité (×1000)" };
+    return { ok: false, msg: 'Pas encore' };
+  }
+  function cases(it, i) {
+    if (!Array.isArray(it.val) || !it.val.length) return '';
+    const vu = etat.verif.has(i);
+    const champs = it.val.map((b, k) => {
+      const v = etat.saisie[`${i}/${k}`] ?? '';
+      const j = vu ? jugerCase(v, b) : null;
+      return `<label class="ex-case ${j ? (j.ok ? 'ok' : 'ko') : ''}"><span class="ex-case-l">${enLigne(b.lbl || '')}</span>
+        <input type="text" inputmode="decimal" autocomplete="off" data-case="${i}/${k}" value="${esc(v)}" aria-label="${esc(String(b.lbl || 'valeur').replace(/[$\\{}_]/g, ''))}">
+        ${b.unite ? `<span class="ex-case-u">${esc(b.unite)}</span>` : ''}
+        ${j ? `<span class="ex-case-r">${j.ok ? icone('check') : `${icone('croix')} ${esc(j.msg)}`}</span>` : ''}</label>`;
+    }).join('');
+    const tout = vu && it.val.every((b, k) => jugerCase(etat.saisie[`${i}/${k}`], b).ok);
+    return `<div class="ex-cases ${tout ? 'juste' : ''}">${champs}${tout ? `<span class="ex-case-bravo">${icone('check')} Juste !</span>` : ''}<button class="btn ex-case-b" data-action="verif" data-i="${i}">${icone('check')} Vérifier</button></div>`;
+  }
+
   function carte(e, t) {
     if (e.type === 'dessin') return carteDessin(e, t);
     const note = t[cle(e)];
     const fini = etat.rep;
     const avecDev = e.items.map((it) => (it.etapes || []).length > 0);
     const etoiles = '★'.repeat(e.niveau || 1) + '☆'.repeat(3 - (e.niveau || 1));
-    const items = e.items.map((it, i) => `<li>${e.items.length > 1 ? `<span class="ex-l">${LETTRES[i]})</span>` : ''}<div>${texte(it.q)}</div></li>`).join('');
+    const items = e.items.map((it, i) => `<li>${e.items.length > 1 ? `<span class="ex-l">${LETTRES[i]})</span>` : ''}<div>${texte(it.q)}${cases(it, i)}</div></li>`).join('');
     let corr = '';
     if (etat.rep) {   // d'abord la réponse ; le développement du calcul s'ouvre à la demande
       const html = e.items.map((it, i) => {
@@ -156,9 +189,11 @@ export function lecteurExercices(conteneur, tous, options = {}) {
         </div>
         ${e.consigne ? `<div class="ex-consigne">${texte(e.consigne)}</div>` : ''}
         ${e.schema ? '<div class="ex-circuit" data-circuit></div>' : ''}
-        ${imageOk(e.image) ? `<figure class="fig ex-img"><img src="${e.image}" alt="Schéma de l'exercice"></figure>` : ''}
+        ${imageOk(e.image) ? (e.schema
+          ? `<details class="ex-orig"><summary>Voir le schéma du cours</summary><figure class="fig ex-img"><img src="${e.image}" alt="Schéma de l'exercice"></figure></details>`
+          : `<figure class="fig ex-img"><img src="${e.image}" alt="Schéma de l'exercice"></figure>`) : ''}
         <ol class="ex-items ${e.items.length > 1 ? '' : 'seul'}">${items}</ol>
-        ${!etat.rep ? `<p class="ex-papier">${icone('crayon')} Résous sur ta feuille, puis vérifie avec la correction.</p>` : ''}
+        ${!etat.rep ? `<p class="ex-papier">${icone('crayon')} ${e.items.some((it) => it.val?.length) ? 'Résous sur ta feuille, tape tes résultats dans les cases et clique sur « Vérifier ».' : 'Résous sur ta feuille, puis vérifie avec la correction.'}</p>` : ''}
         ${e.indice ? (etat.indice ? `<div class="ex-indice">${icone('ampoule')}<div>${texte(e.indice)}</div></div>`
           : (!etat.rep ? `<button class="btn" data-action="indice">${icone('ampoule')} Un indice</button>` : '')) : ''}
         ${corr}
@@ -320,6 +355,10 @@ export function lecteurExercices(conteneur, tous, options = {}) {
       etat.dev = etat.dev.size >= idx.length ? new Set() : new Set(idx); afficher();
     },
     indice: () => { etat.indice = true; afficher(); },
+    verif: (b) => {
+      const i = +b.dataset.i; etat.verif.add(i); afficher();
+      conteneur.querySelector(`[data-case="${i}/0"]`)?.closest('.ex-cases')?.scrollIntoView({ block: 'nearest' });
+    },
     simu: () => {                            // le circuit de l'exercice s'ouvre (neuf) dans le simulateur
       const e = etat.liste[etat.pos];
       const c = structuredClone(e.simu); c.id = `ex-${cle(e).replace(/[^\w-]+/g, '-')}`; c.nom = c.nom || `Ex : ${e.titre}`; c.maj = Date.now();
@@ -345,6 +384,13 @@ export function lecteurExercices(conteneur, tous, options = {}) {
     const b = e.target.closest('[data-action]');
     if (!b || b.tagName === 'SELECT' || b.tagName === 'INPUT' || b.disabled) return;
     actions[b.dataset.action]?.(b);
+  });
+  conteneur.addEventListener('input', (e) => {
+    const k = e.target.dataset?.case; if (k !== undefined) { etat.saisie[k] = e.target.value; e.target.closest('.ex-case')?.classList.remove('ok', 'ko'); }
+  });
+  conteneur.addEventListener('keydown', (e) => {
+    const k = e.target.dataset?.case; if (k === undefined || e.key !== 'Enter') return;
+    e.preventDefault(); actions.verif({ dataset: { i: k.split('/')[0] } });
   });
   conteneur.addEventListener('change', (e) => {
     if (e.target.dataset.action === 'filtre') { etat.filtre = e.target.value; nouvelleListe(filtrer()); }

@@ -14,6 +14,11 @@
                 mesures:  [ { c, g: 'u'|'-u'|'i'|'-i'|'p'|'etat', label, unite? } ]   (u = V(a) − V(b) ; -u = l'inverse),
                 defi?: { q, c, g, op: '>'|'<'|'='|'etat', val, tol?, abs? (défaut : valeur absolue) } }
        Le circuit est recalculé en direct par le moteur du simulateur.
+   Leçon tirée au hasard (évaluation à refaire) : leçon.aleatoire = {
+     params: { nom: { min, max, pas } | { choix: [..] } | { de: 'indice', valeurs: [..] } },  calc: { nom: 'expression' },  condition?: 'expression' }
+     Dans les textes : {{nom}} = valeur tirée. Champs calculés (expressions) : reponse, bonne, solution.I/U ;
+     bloc.si = 'expression' : bloc affiché seulement si vrai. Bouton « Nouvelle évaluation » = nouveau tirage
+     (graine gardée dans « cours » sous « <leçon>/#graine »).
    Progression : stockage « cours » = { "<matière>/<chapitre>/<leçon>/<id>": 1 }
    (synchronisée, voir synchro.js). Une leçon est terminée quand toutes ses
    questions (et ses défis) sont réussies.
@@ -32,6 +37,40 @@ const lireProg = () => stockage.lire('cours', {}) || {};
 const reussi = (cle) => !!lireProg()[cle];
 function noter(cle) { const p = lireProg(); if (p[cle]) return; p[cle] = 1; stockage.ecrire('cours', p); }
 
+/* ---------- leçons tirées au hasard ---------- */
+const EXPR_OK = /^[\w\s+\-*/%().,?:<>=!&|]*$/;   // pas de guillemets ni de crochets
+function evaluer(expr, v) {
+  if (typeof expr !== 'string') return expr;
+  if (!EXPR_OK.test(expr)) return NaN;
+  const noms = Object.keys(v);
+  try { return Function(...noms, `"use strict"; return (${expr});`)(...noms.map((k) => v[k])); } catch { return NaN; }
+}
+function alea(graine) {
+  let a = (graine * 7919 + 17) >>> 0;
+  return () => { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+}
+export function tirer(al, graine) {
+  const r = alea(graine); let v = {};
+  for (let essai = 0; essai < 80; essai++) {
+    v = {};
+    for (const [k, p] of Object.entries(al.params || {})) {
+      if (Array.isArray(p.choix)) v[k] = p.choix[Math.floor(r() * p.choix.length)];
+      else if (p.de) v[k] = (p.valeurs || [])[v[p.de]];   // valeur liée à un indice tiré plus haut (ex. un mot)
+      else { const pas = p.pas || 1; const n = Math.round((p.max - p.min) / pas); v[k] = +(p.min + Math.floor(r() * (n + 1)) * pas).toFixed(6); }
+    }
+    for (const [k, e] of Object.entries(al.calc || {})) v[k] = evaluer(e, v);
+    if (!al.condition || evaluer(al.condition, v)) break;
+  }
+  return v;
+}
+const affNb = (x) => (typeof x === 'number' ? String(+x.toPrecision(4)).replace('.', ',') : String(x));
+export function instancier(x, v, cle = '') {
+  if (typeof x === 'string') return (cle === 'reponse' || cle === 'bonne' || cle === 'I' || cle === 'U') && !/\{\{/.test(x) ? evaluer(x, v) : x.replace(/\{\{(\w+)\}\}/g, (m, k) => (k in v ? affNb(v[k]) : m));
+  if (Array.isArray(x)) return x.map((y) => instancier(y, v));
+  if (x && typeof x === 'object') return Object.fromEntries(Object.entries(x).map(([k, y]) => [k, instancier(y, v, k)]));
+  return x;
+}
+
 const nombre = (s) => { const v = parseFloat(String(s ?? '').trim().replace(/\s/g, '').replace(',', '.')); return Number.isFinite(v) ? v : null; };
 const joliNb = (v) => String(+(+v).toPrecision(4)).replace('.', ',');
 const questions = (l) => (l.blocs || []).filter((b) => (b.type === 'qcm' || b.type === 'nombre' || b.type === 'schema' || (b.type === 'labo' && b.defi)) && b.id);
@@ -41,7 +80,21 @@ export function lecteurCours(zone, cours, { docs = [], prefixe = '' } = {}) {
   const lecons = Array.isArray(cours?.lecons) ? cours.lecons : [];
   if (!lecons.length) { zone.innerHTML = '<div class="panel empty"><h3>Pas encore de cours</h3></div>'; return () => {}; }
   const cleL = (l) => `${prefixe}/${l.id}`;
-  const etat = (l) => { const qs = questions(l); const n = qs.filter((b) => reussi(`${cleL(l)}/${b.id}`)).length; return { n, total: qs.length, fini: n === qs.length && qs.length > 0 }; };
+  const graine = (l) => +(lireProg()[`${cleL(l)}/#graine`] || 1);
+  const inst = (l) => {
+    if (!l.aleatoire) return l;
+    const v = tirer(l.aleatoire, graine(l));
+    return { ...l, blocs: (l.blocs || []).filter((b) => !b.si || evaluer(b.si, v)).map((b) => instancier(b, v)) };
+  };
+  function nouvelle(l) {
+    const p = lireProg(); const base = `${cleL(l)}/`; const g = graine(l) + 1;
+    for (const c of Object.keys(p)) if (c.startsWith(base)) delete p[c];
+    p[`${base}#graine`] = g; stockage.ecrire('cours', p);
+    const ci = stockage.lire('circuits', {}) || {};
+    for (const c of Object.keys(ci)) if (c.startsWith(`cours/${base}`)) delete ci[c];
+    stockage.ecrire('circuits', ci);
+  }
+  const etat = (l0) => { const l = inst(l0); const qs = questions(l); const n = qs.filter((b) => reussi(`${cleL(l)}/${b.id}`)).length; return { n, total: qs.length, fini: n === qs.length && qs.length > 0 }; };
   let k = Math.max(0, lecons.findIndex((l) => !etat(l).fini));
   if (k < 0) k = 0;
   const derniere = stockage.lire(`cours.ou.${prefixe}`, null);
@@ -101,7 +154,7 @@ export function lecteurCours(zone, cours, { docs = [], prefixe = '' } = {}) {
   }
 
   function afficher() {
-    const l = lecons[k];
+    const l = inst(lecons[k]);
     stockage.ecrire(`cours.ou.${prefixe}`, k);
     zone.innerHTML = `
       <div class="crs">
@@ -109,7 +162,7 @@ export function lecteurCours(zone, cours, { docs = [], prefixe = '' } = {}) {
         <div class="crs-corps">
           ${k === 0 && cours.intro ? `<div class="panel crs-intro">${enLigne(cours.intro)}</div>` : ''}
           <section class="panel crs-lecon">
-            <h2><span class="num">${k + 1}</span>${esc(l.titre)}</h2>
+            <h2><span class="num">${k + 1}</span>${esc(l.titre)}${l.aleatoire ? ` <span class="badge">série n° ${graine(l)}</span>` : ''}</h2>
             ${l.but ? `<p class="crs-but">${icone('info')} <b>Objectif :</b> ${enLigne(l.but)}</p>` : ''}
             ${(l.blocs || []).map((b) => bloc(b, l)).join('')}
             <div class="crs-fin"></div>
@@ -129,6 +182,7 @@ export function lecteurCours(zone, cours, { docs = [], prefixe = '' } = {}) {
     if (f) f.innerHTML = e.total ? (e.fini
       ? `<div class="notice ok">${icone('check')}<div><b>Leçon maîtrisée !</b> Toutes les questions sont réussies.</div></div>`
       : `<p class="muted">${e.n}/${e.total} question${e.total > 1 ? 's' : ''} réussie${e.n > 1 ? 's' : ''}.</p>`) : '';
+    if (f && l.aleatoire) f.innerHTML += `<button class="btn primary crs-nouv" type="button" data-nouvelle>${icone('recommencer')} Nouvelle évaluation (nouvelles valeurs et nouveaux schémas)</button>`;
     const nav = zone.querySelector('.crs-nav ol'); if (nav) nav.innerHTML = sommaire();
   }
 
@@ -222,6 +276,7 @@ export function lecteurCours(zone, cours, { docs = [], prefixe = '' } = {}) {
   }
 
   zone.addEventListener('click', (e) => {
+    if (e.target.closest('[data-nouvelle]')) { nouvelle(lecons[k]); afficher(); zone.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
     const s = e.target.closest('[data-l]'); const a = e.target.closest('[data-aller]');
     const i = s ? +s.dataset.l : a ? +a.dataset.aller : null;
     if (i == null || !lecons[i]) return;
