@@ -37,7 +37,7 @@ export function vueParametres(el, app) {
 
       <div class="panel">
         <h3>Mes données</h3>
-        <p class="muted">Ta progression (exercices notés, flashcards à revoir, annotations des schémas) est enregistrée
+        <p class="muted">Ta progression (exercices notés, cours, annotations des schémas) est enregistrée
         dans ton compte : tu la retrouves sur chacun de tes appareils.</p>
         <p class="muted" data-horsligne></p>
         <div class="set-row"><button class="btn" data-action="maj">${icone('recommencer')} Forcer la mise à jour de l'appli</button></div>
@@ -65,8 +65,8 @@ export function vueParametres(el, app) {
   const hl = stockage.lire('horsligne.jour', '');
   el.querySelector('[data-horsligne]').textContent = hl ? `Tout le contenu est gardé sur cet appareil pour le hors ligne (mis à jour le ${hl.split('-').reverse().join('/')}).` : 'Le contenu est copié automatiquement sur cet appareil pour le hors ligne.';
   el.querySelector('[data-action="raz"]').addEventListener('click', () => {
-    if (!confirm(`Effacer toutes tes notes d'exercices, flashcards à revoir et annotations' sur TOUS tes appareils' ?`)) return;
-    for (const k of ['exos', 'fc', 'circuits', 'dernier', 'planches']) stockage.supprimer(k);
+    if (!confirm(`Effacer toutes tes notes d'exercices, ta progression dans les cours et tes annotations sur TOUS tes appareils ?`)) return;
+    for (const k of ['exos', 'fc', 'cours', 'circuits', 'dernier', 'planches']) stockage.supprimer(k);
     toast('Progression effacée');
   });
   el.querySelector('[data-action="maj"]').addEventListener('click', async () => {

@@ -13,6 +13,7 @@ import { matieres, matiere, chargerChapitre, chargerSchemas, chargerEvaluations 
 import { sourcesDe } from '../synthese.js';
 import { lecteurExercices } from '../exercices.js';
 import { texte } from '../rendu.js';
+import { chapitreDe } from './chapitre.js';
 
 /* ---------- impression d'une évaluation (énoncé seul, ou corrigé) ---------- */
 const LETTRES = 'abcdefghijklmnopqrstuvwxyz';
@@ -48,6 +49,14 @@ export function imprimerEvaluation(ev, corrige) {
 }
 
 async function reserve(mid, cid) {
+  if (mid === 'tout') {   // toutes les matières : chaque matière apporte ses exercices
+    const r = [];
+    for (const x of matieres()) r.push(...await reserveMatiere(x.id, ''));
+    return r;
+  }
+  return reserveMatiere(mid, cid);
+}
+async function reserveMatiere(mid, cid) {
   const m = matiere(mid); const r = [];
   for (const c of m.chapitres) {
     if (cid && cid !== c.id) continue;
@@ -55,10 +64,13 @@ async function reserve(mid, cid) {
     const docs = sourcesDe(ch);
     for (const e of ch.exercices) if (e.type !== 'dessin') r.push({ ...e, _cle: `${mid}/${c.id}/${e.id}`, _docs: docs, _ou: c.titre });
   }
-  if (m.schemas && (!cid || cid === 'schemas')) {
+  if (m.schemas) {   // exercices sur schéma : rangés dans leur chapitre
     try {
       const d = await chargerSchemas(mid); const docs = sourcesDe(d);
-      for (const e of d.exercices) r.push({ ...e, _cle: `${mid}/schemas/${e.id}`, _docs: docs, _ou: 'Exercices sur schéma' });
+      for (const e of d.exercices) {
+        const c = chapitreDe(m, e); if (cid && c !== cid) continue;
+        r.push({ ...e, _cle: `${mid}/schemas/${e.id}`, _docs: docs, _ou: m.chapitres.find((x) => x.id === c)?.titre || 'Exercice sur schéma' });
+      }
     } catch { /* hors ligne */ }
   }
   return r;
@@ -83,28 +95,29 @@ async function exerciceEvaluation(el, mid, evId, exId) {
 
 export function vueExamen(el, params = []) {
   if (params[0] === 'eval' && params.length >= 4) return exerciceEvaluation(el, params[1], params[2], params[3]);
-  const pref = stockage.lire('examen.choix', { mid: matieres()[0]?.id, cid: '', n: 10, min: 30 });
+  const pref = stockage.lire('examen.choix', { mid: 'tout', cid: '', n: 10, min: 30 });
   const mats = matieres().filter((m) => m.chapitres.some((c) => c.nb?.exercices) || m.schemas);
-  if (!mats.some((m) => m.id === pref.mid)) pref.mid = mats[0]?.id;
+  if (pref.mid !== 'tout' && !mats.some((m) => m.id === pref.mid)) pref.mid = 'tout';
 
   const formulaire = () => {
-    const m = matiere(pref.mid);
+    const tout = pref.mid === 'tout';
+    const m = tout ? null : matiere(pref.mid);
     el.innerHTML = `
-      <div class="mc" ${styleMatiere(m)}>
+      <div class="mc" ${m ? styleMatiere(m) : ''}>
         <div class="page-head"><span class="m-ic">${icone('examen')}</span>
-          <div><h1>Examen blanc</h1><p class="muted">Des exercices tirés au hasard, en temps limité. Résous sur ta feuille, puis note-toi.</p></div></div>
+          <div><h1>Examen blanc</h1><p class="muted">Des exercices tirés au hasard, en temps limité. Tape tes résultats dans les cases : la note de chaque exercice est proposée d'après tes cases.</p></div></div>
         <div class="exam-evals" data-evals></div>
         <h2 class="exam-h" data-hasard-titre hidden>Exercices au hasard</h2>
         <div class="panel exam-form">
-          <label>Matière <select class="field" data-k="mid">${mats.map((x) => `<option value="${esc(x.id)}" ${x.id === pref.mid ? 'selected' : ''}>${esc(x.nom)}</option>`).join('')}</select></label>
-          <label>Chapitre <select class="field" data-k="cid"><option value="">Tous les chapitres</option>
-            ${m.chapitres.filter((c) => c.nb?.exercices).map((c, i) => `<option value="${esc(c.id)}" ${c.id === pref.cid ? 'selected' : ''}>${i + 1}. ${esc(c.titre)}</option>`).join('')}
-            ${m.schemas ? `<option value="schemas" ${pref.cid === 'schemas' ? 'selected' : ''}>Exercices sur schéma</option>` : ''}</select></label>
+          <label>Matière <select class="field" data-k="mid"><option value="tout" ${tout ? 'selected' : ''}>Toutes les matières</option>${mats.map((x) => `<option value="${esc(x.id)}" ${x.id === pref.mid ? 'selected' : ''}>${esc(x.nom)}</option>`).join('')}</select></label>
+          ${m ? `<label>Chapitre <select class="field" data-k="cid"><option value="">Tous les chapitres</option>
+            ${m.chapitres.filter((c) => c.nb?.exercices || c.nb?.schemas).map((c) => `<option value="${esc(c.id)}" ${c.id === pref.cid ? 'selected' : ''}>${m.chapitres.indexOf(c) + 1}. ${esc(c.titre)}</option>`).join('')}</select></label>` : ''}
           <label>Nombre d'exercices <select class="field" data-k="n">${[5, 10, 15, 20].map((v) => `<option ${+pref.n === v ? 'selected' : ''}>${v}</option>`).join('')}</select></label>
           <label>Durée <select class="field" data-k="min">${[10, 20, 30, 45, 60].map((v) => `<option value="${v}" ${+pref.min === v ? 'selected' : ''}>${v} min</option>`).join('')}</select></label>
           <button class="btn primary" data-action="go">${icone('chrono')} Commencer</button>
         </div>
       </div>`;
+    if (tout) return;
     chargerEvaluations(pref.mid).then((evs) => {
       const z = el.querySelector('[data-evals]'); if (!z || !evs.length) return;
       el.querySelector('[data-hasard-titre]').hidden = false;
@@ -147,8 +160,8 @@ export function vueExamen(el, params = []) {
   let serie = []; let fin = 0;
   function lancer(liste, minutes = +pref.min) {
     serie = liste; notes.clear(); fin = Date.now() + minutes * 60000;
-    const m = matiere(pref.mid);
-    el.innerHTML = `<div class="mc" ${styleMatiere(m)}>
+    const m = pref.mid === "tout" ? null : matiere(pref.mid);
+    el.innerHTML = `<div class="mc" ${m ? styleMatiere(m) : ""}>
       <div class="exam-barre"><span class="exam-chrono">${icone('chrono')} <b data-chrono></b></span>
         <span class="muted" data-fait>0 / ${liste.length} notés</span><span class="grow"></span>
         <button class="btn" data-action="fin">Terminer</button></div>
@@ -171,12 +184,12 @@ export function vueExamen(el, params = []) {
     const pts = [...notes.values()].reduce((a, r) => a + v[r], 0);
     const pct = serie.length ? Math.round(100 * pts / serie.length) : 0;
     const ligne = (ex) => { const r = notes.get(ex._cle); return `<li><span class="badge ex-${r || 'vide'}">${r ? { ok: 'Juste', mid: 'Presque', ko: 'Faux' }[r] : 'Non fait'}</span> ${esc(ex.titre)} <span class="muted">· ${esc(ex._ou)}</span></li>`; };
-    el.innerHTML = `<div class="mc" ${styleMatiere(matiere(pref.mid))}>
+    el.innerHTML = `<div class="mc" ${pref.mid === "tout" ? "" : styleMatiere(matiere(pref.mid))}>
       <div class="panel empty exam-bilan">
         <div class="m-ic">${icone('examen')}</div>
         <h2>${tempsEcoule ? 'Temps écoulé !' : 'Examen terminé'}</h2>
         <p class="exam-note"><b>${pct} %</b> · ${pts.toString().replace('.', ',')} / ${serie.length}</p>
-        <p class="muted">${pluriel(notes.size, 'exercice')} noté${notes.size > 1 ? 's' : ''} sur ${serie.length}. Les exercices ratés apparaissent dans « À revoir » sur l'accueil.</p>
+        <p class="muted">${pluriel(notes.size, 'exercice')} noté${notes.size > 1 ? 's' : ''} sur ${serie.length}. Les exercices ratés reviendront dans « À refaire » sur l'accueil.</p>
         <ul class="exam-liste">${serie.map(ligne).join('')}</ul>
         <button class="btn primary" data-action="refaire">${icone('recommencer')} Nouvel examen</button>
       </div></div>`;

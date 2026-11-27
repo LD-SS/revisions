@@ -1,39 +1,57 @@
 /* =====================================================================
-   VUE CHAPITRE — en-tête + onglets (Cours) / Synthèse / Flashcards / Exercices
+   VUE CHAPITRE — en-tête + onglets, toujours dans le même ordre :
+   Cours (apprendre) → Synthèse (réviser) → Exercices (s'entraîner)
    ---------------------------------------------------------------------
-   Adresse : #/m/<matière>/<chapitre>/<onglet>   (onglet par défaut : synthese)
+   Adresse : #/m/<matière>/<chapitre>/<onglet>   (par défaut : Cours s'il existe, sinon Synthèse)
+   Les exercices sur schéma (fichier « schemas » de la matière) sont rangés dans leur chapitre
+   d'origine (origine.chap) ; leur clé de progression reste « <matière>/schemas/<id> ».
    Pour ajouter un onglet : une entrée dans ONGLETS + son affichage dans afficherOnglet().
    ===================================================================== */
 
 import { esc } from '../utils.js';
 import { icone } from '../icones.js';
 import { styleMatiere } from '../matieres.js';
-import { matiere, infoChapitre, chargerChapitre, voisins } from '../store.js';
-import { rendreSynthese, activerSynthese, sourcesDe } from '../synthese.js';
-import { lecteurFlashcards } from '../flashcards.js';
+import { matiere, infoChapitre, chargerChapitre, chargerSchemas, voisins } from '../store.js';
+import { rendreSynthese, activerSynthese, sourcesDe, rendreBloc } from '../synthese.js';
 import { lecteurExercices } from '../exercices.js';
-import { memoriserVisite, cartesARevoir } from '../suivi.js';
+import { memoriserVisite } from '../suivi.js';
 
 const ONGLETS = [
   { id: 'cours', libelle: 'Cours', icone: 'livre', siCours: true },   // seulement si le chapitre a un cours interactif
   { id: 'synthese', libelle: 'Synthèse', icone: 'synthese' },
-  { id: 'flashcards', libelle: 'Flashcards', icone: 'cartes' },
   { id: 'exercices', libelle: 'Exercices', icone: 'exercices' },
 ];
 
-export async function vueChapitre(el, mid, cid, onglet = 'synthese', extra = '') {
+/** Chapitre où ranger un exercice sur schéma : origine.chap, ou le chapitre qui a le même numéro (ch09-labo → ch09-…). */
+export function chapitreDe(m, e) {
+  const c = e.origine?.chap || ''; if (!c) return null;
+  if (m.chapitres.some((x) => x.id === c)) return c;
+  const num = c.match(/^ch\d+/)?.[0];
+  return (num && m.chapitres.find((x) => x.id.startsWith(`${num}-`))?.id) || null;
+}
+/** Exercices sur schéma d'un chapitre (+ la méthode commune), ou rien. */
+async function schemasDu(m, cid) {
+  if (!m.schemas) return { exos: [], d: null };
+  try {
+    const d = await chargerSchemas(m.id); const docs = sourcesDe(d);
+    const exos = d.exercices.filter((e) => chapitreDe(m, e) === cid).map((e) => ({ ...e, _cle: `${m.id}/schemas/${e.id}`, _docs: docs }));
+    return { exos, d };
+  } catch { return { exos: [], d: null }; }
+}
+
+export async function vueChapitre(el, mid, cid, onglet = '', extra = '') {
   const m = matiere(mid);
   const info = infoChapitre(mid, cid);
   if (!m || !info) throw new Error(`Chapitre introuvable : « ${mid}/${cid} ».`);
   const ch = await chargerChapitre(mid, cid);
   const onglets = ONGLETS.filter((o) => !o.siCours || ch.cours?.lecons?.length);
-  if (!onglets.some((o) => o.id === onglet)) onglet = 'synthese';
+  if (!onglets.some((o) => o.id === onglet)) onglet = onglets[0].id;
+  const sch = await schemasDu(m, cid);
 
   const base = `#/m/${esc(m.id)}/${esc(info.id)}`;
   const num = m.chapitres.indexOf(info) + 1;
-  const compte = { cours: ch.cours?.lecons?.length || 0, synthese: ch.synthese.sections.length, flashcards: ch.flashcards.length, exercices: ch.exercices.length };
+  const compte = { cours: ch.cours?.lecons?.length || 0, synthese: ch.synthese.sections.length, exercices: ch.exercices.length + sch.exos.length };
   memoriserVisite(`${base}/${onglet}`, ch.titre || info.titre, `${m.court || m.nom} · ${onglets.find((o) => o.id === onglet).libelle}`);
-  const nbRevoir = cartesARevoir(`${mid}/${cid}`).length;
   const { precedent, suivant } = voisins(mid, cid);
 
   el.innerHTML = `
@@ -51,7 +69,7 @@ export async function vueChapitre(el, mid, cid, onglet = 'synthese', extra = '')
         Ce chapitre a été rédigé pour tester l'appli : il ne provient pas d'un PDF de cours. Les numéros de page sont fictifs.</div></div>` : ''}
       <nav class="seg" aria-label="Contenu du chapitre">
         ${onglets.map((o) => `<a href="${base}/${o.id}" class="${o.id === onglet ? 'active' : ''}" ${o.id === onglet ? 'aria-current="page"' : ''}>
-          ${icone(o.icone)}<span class="seg-t">${o.libelle}</span><span class="count">${compte[o.id]}</span>${o.id === 'flashcards' && nbRevoir ? `<span class="count ko" title="Cartes à revoir">${nbRevoir}</span>` : ''}</a>`).join('')}
+          ${icone(o.icone)}<span class="seg-t">${o.libelle}</span><span class="count">${compte[o.id]}</span></a>`).join('')}
       </nav>
       <div id="onglet"></div>
       <div class="chap-nav">
@@ -60,24 +78,24 @@ export async function vueChapitre(el, mid, cid, onglet = 'synthese', extra = '')
       </div>
     </div>`;
 
-  let zone = el.querySelector('#onglet');
-  if (onglet === 'exercices' && info.nb?.schemas) {   // exercices de ce chapitre déplacés vers « Exercices sur schéma »
-    zone.innerHTML = `<a class="notice info sch-renvoi" href="#/m/${esc(m.id)}/schemas">${icone('eclair')}<div><b>${info.nb.schemas} exercice${info.nb.schemas > 1 ? 's' : ''} sur schéma</b> de ce chapitre ${info.nb.schemas > 1 ? 'sont' : 'est'} dans l'onglet <b>Exercices sur schéma</b> de la page ${esc(m.nom)} (schéma à annoter directement). ${icone('fleche-d')}</div></a><div></div>`;
-    zone = zone.lastElementChild;
-  }
-  return afficherOnglet(zone, onglet, ch, `${base}/${onglet}`, extra);
+  const zone = el.querySelector('#onglet');
+  return afficherOnglet(zone, onglet, ch, `${base}/${onglet}`, extra, sch);
 }
 
 /** Affiche le contenu de l'onglet ; renvoie une fonction de nettoyage. */
-function afficherOnglet(zone, onglet, ch, adresse, extra) {
+function afficherOnglet(zone, onglet, ch, adresse, extra, sch) {
   const prefixe = `${ch.matiere}/${ch.id}`;
   switch (onglet) {
     case 'cours':
       return import('../cours.js').then(({ lecteurCours }) => lecteurCours(zone, ch.cours, { docs: sourcesDe(ch), prefixe }));
-    case 'flashcards':
-      return lecteurFlashcards(zone, ch.flashcards, { docs: sourcesDe(ch), prefixe, revoir: extra === 'revoir' });
-    case 'exercices':
-      return lecteurExercices(zone, ch.exercices, { docs: sourcesDe(ch), prefixe, debut: extra || undefined });
+    case 'exercices': {
+      const debut = extra?.startsWith('sch-') ? `${ch.matiere}/schemas/${extra.slice(4)}` : (extra || undefined);
+      const methode = sch.exos.length && sch.d?.synthese?.length
+        ? `<details class="panel sch-methode"><summary><b>${icone('ampoule')} Méthode et conventions</b> <span class="muted">(appareils de mesure, sens des flèches)</span></summary>
+          ${sch.d.synthese.map((s) => `<h4>${esc(s.titre)}</h4>${(s.blocs || []).map((b) => rendreBloc({ ...b, pages: null, doc: null })).join('')}`).join('')}</details>` : '';
+      zone.innerHTML = `${methode}<div></div>`;
+      return lecteurExercices(zone.lastElementChild, [...ch.exercices, ...sch.exos], { docs: sourcesDe(ch), prefixe, debut });
+    }
     default:
       zone.innerHTML = rendreSynthese(ch, adresse);
       return activerSynthese(zone);

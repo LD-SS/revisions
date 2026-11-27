@@ -6,7 +6,7 @@ import { esc, pluriel, formatDate } from '../utils.js';
 import { icone } from '../icones.js';
 import { styleMatiere, profilDe } from '../matieres.js';
 import { matieres, totaux, dateContenu } from '../store.js';
-import { notesExos, notesCartes, derniereVisite, bilan } from '../suivi.js';
+import { derniereVisite, bilan, aRefaire, chapitreSchema } from '../suivi.js';
 
 const NOTE = { mid: ['Presque', 'mid'], ko: ['Faux', 'ko'] };
 
@@ -14,7 +14,7 @@ const NOTE = { mid: ['Presque', 'mid'], ko: ['Faux', 'ko'] };
 function lienExo(cle) {
   const [mid, cid, ...r] = cle.split('/'); const eid = r.join('/');
   if (mid === 'dessin' && cid === 'hasard') return `#/dessin/hasard/${eid}`;
-  if (cid === 'schemas') return `#/m/${mid}/schemas/${eid}`;
+  if (cid === 'schemas') { const c = chapitreSchema(matieres().find((x) => x.id === mid), eid); return c ? `#/m/${mid}/${c}/exercices/sch-${encodeURIComponent(eid)}` : `#/m/${mid}/schemas/${eid}`; }
   if (cid === 'eval') return `#/examen/eval/${mid}/${eid}`;
   return `#/m/${mid}/${cid}/exercices/${eid}`;
 }
@@ -22,38 +22,32 @@ function lienExo(cle) {
 export function vueAccueil(el) {
   const liste = matieres();
   const der = derniereVisite();
-  const nomChap = (mid, cid) => {
+  const nomChap = (mid, cid, k3 = '') => {
     const m = liste.find((x) => x.id === mid);
-    if (cid === 'schemas') return [m, 'Exercices sur schéma'];
+    if (cid === 'schemas') { const c = chapitreSchema(m, k3); return [m, m?.chapitres.find((x) => x.id === c)?.titre || 'Exercice sur schéma']; }
     if (cid === 'hasard') return [m, 'Pièce au hasard'];
     if (cid === 'eval') return [m, 'Évaluation type'];
     return [m, m?.chapitres.find((c) => c.id === cid)?.titre || cid];
   };
 
-  // ---- à revoir : exercices Faux / Presque (les plus récents d'abord) + flashcards ratées
-  const ex = Object.entries(notesExos()).filter(([, n]) => n.r !== 'ok')
-    .sort((a, b) => String(b[1].d).localeCompare(String(a[1].d))).slice(0, 8);
-  const fc = {};
-  for (const [k, n] of Object.entries(notesCartes())) {
-    if (n.r !== 'ko') continue;
-    const [mid, cid] = k.split('/'); const c = `${mid}/${cid}`; fc[c] = (fc[c] || 0) + 1;
-  }
-  const revoir = [
-    ...ex.map(([k, n]) => {
-      const [mid, cid, evId] = k.split('/'); const [m, nom] = nomChap(mid, cid);
-      const nv = cid === 'eval' ? String(evId).match(/-(\d+)$/)?.[1] : null;   // « Évaluation type 2 »
-      const ch = nv ? `${nom} ${nv}` : nom;
-      return `<a class="rv-l mc" ${m ? styleMatiere(m) : ''} href="${lienExo(k)}">
+  // ---- exercices à refaire (révision espacée : Faux → 1 jour, Presque → 3 jours)
+  const { maintenant, plusTard } = aRefaire();
+  const ligne = ([k, n]) => {
+    const [mid, cid, evId] = k.split('/'); const [m, nom] = nomChap(mid, cid, evId);
+    const nv = cid === 'eval' ? String(evId).match(/-(\d+)$/)?.[1] : null;   // « Évaluation type 2 »
+    const ch = nv ? `${nom} ${nv}` : nom;
+    return `<a class="rv-l mc" ${m ? styleMatiere(m) : ''} href="${lienExo(k)}">
         <span class="badge ex-${NOTE[n.r][1]}">${NOTE[n.r][0]}</span>
         <span><b>${esc(n.t || 'Exercice')}</b><span class="muted">${esc(m?.court || m?.nom || '')} · ${esc(ch)}</span></span>${icone('fleche-d')}</a>`;
-    }),
-    ...Object.entries(fc).map(([c, nb]) => {
-      const [mid, cid] = c.split('/'); const [m, ch] = nomChap(mid, cid);
-      return `<a class="rv-l mc" ${m ? styleMatiere(m) : ''} href="#/m/${esc(mid)}/${esc(cid)}/flashcards/revoir">
-        <span class="badge ex-ko">${icone('cartes')} ${nb}</span>
-        <span><b>${pluriel(nb, 'flashcard')} à revoir</b><span class="muted">${esc(m?.court || m?.nom || '')} · ${esc(ch)}</span></span>${icone('fleche-d')}</a>`;
-    }),
-  ];
+  };
+  const prochain = plusTard[0] ? new Date(plusTard[0][2]).toLocaleDateString('fr-BE', { weekday: 'long', day: 'numeric', month: 'long' }) : '';
+  const blocRefaire = `<section class="panel rv">
+      <h3>${icone('revoir')} À refaire aujourd'hui ${maintenant.length ? `<span class="badge ex-ko">${maintenant.length}</span>` : ''}</h3>
+      ${maintenant.length ? `<div class="rv-liste">${maintenant.slice(0, 8).map(ligne).join('')}</div>
+        ${maintenant.length > 8 ? `<p class="muted">… et ${maintenant.length - 8} autres.</p>` : ''}`
+        : `<p class="muted">${plusTard.length ? 'Rien pour aujourd\'hui.' : 'Rien à refaire : les exercices notés Faux reviennent ici 1 jour après, les Presque 3 jours après.'}</p>`}
+      ${plusTard.length ? `<p class="muted rv-plus">${pluriel(plusTard.length, 'exercice')} reviendr${plusTard.length > 1 ? 'ont' : 'a'} plus tard (prochain : ${esc(prochain)}).</p>` : ''}
+    </section>`;
 
   const tuiles = liste.map((m) => {
     const t = totaux(m);
@@ -65,7 +59,7 @@ export function vueAccueil(el) {
         <span class="m-ic">${icone(m.icone)}</span>
         <div class="tile-body">
           <h3>${esc(m.nom)}</h3>
-          <p>${pluriel(t.chapitres, 'chapitre')} · ${pluriel(t.flashcards, 'flashcard')} · ${pluriel(nbEx, 'exercice')}</p>
+          <p>${pluriel(t.chapitres, 'chapitre')} · ${pluriel(nbEx, 'exercice')}</p>
           <div class="prog" title="${b.reussis} exercices réussis sur ${nbEx}"><div style="width:${pct}%"></div></div>
           <p class="prog-t">${b.faits ? `${b.reussis} / ${nbEx} exercices réussis${b.aRefaire ? ` · <b>${b.aRefaire} à refaire</b>` : ''}` : 'Pas encore commencé'}</p>
         </div>
@@ -75,14 +69,12 @@ export function vueAccueil(el) {
   el.innerHTML = `
     <section class="hero">
       <h1>Mes révisions</h1>
-      <p class="muted">Synthèses, flashcards et exercices corrigés pour chaque chapitre.</p>
+      <p class="muted">Pour chaque chapitre : le cours, la synthèse, puis les exercices corrigés.</p>
     </section>
     ${der ? `<a class="panel continuer" href="${esc(der.h)}">
       <span class="m-ic">${icone('fleche-d')}</span>
-      <span><span class="muted">Continuer où tu t'es arrêté</span><b>${esc(der.t)}</b>${der.s ? `<span class="muted">${esc(der.s)}</span>` : ''}</span></a>` : ''}
-    ${revoir.length ? `<section class="panel rv">
-      <h3>${icone('revoir')} À revoir</h3>
-      <div class="rv-liste">${revoir.join('')}</div></section>` : ''}
+      <span><span class="muted">Reprendre où tu t'es arrêté</span><b>${esc(der.t)}</b>${der.s ? `<span class="muted">${esc(der.s)}</span>` : ''}</span></a>` : ''}
+    ${blocRefaire}
     ${liste.length
       ? `<div class="tiles big">${tuiles}</div>`
       : `<div class="panel empty"><div class="m-ic">${icone('livre')}</div><h3>Aucune matière</h3>
@@ -93,9 +85,9 @@ export function vueAccueil(el) {
       <div class="panel">
         <h3>Comment réviser avec l'appli</h3>
         <ul>
-          <li><b>Synthèse</b> : l'essentiel du chapitre, avec les définitions, formules et pièges fréquents.</li>
-          <li><b>Flashcards</b> : retourne la carte, puis indique si tu savais. Les cartes ratées reviennent dans « À revoir ».</li>
-          <li><b>Exercices</b> : résous sur ta feuille, regarde la réponse et le développement, puis note-toi.</li>
+          <li><b>1. Cours</b> : apprends pas à pas, avec des questions et des schémas à annoter.</li>
+          <li><b>2. Synthèse</b> : l'essentiel du chapitre (définitions, formules, pièges fréquents).</li>
+          <li><b>3. Exercices</b> : toujours les mêmes étapes (énoncé, schéma, questions, correction). Tape tes résultats dans les cases, vérifie, puis note-toi. Les exercices ratés reviennent dans « À refaire ».</li>
           <li>La pastille <span class="badge">${icone('page')} p. 4</span> renvoie à la page du PDF de cours.</li>
         </ul>
       </div>
@@ -103,7 +95,7 @@ export function vueAccueil(el) {
         <h3>Bon à savoir</h3>
         <ul>
           <li>Le contenu est généré à partir des cours avec l'aide d'une IA. Il peut contenir des erreurs : en cas de doute, le cours du professeur fait foi.</li>
-          <li>Ta progression reste dans ton navigateur, sur cet appareil.</li>
+          <li>Ta progression est gardée sur cet appareil et synchronisée avec ton compte.</li>
           ${dateContenu() ? `<li class="muted">Contenu mis à jour le ${esc(formatDate(dateContenu()))}.</li>` : ''}
         </ul>
       </div>
