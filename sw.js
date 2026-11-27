@@ -7,7 +7,7 @@
    Quand on ajoute un fichier JS / CSS : l'ajouter dans FICHIERS_APP.
    ===================================================================== */
 
-const CACHE = 'revisions-v115';
+const CACHE = 'revisions-v116';
 
 const FICHIERS_APP = [
   './',
@@ -91,7 +91,8 @@ const FICHIERS_APP = [
 self.addEventListener('install', (event) => {
   event.waitUntil((async () => {
     const cache = await caches.open(CACHE);
-    await cache.addAll(FICHIERS_APP);
+    // cache: 'reload' : on reprend les fichiers sur le serveur, jamais une ancienne copie du navigateur
+    await cache.addAll(FICHIERS_APP.map((u) => new Request(u, { cache: 'reload' })));
     // Le contenu (synthèses, exercices) n'est plus dans le site : il vient de Firestore,
     // qui garde sa propre copie hors ligne pour les comptes acceptés.
     await self.skipWaiting();
