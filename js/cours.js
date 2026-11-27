@@ -5,7 +5,7 @@
    Blocs : ceux de la synthèse (texte, definition, point-cle, piege, exemple,
    formule, liste, tableau, figure) + trois blocs interactifs :
      qcm    → { id, q, choix: [..], bonne: n, explication? }
-     nombre → { id, q, reponse, unite?, tol? (relative, défaut 0,02), indice?, explication? }
+     nombre → { id, q, reponse, unite?, tol? (relative, défaut 0,02), tolAbs? (écart permis, ex. 0,0051 « au centième »), indice?, explication? }
      schema → { id, q, schema, solution, donnees? }  schéma à annoter (flèches de courant et vecteurs
               tension + valeurs), même format que les exercices sur schéma (voir circuit.js) ;
               réussi quand « Vérifier » donne 100 %
@@ -205,7 +205,7 @@ export function lecteurCours(zone, cours, { docs = [], prefixe = '' } = {}) {
           const v = nombre(inp.value);
           if (v == null) { fb.hidden = false; fb.innerHTML = `<div class="crs-ret ko">${icone('alerte')} Écris un nombre (ex. 7 ou 0,5).</div>`; return; }
           const tol = b.tol ?? 0.02; const r = +b.reponse;
-          const bon = r === 0 ? Math.abs(v) < 1e-9 : Math.abs(v - r) <= Math.abs(r) * tol;
+          const bon = (r === 0 ? Math.abs(v) < 1e-9 : Math.abs(v - r) <= Math.abs(r) * tol) || (b.tolAbs != null && Math.abs(v - r) <= b.tolAbs);   // tolAbs : réponse arrondie (« au centième » → 0,0051)
           let aide = '';
           if (!bon && r !== 0) {
             const q = v / r;
