@@ -1332,3 +1332,15 @@ body.sim-large .sim-barre select{max-width:210px}
 .ex-case-bravo{color:var(--ok);font-weight:600;display:inline-flex;gap:4px;align-items:center}
 .ex-case-b{padding:5px 10px;font-size:13px}
 .ex-orig{margin:6px 0}.ex-orig summary{cursor:pointer;color:var(--muted);font-size:13.5px}
+
+/* ---------- modèle unique d'exercice : étapes numérotées ---------- */
+.ex-etape{margin-top:14px;padding-top:12px;border-top:1px solid var(--border)}
+.ex-etape:first-of-type{border-top:0;padding-top:0;margin-top:8px}
+.ex-card .ex-et-t{display:flex;gap:8px;align-items:center;margin:0 0 8px;font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.ex-et-n{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:var(--mw,var(--accent-weak));color:var(--mt,var(--accent));font-weight:700;font-size:12px;letter-spacing:0;flex:none}
+.ex-etape .ex-consigne{color:var(--text)}
+.ex-etape.ex-corr{border-top:1px solid var(--border);margin-top:14px}
+.ex-simu{margin-top:8px}
+.ex-noter .btn.conseil{outline:2px solid var(--accent);outline-offset:2px;font-weight:600}
+.plus-h{font-size:14px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:18px 0 8px}
+.rv-plus{margin:8px 0 0}
