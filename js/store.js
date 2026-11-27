@@ -2,7 +2,7 @@
    STORE — chargement du contenu publié (dossier content/)
    ---------------------------------------------------------------------
    content/index.json         liste des matières et de leurs chapitres
-   content/<matiere>/<ch>.json  un fichier par chapitre (synthèse, flashcards, exercices)
+   content/<matiere>/<ch>.json  un fichier par chapitre (cours, synthèse, exercices ; les anciennes flashcards sont ignorées)
    Les chapitres sont chargés à la demande puis gardés en mémoire.
    Étape 2 : une couche « brouillons » (IndexedDB, mode créateur) viendra se
    superposer au contenu publié, sans changer l'interface de ce module.

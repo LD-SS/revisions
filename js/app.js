@@ -4,8 +4,9 @@
    Navigation par l'adresse après « # » (fonctionne sur GitHub Pages sans configuration) :
      #/                              accueil (tuiles des matières)
      #/m/<matière>                   chapitres d'une matière
-     #/m/<matière>/<chapitre>[/<onglet>]   synthese | flashcards | exercices
-     #/m/<matière>/schemas[/<ex>]   exercices sur schéma
+     #/m/<matière>/<chapitre>[/<onglet>]   cours | synthese | exercices
+     #/m/<matière>/schemas[/<ex>]   ancienne adresse → redirigée vers le chapitre de l'exercice
+     #/plus                         menu Outils (examen, simulateur, générateurs, atelier, paramètres)
      #/dessin…                       atelier de dessin
      #/plus  #/recherche  #/examen   menu « Plus », recherche, examen blanc
      #/parametres                    paramètres
@@ -27,7 +28,7 @@ import { vueExamen } from './vues/examen.js';
 import { majBoutonProposer, viderAttente } from './proposer.js';
 import { demarrerSynchro, adopterCompte } from './synchro.js';
 import { exigerAcces, ecranPerte } from './vues/acces.js';
-
+const VERSION = '1.50.0 (refonte : chapitres Cours → Synthèse → Exercices, flashcards retirées, exercices en 4 étapes, exercices à refaire, menu Outils, examen toutes matières)';
 const VERSION = '1.49.0 (cours complétés, bilans à refaire avec de nouvelles valeurs, questions anode / cathode, réponses à taper dans les exercices, Ctrl + clic pour annoter plusieurs composants)';
 window.__version = VERSION;
 const vue = document.getElementById('vue');
@@ -65,21 +66,20 @@ const pastille = () => (window.__nbDemandes ? `<span class="pastille" title="Dem
 function rendreOnglets(route) {
   routeAffichee = route;
   const actif = (cond) => (cond ? 'active' : '');
-  const enPlus = ['plus', 'recherche', 'examen', 'parametres', 'membres'].includes(route[0]);
-  const surMatiere = (m) => (route[0] === 'm' && route[1] === m.id) || (route[0] === 'dessin' && m.id === 'dessin') || (route[0] === 'simu' && !!m.schemas);
+  const enPlus = ['plus', 'recherche', 'examen', 'parametres', 'membres', 'dessin', 'simu'].includes(route[0]) || (route[0] === 'm' && route[2] === 'generateur');
+  const surMatiere = (m) => route[0] === 'm' && route[1] === m.id && route[2] !== 'generateur';
   const tabs = [
     `<a class="tab ${actif(route[0] === '')}" href="#/">${icone('accueil')}<span class="txt">Accueil</span></a>`,
     ...matieres().map((m) => `<a class="tab mc ${actif(surMatiere(m))}" ${styleMatiere(m)} href="#/m/${esc(m.id)}" title="${esc(m.nom)}">
       ${icone(m.icone)}<span class="txt">${esc(nomCourt(m))}</span></a>`),
     `<a class="tab ${actif(route[0] === 'examen')}" href="#/examen">${icone('examen')}<span class="txt">Examen blanc</span></a>`,
-    ...(window.__admin ? [`<a class="tab ${actif(route[0] === 'membres')}" href="#/membres">${icone('cadenas')}<span class="txt">Membres</span>${pastille()}</a>`] : []),
-    `<a class="tab ${actif(route[0] === 'parametres')}" href="#/parametres">${icone('reglages')}<span class="txt">Paramètres</span></a>`,
+    `<a class="tab ${actif(enPlus && route[0] !== 'examen')}" href="#/plus">${icone('plus')}<span class="txt">Outils</span>${window.__admin ? pastille() : ''}</a>`,
   ];
   document.getElementById('tabs').innerHTML = tabs.join('');
   const bas = [
     `<a class="${actif(route[0] === '')}" href="#/">${icone('accueil')}<span>Accueil</span></a>`,
     ...matieres().map((m) => `<a class="mc ${actif(surMatiere(m))}" ${styleMatiere(m)} href="#/m/${esc(m.id)}">${icone(m.icone)}<span>${esc(m.mini || nomCourt(m).split(' ')[0])}</span></a>`),
-    `<a class="${actif(enPlus)}" href="#/plus">${icone('plus')}<span>Plus</span>${window.__admin ? pastille() : ''}</a>`,
+    `<a class="${actif(enPlus)}" href="#/plus">${icone('plus')}<span>Outils</span>${window.__admin ? pastille() : ''}</a>`,
   ];
   document.getElementById('botnav').innerHTML = bas.join('');
 }

@@ -150,14 +150,54 @@ export function lecteurExercices(conteneur, tous, options = {}) {
     return `<div class="ex-cases ${tout ? 'juste' : ''}">${champs}${tout ? `<span class="ex-case-bravo">${icone('check')} Juste !</span>` : ''}<button class="btn ex-case-b" data-action="verif" data-i="${i}">${icone('check')} Vérifier</button></div>`;
   }
 
+  /* ---------- Modèle unique : 1 Énoncé · 2 Schéma · 3 Questions · 4 Correction (mêmes étapes partout) ---------- */
+  const etape = (n, titre, corps, cls = '') => `<section class="ex-etape ${cls}"><h4 class="ex-et-t"><span class="ex-et-n">${n}</span>${titre}</h4>${corps}</section>`;
+  /** Note proposée d'après les cases : toutes justes = Juste, au moins la moitié = Presque, sinon Faux. */
+  function noteAuto(e) {
+    const bs = e.items.flatMap((it, i) => (it.val || []).map((b, k) => [i, k, b]));
+    if (!bs.length || bs.some(([i]) => !etat.verif.has(i))) return null;
+    const ok = bs.filter(([i, k, b]) => jugerCase(etat.saisie[`${i}/${k}`], b).ok).length;
+    return { r: ok === bs.length ? 'ok' : ok >= bs.length / 2 ? 'mid' : 'ko', ok, n: bs.length };
+  }
+  function boutonsNote(auto) {
+    const b = (r, cls, ic, lib) => `<button class="btn ${cls} ${auto?.r === r ? 'conseil' : ''}" data-action="noter" data-r="${r}">${ic} ${lib}</button>`;
+    return `<div class="fc-actions ex-noter">
+      <span class="ex-q">${auto ? `D'après tes cases (${auto.ok} / ${auto.n} justes) : <b>${NOTES[auto.r].lib}</b>. Valide ou change :` : 'Comment ça s\'est passé ?'}</span>
+      ${b('ok', 'ok', icone('check'), 'Juste')}${b('mid', 'ex-mid', '≈', 'Presque')}${b('ko', 'bad', icone('croix'), 'Faux')}</div>`;
+  }
+  function navEx() {
+    return `<div class="fc-actions ex-nav">
+          <button class="btn icon" data-action="prec" title="Exercice précédent" ${etat.pos === 0 ? 'disabled' : ''}>${icone('fleche-g')}</button>
+          ${estAuteur() || !boiteActive() ? '' : `<button class="btn ex-prop" data-action="proposer" title="Signaler une erreur dans cet exercice (capture d'écran jointe)">${icone('alerte')}<span>Signaler une erreur</span></button>`}
+          <button class="btn" data-action="suiv" ${etat.pos >= etat.liste.length - 1 ? 'disabled' : ''}>Passer ${icone('fleche-d')}</button>
+        </div>`;
+  }
+
   function carte(e, t) {
     if (e.type === 'dessin') return carteDessin(e, t);
     const note = t[cle(e)];
-    const fini = etat.rep;
     const avecDev = e.items.map((it) => (it.etapes || []).length > 0);
-    const etoiles = '★'.repeat(e.niveau || 1) + '☆'.repeat(3 - (e.niveau || 1));
+    const avecCases = e.items.some((it) => it.val?.length);
     const items = e.items.map((it, i) => `<li>${e.items.length > 1 ? `<span class="ex-l">${LETTRES[i]})</span>` : ''}<div>${texte(it.q)}${cases(it, i)}</div></li>`).join('');
-    let corr = '';
+    let n = 0;
+    // 1. Énoncé
+    const enonce = etape(++n, 'Énoncé', e.consigne ? `<div class="ex-consigne">${texte(e.consigne)}</div>` : '<p class="muted">Réponds aux questions ci-dessous.</p>');
+    // 2. Schéma (à annoter ou image)
+    const aSchema = e.schema || imageOk(e.image);
+    const schema = aSchema ? etape(++n, e.schema ? 'Schéma à annoter' : 'Schéma', `
+        ${e.schema ? '<div class="ex-circuit" data-circuit></div>' : ''}
+        ${imageOk(e.image) ? (e.schema
+          ? `<details class="ex-orig"><summary>Voir le schéma du cours</summary><figure class="fig ex-img"><img src="${e.image}" alt="Schéma de l'exercice"></figure></details>`
+          : `<figure class="fig ex-img"><img src="${e.image}" alt="Schéma de l'exercice"></figure>`) : ''}
+        ${e.simu ? `<button class="btn ex-simu" data-action="simu" title="Ouvrir ce circuit dans le simulateur : changer les valeurs et voir ce qui se passe">${icone('eclair')} Voir dans le simulateur</button>` : ''}`) : '';
+    // 3. Questions
+    const questions = etape(++n, 'Questions', `
+        <ol class="ex-items ${e.items.length > 1 ? '' : 'seul'}">${items}</ol>
+        ${!etat.rep ? `<p class="ex-papier">${icone('crayon')} ${avecCases ? 'Résous sur ta feuille, tape tes résultats dans les cases et clique sur « Vérifier ».' : 'Résous sur ta feuille, puis ouvre la correction.'}</p>` : ''}
+        ${e.indice ? (etat.indice ? `<div class="ex-indice">${icone('ampoule')}<div>${texte(e.indice)}</div></div>`
+          : (!etat.rep ? `<button class="btn" data-action="indice">${icone('ampoule')} Un indice</button>` : '')) : ''}`);
+    // 4. Correction
+    let corps;
     if (etat.rep) {   // d'abord la réponse ; le développement du calcul s'ouvre à la demande
       const html = e.items.map((it, i) => {
         const lettre = e.items.length > 1 ? `<span class="ex-l">${LETTRES[i]})</span>` : '';
@@ -172,45 +212,18 @@ export function lecteurExercices(conteneur, tous, options = {}) {
         </div></div>`;
       }).join('');
       const nDev = avecDev.filter(Boolean).length;
-      // schéma corrigé : toutes les tensions et tous les courants calculés, notés sur le schéma
       const schemaCorr = imageOk(e.imageCorr)
         ? `<figure class="fig ex-img ex-img-corr"><img src="${e.imageCorr}" alt="Schéma corrigé"><figcaption>Schéma corrigé : valeurs calculées en <b class="vert">vert</b> (courants, potentiels) et en <b class="bleu">bleu</b> (tensions, pointe = côté +).</figcaption></figure>` : '';
-      corr = `<div class="ex-corr"><h4>${icone('crayon')} Correction
-        ${nDev > 1 ? `<button class="btn ex-dev-tout" data-action="devtout">${etat.dev.size >= nDev ? 'Tout masquer' : 'Tout développer'}</button>` : ''}</h4>${schemaCorr}${html}</div>`;
-    }
+      corps = `${nDev > 1 ? `<button class="btn ex-dev-tout" data-action="devtout">${etat.dev.size >= nDev ? 'Tout masquer' : 'Tout développer'}</button>` : ''}
+        ${schemaCorr}${html}${boutonsNote(noteAuto(e))}`;
+    } else corps = `<button class="btn primary" data-action="reponse">${icone('check')} Voir la correction</button>`;
+    const correction = etape(++n, 'Correction', corps, 'ex-corr');
+
     return `
       <div class="panel ex-card">
-        <div class="ex-head">
-          <span class="ex-niv" title="Niveau ${e.niveau || 1} sur 3">${etoiles}</span>
-          <h3>${enLigne(e.titre || 'Exercice')}</h3>
-          <span class="grow"></span>
-          ${note ? `<span class="badge ex-${note.r}">${NOTES[note.r].lib}${note.n > 1 ? ` · ${note.n}×` : ''}</span>` : ''}
-          ${badgeSource(e, e._docs || options.docs)}
-        </div>
-        ${e.consigne ? `<div class="ex-consigne">${texte(e.consigne)}</div>` : ''}
-        ${e.schema ? '<div class="ex-circuit" data-circuit></div>' : ''}
-        ${imageOk(e.image) ? (e.schema
-          ? `<details class="ex-orig"><summary>Voir le schéma du cours</summary><figure class="fig ex-img"><img src="${e.image}" alt="Schéma de l'exercice"></figure></details>`
-          : `<figure class="fig ex-img"><img src="${e.image}" alt="Schéma de l'exercice"></figure>`) : ''}
-        <ol class="ex-items ${e.items.length > 1 ? '' : 'seul'}">${items}</ol>
-        ${!etat.rep ? `<p class="ex-papier">${icone('crayon')} ${e.items.some((it) => it.val?.length) ? 'Résous sur ta feuille, tape tes résultats dans les cases et clique sur « Vérifier ».' : 'Résous sur ta feuille, puis vérifie avec la correction.'}</p>` : ''}
-        ${e.indice ? (etat.indice ? `<div class="ex-indice">${icone('ampoule')}<div>${texte(e.indice)}</div></div>`
-          : (!etat.rep ? `<button class="btn" data-action="indice">${icone('ampoule')} Un indice</button>` : '')) : ''}
-        ${corr}
-        <div class="fc-actions">
-          ${!fini ? `<button class="btn primary" data-action="reponse">${icone('check')} Voir la réponse</button>` : ''}
-          ${e.simu ? `<button class="btn" data-action="simu" title="Ouvrir ce circuit dans le simulateur : changer les valeurs et voir ce qui se passe">${icone('eclair')} Voir dans le simulateur</button>` : ''}
-          ${fini ? `
-            <span class="ex-q">Comment ça s'est passé ?</span>
-            <button class="btn ok" data-action="noter" data-r="ok">${icone('check')} Juste</button>
-            <button class="btn ex-mid" data-action="noter" data-r="mid">≈ Presque</button>
-            <button class="btn bad" data-action="noter" data-r="ko">${icone('croix')} Faux</button>` : ''}
-        </div>
-        <div class="fc-actions ex-nav">
-          <button class="btn icon" data-action="prec" title="Exercice précédent" ${etat.pos === 0 ? 'disabled' : ''}>${icone('fleche-g')}</button>
-          ${estAuteur() || !boiteActive() ? '' : `<button class="btn ex-prop" data-action="proposer" title="Signaler une erreur dans cet exercice (capture d'écran jointe)">${icone('alerte')}<span>Signaler une erreur</span></button>`}
-          <button class="btn" data-action="suiv" ${etat.pos >= etat.liste.length - 1 ? 'disabled' : ''}>Passer ${icone('fleche-d')}</button>
-        </div>
+        ${entete(e, note)}
+        ${enonce}${schema}${questions}${correction}
+        ${navEx()}
       </div>`;
   }
 
@@ -233,10 +246,7 @@ export function lecteurExercices(conteneur, tous, options = {}) {
     const d = etatDessin(e);
     const restIndices = A.indices === Infinity ? '' : ` (${Math.max(0, A.indices - d.indices.length)})`;
     const restBilans = A.bilans === Infinity ? '' : ` (${Math.max(0, A.bilans - d.bilans)})`;
-    return `
-      <div class="panel ex-card ex-dessin">
-        ${entete(e, note)}
-        <div class="ex-aides-niv" role="radiogroup" aria-label="Niveau d'aide">
+    const aidesNiv = `<div class="ex-aides-niv" role="radiogroup" aria-label="Niveau d'aide">
           <span>Aides :</span>
           ${Object.entries(AIDES).map(([k, v]) => `<label class="chip"><input type="radio" name="aide" value="${k}" ${k === niv ? 'checked' : ''} ${corrige ? 'disabled' : ''}><span>${v.nom}</span></label>`).join('')}
           <span class="muted ex-aides-txt">${{
@@ -244,33 +254,29 @@ export function lecteurExercices(conteneur, tous, options = {}) {
             moyen: 'lignes de rappel, ligne à 45°, pièce 3D sans boutons de vue, 3 traits d’aide et 3 vérifications.',
             difficile: 'comme à l’examen : perspective fixe, pas de ligne à 45° ni de rappels, aucune aide.',
           }[niv]}</span>
-        </div>
-        <div class="ex-dz">
+        </div>`;
+    const enonce = etape(1, 'Énoncé', `<div class="ex-dz">
           <div class="ex-consigne">${texte(e.consigne || '')}</div>
           <div class="ex-3d" data-p3d>${!e.piece && e.perspective ? `<figure class="fig ex-persp-fixe">${svgSur(e.perspective)}<figcaption>Perspective · F = sens de la vue de face</figcaption></figure>` : ''}</div>
         </div>
         ${e.indice && niv !== 'difficile' ? (etat.indice ? `<div class="ex-indice">${icone('ampoule')}<div>${texte(e.indice)}</div></div>`
-          : (!corrige ? `<button class="btn" data-action="indice">${icone('ampoule')} Un conseil</button>` : '')) : ''}
+          : (!corrige ? `<button class="btn" data-action="indice">${icone('ampoule')} Un conseil</button>` : '')) : ''}`);
+    const planche = etape(2, 'Dessin sur la planche', `${aidesNiv}
         <div class="ex-planche" data-planche></div>
         ${!corrige && (A.indices || A.bilans) ? `<div class="ex-aides">
           ${A.indices ? `<button class="btn" data-action="traitaide" ${d.indices.length >= A.indices ? 'disabled' : ''} title="Montre un trait manquant (−${A.penalite} % par trait d'aide)">${icone('ampoule')} Un trait d'aide${restIndices}</button>` : ''}
           ${A.bilans ? `<button class="btn" data-action="bilan" ${d.bilans >= A.bilans ? 'disabled' : ''} title="Combien de traits sont justes, sans dire lesquels">${icone('progression')} Où j'en suis ?${restBilans}</button>` : ''}
           <div class="ex-aide-msg" data-aidemsg></div>
-        </div>` : ''}
-        ${corrige ? '<div class="ex-res" data-res></div><div class="ex-expl" data-expl><p class="muted">👉 Touche un trait de la correction (sur la planche) pour savoir d\'où il vient : il s\'allume aussi sur la pièce 3D.</p></div>' : ''}
-        <div class="fc-actions">
-          ${!corrige ? `<button class="btn primary" data-action="verifier">${icone('check')} Vérifier mon dessin</button>` : `
-            <span class="ex-q">Comment ça s'est passé ?</span>
-            <button class="btn ok" data-action="noter" data-r="ok">${icone('check')} Juste</button>
-            <button class="btn ex-mid" data-action="noter" data-r="mid">≈ Presque</button>
-            <button class="btn bad" data-action="noter" data-r="ko">${icone('croix')} Faux</button>
-            <button class="btn" data-action="retoucher">${icone('crayon')} Corriger mon dessin</button>`}
-        </div>
-        <div class="fc-actions ex-nav">
-          <button class="btn icon" data-action="prec" title="Exercice précédent" ${etat.pos === 0 ? 'disabled' : ''}>${icone('fleche-g')}</button>
-          ${estAuteur() || !boiteActive() ? '' : `<button class="btn ex-prop" data-action="proposer" title="Signaler une erreur dans cet exercice (capture d'écran jointe)">${icone('alerte')}<span>Signaler une erreur</span></button>`}
-          <button class="btn" data-action="suiv" ${etat.pos >= etat.liste.length - 1 ? 'disabled' : ''}>Passer ${icone('fleche-d')}</button>
-        </div>
+        </div>` : ''}`);
+    const correction = etape(3, 'Correction', !corrige
+      ? `<button class="btn primary" data-action="verifier">${icone('check')} Vérifier mon dessin</button>`
+      : `<div class="ex-res" data-res></div><div class="ex-expl" data-expl><p class="muted">👉 Touche un trait de la correction (sur la planche) pour savoir d'où il vient : il s'allume aussi sur la pièce 3D.</p></div>
+        ${boutonsNote(null)}<div class="fc-actions"><button class="btn" data-action="retoucher">${icone('crayon')} Corriger mon dessin</button></div>`, 'ex-corr');
+    return `
+      <div class="panel ex-card ex-dessin">
+        ${entete(e, note)}
+        ${enonce}${planche}${correction}
+        ${navEx()}
       </div>`;
   }
   /* aides utilisées pour l'exercice affiché (remises à zéro en changeant d'exercice) */

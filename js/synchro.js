@@ -1,7 +1,7 @@
 /* =====================================================================
    SYNCHRO — partage la progression entre tes appareils (PC, téléphone…)
    ---------------------------------------------------------------------
-   La progression (exercices notés, flashcards, annotations des schémas,
+   La progression (exercices notés, cours, annotations des schémas,
    « continuer ») est rangée dans le compte de l'élève (Firestore,
    document progression/{uid}, lisible par lui seul).
    À la première connexion, la progression déjà présente dans le navigateur
