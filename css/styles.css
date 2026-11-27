@@ -1317,3 +1317,18 @@ body.sim-large .sim-barre select{max-width:210px}
 }
 .crs-lecon>h2{margin:0 0 12px;font-size:19px}
 .crs-lecon>h2 .num{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;background:var(--mw);color:var(--mt);font-size:15px;flex:none}
+.crs-nouv{margin-top:10px}
+
+/* cases réponse des exercices */
+.ex-cases{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin:8px 0 4px}
+.ex-case{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:14px}
+.ex-case input{width:7.5em;padding:5px 8px;border:1px solid var(--border);border-radius:8px;background:var(--panel);color:var(--text);font:inherit}
+.ex-case.ok input{border-color:var(--ok);box-shadow:0 0 0 1px var(--ok)}
+.ex-case.ko input{border-color:var(--bad);box-shadow:0 0 0 1px var(--bad)}
+.ex-case-u{color:var(--muted)}
+.ex-case-r{display:inline-flex;align-items:center;gap:3px;font-size:12.5px}
+.ex-case.ok .ex-case-r{color:var(--ok)} .ex-case.ko .ex-case-r{color:var(--bad)}
+.ex-case-r svg,.ex-case-bravo svg,.ex-case-b svg{width:14px;height:14px}
+.ex-case-bravo{color:var(--ok);font-weight:600;display:inline-flex;gap:4px;align-items:center}
+.ex-case-b{padding:5px 10px;font-size:13px}
+.ex-orig{margin:6px 0}.ex-orig summary{cursor:pointer;color:var(--muted);font-size:13.5px}
