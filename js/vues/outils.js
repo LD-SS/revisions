@@ -31,7 +31,7 @@ export function vuePlus(el) {
     </div>
     <h2 class="plus-h">Compte</h2>
     <div class="plus-liste">
-      ${window.__admin ? lien('#/membres', 'cadenas', 'Membres', 'Inscriptions, appareils, accès (administrateur)') : ''}
+      ${window.__admin ? lien('#/membres', 'cadenas', `Membres${window.__nbDemandes ? ` <span class="pastille" title="Demandes en attente">${window.__nbDemandes}</span>` : ''}`, window.__nbDemandes ? `<b>${window.__nbDemandes} demande${window.__nbDemandes > 1 ? 's' : ''} en attente</b> (inscription ou nouvel appareil) : ouvre pour accepter ou refuser` : 'Inscriptions, appareils, accès (administrateur)') : ''}
       ${lien('#/parametres', 'reglages', 'Paramètres', 'Mon compte, thème, PDF de cours, mise à jour')}
     </div>`;
 }
