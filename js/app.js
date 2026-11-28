@@ -29,7 +29,7 @@ import { majBoutonProposer, viderAttente } from './proposer.js';
 import { demarrerSynchro, adopterCompte } from './synchro.js';
 import { exigerAcces, ecranPerte } from './vues/acces.js';
 
-const VERSION = '1.51.0 (cours de maths étoffés : figures à curseurs et animées)';
+const VERSION = '1.51.1 (notifications : infobulle qui dit quoi et où, liste « À traiter » dans Membres)';
 window.__version = VERSION;
 const vue = document.getElementById('vue');
 let nettoyer = null; // fonction fournie par la page affichée, appelée avant d'en changer
@@ -62,7 +62,8 @@ document.getElementById('btn-theme').addEventListener('click', () => {
 
 /* ---------- Barre d'onglets (haut, ordinateur) et barre du bas (téléphone) ---------- */
 let routeAffichee = [''];
-const pastille = () => (window.__nbDemandes ? `<span class="pastille" title="Demandes en attente">${window.__nbDemandes}</span>` : '');
+const infoDemandes = () => `${window.__nbDemandes} demande${window.__nbDemandes > 1 ? 's' : ''} à traiter dans Outils › Membres :\n${(window.__detailDemandes || []).map((x) => `• ${x}`).join('\n')}`;
+const pastille = () => (window.__nbDemandes ? `<span class="pastille" title="${esc(infoDemandes())}">${window.__nbDemandes}</span>` : '');
 function rendreOnglets(route) {
   routeAffichee = route;
   const actif = (cond) => (cond ? 'active' : '');
@@ -73,13 +74,13 @@ function rendreOnglets(route) {
     ...matieres().map((m) => `<a class="tab mc ${actif(surMatiere(m))}" ${styleMatiere(m)} href="#/m/${esc(m.id)}" title="${esc(m.nom)}">
       ${icone(m.icone)}<span class="txt">${esc(nomCourt(m))}</span></a>`),
     `<a class="tab ${actif(route[0] === 'examen')}" href="#/examen">${icone('examen')}<span class="txt">Examen blanc</span></a>`,
-    `<a class="tab ${actif(enPlus && route[0] !== 'examen')}" href="#/plus">${icone('plus')}<span class="txt">Outils</span>${window.__admin ? pastille() : ''}</a>`,
+    `<a class="tab ${actif(enPlus && route[0] !== 'examen')}" href="#/plus" ${window.__admin && window.__nbDemandes ? `title="${esc(infoDemandes())}"` : ''}>${icone('plus')}<span class="txt">Outils</span>${window.__admin ? pastille() : ''}</a>`,
   ];
   document.getElementById('tabs').innerHTML = tabs.join('');
   const bas = [
     `<a class="${actif(route[0] === '')}" href="#/">${icone('accueil')}<span>Accueil</span></a>`,
     ...matieres().map((m) => `<a class="mc ${actif(surMatiere(m))}" ${styleMatiere(m)} href="#/m/${esc(m.id)}">${icone(m.icone)}<span>${esc(m.mini || nomCourt(m).split(' ')[0])}</span></a>`),
-    `<a class="${actif(enPlus)}" href="#/plus">${icone('plus')}<span>Outils</span>${window.__admin ? pastille() : ''}</a>`,
+    `<a class="${actif(enPlus)}" href="#/plus" ${window.__admin && window.__nbDemandes ? `title="${esc(infoDemandes())}"` : ''}>${icone('plus')}<span>Outils</span>${window.__admin ? pastille() : ''}</a>`,
   ];
   document.getElementById('botnav').innerHTML = bas.join('');
 }
@@ -194,7 +195,7 @@ async function demarrer() {
     if (sur && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName || '')) router();
   });
   // Administrateur : pastille du nombre de demandes (inscriptions, appareils) sur l'onglet Membres.
-  if (window.__admin) compte.surveillerDemandes((n) => { window.__nbDemandes = n; rendreOnglets(routeAffichee); });
+  if (window.__admin) compte.surveillerDemandes((n, detail) => { window.__nbDemandes = n; window.__detailDemandes = detail; rendreOnglets(routeAffichee); if (routeAffichee[0] === 'plus') router(); });
   // Hors ligne : une fois par jour, tout le contenu est copié sur l'appareil (en arrière-plan).
   setTimeout(() => prechargerTout().catch(() => {}), 6000);
   compte.surveiller((raison) => {

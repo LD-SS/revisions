@@ -239,9 +239,13 @@ export const majMembre = (uid, champs) => updateDoc(refMembre(uid), champs);
 /** Admin : nombre de demandes en attente (inscriptions + appareils en plus), en direct. */
 export function surveillerDemandes(cb) {
   return onSnapshot(collection(db, 'membres'), (s) => {
-    let n = 0;
-    s.forEach((d) => { const m = d.data(); if (m.statut === 'attente') n++; n += Object.keys(m.demandes || {}).length; });
-    cb(n);
+    let n = 0; const detail = [];   // détail pour l'infobulle : qui, et quoi
+    s.forEach((d) => {
+      const m = d.data(); const qui = nomComplet(m) || m.email || 'Quelqu\'un';
+      if (m.statut === 'attente') { n++; detail.push(`${qui} : inscription à accepter`); }
+      for (const a of Object.values(m.demandes || {})) { n++; detail.push(`${qui} : appareil en plus à accepter (${a?.nom || 'appareil'})`); }
+    });
+    cb(n, detail);
   }, () => {});
 }
 export const champSupprime = deleteField;
