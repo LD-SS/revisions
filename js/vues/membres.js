@@ -71,6 +71,12 @@ export async function vueMembres(el) {
       <div class="panel"><div class="big ${nbDem ? 'mid' : ''}">${nbDem}</div>demandes d'appareil</div>
       <div class="panel"><div class="big">${nb('bloque')}</div>bloqués</div>
     </div>
+    ${(() => {   // ce qui attend une décision, en premier (même liste que la pastille de l'onglet Outils)
+      const t = liste.flatMap((m) => [...(m.statut === 'attente' ? [[m, 'inscription à accepter']] : []),
+        ...Object.values(m.demandes || {}).map((a) => [m, `appareil en plus à accepter : ${a?.nom || 'appareil'}`])]);
+      return t.length ? `<div class="notice warn mb-atraiter">${icone('alerte')}<div><b>À traiter (${t.length})</b><ul>${t.map(([m, q]) => `<li><a href="#" data-voir="${esc(m.uid)}">${esc(nomComplet(m))}</a> : ${esc(q)}</li>`).join('')}</ul>
+        <span class="muted">Clique sur un nom pour aller à sa fiche, puis utilise les boutons Accepter / Refuser.</span></div></div>` : '';
+    })()}
     <div class="at-barre"><div class="at-filtres" role="radiogroup">
       ${[['tous', 'Tous'], ['attente', 'En attente'], ['demandes', 'Demandes d\'appareil'], ['bloque', 'Bloqués']].map(([v, l]) => `<label class="chip"><input type="radio" name="mbf" value="${v}" ${v === filtre ? 'checked' : ''}><span>${l}</span></label>`).join('')}
       <button class="btn" data-a="actualiser">${icone('recommencer')} Actualiser</button>
@@ -125,6 +131,12 @@ export async function vueMembres(el) {
   });
   el.querySelector('.at-filtres').addEventListener('change', (e) => { el.dataset.filtre = e.target.value; refaire(); });
   el.querySelector('[data-a=actualiser]').addEventListener('click', refaire);
+  el.querySelector('.mb-atraiter')?.addEventListener('click', (e) => {
+    const a = e.target.closest('[data-voir]'); if (!a) return; e.preventDefault();
+    let c = el.querySelector(`.mb-carte[data-uid="${CSS.escape(a.dataset.voir)}"]`);
+    if (!c) { el.dataset.filtre = 'tous'; refaire(); return; }
+    c.scrollIntoView({ behavior: 'smooth', block: 'center' }); c.classList.add('mb-flash'); setTimeout(() => c.classList.remove('mb-flash'), 1600);
+  });
   el.querySelector('[data-a=excel]').addEventListener('click', () => {   // CSV lisible par Excel (séparateur « ; », accents conservés)
     const cel = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
     const d = (t) => (t ? new Date(t).toLocaleString('fr-BE') : '');
