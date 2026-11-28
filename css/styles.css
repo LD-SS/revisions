@@ -1356,3 +1356,6 @@ body.sim-large .sim-barre select{max-width:210px}
 .crs-int-cur label{display:flex;flex-direction:column;gap:2px;font-size:13.5px;flex:1 1 180px}
 .crs-int-cur input[type=range]{width:100%;accent-color:var(--mt,var(--accent))}
 .crs-int-leg{font-size:13px;margin:6px 0 0}
+
+.mb-atraiter ul{margin:4px 0 6px;padding-left:18px}
+.mb-carte.mb-flash{outline:3px solid var(--warn);outline-offset:2px}
