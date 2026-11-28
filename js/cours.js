@@ -9,6 +9,10 @@
      schema → { id, q, schema, solution, donnees? }  schéma à annoter (flèches de courant et vecteurs
               tension + valeurs), même format que les exercices sur schéma (voir circuit.js) ;
               réussi quand « Vérifier » donne 100 %
+     interactif → { titre?, params: [ { n, label, min, max, pas, val, unite? } ], svg, texte?, legende? }
+              figure qu'on fait varier avec des curseurs (bouton « Animer » : le 1er curseur défile tout seul).
+              Dans svg et texte : {{expression}} (avec les noms des curseurs, Math.sin…) ; {{expression|2}} = arrondi
+              à 2 décimales, écrit avec une virgule (pour les étiquettes ; les coordonnées : {{expression}}). Pas une question : ne compte pas dans la progression.
      labo   → { id, titre?, consigne?, circuit (format du simulateur),
                 reglages: [ { c, champ: 'val'|'vz'|'vs'|'ferme', label, min?, max?, pas?, unite? } ],
                 mesures:  [ { c, g: 'u'|'-u'|'i'|'-i'|'p'|'etat', label, unite? } ]   (u = V(a) − V(b) ; -u = l'inverse),
@@ -26,7 +30,7 @@
 
 import { esc, stockage, $$ } from './utils.js';
 import { icone } from './icones.js';
-import { enLigne } from './rendu.js';
+import { enLigne, svgSur } from './rendu.js';
 import { rendreBloc } from './synthese.js';
 import { resoudre } from './simu/moteur.js';
 import { svgCircuit, fmt, ETAT } from './vues/simulateur.js';
@@ -71,6 +75,38 @@ export function instancier(x, v, cle = '') {
   return x;
 }
 
+/* ---------- figures à curseurs (bloc « interactif ») ---------- */
+function gabarit(src, v, texte) {
+  return String(src || '').replace(/\{\{([^{}|]+)(?:\|(\d))?\}\}/g, (m, e, d) => {
+    const x = evaluer(e, v);
+    if (typeof x !== 'number' || !Number.isFinite(x)) return texte ? '—' : '0';
+    if (d !== undefined) return (+x.toFixed(+d)).toString().replace('.', ',').replace('-', '−');   // valeur affichée (texte ou étiquette du schéma)
+    return texte ? String(+x.toPrecision(4)).replace('.', ',').replace('-', '−') : String(Math.round(x * 100) / 100);
+  });
+}
+function figureInteractive(el, b) {
+  const v = Object.fromEntries((b.params || []).map((p) => [p.n, +p.val]));
+  const z = el.querySelector('.crs-int-svg'); const t = el.querySelector('.crs-int-txt');
+  const dessiner = () => {
+    z.innerHTML = svgSur(gabarit(b.svg, v, false));
+    if (t) t.innerHTML = enLigne(gabarit(b.texte, v, true));
+    for (const p of b.params || []) { const o = el.querySelector(`[data-v="${p.n}"]`); if (o) o.textContent = `${String(+(+v[p.n]).toFixed(4)).replace('.', ',')}${p.unite ? ` ${p.unite}` : ''}`; }
+  };
+  el.querySelectorAll('input[type=range]').forEach((r) => r.addEventListener('input', () => { v[r.dataset.n] = +r.value; dessiner(); }));
+  let tic = null;
+  el.querySelector('[data-anim]')?.addEventListener('click', (ev) => {
+    const bt = ev.currentTarget; const p = b.params[0]; const r = el.querySelector(`input[data-n="${p.n}"]`);
+    if (tic) { clearInterval(tic); tic = null; bt.textContent = '▶ Animer'; return; }
+    bt.textContent = '⏸ Pause';
+    tic = setInterval(() => {
+      if (!el.isConnected) { clearInterval(tic); return; }
+      let x = +v[p.n] + (+p.pas || 1); if (x > +p.max) x = +p.min;
+      v[p.n] = x; r.value = x; dessiner();
+    }, 60);
+  });
+  dessiner();
+}
+
 const nombre = (s) => { const v = parseFloat(String(s ?? '').trim().replace(/\s/g, '').replace(',', '.')); return Number.isFinite(v) ? v : null; };
 const joliNb = (v) => String(+(+v).toPrecision(4)).replace('.', ',');
 const questions = (l) => (l.blocs || []).filter((b) => (b.type === 'qcm' || b.type === 'nombre' || b.type === 'schema' || (b.type === 'labo' && b.defi)) && b.id);
@@ -110,6 +146,14 @@ export function lecteurCours(zone, cours, { docs = [], prefixe = '' } = {}) {
   }
 
   function bloc(b, l) {
+    if (b.type === 'interactif') {
+      return `<div class="crs-int bloc">${b.titre ? `<div class="crs-int-t">${icone('eclair')} ${enLigne(b.titre)}</div>` : ''}
+        <div class="crs-int-svg fig"></div>${b.texte ? '<div class="crs-int-txt"></div>' : ''}
+        <div class="crs-int-cur">${(b.params || []).map((p) => `<label><span>${enLigne(p.label || p.n)} : <b data-v="${esc(p.n)}"></b></span>
+          <input type="range" data-n="${esc(p.n)}" min="${+p.min}" max="${+p.max}" step="${+p.pas || 1}" value="${+p.val}"></label>`).join('')}
+          <button class="btn" type="button" data-anim>▶ Animer</button></div>
+        ${b.legende ? `<p class="muted crs-int-leg">${enLigne(b.legende)}</p>` : ''}</div>`;
+    }
     if (!INTERACTIFS.has(b.type)) return rendreBloc(b, docs);
     const cle = `${cleL(l)}/${b.id}`; const ok = reussi(cle);
     if (b.type === 'qcm') {
@@ -187,6 +231,8 @@ export function lecteurCours(zone, cours, { docs = [], prefixe = '' } = {}) {
   }
 
   function activer(l) {
+    const ints = (l.blocs || []).filter((x) => x.type === 'interactif');
+    zone.querySelectorAll('.crs-int').forEach((el, i) => { if (ints[i]) figureInteractive(el, ints[i]); });
     for (const el of $$('.crs-q, .crs-labo', zone)) {
       const b = (l.blocs || []).find((x) => x.id === el.dataset.q); if (!b) continue;
       const cle = `${cleL(l)}/${b.id}`; const fb = el.querySelector('.crs-fb');
